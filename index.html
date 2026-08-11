@@ -1070,12 +1070,54 @@ const TRIAL_DAYS = 7;
 
 function normCode(s){ return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
 function codeOk(s){ return ACCESS_CODES.indexOf(normCode(s)) >= 0; }
+
+/* ---- Lemon Squeezy licence keys ----
+   Their licence API is callable straight from the browser, so there is still no
+   server anywhere. A key is activated once per device, then the device works
+   offline for ever; we re-check quietly every 30 days and only lock up if the
+   service actually tells us the subscription has ended. Network trouble never
+   locks a child out mid-week. */
+const LS_API = 'https://api.lemonsqueezy.com/v1/licenses';
+const RECHECK_DAYS = 30;
+
+function looksLikeKey(s){
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(s||'').trim());
+}
+
+function activateKey(key, deviceName){
+  const body = new URLSearchParams({ license_key:key.trim(), instance_name:deviceName || 'Family device' });
+  return fetch(LS_API + '/activate', {
+    method:'POST', headers:{ 'Accept':'application/json' }, body
+  }).then(r => r.json());
+}
+function validateKey(key, instanceId){
+  const p = { license_key:key.trim() };
+  if (instanceId) p.instance_id = instanceId;
+  return fetch(LS_API + '/validate', {
+    method:'POST', headers:{ 'Accept':'application/json' }, body:new URLSearchParams(p)
+  }).then(r => r.json());
+}
+
+/* quiet background re-check; only revokes on a definite "no" from the service */
+function recheckLicence(){
+  if (!DB.licence || !DB.licence.key) return;
+  const last = DB.licence.checked || 0;
+  if (Date.now() - last < RECHECK_DAYS * 86400000) return;
+  validateKey(DB.licence.key, DB.licence.instance).then(res => {
+    DB.licence.checked = Date.now();
+    if (res && res.valid === false && /expired|disabled|inactive/i.test(res.error || '')){
+      DB.licence.dead = true;
+    }
+    save();
+  }).catch(()=>{});      // offline or blocked: leave everything alone
+}
 function trialLeft(){
   if (!DB || !DB.trialStart) return null;
   const used = Math.floor((Date.now() - DB.trialStart) / 86400000);
   return Math.max(0, TRIAL_DAYS - used);
 }
 function hasAccess(){
+  if (DB && DB.licence && DB.licence.key && !DB.licence.dead) return true;
   if (DB && DB.accessCode && codeOk(DB.accessCode)) return true;
   const left = trialLeft();
   return left !== null && left > 0;
@@ -1499,8 +1541,8 @@ function renderGate(a){
                '<p class="muted">Hope they enjoyed it! Pop in your access code to carry on.</p>'
              : '<h2 style="font-size:21px">Enter your access code</h2>'+
                '<p class="muted">It came with your welcome email.</p>')+
-    '<input class="ti" id="ac" placeholder="BEE-••••" autocapitalize="characters" '+
-      'style="text-align:center;font-size:24px;letter-spacing:3px;margin-top:10px">'+
+    '<input class="ti" id="ac" placeholder="Paste your key or code" '+
+      'style="text-align:center;font-size:17px;letter-spacing:1px;margin-top:10px">'+
     '<button class="btn green big" id="acgo" style="margin-top:10px">Unlock</button>'+
     (left === null
       ? '<button class="btn link" id="actry" style="width:100%;margin-top:8px">Have a free look for a week first</button>'
@@ -1508,17 +1550,38 @@ function renderGate(a){
   '</div>');
   a.appendChild(c);
 
+  const unlocked = () => {
+    sfx('win'); confetti(70);
+    toast('🎉 Unlocked — enjoy!', 3000);
+    setTimeout(()=>go('pick'), 700);
+  };
+  const fail = msg => {
+    sfx('wrong');
+    const f = c.querySelector('#ac');
+    f.value = ''; f.placeholder = msg || 'Not quite — check the email';
+    btn.disabled = false; btn.textContent = 'Unlock';
+  };
+  const btn = c.querySelector('#acgo');
   const tryIt = () => {
-    const v = c.querySelector('#ac').value;
-    if (codeOk(v)){
-      DB.accessCode = normCode(v); save(); sfx('win'); confetti(70);
-      toast('🎉 Unlocked — enjoy!', 3000);
-      setTimeout(()=>go('pick'), 700);
-    } else {
-      sfx('wrong');
-      c.querySelector('#ac').value = '';
-      c.querySelector('#ac').placeholder = 'Not quite — check the email';
+    const v = (c.querySelector('#ac').value || '').trim();
+    if (!v) return;
+    if (codeOk(v)){                                   // a code you handed out yourself
+      DB.accessCode = normCode(v); save(); return unlocked();
     }
+    if (!looksLikeKey(v)) return fail('That doesn\'t look right — check the email');
+    btn.disabled = true; btn.textContent = 'Checking…';
+    activateKey(v, 'Spelling Quest device').then(res => {
+      if (res && res.activated){
+        DB.licence = { key:v, instance:(res.instance && res.instance.id) || null,
+                       checked:Date.now(), dead:false };
+        save(); return unlocked();
+      }
+      fail((res && res.error) ? 'That key didn\'t work' : 'That key didn\'t work');
+    }).catch(() => {
+      // no internet, or the browser blocked the call — let them in and check later
+      DB.licence = { key:v, instance:null, checked:0, dead:false, pending:true };
+      save(); unlocked();
+    });
   };
   c.querySelector('#acgo').onclick = tryIt;
   c.querySelector('#ac').addEventListener('keydown', e => { if (e.key === 'Enter') tryIt(); });
@@ -1526,7 +1589,7 @@ function renderGate(a){
   if (t) t.onclick = () => { DB.trialStart = Date.now(); save(); sfx('good'); go('pick'); };
 
   a.appendChild(el('<p class="muted center" style="margin-top:14px;color:rgba(255,255,255,.6)">'+
-    'Need a code? Visit muslimeenmarket.com</p>'));
+    'Need access? Visit muslimeenmarket.com</p>'));
 }
 
 /* ---------------- profile picker ---------------- */
@@ -2144,7 +2207,10 @@ function parentMore(a){
   // ---------- access ----------
   const left = trialLeft();
   const acc = el('<div class="card"><h3>🔑 Access</h3>'+
-    (DB.accessCode
+    (DB.licence && DB.licence.key
+      ? '<p class="muted">Unlocked with your licence key. Ends in <b>'+
+        esc(String(DB.licence.key).slice(-6))+'</b>'+(DB.licence.pending?' (will confirm when online)':'')+'.</p>'
+      : DB.accessCode
       ? '<p class="muted">Unlocked with code <b>'+esc(DB.accessCode)+'</b>. Nothing expires on this device.</p>'
       : (left > 0
           ? '<p class="muted">Free look — <b>'+left+' day'+(left===1?'':'s')+'</b> left. Enter your code any time.</p>'
@@ -2154,9 +2220,21 @@ function parentMore(a){
     '<button class="btn grey" id="acsave">Save</button></div></div>');
   a.appendChild(acc);
   acc.querySelector('#acsave').onclick = () => {
-    const v = acc.querySelector('#acin').value;
-    if (codeOk(v)){ DB.accessCode = normCode(v); save(); sfx('good'); toast('🔑 Unlocked'); setTimeout(()=>go('parent','more'), 500); }
-    else { sfx('wrong'); toast('❌ That code didn\'t work'); }
+    const v = (acc.querySelector('#acin').value||'').trim();
+    if (codeOk(v)){ DB.accessCode = normCode(v); save(); sfx('good'); toast('🔑 Unlocked');
+      return setTimeout(()=>go('parent','more'), 500); }
+    if (!looksLikeKey(v)) { sfx('wrong'); return toast('❌ That code didn\'t work'); }
+    toast('Checking…');
+    activateKey(v, 'Spelling Quest device').then(res => {
+      if (res && res.activated){
+        DB.licence = { key:v, instance:(res.instance&&res.instance.id)||null, checked:Date.now(), dead:false };
+        save(); sfx('good'); toast('🔑 Unlocked'); setTimeout(()=>go('parent','more'), 500);
+      } else { sfx('wrong'); toast('❌ That key didn\'t work'); }
+    }).catch(()=>{
+      DB.licence = { key:v, instance:null, checked:0, dead:false, pending:true };
+      save(); sfx('good'); toast('🔑 Saved — will confirm when online');
+      setTimeout(()=>go('parent','more'), 500);
+    });
   };
 
   // ---------- code ----------
@@ -2247,6 +2325,7 @@ function boot(){
     st.appendChild(n);
   });
   if (gotWeek) toast('📚 New words loaded!');
+  try{ recheckLicence(); }catch(e){}
   DB.active = null;
   go(hasAccess() ? 'pick' : 'gate');
 }
