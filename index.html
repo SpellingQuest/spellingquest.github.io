@@ -314,6 +314,59 @@ table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); t
 select.ti{ appearance:none; background:#fff; }
 input[type=range]{ accent-color:var(--brand); height:34px; }
 
+/* ---------- segmented two/three-way picker ---------- */
+.seg{ display:flex; gap:8px; margin-top:8px; }
+.seg button{ flex:1; padding:14px 6px; border-radius:14px; background:#f0ecfb; color:var(--ink);
+  font-weight:800; font-size:16px; box-shadow:0 3px 0 rgba(0,0,0,.10); }
+.seg button.on{ background:var(--brand); color:#fff; box-shadow:0 3px 0 rgba(0,0,0,.2); }
+.seg button:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.1); }
+
+/* ---------- collapsible sections ---------- */
+details > summary{ cursor:pointer; font-weight:800; font-size:16px; color:var(--brand);
+  list-style:none; padding:4px 0; }
+details > summary::-webkit-details-marker{ display:none; }
+details > summary::before{ content:'▸ '; }
+details[open] > summary::before{ content:'▾ '; }
+
+/* ---------- voice audition list ---------- */
+.vrow{ display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line); }
+.vrow .vplay{ width:46px; height:46px; border-radius:12px; background:#eaf5ff; font-size:18px; flex:0 0 auto; }
+.vrow .vname{ flex:1; min-width:0; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vrow .vpin{ width:44px; height:44px; border-radius:12px; background:#f0ecfb; color:var(--ink);
+  font-size:19px; font-weight:900; flex:0 0 auto; }
+.vrow .vpin.on{ background:var(--brand); color:#fff; }
+.tag{ background:var(--green); color:#fff; font-size:10px; font-weight:900; padding:2px 6px;
+  border-radius:6px; letter-spacing:.5px; vertical-align:middle; }
+.wordchip.bad{ background:#ffe4e4; border-color:var(--red); }
+.wordchip.dim{ opacity:.5; }
+
+/* ---------- the hive: one hexagon per word ---------- */
+.hive{ display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin:12px 0 6px; }
+.hive .hex{ width:26px; height:29px; background:#e6e1f5; display:block;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); transition:background .3s; }
+.hive .hex.warm{ background:#ffe4a3; }
+.hive .hex.red{ background:#ffb3b3; }
+.hive .hex.gold{ background:linear-gradient(160deg,#ffd76e,#ffb02e); }
+
+/* ---------- the bee stage ---------- */
+.stage{ position:relative; border-radius:22px; padding:18px 14px 14px;
+  background:radial-gradient(120% 90% at 50% 0%, #4b3a12 0%, #241a3f 60%, #1a1030 100%);
+  overflow:hidden; text-align:center; }
+.stage .spot{ position:absolute; top:-70px; left:50%; transform:translateX(-50%);
+  width:230px; height:230px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,224,130,.55) 0%, rgba(255,224,130,0) 70%); pointer-events:none; }
+.stage .micon{ font-size:52px; line-height:64px; height:64px; position:relative; z-index:1; }
+.stage .rnd{ color:#ffd76e; font-weight:900; letter-spacing:1px; font-size:13px; position:relative; z-index:1; }
+.stage .rivals{ color:#fff; font-size:15px; font-weight:800; margin-top:4px; position:relative; z-index:1; }
+.stage .crowd{ font-size:19px; letter-spacing:-3px; margin-top:8px; position:relative; z-index:1; opacity:.9; }
+.stage .out{ opacity:.18; }
+.judge{ background:#fffdf5; border:3px solid #ffd76e; border-radius:18px; padding:12px 14px;
+  margin:12px 0 4px; font-weight:800; color:#5c3d00; font-size:17px; }
+.askbacks{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:10px 0 2px; }
+.askbacks button{ background:#fff5d6; color:#5c3d00; border-radius:14px; padding:11px 14px;
+  font-weight:800; font-size:15px; box-shadow:0 3px 0 rgba(0,0,0,.13); }
+.askbacks button:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.13); }
+
 </style>
 </head>
 <body>
@@ -353,7 +406,7 @@ const PATTERNS = [
 
   { id:'tion', label:'-tion words', g:'tion',
     title:'-tion says "shun"', rule:'It turns an action into a thing.',
-    trick:'Ac<b>tion</b>, mo<b>tion</b>, sta<b>tion</b> — all say <i>shun</i>.', emoji:'🚉' },
+    trick:'Action, motion, station. They all say shun.', emoji:'🚉' },
 
   { id:'sion', label:'-sion words', g:'sion',
     title:'-sion says "shun" or "zhun"', rule:'Like -tion, but with an <b>s</b>.',
@@ -365,19 +418,19 @@ const PATTERNS = [
 
   { id:'dge', label:'dge words', g:'dge',
     title:'Use dge after a short vowel', rule:'If the vowel is short and it\'s the end of the word, use <b>dge</b>.',
-    trick:'Bri<b>dge</b>, ba<b>dge</b>, fu<b>dge</b> — short vowel, big ending!', emoji:'🌉' },
+    trick:'Bridge, badge, fudge. Short vowel, then the big ending.', emoji:'🌉' },
 
   { id:'tch', label:'tch words', g:'tch',
     title:'Use tch right after a short vowel', rule:'Ca<b>tch</b> has a short <b>a</b> sound, so it needs the <b>t</b>.',
-    trick:'Ca<b>tch</b> the ma<b>tch</b>! (But <i>much, such, rich, which</i> break the rule.)', emoji:'🥎' },
+    trick:'Catch the match! But watch out, because much, such, rich and which all break the rule.', emoji:'🥎' },
 
   { id:'kn', label:'kn words', g:'kn', start:true,
     title:'The k is silent', rule:'<b>kn</b> at the start just sounds like <b>n</b>.',
-    trick:'A <b>kn</b>ight <b>kn</b>ocks <b>kn</b>ees — the k is sneaking quietly.', emoji:'🤫' },
+    trick:'A knight knocks knees. The k is sneaking about, very quietly.', emoji:'🤫' },
 
   { id:'wr', label:'wr words', g:'wr', start:true,
     title:'The w is silent', rule:'<b>wr</b> at the start just sounds like <b>r</b>.',
-    trick:'<b>Wr</b>ite with your <b>wr</b>ist — the w is wrapped up quiet.', emoji:'✍️' },
+    trick:'Write with your wrist. The w is all wrapped up, and quiet.', emoji:'✍️' },
 
   { id:'ph', label:'ph words', g:'ph',
     title:'ph sounds like <b>f</b>', rule:'Two letters teaming up to make an f sound.',
@@ -385,10 +438,10 @@ const PATTERNS = [
 
   { id:'ck', label:'ck words', g:'ck',
     title:'ck comes right after a short vowel', rule:'Only at the end of a short word.',
-    trick:'Du<b>ck</b>, ro<b>ck</b>, sti<b>ck</b> — short vowel, then ck!', emoji:'🦆' },
+    trick:'Duck, rock, stick. Short vowel, then c k.', emoji:'🦆' },
 
   { id:'shr', label:'shr words', g:'shr', start:true,
-    title:'Three letters, one blend', rule:'<b>shr</b> = sh + r squished together.',
+    title:'Three letters, one blend', rule:'<b>shr</b> is sh and r, squished together.',
     trick:'<b>Shr</b>imp <b>shr</b>ink in the <b>shr</b>ubs.', emoji:'🦐' },
 
   // ---------- long vowel teams ----------
@@ -398,15 +451,15 @@ const PATTERNS = [
 
   { id:'ei', label:'ei words', g:'ei',
     title:'e before i after c', rule:'After a <b>c</b>, flip it around.',
-    trick:'i before e, <i>except after c</i> — re<b>ce</b>ive, <b>ce</b>iling.', emoji:'🧾' },
+    trick:'i before e, except after c. Receive, and ceiling.', emoji:'🧾' },
 
   { id:'ai', label:'ai words', g:'ai',
     title:'ai sounds like the letter <b>a</b> — in the middle', rule:'When two vowels go walking, the first one does the talking.',
-    trick:'<b>ai</b> hides in the m<b>ai</b>ddle — r<b>ai</b>n, tr<b>ai</b>n, p<b>ai</b>nt.', emoji:'🌧️' },
+    trick:'ai hides in the middle. Rain, train, paint.', emoji:'🌧️' },
 
   { id:'ay', label:'ay words', g:'ay',
     title:'ay sounds like the letter <b>a</b> — at the end', rule:'<b>ay</b> likes to play at the <i>end</i> of a word.',
-    trick:'D<b>ay</b>, pl<b>ay</b>, st<b>ay</b> — ay away at the end!', emoji:'☀️' },
+    trick:'Day, play, stay. Ay goes away, at the end.', emoji:'☀️' },
 
   { id:'ee', label:'ee words', g:'ee',
     title:'ee says a long <b>eeee</b>', rule:'Two e\'s make the long <i>eeee</i> sound.',
@@ -414,7 +467,7 @@ const PATTERNS = [
 
   { id:'ea', label:'ea words', g:'ea',
     title:'ea has two jobs', rule:'Usually it sounds like <b>ee</b> (<b>ea</b>t) — but sometimes like the <b>e</b> in bed (br<b>ea</b>d).',
-    trick:'<b>Ea</b>t your br<b>ea</b>d — same letters, different sounds!', emoji:'🍞' },
+    trick:'Eat your bread. Same letters, but different sounds.', emoji:'🍞' },
 
   { id:'oa', label:'oa words', g:'oa',
     title:'oa sounds like the letter <b>o</b> — in the middle', rule:'Another two-vowels-walking team.',
@@ -443,18 +496,18 @@ const PATTERNS = [
 
   { id:'oy', label:'oy words', g:'oy',
     title:'oy sounds like <b>oy</b> — at the end', rule:'<b>oy</b> is the boy who goes last.',
-    trick:'The b<b>oy</b> has a t<b>oy</b> — oy at the end!', emoji:'🧸' },
+    trick:'The boy has a toy. Oy goes at the end.', emoji:'🧸' },
 
   { id:'ou', label:'ou words', g:'ou',
     title:'ou sounds like <b>ow</b> — in the middle', rule:'Like when you get hurt — <i>ouch!</i>',
-    trick:'A m<b>ou</b>se in the h<b>ou</b>se — <b>ou</b>ch!', emoji:'🐭' },
+    trick:'A mouse in the house. Ouch!', emoji:'🐭' },
 
   { id:'ow', label:'ow words', g:'ow',
     title:'ow has two sounds', rule:'Like <b>ow</b> in c<b>ow</b>, or like the letter <b>o</b> in sn<b>ow</b>.',
-    trick:'The c<b>ow</b> in the sn<b>ow</b> — same letters, two sounds!', emoji:'🐄' },
+    trick:'The cow in the snow. Same letters, but two different sounds.', emoji:'🐄' },
 
   { id:'oo', label:'oo words', g:'oo',
-    title:'oo has two sounds', rule:'Long <i>oo</i> like <b>moon</b>, short <i>oo</i> like <b>book</b>.',
+    title:'oo has two sounds', rule:'A long one, as in moon, and a short one, as in book.',
     trick:'A b<b>oo</b>k on the m<b>oo</b>n!', emoji:'🌕' },
 
   { id:'aw', label:'aw words', g:'aw',
@@ -463,12 +516,12 @@ const PATTERNS = [
 
   { id:'au', label:'au words', g:'au',
     title:'au sounds like <b>aw</b> — in the middle', rule:'<b>au</b> hides inside the word.',
-    trick:'The <b>au</b>tumn s<b>au</b>ce — au in the middle!', emoji:'🍂' },
+    trick:'The autumn sauce. Au sits in the middle.', emoji:'🍂' },
 
   // ---------- r-controlled ----------
   { id:'ar', label:'ar words', g:'ar',
     title:'ar sounds like <b>arrr</b>', rule:'The <b>r</b> bosses the vowel around.',
-    trick:'The c<b>ar</b> is p<b>ar</b>ked f<b>ar</b> — <i>arrr</i>, like a pirate!', emoji:'🏴‍☠️' },
+    trick:'The car is parked far. Arrr, just like a pirate.', emoji:'🏴‍☠️' },
 
   { id:'or', label:'or words', g:'or',
     title:'or sounds like <b>or</b>', rule:'Bossy r again.',
@@ -488,12 +541,12 @@ const PATTERNS = [
 
   // ---------- endings ----------
   { id:'ing', label:'-ing words', g:'ing', end:true,
-    title:'Adding -ing', rule:'<b>1-1-1 rule:</b> one syllable, one vowel, one final consonant → <i>double</i> the last letter.',
-    trick:'hug → hu<b>gg</b>ing · run → ru<b>nn</b>ing · but jump → jumping (two consonants, no doubling)', emoji:'🏃' },
+    title:'Adding -ing', rule:'The <b>1-1-1 rule</b>. If the word has one syllable, one vowel, and one final consonant, then you double the last letter.',
+    trick:'hug becomes hu<b>gg</b>ing. run becomes ru<b>nn</b>ing. But jump just becomes jumping, because it already has two consonants.', emoji:'🏃' },
 
   { id:'ed', label:'-ed words', g:'ed', end:true,
     title:'Adding -ed', rule:'<b>-ed</b> makes it past. Same 1-1-1 doubling rule applies!',
-    trick:'hop → ho<b>pp</b>ed · bake → bak<b>ed</b> (drop the e first!)', emoji:'⏪' },
+    trick:'hop becomes ho<b>pp</b>ed. bake becomes bak<b>ed</b>, and you drop the e first.', emoji:'⏪' },
 
   { id:'es', label:'-es plurals', g:'es', end:true,
     title:'Add -es after s, x, z, ch, sh', rule:'Those letters need an extra <i>uh</i> to breathe.',
@@ -501,11 +554,11 @@ const PATTERNS = [
 
   { id:'ful', label:'-ful words', g:'ful', end:true,
     title:'-ful only gets ONE l', rule:'Even though the word <i>full</i> has two.',
-    trick:'Help<b>ful</b>, care<b>ful</b>, joy<b>ful</b> — one l only!', emoji:'🎁' },
+    trick:'Helpful, careful, joyful. One l only.', emoji:'🎁' },
 
   { id:'less', label:'-less words', g:'less', end:true,
     title:'-less means "without"', rule:'It always has double s.',
-    trick:'Fear<b>less</b> = without fear.', emoji:'🦁' },
+    trick:'Fear<b>less</b> means without fear.', emoji:'🦁' },
 
   { id:'ness', label:'-ness words', g:'ness', end:true,
     title:'-ness turns it into a feeling', rule:'Always double s.',
@@ -524,25 +577,25 @@ const PATTERNS = [
     trick:'App<b>le</b>, litt<b>le</b>, tab<b>le</b>.', emoji:'🍏' },
 
   { id:'y', label:'-y ending words', g:'y', end:true,
-    title:'y can be a vowel!', rule:'At the end of a word <b>y</b> sounds like <b>ee</b> (happ<b>y</b>) or like <b>i</b> (fl<b>y</b>).',
-    trick:'Happ<b>y</b> and fl<b>y</b> — y is a sneaky vowel.', emoji:'😊' },
+    title:'y can be a vowel', rule:'At the end of a word <b>y</b> sounds like <b>ee</b> (happ<b>y</b>) or like <b>i</b> (fl<b>y</b>).',
+    trick:'Happy, and fly. Y is a sneaky vowel.', emoji:'😊' },
 
   // ---------- beginnings ----------
   { id:'un', label:'un- words', g:'un', start:true,
     title:'un- means "not"', rule:'Stick it on the front — the base word never changes.',
-    trick:'<b>un</b>happy = not happy.', emoji:'🚫' },
+    trick:'<b>un</b>happy means not happy.', emoji:'🚫' },
 
   { id:'re', label:'re- words', g:'re', start:true,
     title:'re- means "again"', rule:'Stick it on the front, spelling stays the same.',
-    trick:'<b>re</b>do = do again.', emoji:'🔁' },
+    trick:'<b>re</b>do means to do it again.', emoji:'🔁' },
 
   { id:'dis', label:'dis- words', g:'dis', start:true,
     title:'dis- means "opposite"', rule:'One s in dis-, then the whole base word.',
-    trick:'<b>dis</b>agree = not agree.', emoji:'🙅' },
+    trick:'<b>dis</b>agree means to not agree.', emoji:'🙅' },
 
   { id:'pre', label:'pre- words', g:'pre', start:true,
     title:'pre- means "before"', rule:'Front of the word, spelling unchanged.',
-    trick:'<b>pre</b>view = view before.', emoji:'⏮️' },
+    trick:'<b>pre</b>view means to view it before.', emoji:'⏮️' },
 
   { id:'mis', label:'mis- words', g:'mis', start:true,
     title:'mis- means "wrongly"', rule:'One s, then the base word.',
@@ -554,11 +607,11 @@ const PATTERNS = [
     trick:'<b>Sh</b>! The <b>sh</b>eep is asleep.', emoji:'🐑' },
 
   { id:'ch', label:'ch words', g:'ch',
-    title:'ch says <b>ch</b>', rule:'Like a train: <i>ch-ch-ch</i>.',
+    title:'ch says <b>ch</b>', rule:'It sounds like a train. Ch, ch, ch.',
     trick:'<b>Ch</b>ips on the <b>ch</b>air.', emoji:'🚂' },
 
   { id:'th', label:'th words', g:'th',
-    title:'th — stick your tongue out!', rule:'Two sounds: soft <i>think</i> and buzzy <i>this</i>.',
+    title:'th. Stick your tongue out', rule:'It has two sounds. A soft one, as in think, and a buzzy one, as in this.',
     trick:'<b>Th</b>ink about <b>th</b>is.', emoji:'👅' },
 
   { id:'wh', label:'wh words', g:'wh', start:true,
@@ -566,7 +619,7 @@ const PATTERNS = [
     trick:'<b>Wh</b>o, <b>wh</b>at, <b>wh</b>en, <b>wh</b>ere, <b>wh</b>y.', emoji:'❓' },
 
   { id:'magic_e', label:'Magic e words', g:'', custom:'magic_e',
-    title:'Magic e!', rule:'The <b>e</b> at the end is silent — it jumps back over one letter and makes the vowel say its own name.',
+    title:'Magic e', rule:'The <b>e</b> at the end is silent — it jumps back over one letter and makes the vowel say its own name.',
     trick:'cap → c<b>a</b>p<b>e</b> · kit → k<b>i</b>t<b>e</b> · hop → h<b>o</b>p<b>e</b>', emoji:'✨' },
 ];
 
@@ -575,8 +628,8 @@ PATTERNS.forEach(p => PATTERN_BY_ID[p.id] = p);
 
 /* Words that follow no pattern still deserve their own rule. */
 const TRICKY = {
-  said:   {em:'💬', title:'said', rule:'It sounds like "sed" but it\'s spelled with <b>ai</b>.', trick:'<b>S</b>ally <b>A</b>nn <b>I</b>s <b>D</b>ancing — s-a-i-d!'},
-  was:    {em:'🌀', title:'was', rule:'It sounds like "wuz" but the middle letter is an <b>a</b>.', trick:'w-<b>a</b>-s. Not a u — an <b>a</b>!'},
+  said:   {em:'💬', title:'said', rule:'It sounds like "sed" but it\'s spelled with <b>ai</b>.', trick:'Sally Ann Is Dancing. That spells s, a, i, d.'},
+  was:    {em:'🌀', title:'was', rule:'It sounds like "wuz" but the middle letter is an <b>a</b>.', trick:'w, a, s. Not a u. An a.'},
   were:   {em:'🐻', title:'were', rule:'<b>were</b> is just <b>we</b> with <b>re</b> stuck on the end.', trick:'we + re = were'},
   they:   {em:'👫', title:'they', rule:'<b>they</b> is <b>the</b> with a <b>y</b> on the end.', trick:'the + y = they'},
   their:  {em:'🎒', title:'their', rule:'This one means "it belongs to them" — it has <b>heir</b> hiding inside.', trick:'t + <b>heir</b> = their (an heir owns things!)'},
@@ -585,31 +638,31 @@ const TRICKY = {
   some:   {em:'🍪', title:'some', rule:'It ends in <b>ome</b> but says "um".', trick:'c-<b>ome</b>, s-<b>ome</b> — the same ending twice!'},
   one:    {em:'1️⃣', title:'one', rule:'It starts with <b>o</b> but sounds like "wun".', trick:'<b>one</b> is hiding inside <b>once</b> and al<b>one</b>.'},
   once:   {em:'✨', title:'once', rule:'<b>once</b> is just <b>one</b> + <b>ce</b>.', trick:'one + ce = once'},
-  because:{em:'🐘', title:'because', rule:'Seven letters, and the tricky bit is <b>cause</b>.', trick:'<b>B</b>ig <b>E</b>lephants <b>C</b>an <b>A</b>lways <b>U</b>nderstand <b>S</b>mall <b>E</b>lephants.'},
-  friend: {em:'🤝', title:'friend', rule:'The tricky part is the <b>ie</b> in the middle.', trick:'A <b>fri</b>-<b>end</b> is there to the <b>end</b>!'},
-  people: {em:'👨‍👩‍👧', title:'people', rule:'The <b>eo</b> in the middle is the sneaky bit.', trick:'p-<b>eo</b>-ple. Say it wrong on purpose: "pee-OP-lee"!'},
+  because:{em:'🐘', title:'because', rule:'Seven letters, and the tricky bit is <b>cause</b>.', trick:'Big Elephants Can Always Understand Small Elephants.'},
+  friend: {em:'🤝', title:'friend', rule:'The tricky part is the <b>ie</b> in the middle.', trick:'A friend is there, right to the end.'},
+  people: {em:'👨‍👩‍👧', title:'people', rule:'The <b>eo</b> in the middle is the sneaky bit.', trick:'p, e, o, ple. Say it wrong on purpose. Pee, op, lee!'},
   again:  {em:'🔁', title:'again', rule:'<b>again</b> is <b>a</b> + <b>gain</b>.', trick:'a + gain = again'},
   any:    {em:'❓', title:'any', rule:'It starts like <b>an</b> but says "eh".', trick:'<b>an</b> + y = any'},
   many:   {em:'🔢', title:'many', rule:'It starts like <b>man</b> but says "meh".', trick:'<b>man</b> + y = many'},
-  who:    {em:'🦉', title:'who', rule:'The <b>w</b> is silent, like an owl saying it.', trick:'w-h-o — the owl asks "whooo?"'},
+  who:    {em:'🦉', title:'who', rule:'The <b>w</b> is silent, like an owl saying it.', trick:'w, h, o. The owl asks, whooo?'},
   does:   {em:'🔧', title:'does', rule:'<b>does</b> is <b>do</b> + <b>es</b>.', trick:'do + es = does'},
   done:   {em:'✅', title:'done', rule:'<b>done</b> is <b>do</b> + <b>ne</b>.', trick:'do + ne = done'},
   love:   {em:'❤️', title:'love', rule:'No English word ends in <b>v</b>, so we add a silent <b>e</b>.', trick:'lov + e — have, give, live all do it too!'},
   give:   {em:'🎁', title:'give', rule:'No English word ends in <b>v</b>, so we add a silent <b>e</b>.', trick:'giv + e — love, have, live all do it too!'},
   have:   {em:'🤲', title:'have', rule:'No English word ends in <b>v</b>, so we add a silent <b>e</b>.', trick:'hav + e — love, give, live all do it too!'},
   live:   {em:'🏠', title:'live', rule:'No English word ends in <b>v</b>, so we add a silent <b>e</b>.', trick:'liv + e — love, give, have all do it too!'},
-  from:   {em:'📮', title:'from', rule:'Careful — this is <b>not</b> "form". The <b>r</b> comes second.', trick:'f-<b>r</b>-o-m. F-R first, then O-M.'},
+  from:   {em:'📮', title:'from', rule:'Careful — this is <b>not</b> "form". The <b>r</b> comes second.', trick:'f, r, o, m. F and r first, then o and m.'},
   want:   {em:'🎯', title:'want', rule:'<b>want</b> has an <b>ant</b> in it.', trick:'w + <b>ant</b> = want 🐜'},
-  water:  {em:'💧', title:'water', rule:'<b>water</b> has <b>ate</b> in the middle.', trick:'w-<b>ate</b>-r'},
+  water:  {em:'💧', title:'water', rule:'<b>water</b> has <b>ate</b> in the middle.', trick:'w, ate, r.'},
   very:   {em:'❗', title:'very', rule:'One <b>r</b>, then <b>y</b> on the end.', trick:'ver + y = very'},
   every:  {em:'🔄', title:'every', rule:'<b>every</b> has <b>ever</b> hiding inside.', trick:'<b>ever</b> + y = every'},
-  little: {em:'🐜', title:'little', rule:'Double <b>t</b>, then the quiet <b>le</b> ending.', trick:'lit + tle = little'},
-  would:  {em:'🍀', title:'would', rule:'The <b>oul</b> is silent-ish — would, could and should all share it.', trick:'<b>O</b>h <b>U</b> <b>L</b>ucky <b>D</b>uck — w-<b>ould</b>!'},
-  could:  {em:'🍀', title:'could', rule:'would, could and should all share the same <b>ould</b>.', trick:'<b>O</b>h <b>U</b> <b>L</b>ucky <b>D</b>uck — c-<b>ould</b>!'},
-  should: {em:'🍀', title:'should', rule:'would, could and should all share the same <b>ould</b>.', trick:'<b>O</b>h <b>U</b> <b>L</b>ucky <b>D</b>uck — sh-<b>ould</b>!'},
-  two:    {em:'2️⃣', title:'two', rule:'It has a silent <b>w</b> — like <b>tw</b>in and <b>tw</b>ice, which are also about 2.', trick:'t-<b>w</b>-o: twin, twice, two.'},
-  buy:    {em:'🛒', title:'buy', rule:'<b>buy</b> has a <b>u</b> in it — because <b>u</b> buy things!', trick:'b-<b>u</b>-y'},
-  laugh:  {em:'😂', title:'laugh', rule:'The <b>gh</b> makes an f sound here.', trick:'la + <b>ugh</b>! = laugh'},
+  little: {em:'🐜', title:'little', rule:'Double <b>t</b>, then the quiet <b>le</b> ending.', trick:'lit, and tle. That makes little.'},
+  would:  {em:'🍀', title:'would', rule:'The <b>oul</b> is silent-ish — would, could and should all share it.', trick:'Oh, U, Lucky Duck. That gives you, ould.'},
+  could:  {em:'🍀', title:'could', rule:'would, could and should all share the same <b>ould</b>.', trick:'Oh, U, Lucky Duck. That gives you, ould.'},
+  should: {em:'🍀', title:'should', rule:'would, could and should all share the same <b>ould</b>.', trick:'Oh, U, Lucky Duck. That gives you, ould.'},
+  two:    {em:'2️⃣', title:'two', rule:'It has a silent <b>w</b> — like <b>tw</b>in and <b>tw</b>ice, which are also about 2.', trick:'t, w, o. Twin, twice, two.'},
+  buy:    {em:'🛒', title:'buy', rule:'<b>buy</b> has a <b>u</b> in it — because <b>u</b> buy things!', trick:'b, u, y.'},
+  laugh:  {em:'😂', title:'laugh', rule:'The <b>gh</b> makes an f sound here.', trick:'La, and ugh. That makes laugh.'},
   eight:  {em:'8️⃣', title:'eight', rule:'It has <b>igh</b> hiding in the middle.', trick:'e + <b>igh</b> + t = eight'},
   said2:  null
 };
@@ -1009,6 +1062,25 @@ const BADGES = [
   { id:'weeks4',   em:'📚', n:'Month of Words', d:'Finish 4 weeks' },
 ];
 
+/* ---- access ----
+   One code per school year, printed on the welcome sheet the store delivers.
+   Checked entirely on the device, so it keeps working offline for ever. */
+const ACCESS_CODES = ['BEE2627','BEE2728','BEE2829','BEE2930','BEE3031'];
+const TRIAL_DAYS = 7;
+
+function normCode(s){ return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+function codeOk(s){ return ACCESS_CODES.indexOf(normCode(s)) >= 0; }
+function trialLeft(){
+  if (!DB || !DB.trialStart) return null;
+  const used = Math.floor((Date.now() - DB.trialStart) / 86400000);
+  return Math.max(0, TRIAL_DAYS - used);
+}
+function hasAccess(){
+  if (DB && DB.accessCode && codeOk(DB.accessCode)) return true;
+  const left = trialLeft();
+  return left !== null && left > 0;
+}
+
 const SAMPLE = "igh words:\nlight night bright right fight\nie words:\nfield chief believe piece thief";
 
 /* ---------------- state ---------------- */
@@ -1027,11 +1099,17 @@ function defaultDB(){
     active:null,
     unlockAll:false,
     pin:'',
+    voiceSex:'male',
+    rate:0.85,
     weekRaw:SAMPLE,
     weekId:'w1',
     weekTitle:'',
     perKid:true,
     weekRawByKid:{},
+    beeByKid:{},
+    beeTarget:'',
+    beeTargetByKid:{},
+    beeId:'bee1',
     weeks:[]
   };
 }
@@ -1044,6 +1122,9 @@ function load(){
   if (!DB || !DB.kids || !DB.kids.length) DB = defaultDB();
   DB.kids.forEach(k => { k.prog = k.prog || {}; k.badges = k.badges || []; });
   DB.weekRawByKid = DB.weekRawByKid || {};
+  DB.beeByKid = DB.beeByKid || {};
+  DB.beeTargetByKid = DB.beeTargetByKid || {};
+  DB.beeId = DB.beeId || 'bee1';
   // Older saves kept ONE shared word list. Give every child their own copy so the
   // two of them can never silently end up locked to the same words.
   DB.kids.forEach(k => {
@@ -1096,13 +1177,7 @@ function todayKey(){
   const js = new Date().getDay();           // 0=Sun
   return ['sun','mon','tue','wed','thu','fri','sat'][js];
 }
-function dayUnlocked(key){
-  if (DB.unlockAll) return true;
-  const p = prog();
-  if (p.days[key] && p.days[key].done) return true;
-  const order = ['mon','tue','wed','thu','fri','sat','sun'];
-  return order.indexOf(key) <= order.indexOf(todayKey());
-}
+function dayUnlocked(){ return true; }   // every day is always open
 
 function completeDay(key, stars, xp){
   const p = prog();
@@ -1184,27 +1259,69 @@ const SFX = {
   launch: () => { blip(90, 0, 1.5, 'sawtooth', .10, 1400); hiss(0, 1.5, .10); },
   tick:   () => blip(1100, 0, .03, 'square', .05),
   write:  () => { blip(400,0,.08,'triangle',.12,700); blip(700,.09,.10,'triangle',.12,1000); },
+  clap:   () => { for(let i=0;i<14;i++) hiss(i*.045 + Math.random()*.03, .09, .07);
+                  [523,659,784].forEach((f,i)=>blip(f, .12+i*.07, .3, 'triangle', .14)); },
+  buzz:   () => { blip(150, 0, .45, 'sawtooth', .16); blip(151.5, 0, .45, 'square', .10); },
+  ding:   () => { [1319,1568].forEach((f,i)=>blip(f, i*.09, .5, 'sine', .17)); },
 };
 function sfx(n, arg){ try{ const f = SFX[n]; if (f) f(arg); }catch(e){} }
 
 /* ---------------- speech ---------------- */
 let VOICE = null, voiceReady = false, ALL_VOICES = [];
 
+/* Only two choices are offered. Daniel (en-GB) is the male default; the female
+   list is ordered to match his pronunciation as closely as possible — en-GB
+   first, then other British-sounding voices, then anything English. */
+const VOICE_SETS = {
+  male:   ['Daniel','Oliver','Arthur','Ryan','Google UK English Male','Microsoft Ryan',
+           'Alex','Aaron','Tom','Fred','Google US English','Microsoft Guy'],
+  female: ['Serena','Kate','Martha','Stephanie','Google UK English Female','Microsoft Sonia',
+           'Moira','Fiona','Karen','Samantha','Ava','Allison','Microsoft Aria']
+};
+
 /* turn our little HTML rule strings into something a voice reads naturally */
+/* find the best available voice for the chosen sex */
+function pickVoiceFor(sex){
+  const ov = (DB && DB.voicePick && DB.voicePick[sex]);
+  if (ov){
+    const hit = ALL_VOICES.find(v => v.name === ov);
+    if (hit) return hit;
+  }
+  const want = VOICE_SETS[sex] || VOICE_SETS.male;
+  for (const name of want){
+    const hit = ALL_VOICES.find(v => v.name.toLowerCase().indexOf(name.toLowerCase()) >= 0);
+    if (hit) return hit;
+  }
+  // nothing matched by name — prefer a British voice, else the best-scoring one
+  return ALL_VOICES.find(v => /en-GB/i.test(v.lang)) || ALL_VOICES[0] || null;
+}
+function setVoiceSex(sex){
+  DB.voiceSex = sex;
+  VOICE = pickVoiceFor(sex);
+  save();
+}
+
 function speakable(html){
   return String(html)
     .replace(/<[^>]+>/g, '')
+    .replace(/\s*→\s*/g, ' becomes ')
+    .replace(/\s*\+\s*/g, ' plus ')
+    .replace(/\s*=\s*/g, ' makes ')
     .replace(/[—–]/g, ', ')
-    .replace(/·/g, ', ')
+    .replace(/\s*·\s*/g, '. ')
     .replace(/\u2019/g, "'")
     .replace(/\u201c|\u201d/g, '')
     .replace(/\s*\/\s*/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/\s+([,.!?])/g, '$1')
     .replace(/,\s*,/g, ',')
+    .replace(/\s*\.\s*\./g, '.')
+    .replace(/([!?])\./g, '$1')                       // no "!." after a title
+    .replace(/\b([a-z])(?:-([a-z]))+\b/gi, m => m.split('-').join(', '))  // s-a-i-d -> s, a, i, d
+    .replace(/([a-z0-9)!?])\s*$/i, m => /[.!?]$/.test(m) ? m : m + '.')
     .trim();
 }
-function speed(){ return (DB && DB.rate) ? DB.rate : 1; }
+function speed(){ return (DB && DB.rate) ? DB.rate : .85; }
 function initVoices(){
   if (!('speechSynthesis' in window)) return;
   const pick = () => {
@@ -1227,7 +1344,7 @@ function initVoices(){
       return s;
     };
     ALL_VOICES = vs.slice().sort((a,b) => score(b) - score(a));
-    VOICE = (DB && DB.voiceName && ALL_VOICES.find(v => v.name === DB.voiceName)) || ALL_VOICES[0];
+    VOICE = pickVoiceFor((DB && DB.voiceSex) || 'male');
     voiceReady = true;
   };
   pick();
@@ -1354,15 +1471,72 @@ function go(v, arg){ VIEW = v; render(arg); window.scrollTo(0,0); }
 function render(arg){
   const a = app();
   a.innerHTML = '';
-  if (VIEW === 'pick')   return renderPick(a);
-  if (VIEW === 'home')   return renderHome(a);
+  if (VIEW === 'gate')     return renderGate(a);
+  if (VIEW === 'pick')     return renderPick(a);
+  if (VIEW === 'modes')    return renderModes(a);
+  if (VIEW === 'bee')      return renderBeeHome(a);
+  if (VIEW === 'beeplay')  return actBeePlay(a);
+  if (VIEW === 'beespeed') return actBeeSpeed(a);
+  if (VIEW === 'home')     return renderHome(a);
   if (VIEW === 'parent') return renderParent(a, arg);
   if (VIEW === 'day')    return renderDay(a, arg);
   if (VIEW === 'badges') return renderBadges(a);
 }
 
+/* ---------------- the way in ---------------- */
+function renderGate(a){
+  const left = trialLeft();
+  const expired = left === 0;
+  a.appendChild(el(
+    '<div class="center white" style="padding:26px 0 10px">'+
+      '<div style="font-size:52px">🔤✨</div>'+
+      '<h1 style="font-size:34px;margin:6px 0 2px">Spelling Quest</h1>'+
+      '<p class="muted">Weekly spelling words and spelling-bee practice, for the whole family.</p>'+
+    '</div>'));
+
+  const c = el('<div class="card center">'+
+    (expired ? '<div style="font-size:44px">⏳</div><h2>Your free week is up</h2>'+
+               '<p class="muted">Hope they enjoyed it! Pop in your access code to carry on.</p>'
+             : '<h2 style="font-size:21px">Enter your access code</h2>'+
+               '<p class="muted">It came with your welcome email.</p>')+
+    '<input class="ti" id="ac" placeholder="BEE-••••" autocapitalize="characters" '+
+      'style="text-align:center;font-size:24px;letter-spacing:3px;margin-top:10px">'+
+    '<button class="btn green big" id="acgo" style="margin-top:10px">Unlock</button>'+
+    (left === null
+      ? '<button class="btn link" id="actry" style="width:100%;margin-top:8px">Have a free look for a week first</button>'
+      : (left > 0 ? '<p class="muted" style="margin-top:10px">Free look: '+left+' day'+(left===1?'':'s')+' left</p>' : ''))+
+  '</div>');
+  a.appendChild(c);
+
+  const tryIt = () => {
+    const v = c.querySelector('#ac').value;
+    if (codeOk(v)){
+      DB.accessCode = normCode(v); save(); sfx('win'); confetti(70);
+      toast('🎉 Unlocked — enjoy!', 3000);
+      setTimeout(()=>go('pick'), 700);
+    } else {
+      sfx('wrong');
+      c.querySelector('#ac').value = '';
+      c.querySelector('#ac').placeholder = 'Not quite — check the email';
+    }
+  };
+  c.querySelector('#acgo').onclick = tryIt;
+  c.querySelector('#ac').addEventListener('keydown', e => { if (e.key === 'Enter') tryIt(); });
+  const t = c.querySelector('#actry');
+  if (t) t.onclick = () => { DB.trialStart = Date.now(); save(); sfx('good'); go('pick'); };
+
+  a.appendChild(el('<p class="muted center" style="margin-top:14px;color:rgba(255,255,255,.6)">'+
+    'Need a code? Visit muslimeenmarket.com</p>'));
+}
+
 /* ---------------- profile picker ---------------- */
 function renderPick(a){
+  const left = trialLeft();
+  if (left !== null && left > 0 && !DB.accessCode){
+    const w = el('<div class="card" style="background:#fff4d6;padding:12px;text-align:center">'+
+      '<b style="color:#8a5a00">Free look · '+left+' day'+(left===1?'':'s')+' left</b></div>');
+    a.appendChild(w);
+  }
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
       '<div style="font-size:52px">🔤✨</div>'+
@@ -1378,7 +1552,7 @@ function renderPick(a){
         '<div class="muted">Level '+level(k)+' · '+(k.xp||0)+' ⭐</div>'+
         (k.streak ? '<div class="muted">🔥 '+k.streak+' day streak</div>' : '')+
       '</button>');
-    c.onclick = () => { DB.active = k.id; save(); unlockAudio(); sfx('tap'); buildCurrentWeek(); go('home'); };
+    c.onclick = () => { DB.active = k.id; save(); unlockAudio(); sfx('tap'); buildCurrentWeek(); go('modes'); };
     grid.appendChild(c);
   });
   a.appendChild(grid);
@@ -1463,8 +1637,15 @@ function renderHome(a){
   });
   a.appendChild(list);
 
-  const foot = el('<div class="center" style="margin-top:6px"><button class="btn ghost">⚙️ Grown-ups</button></div>');
-  foot.querySelector('button').onclick = parentGate;
+  const foot = el('<div class="center" style="margin-top:6px"></div>');
+  if (beeHasList(kid())){
+    const bk = el('<button class="btn ghost" style="margin-right:8px">⬅️ Back</button>');
+    bk.onclick = () => go('modes');
+    foot.appendChild(bk);
+  }
+  const gu = el('<button class="btn ghost">⚙️ Grown-ups</button>');
+  gu.onclick = parentGate;
+  foot.appendChild(gu);
   a.appendChild(foot);
 }
 
@@ -1592,99 +1773,124 @@ function renderParent(a, tab){
 }
 
 function parentWords(a){
-  a.appendChild(el('<div class="card"><h3>📝 This week\'s spelling words</h3>'+
-    '<p class="muted">Each child gets their own list. Paste straight from the teacher — one word per line, '+
-    'commas, or all on one line, it all works. The rules, chunks and puzzles are worked out for you.</p>'+
-    '<p class="muted">Want to force your own sections? Start a line with a heading and a colon:<br>'+
-    '<b>ie words:</b> then the words, then <b>igh words:</b> and so on.</p></div>'));
-
   const lists = DB.kids.map(k => (DB.weekRawByKid[k.id]||'').trim());
   if (DB.kids.length > 1 && lists[0] && lists.every(x => x === lists[0])){
     a.appendChild(el('<div class="card" style="background:#fff4d6;border:3px dashed var(--orange)">'+
-      '<h3 style="color:#8a5a00">⚠️ Both children are on the same word list</h3>'+
-      '<p class="muted" style="color:#8a5a00">Paste each child\'s own words into their box below and tap '+
-      '<b>Save &amp; start the week</b>. They\'ll be independent from then on.</p></div>'));
+      '<h3 style="color:#8a5a00">⚠️ Both children have the same words</h3>'+
+      '<p class="muted" style="color:#8a5a00">Paste each child\'s own list below and tap Save.</p></div>'));
   }
 
   const boxes = {};
+  const card = el('<div class="card"><h3>📝 This week\'s words</h3>'+
+    '<p class="muted">Paste them straight from the teacher — any layout works. '+
+    'The rules, chunks and puzzles are worked out for you.</p><div id="kb"></div>'+
+    '<button class="btn green big" id="wsave" style="margin-top:6px">💾 Save &amp; start the week</button>'+
+    '<label style="display:flex;gap:9px;align-items:center;font-size:14px;margin-top:12px;color:var(--ink-soft)">'+
+      '<input type="checkbox" id="fw" style="width:20px;height:20px" checked> Start a fresh week (resets the day map)</label>'+
+    '</div>');
+  a.appendChild(card);
+  const kb = card.querySelector('#kb');
 
   DB.kids.forEach(k => {
-    const c = el('<div class="card">'+
-      '<h3>'+k.avatar+' '+esc(k.name)+' <span class="muted" style="font-weight:600">· grade '+(k.grade||1)+'</span></h3>'+
-      '<textarea class="ta" spellcheck="false" placeholder="Paste '+esc(k.name)+'\'s words here…"></textarea>'+
-      '<div class="row" style="margin-top:8px">'+
-        '<button class="btn grey" data-a="prev" style="flex:1">👀 Preview the rules</button>'+
-        '<button class="btn grey" data-a="copy">📄 Copy to the other child</button>'+
-      '</div>'+
-      '<div class="pvbox"></div></div>');
-    const ta = c.querySelector('textarea');
+    const w = el('<div style="margin-top:14px">'+
+      '<label class="fl">'+k.avatar+' '+esc(k.name)+' · grade '+(k.grade||1)+'</label>'+
+      '<textarea class="ta" style="min-height:120px" spellcheck="false" placeholder="Paste '+esc(k.name)+'\'s words…"></textarea>'+
+      '<details style="margin-top:6px"><summary>See the rules they\'ll get</summary><div class="pvbox"></div></details>'+
+      '</div>');
+    const ta = w.querySelector('textarea');
     ta.value = DB.weekRawByKid[k.id] || '';
     boxes[k.id] = ta;
-
+    const box = w.querySelector('.pvbox');
     const preview = () => {
-      const box = c.querySelector('.pvbox');
       box.innerHTML = '';
       const txt = ta.value.trim();
-      if (!txt){ box.appendChild(el('<p class="muted">No words yet for '+esc(k.name)+'.</p>')); return; }
-      const w = buildWeek(txt, {});
-      box.appendChild(el('<h3 style="margin-top:14px;font-size:16px">'+esc(w.title)+' — '+
-        w.sections.reduce((n,s)=>n+s.words.length,0)+' words</h3>'));
-      w.sections.forEach(s => box.appendChild(el(
-        '<div class="tip"><h3>'+s.emoji+' '+esc(s.label)+'</h3>'+
-        '<p><b>'+s.tip.title+'</b> — '+s.tip.rule+'</p>'+
-        '<p class="trick">💡 '+s.tip.trick+'</p>'+
-        '<p style="font-size:13px"><b>Chunks:</b> '+
-          s.words.map(x => esc(x.word)+' → '+x.chunks.map(esc).join('|')).join(' &nbsp;·&nbsp; ')+'</p></div>')));
+      if (!txt){ box.appendChild(el('<p class="muted">No words yet.</p>')); return; }
+      const wk = buildWeek(txt, {});
+      box.appendChild(el('<p class="muted" style="margin-top:8px"><b>'+esc(wk.title)+'</b> · '+
+        wk.sections.reduce((n,x)=>n+x.words.length,0)+' words</p>'));
+      wk.sections.forEach(sec => box.appendChild(el(
+        '<div class="tip" style="padding:12px"><h3 style="font-size:17px">'+sec.emoji+' '+esc(sec.label)+'</h3>'+
+        '<p style="font-size:15px"><b>'+sec.tip.title+'</b> — '+sec.tip.rule+'</p>'+
+        '<p class="trick" style="font-size:15px">💡 '+sec.tip.trick+'</p></div>')));
     };
-    c.querySelector('[data-a="prev"]').onclick = preview;
-    c.querySelector('[data-a="copy"]').onclick = () => {
-      DB.kids.forEach(o => { if (o.id !== k.id && boxes[o.id]) boxes[o.id].value = ta.value; });
-      toast('📄 Copied to the other child');
-    };
+    w.querySelector('details').addEventListener('toggle', preview);
     ta.addEventListener('blur', preview);
-    a.appendChild(c);
-    if (ta.value) preview();
+    kb.appendChild(w);
   });
 
-  const fresh = el('<div class="card">'+
-    '<label style="display:flex;gap:10px;align-items:center;font-size:16px">'+
-      '<input type="checkbox" id="fw" style="width:24px;height:24px" checked> '+
-      '<span>Start a <b>fresh week</b> — resets the day map and the stars for this week<br>'+
-      '<span class="muted">Untick this if you\'re just fixing a typo mid-week.</span></span></label>'+
-    '<button class="btn green big" id="wsave" style="margin-top:12px">💾 Save &amp; start the week</button></div>');
-  a.appendChild(fresh);
-
-  fresh.querySelector('#wsave').onclick = () => {
+  card.querySelector('#wsave').onclick = () => {
     let any = false;
     DB.kids.forEach(k => { const v = boxes[k.id].value.trim(); if (v){ DB.weekRawByKid[k.id] = v; any = true; } });
     if (!any){ toast('Add some words first!'); return; }
-    if (fresh.querySelector('#fw').checked) newWeekId(); else logWeek();
-    save(); buildCurrentWeek();
+    if (card.querySelector('#fw').checked) newWeekId(); else logWeek();
+    save(); buildCurrentWeek(); sfx('good');
     toast('✅ New week saved!');
     setTimeout(()=>go('parent','words'), 600);
   };
 
-  // share to another device
-  const sh = el('<div class="card"><h3>📲 Send this week to the other devices</h3>'+
-    '<p class="muted">Two ways — both do the same thing:</p>'+
-    '<button class="btn blue big" id="mklink">🔗 Copy a week link</button>'+
-    '<input class="ti" id="lnkout" style="margin-top:10px;font-size:12px" readonly placeholder="Link appears here">'+
-    '<p class="muted" style="margin-top:6px">Open that link on the other iPad. (If the app is already on the Home Screen, use the code below instead.)</p>'+
-    '<label class="fl">Or paste a week code someone sent you</label>'+
-    '<textarea class="ta" id="wcode" style="min-height:80px;font-size:12px" placeholder="Paste the code here…"></textarea>'+
-    '<button class="btn green big" id="wapply" style="margin-top:8px">📥 Load these words</button>'+
-    '<button class="btn grey" id="wcopycode" style="margin-top:8px;width:100%">📋 Copy this week\'s code</button></div>');
+  // ---- spelling bee list ----
+  const anyBee = DB.kids.some(k => (DB.beeByKid[k.id]||'').trim());
+  const beeCard = el('<div class="card"><details'+(anyBee?' open':'')+'>'+
+    '<summary>🐝 Spelling Bee list</summary>'+
+    '<p class="muted" style="margin-top:10px">A long list with a date. The app splits it into weekly sections, '+
+    'carries forward anything they miss, and in the last two weeks brings back the words they\'ve already nailed '+
+    'so nothing goes stale.</p>'+
+    '<div id="bkids"></div>'+
+    '<button class="btn green big" id="bsave" style="margin-top:12px">🐝 Save bee list</button>'+
+    '<button class="btn link" id="bclear" style="width:100%;margin-top:4px">Remove the bee list</button>'+
+    '</details></div>');
+  a.appendChild(beeCard);
+  const bboxes = {}, bdates = {};
+  const bkids = beeCard.querySelector('#bkids');
+  DB.kids.forEach(k => {
+    const w = el('<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'+
+      '<label class="fl">'+k.avatar+' '+esc(k.name)+' — bee date</label>'+
+      '<input class="ti bdate" type="date" value="'+esc((DB.beeTargetByKid&&DB.beeTargetByKid[k.id])||DB.beeTarget||'')+'">'+
+      '<label class="fl">'+esc(k.name)+'\'s bee words</label>'+
+      '<textarea class="ta" style="min-height:110px" spellcheck="false" '+
+      'placeholder="Paste the whole bee list — as many words as you like"></textarea>'+
+      '<p class="muted bn"></p></div>');
+    const ta = w.querySelector('textarea');
+    ta.value = DB.beeByKid[k.id] || '';
+    bdates[k.id] = w.querySelector('.bdate');
+    const n = w.querySelector('.bn');
+    const count = () => { const wk = buildWeek(ta.value, {});
+      const c = wk.sections.reduce((x,s2)=>x+s2.words.length,0);
+      n.textContent = c ? (c + ' words \u00b7 ' + wk.sections.length + ' rule' + (wk.sections.length===1?'':'s')) : ''; };
+    ta.addEventListener('input', count); count();
+    bboxes[k.id] = ta;
+    bkids.appendChild(w);
+  });
+  beeCard.querySelector('#bsave').onclick = () => {
+    let any = false;
+    DB.kids.forEach(k => {
+      const v = bboxes[k.id].value.trim();
+      DB.beeByKid[k.id] = v;
+      DB.beeTargetByKid[k.id] = (bdates[k.id] && bdates[k.id].value) || '';
+      if (v) any = true;
+    });
+    if (!any){ toast('Add some words first!'); return; }
+    DB.beeTarget = '';
+    save(); sfx('good'); toast('\ud83d\udC1d Bee list saved!');
+  };
+  beeCard.querySelector('#bclear').onclick = () => {
+    DB.kids.forEach(k => { DB.beeByKid[k.id] = ''; DB.beeTargetByKid[k.id] = ''; });
+    DB.beeTarget = ''; save(); toast('Bee list removed');
+    setTimeout(()=>go('parent','words'), 500);
+  };
+
+  // ---- one simple share block ----
+  const sh = el('<div class="card"><h3>📲 Send to another device</h3>'+
+    '<p class="muted">Copy the code and paste it into the app on the other iPad. It carries both children\'s lists.</p>'+
+    '<button class="btn blue big" id="wcopycode">📋 Copy this week\'s code</button>'+
+    '<textarea class="ta" id="wcode" style="min-height:70px;font-size:12px;margin-top:10px" placeholder="…or paste a code you were sent"></textarea>'+
+    '<button class="btn green big" id="wapply" style="margin-top:8px">📥 Load these words</button></div>');
   a.appendChild(sh);
-  // keyed by child NAME so it works even if the other iPad was set up separately
+
   const makeCode = () => btoa(unescape(encodeURIComponent(JSON.stringify({
     v:2, id: DB.weekId,
     kids: DB.kids.map(k => ({ n:k.name, w: DB.weekRawByKid[k.id] || '' })).filter(x => x.w)
   }))));
-  sh.querySelector('#mklink').onclick = () => {
-    const url = location.origin + location.pathname + '#w=' + makeCode();
-    sh.querySelector('#lnkout').value = url;
-    copyText(url, '🔗 Link copied!');
-  };
   sh.querySelector('#wcopycode').onclick = () => {
     const code = makeCode();
     sh.querySelector('#wcode').value = code;
@@ -1693,8 +1899,9 @@ function parentWords(a){
   sh.querySelector('#wapply').onclick = () => {
     let v = sh.querySelector('#wcode').value.trim();
     const hm = /[#&]w=([^&\s]+)/.exec(v); if (hm) v = hm[1];
-    if (applyWeekPayload(v)){ buildCurrentWeek(); toast('✅ New words loaded!'); setTimeout(()=>go('parent','words'), 700); }
-    else toast('❌ That code didn\'t work');
+    if (applyWeekPayload(v)){ buildCurrentWeek(); sfx('good'); toast('✅ New words loaded!');
+      setTimeout(()=>go('parent','words'), 700); }
+    else { sfx('wrong'); toast('❌ That code didn\'t work'); }
   };
 }
 
@@ -1790,6 +1997,7 @@ function parentProgress(a){
       '<table class="pt">'+rows+'</table>'+
       pastHtml+
       writeLogHtml(k)+
+      beeLogHtml(k)+
       '<h3 style="margin-top:16px;font-size:17px">🔴 Still shaky</h3>'+
       (shaky.length
         ? '<table class="pt">'+shaky.map(o =>
@@ -1825,96 +2033,187 @@ function writeLogHtml(k){
     }).join('') + '</table>';
 }
 
+const TEST_LINE = 'The light in the night is bright. Two vowels went walking, and the first one did the talking. '+
+  'Can you hear how fast I am reading now?';
+
+/* how the spelling-bee list is going */
+function beeLogHtml(k){
+  const raw = (DB.beeByKid && DB.beeByKid[k.id]) || '';
+  if (!String(raw).trim()) return '';
+  let words = [];
+  try{ const wk = buildWeek(raw, {}); wk.sections.forEach(s2 => s2.words.forEach(w => words.push(w.word))); }
+  catch(e){ return ''; }
+  const bkey = (DB.beeId||'bee1') + ':' + (((DB.beeTargetByKid&&DB.beeTargetByKid[k.id])||DB.beeTarget||'') || 'open');
+  const bp = (k.bee && (k.bee[bkey] || k.bee[DB.beeId])) || { stats:{} };
+  const st = w => bp.stats[w] || {r:0,x:0,run:0,seen:0};
+  const mastered = words.filter(w => st(w).run >= 3);
+  const shaky = words.filter(w => st(w).x > 0 && st(w).run < 3);
+  const untouched = words.filter(w => !st(w).seen);
+  const tgt = (DB.beeTargetByKid && DB.beeTargetByKid[k.id]) || DB.beeTarget || '';
+  const days = tgt
+    ? Math.max(0, Math.round((new Date(tgt) - new Date(new Date().toISOString().slice(0,10)))/86400000))
+    : null;
+  return '<h3 style="margin-top:16px;font-size:17px">🐝 Spelling Bee</h3>'+
+    '<div class="muted" style="margin-bottom:6px">'+
+      (days != null ? days+' day'+(days===1?'':'s')+' to go · ' : '')+
+      mastered.length+' of '+words.length+' mastered</div>'+
+    '<div class="bar" style="margin-bottom:8px"><i style="width:'+
+      Math.round(100*mastered.length/Math.max(1,words.length))+'%"></i></div>'+
+    (shaky.length ? '<p class="muted"><b style="color:var(--red)">Needs work:</b> '+shaky.map(esc).join(', ')+'</p>' : '')+
+    (untouched.length ? '<p class="muted"><b>Not started yet:</b> '+untouched.length+' word'+(untouched.length===1?'':'s')+'</p>' : '');
+}
+
 function parentMore(a){
-  const c = el('<div class="card">'+
-    '<h3>⚙️ Settings</h3>'+
-    '<label style="display:flex;gap:10px;align-items:center;font-size:16px;margin-top:10px">'+
-      '<input type="checkbox" id="ua" style="width:24px;height:24px" '+(DB.unlockAll?'checked':'')+'> '+
-      'Unlock every day right away (no waiting for the calendar)</label>'+
-  '</div>');
-  c.querySelector('#ua').onchange = e => { DB.unlockAll = e.target.checked; save(); };
-  a.appendChild(c);
-
+  // ---------- voice: two choices, three speeds ----------
   const v = el('<div class="card"><h3>🗣️ Voice</h3>'+
-    '<p class="muted">Different iPads have different voices installed. Try a few and pick the one that sounds most human. '+
-    'On iOS you can download better ones in <b>Settings → Accessibility → Spoken Content → Voices</b> — the ones marked '+
-    '<i>Enhanced</i> or <i>Premium</i> sound far more natural than the default.</p>'+
-    '<label class="fl">Voice</label><select class="ti" id="vsel"></select>'+
-    '<label class="fl">Speaking speed — <span id="vrl"></span></label>'+
-    '<input type="range" id="vrate" min="60" max="130" step="5" style="width:100%">'+
-    '<button class="btn blue big" id="vtest" style="margin-top:10px">🔊 Test it</button></div>');
+    '<div class="seg" id="vsex">'+
+      '<button data-v="male">👦 Male</button><button data-v="female">👩 Female</button></div>'+
+    '<label class="fl">Speed</label>'+
+    '<div class="seg" id="vspd">'+
+      '<button data-r="0.6">🐢 Slower</button><button data-r="0.85">Normal</button>'+
+      '<button data-r="1.15">🐇 Faster</button></div>'+
+    '<button class="btn blue big" id="vtest" style="margin-top:12px">🔊 Test it</button>'+
+    '<p class="muted" id="vnow" style="margin-top:8px"></p>'+
+    '<details style="margin-top:10px"><summary>Hear every voice on this iPad</summary>'+
+      '<p class="muted" style="margin-top:8px">Tap ▶️ to hear one. Then pin your favourites to the '+
+      'Male and Female buttons above — that\'s what the children will hear. '+
+      'Any marked <span class="tag">HD</span> are the good ones.</p>'+
+      '<div id="vlist"></div>'+
+      '<div class="tip" style="margin-top:12px"><h3>🤖 Everything sounds robotic?</h3>'+
+      '<p>iPads ship with small, low-quality versions of each voice. The good ones are a free download '+
+      'and they sound like a completely different app.</p>'+
+      '<p><b>On the iPad:</b> Settings → Accessibility → Spoken Content → Voices → English. '+
+      'Download any voice marked <b>Enhanced</b> or <b>Premium</b> (they\'re 100–500&nbsp;MB each — that size '+
+      'is the whole point). Come back here and they\'ll be in the list.</p>'+
+      '<p><b>On a Mac:</b> System Settings → Accessibility → Spoken Content → System Voice → Manage Voices.</p>'+
+      '<p class="trick">Downloading “Daniel (Enhanced)” replaces plain Daniel everywhere — same name, far better voice.</p>'+
+      '</div></details></div>');
   a.appendChild(v);
-  const sel = v.querySelector('#vsel');
-  const fill = () => {
-    sel.innerHTML = '';
-    (ALL_VOICES.length ? ALL_VOICES : []).forEach(vo => {
-      const o = document.createElement('option');
-      o.value = vo.name; o.textContent = vo.name + ' (' + vo.lang + ')';
-      if (VOICE && vo.name === VOICE.name) o.selected = true;
-      sel.appendChild(o);
-    });
-    if (!sel.children.length) sel.appendChild(el('<option>Using this device\'s default voice</option>'));
-  };
-  fill(); setTimeout(fill, 600);
-  sel.onchange = () => {
-    DB.voiceName = sel.value;
-    VOICE = ALL_VOICES.find(x => x.name === sel.value) || VOICE;
-    save(); sayRule('Hello! I am going to read the spelling rules out loud.');
-  };
-  const rate = v.querySelector('#vrate'), rl = v.querySelector('#vrl');
-  const showRate = () => rl.textContent = Math.round(rate.value) + '%';
-  rate.value = Math.round((DB.rate || 1) * 100); showRate();
-  rate.oninput = showRate;
-  rate.onchange = () => { DB.rate = rate.value/100; save(); sayRule('This is how fast I will read.'); };
-  v.querySelector('#vtest').onclick = () => sayRule(
-    'i g h sounds like the letter i. The g h is totally silent. The light in the night is bright.');
 
+  const paint = () => {
+    v.querySelectorAll('#vsex button').forEach(b =>
+      b.className = (b.dataset.v === (DB.voiceSex||'male')) ? 'on' : '');
+    const r = String(DB.rate == null ? 0.85 : DB.rate);
+    v.querySelectorAll('#vspd button').forEach(b => b.className = (b.dataset.r === r) ? 'on' : '');
+    v.querySelector('#vnow').textContent = VOICE ? ('Using ' + VOICE.name) : 'Using this device\'s default voice';
+  };
+  v.querySelectorAll('#vsex button').forEach(b => b.onclick = () => {
+    setVoiceSex(b.dataset.v); paint();
+    sayRule(TEST_LINE);
+  });
+  v.querySelectorAll('#vspd button').forEach(b => b.onclick = () => {
+    DB.rate = parseFloat(b.dataset.r); save(); paint();
+    sayRule(TEST_LINE);
+  });
+  v.querySelector('#vtest').onclick = () => sayRule(TEST_LINE);
+  const drawList = () => {
+    const box = v.querySelector('#vlist');
+    if (!box) return;
+    box.innerHTML = '';
+    if (!ALL_VOICES.length){ box.appendChild(el('<p class="muted">No voices found yet — close and reopen this screen.</p>')); return; }
+    ALL_VOICES.forEach(vo => {
+      const pickedM = DB.voicePick && DB.voicePick.male === vo.name;
+      const pickedF = DB.voicePick && DB.voicePick.female === vo.name;
+      const good = /enhanced|premium|neural|natural|siri/i.test(vo.name);
+      const row = el('<div class="vrow">'+
+        '<button class="vplay">▶️</button>'+
+        '<div class="vname"><b>'+esc(vo.name)+'</b><span class="muted"> '+esc(vo.lang)+'</span>'+
+          (good ? ' <span class="tag">HD</span>' : '')+'</div>'+
+        '<button class="vpin'+(pickedM?' on':'')+'" data-s="male">♂</button>'+
+        '<button class="vpin'+(pickedF?' on':'')+'" data-s="female">♀</button></div>');
+      row.querySelector('.vplay').onclick = () => {
+        stopSpeech();
+        const u = new SpeechSynthesisUtterance(TEST_LINE);
+        u.voice = vo; u.lang = vo.lang; u.rate = .95 * speed(); u.pitch = 1;
+        try{ speechSynthesis.speak(u); }catch(e){}
+      };
+      row.querySelectorAll('.vpin').forEach(b => b.onclick = () => {
+        DB.voicePick = DB.voicePick || {};
+        DB.voicePick[b.dataset.s] = vo.name;
+        if ((DB.voiceSex||'male') === b.dataset.s) VOICE = vo;
+        save(); sfx('good');
+        toast((b.dataset.s === 'male' ? '♂ Male' : '♀ Female') + ' voice set to ' + vo.name, 3500);
+        drawList(); paint();
+      });
+      box.appendChild(row);
+    });
+  };
+  v.querySelector('details').addEventListener('toggle', drawList);
+  paint(); setTimeout(()=>{ paint(); drawList(); }, 800);
+
+  // ---------- access ----------
+  const left = trialLeft();
+  const acc = el('<div class="card"><h3>🔑 Access</h3>'+
+    (DB.accessCode
+      ? '<p class="muted">Unlocked with code <b>'+esc(DB.accessCode)+'</b>. Nothing expires on this device.</p>'
+      : (left > 0
+          ? '<p class="muted">Free look — <b>'+left+' day'+(left===1?'':'s')+'</b> left. Enter your code any time.</p>'
+          : '<p class="muted">No code entered yet.</p>'))+
+    '<div class="row" style="align-items:center;margin-top:8px">'+
+    '<input class="ti" id="acin" placeholder="Access code" style="flex:1;text-align:center;letter-spacing:2px">'+
+    '<button class="btn grey" id="acsave">Save</button></div></div>');
+  a.appendChild(acc);
+  acc.querySelector('#acsave').onclick = () => {
+    const v = acc.querySelector('#acin').value;
+    if (codeOk(v)){ DB.accessCode = normCode(v); save(); sfx('good'); toast('🔑 Unlocked'); setTimeout(()=>go('parent','more'), 500); }
+    else { sfx('wrong'); toast('❌ That code didn\'t work'); }
+  };
+
+  // ---------- code ----------
   const pn = el('<div class="card"><h3>🔒 Grown-up code</h3>'+
-    '<p class="muted">The 4-digit code that unlocks this area.</p>'+
-    '<input class="ti" id="pinin" inputmode="numeric" maxlength="6" value="'+esc(DB.pin||'')+'" style="font-size:22px;letter-spacing:6px;text-align:center">'+
-    '<button class="btn grey big" id="pinsave" style="margin-top:10px">Save code</button></div>');
+    '<div class="row" style="align-items:center">'+
+    '<input class="ti" id="pinin" inputmode="numeric" maxlength="6" value="'+esc(DB.pin||'')+'" '+
+      'style="flex:1;font-size:22px;letter-spacing:6px;text-align:center">'+
+    '<button class="btn grey" id="pinsave">Save</button></div></div>');
   a.appendChild(pn);
   pn.querySelector('#pinsave').onclick = () => {
     const val = pn.querySelector('#pinin').value.replace(/\D/g,'');
     if (val.length < 4){ toast('Use at least 4 digits'); return; }
-    DB.pin = val; save(); toast('🔒 Code saved');
+    DB.pin = val; save(); sfx('good'); toast('🔒 Code saved');
   };
 
-  const b = el('<div class="card"><h3>💾 Backup &amp; move to another device</h3>'+
-    '<p class="muted">Copy this code, then paste it into the same box on another device to bring across all progress, stars and badges.</p>'+
+  // ---------- advanced, tucked away ----------
+  const adv = el('<div class="card"><details><summary>📱 Move everything to another device</summary>'+
+    '<p class="muted" style="margin-top:10px">Copy this code, paste it on the other device, and all progress, '+
+    'stars and badges come across.</p>'+
     '<button class="btn blue big" id="bex">📋 Copy my backup code</button>'+
-    '<textarea class="ta" id="bcode" style="min-height:90px;font-size:12px;margin-top:10px" placeholder="Paste a backup code here…"></textarea>'+
-    '<button class="btn green big" id="bim" style="margin-top:8px">📥 Restore from code</button></div>');
-  a.appendChild(b);
-  b.querySelector('#bex').onclick = () => {
+    '<textarea class="ta" id="bcode" style="min-height:70px;font-size:11px;margin-top:10px" placeholder="…or paste a backup code"></textarea>'+
+    '<button class="btn green big" id="bim" style="margin-top:8px">📥 Restore</button>'+
+    '</details></div>');
+  a.appendChild(adv);
+  adv.querySelector('#bex').onclick = () => {
     const code = btoa(unescape(encodeURIComponent(JSON.stringify(DB))));
-    b.querySelector('#bcode').value = code;
+    adv.querySelector('#bcode').value = code;
     copyText(code, '📋 Copied!');
   };
-  b.querySelector('#bim').onclick = () => {
+  adv.querySelector('#bim').onclick = () => {
     try{
-      const d = JSON.parse(decodeURIComponent(escape(atob(b.querySelector('#bcode').value.trim()))));
+      const d = JSON.parse(decodeURIComponent(escape(atob(adv.querySelector('#bcode').value.trim()))));
       if (!d.kids) throw 0;
-      DB = d; save(); toast('✅ Restored!'); setTimeout(()=>go('pick'), 800);
-    }catch(e){ toast('❌ That code didn\'t work'); }
+      DB = d; save(); sfx('good'); toast('✅ Restored!'); setTimeout(()=>go('pick'), 800);
+    }catch(e){ sfx('wrong'); toast('❌ That code didn\'t work'); }
   };
 
-  const r = el('<div class="card"><h3>🧹 Reset</h3>'+
-    '<div class="row" style="margin-top:8px">'+
-    '<button class="btn grey" id="rw" style="flex:1">Reset this week only</button>'+
-    '<button class="btn red" id="ra" style="flex:1">Erase everything</button></div></div>');
+  const r = el('<div class="card"><details><summary>🧹 Start over</summary>'+
+    '<div class="row" style="margin-top:12px">'+
+    '<button class="btn grey" id="rw" style="flex:1">Reset this week</button>'+
+    '<button class="btn red" id="ra" style="flex:1">Erase everything</button></div></details></div>');
   a.appendChild(r);
   r.querySelector('#rw').onclick = () => { DB.kids.forEach(k => { delete k.prog[DB.weekId]; }); save(); toast('Week reset'); };
   r.querySelector('#ra').onclick = () => {
-    const p = popup('<div class="em">⚠️</div><h2>Erase everything?</h2><p class="muted">All words, stars and badges will be deleted.</p>'+
-      '<div class="row"><button class="btn grey" style="flex:1" data-close>Cancel</button><button class="btn red" style="flex:1" id="yes">Erase</button></div>');
+    const p = popup('<div class="em">⚠️</div><h2>Erase everything?</h2>'+
+      '<p class="muted">All words, stars and badges will be deleted.</p>'+
+      '<div class="row"><button class="btn grey" style="flex:1" data-close>Cancel</button>'+
+      '<button class="btn red" style="flex:1" id="yes">Erase</button></div>');
     p.querySelector('#yes').onclick = () => { localStorage.removeItem(STORE_KEY); location.hash=''; location.reload(); };
   };
 
-  a.appendChild(el('<div class="card"><h3>ℹ️ About</h3><p class="muted">Spelling Quest works offline once it\'s loaded. '+
-    'On an iPad: tap the Share button in Safari → <b>Add to Home Screen</b> for a full-screen app icon.</p>'+
-    '<p class="muted">Version <b>'+BUILD+'</b> — if you\'ve just uploaded a new version but still see an old one here, '+
-    'swipe the app closed from the iPad app switcher and open it again.</p></div>'));
+  a.appendChild(el('<div class="card"><h3>ℹ️ About</h3>'+
+    '<p class="muted">Spelling Quest works offline once it\'s loaded. On an iPad: Safari → Share → '+
+    '<b>Add to Home Screen</b> for a full-screen app icon.</p>'+
+    '<p class="muted">All seven days are always open, so they can jump ahead or catch up whenever they like.</p>'+
+    '<p class="muted">Version <b>'+BUILD+'</b> — if you\'ve just uploaded a new version but still see an old one, '+
+    'swipe the app closed in the iPad app switcher and open it again.</p></div>'));
 }
 
 /* ---------------- boot ---------------- */
@@ -1949,7 +2248,7 @@ function boot(){
   });
   if (gotWeek) toast('📚 New words loaded!');
   DB.active = null;
-  go('pick');
+  go(hasAccess() ? 'pick' : 'gate');
 }
 document.addEventListener('DOMContentLoaded', boot);
 
@@ -1967,12 +2266,13 @@ function highlight(word, patternId){
   return esc(word.slice(0,m.i)) + '<span class="hi">' + esc(word.slice(m.i, m.i+m.len)) + '</span>' + esc(word.slice(m.i+m.len));
 }
 
+let BACK_TO = 'home';
 function dayHeader(a, d, sub){
   const h = el('<div class="topbar">'+
     '<button class="iconbtn" id="bk">⬅️</button>'+
     '<div class="who"><b>'+d.em+' '+d.n+' — '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
     '</div>');
-  h.querySelector('#bk').onclick = () => { stopSpeech(); stopMic(); go('home'); };
+  h.querySelector('#bk').onclick = () => { stopSpeech(); stopMic(); go(BACK_TO || 'home'); };
   a.appendChild(h);
 }
 
@@ -2129,7 +2429,7 @@ function typingRound(host, opts){
     tries++;
     if (ok){
       locked = true; draw('good');
-      const st = wordStat(word); st.r++; save();
+      if (!opts.noStats){ wordStat(word).r++; save(); }
       sfx(tries === 1 ? 'great' : 'good');
       setTimeout(()=>sayWord(word), 260);
       toast('🎉 '+cheer(), 2200);
@@ -2137,14 +2437,19 @@ function typingRound(host, opts){
     } else {
       draw('bad');
       sfx('wrong');
-      const st = wordStat(word); if (tries === 1) { st.x++; noteMiss(word); save(); }
+      if (tries === 1){ if (!opts.noStats) wordStat(word).x++; noteMiss(word); save(); }
       setTimeout(()=>{
         if (tries >= 2){
           locked = true;
           blanks.forEach(i => filled[i] = word[i]);
           draw('good');
-          toast('Here it is: <b>'+esc(word)+'</b> — spell it out with me!', 6000);
-          setTimeout(()=>sayLetters(word), 300);
+          if (opts.noSpell){
+            toast('The judges say it\'s <b>'+esc(word)+'</b> — take a good look.', 6000);
+            setTimeout(()=>sayWord(word), 300);
+          } else {
+            toast('Here it is: <b>'+esc(word)+'</b> — spell it out with me!', 6000);
+            setTimeout(()=>sayLetters(word), 300);
+          }
           setTimeout(()=>opts.onDone(false, tries), 5200);
         } else {
           blanks.forEach(i => { if (filled[i] !== word[i]) delete filled[i]; });
@@ -2274,11 +2579,12 @@ function actMonday(a, d){
 function stripTags(h){ return String(h).replace(/<[^>]+>/g,''); }
 
 /* the rule popup — reads itself out loud so they don't have to read it */
-function rulePopup(tip){
+function rulePopup(tip, safe){
   const text = tip.title + '. ' + tip.rule + ' ' + tip.trick;
   const p = popup('<div class="em">💡</div><h2 style="font-size:22px">'+tip.title+'</h2>'+
     '<p style="font-size:17px;line-height:1.5">'+tip.rule+'</p>'+
     '<p style="background:#fff8e1;padding:12px;border-radius:14px;font-weight:800;font-size:17px">'+tip.trick+'</p>'+
+    (safe ? '<p class="muted">The judges won\'t spell it for you!</p>' : '')+
     '<button class="btn blue big" id="rsay" style="margin-top:6px">🔊 Say it again</button>'+
     '<button class="btn big green" style="margin-top:8px" data-close>Got it!</button>');
   p.querySelector('#rsay').onclick = () => sayRule(text);
@@ -2871,6 +3177,7 @@ const ACTS = { mon:actMonday, tue:actTuesday, wed:actWednesday, thu:actThursday,
 
 function renderDay(a, key){
   buildCurrentWeek();
+  BACK_TO = 'home';
   MISSED = [];
   const d = DAYS[DAY_INDEX[key]];
   dayHeader(a, d);
@@ -2883,6 +3190,534 @@ function renderDay(a, key){
 }
 
 window.addEventListener('hashchange', () => location.reload());
+
+</script>
+<script>
+/* ===================== SPELLING QUEST — Bee Prep =====================
+   A long word list with a target date. The app splits it into weekly
+   sections, carries missed words forward, and in the last fortnight
+   swings the balance towards misses while bringing back the words they
+   had already mastered, so nothing goes stale.
+   Thursday's "Spelling Bee" activity is a different thing and untouched.
+   ===================================================================== */
+
+const BEE_SESSION_MS = 10 * 60 * 1000;      // the 10-minute cap
+const BEE_MASTER_RUN = 3;                   // right this many times in a row = mastered
+const BEE_FINAL_DAYS = 14;                  // "the final fortnight"
+
+let BEE = null;
+
+function beeRawFor(k){ return (DB.beeByKid && DB.beeByKid[k.id]) || ''; }
+function beeTargetFor(k){
+  return (DB.beeTargetByKid && k && DB.beeTargetByKid[k.id]) || DB.beeTarget || '';
+}
+function beeHasList(k){ return !!String(beeRawFor(k||kid())).trim(); }
+
+function buildBee(){
+  const raw = beeRawFor(kid());
+  BEE = buildWeek(raw, { id:'bee' });
+  BEE.allWords = [];
+  BEE.sections.forEach(s => s.words.forEach(w => BEE.allWords.push(
+    Object.assign({}, w, { patternId:s.patternId, section:s.label, tip:s.tip, emoji:s.emoji })
+  )));
+  BEE.byWord = {};
+  BEE.allWords.forEach(w => BEE.byWord[w.word] = w);
+  return BEE;
+}
+
+/* ---------------- per-child bee progress ---------------- */
+function beeProg(){
+  const k = kid();
+  k.bee = k.bee || {};
+  const id = (DB.beeId || 'bee1') + ':' + (beeTargetFor(k) || 'open');
+  if (!k.bee[id]) k.bee[id] = { stats:{}, days:{}, started:new Date().toISOString().slice(0,10) };
+  return k.bee[id];
+}
+function beeStat(w){
+  const p = beeProg();
+  if (!p.stats[w]) p.stats[w] = { r:0, x:0, run:0, seen:0 };
+  return p.stats[w];
+}
+function beeMastered(w){ const s = beeProg().stats[w]; return !!(s && s.run >= BEE_MASTER_RUN); }
+function beeSeen(w){ const s = beeProg().stats[w]; return !!(s && s.seen); }
+function beeShaky(w){ const s = beeProg().stats[w]; return !!(s && s.x > 0 && s.run < BEE_MASTER_RUN); }
+
+function beeMark(word, ok){
+  const s = beeStat(word);
+  s.seen++;
+  if (ok){ s.r++; s.run++; }
+  else { s.x++; s.run = 0; }
+  save();
+}
+
+/* ---------------- the schedule ---------------- */
+function daysBetween(a, b){ return Math.round((new Date(b) - new Date(a)) / 86400000); }
+function today(){ return new Date().toISOString().slice(0,10); }
+
+function beePlan(){
+  const p = beeProg();
+  const words = BEE.allWords.map(w => w.word);
+  const target = beeTargetFor(kid());
+  const daysLeft = target ? Math.max(0, daysBetween(today(), target)) : null;
+  const started = p.started || today();
+  const weekIndex = Math.max(0, Math.floor(daysBetween(started, today()) / 7));
+
+  // how many weeks of NEW material: everything except the last fortnight
+  let totalWeeks = daysLeft != null ? Math.ceil((daysLeft + 1) / 7) : 4;
+  let newWeeks = Math.max(1, totalWeeks - 2);
+  const perChunk = Math.max(1, Math.ceil(words.length / newWeeks));
+
+  const chunks = [];
+  for (let i = 0; i < words.length; i += perChunk) chunks.push(words.slice(i, i + perChunk));
+
+  const finalStretch = daysLeft != null && daysLeft <= BEE_FINAL_DAYS;
+  const ci = Math.min(weekIndex, chunks.length - 1);
+  const introduced = chunks.slice(0, (finalStretch ? chunks.length : ci + 1)).flat();
+
+  return {
+    words, chunks, chunkIndex: ci, totalWeeks, newWeeks, daysLeft, finalStretch,
+    thisWeek: finalStretch ? [] : (chunks[ci] || []),
+    introduced,
+    mastered: words.filter(beeMastered),
+    shaky: introduced.filter(beeShaky),
+    unseen: (finalStretch ? words : (chunks[ci] || [])).filter(w => !beeSeen(w))
+  };
+}
+
+/* Build today's practice list. Missed words lead; new words next; mastered
+   words rotate through across the days so the whole list stays warm. */
+function beeSessionWords(){
+  const plan = beePlan();
+  const out = [];
+  const push = arr => arr.forEach(w => { if (out.indexOf(w) < 0) out.push(w); });
+
+  const rot = Math.floor(Date.now() / 86400000);   // changes once a day
+  const slice = (arr, n) => {
+    if (arr.length <= n) return arr.slice();
+    const start = (rot * n) % arr.length;
+    const r = [];
+    for (let i = 0; i < n; i++) r.push(arr[(start + i) % arr.length]);
+    return r;
+  };
+
+  if (plan.finalStretch){
+    push(plan.shaky.slice(0, 10));               // misses get the volume
+    push(slice(plan.mastered, 6));               // but the good ones come back for review
+    push(plan.words.filter(w => !beeSeen(w)).slice(0, 3));
+  } else {
+    push(plan.shaky.slice(0, 6));
+    push(plan.unseen.slice(0, 6));
+    push(slice(plan.introduced.filter(w => !beeShaky(w) && beeSeen(w)), 4));
+  }
+  // top the session up so it's always worth sitting down for
+  const MIN = 10;
+  if (out.length < MIN) push(slice(plan.introduced.filter(w => out.indexOf(w) < 0), MIN - out.length));
+  if (out.length < MIN) push(slice(plan.words.filter(w => out.indexOf(w) < 0), MIN - out.length));
+  return shuffle(out).map(w => BEE.byWord[w]).filter(Boolean);
+}
+
+/* ---------------- kid: bee home ---------------- */
+function renderBeeHome(a){
+  buildBee();
+  topbar(a);
+  if (!BEE.allWords.length){
+    a.appendChild(el('<div class="card center"><div style="font-size:48px">🐝</div>'+
+      '<h2>No bee list yet</h2><p class="muted">A grown-up can add one in the Grown-up Zone.</p></div>'));
+    const b = el('<button class="btn big grey">⬅️ Back</button>');
+    b.onclick = () => go('modes'); a.appendChild(b); return;
+  }
+  const plan = beePlan();
+  const p = beeProg();
+  const mastered = plan.mastered.length;
+  const pct = Math.round(100 * mastered / Math.max(1, plan.words.length));
+  const doneToday = p.days[today()];
+
+  a.appendChild(el('<div class="card center">'+
+    '<div style="font-size:13px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">SPELLING BEE</div>'+
+    '<h2 style="font-size:23px;margin:2px 0 8px">'+
+      (plan.daysLeft == null ? 'Practice pool'
+        : plan.daysLeft === 0 ? '🐝 The bee is today!'
+        : plan.daysLeft + ' day'+(plan.daysLeft===1?'':'s')+' to go')+'</h2>'+
+    '<div class="hive" id="hive"></div>'+
+    '<div class="fuel-lbl muted">'+mastered+' of '+plan.words.length+' words in the hive</div>'+
+    (plan.finalStretch
+      ? '<p class="muted" style="margin-top:10px">🔥 Final stretch — every word is back in the mix, with extra time on the tricky ones.</p>'
+      : '<p class="muted" style="margin-top:10px">This week\'s section: <b>'+plan.thisWeek.length+' new words</b>'+
+        (plan.shaky.length ? ' plus <b>'+plan.shaky.length+'</b> to fix' : '')+'</p>')+
+  '</div>'));
+
+  const hive = a.querySelector('#hive');
+  plan.words.forEach(w => {
+    const cls = beeMastered(w) ? 'gold' : beeShaky(w) ? 'red' : beeSeen(w) ? 'warm' : '';
+    const h = el('<i class="hex '+cls+'"></i>');
+    h.title = w;
+    h.onclick = () => { unlockAudio(); sayWord(w); };
+    hive.appendChild(h);
+  });
+
+  const start = el('<button class="btn big '+(doneToday?'grey':'yellow')+'" style="margin-bottom:10px">'+
+    (doneToday ? '🎤 Back on stage?' : '🎤 Take the stage') + '</button>');
+  start.onclick = () => { unlockAudio(); sfx('tap'); go('beeplay'); };
+  a.appendChild(start);
+
+  const speed = el('<button class="btn big blue" style="margin-bottom:14px">⚡ Speed round — all '+plan.words.length+' words</button>');
+  speed.onclick = () => { unlockAudio(); sfx('tap'); go('beespeed'); };
+  a.appendChild(speed);
+
+  // word wall
+  const list = el('<div class="card"><h3 style="font-size:18px">🐝 The whole list</h3>'+
+    '<p class="muted">Green = mastered · red = needs work · grey = not started</p><div id="ww" style="margin-top:8px"></div></div>');
+  const ww = list.querySelector('#ww');
+  plan.words.forEach(w => {
+    const cls = beeMastered(w) ? ' done' : beeShaky(w) ? ' bad' : beeSeen(w) ? '' : ' dim';
+    const chip = el('<span class="wordchip'+cls+'">'+esc(w)+'<span class="sp">🔊</span></span>');
+    chip.onclick = () => { unlockAudio(); sayWord(w); };
+    ww.appendChild(chip);
+  });
+  a.appendChild(list);
+
+  const back = el('<button class="btn big grey">⬅️ Back</button>');
+  back.onclick = () => go('modes');
+  a.appendChild(back);
+}
+
+/* A bee hint may point at the rule, but it must never hand over the word —
+   no printing it, no spelling it out, in text or in speech. */
+function beeSafeTip(tip, word){
+  const w = String(word).toLowerCase();
+  const clean = s => {
+    let out = speakableText(s);
+    out = out.replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi'), '\u2022\u2022\u2022');
+    // kill letter-by-letter giveaways: "s, a, i, d" / "s-a-i-d" / "w a s"
+    out = out.replace(/\b[a-z](?:\s*[,\-]\s*[a-z]\b){2,}/gi, '\u2022\u2022\u2022');
+    return out;
+  };
+  return { title: clean(tip.title), rule: clean(tip.rule), trick: clean(tip.trick) };
+}
+function speakableText(h){ return String(h).replace(/<[^>]+>/g,''); }
+
+/* ---------------- kid: on stage at the bee ---------------- */
+const RIVALS = ['🐛','🦗','🐞','🦋','🐌','🐜','🕷️','🦂','🐝','🦟','🪲','🐢'];
+
+function actBeePlay(a){
+  buildBee();
+  const d = { key:'bee', n:'The Spelling Bee', t:'You\'re on stage', em:'🎤', sub:'Spell it right and a rival sits down' };
+  BACK_TO = 'bee';
+  dayHeader(a, d);
+  MISSED = [];
+
+  let words = beeSessionWords();
+  if (!words.length){ a.appendChild(el('<div class="card center"><h2>Nothing to practise!</h2></div>')); return; }
+
+  const host = el('<div></div>'); a.appendChild(host);
+  const started = Date.now();
+  let i = 0, right = 0, asked = 0, extended = false;
+  let field = Math.min(12, words.length);        // rivals on stage
+  let out = 0;                                   // how many we've knocked out
+
+  function overTime(){ return (Date.now() - started) > BEE_SESSION_MS; }
+
+  function stageHTML(sub){
+    const crowd = RIVALS.slice(0, field).map((r,ix) =>
+      '<span class="'+(ix < out ? 'out' : '')+'">'+r+'</span>').join('');
+    return '<div class="stage">'+
+      '<div class="spot"></div>'+
+      '<div class="rnd">ROUND '+(asked+1)+'</div>'+
+      '<div class="micon">🎤</div>'+
+      '<div class="rivals">'+Math.max(0, field-out)+' speller'+(field-out===1?'':'s')+' still standing</div>'+
+      '<div class="crowd">'+crowd+'</div>'+
+      (sub ? '<div class="rivals" style="margin-top:8px;opacity:.85">'+sub+'</div>' : '')+
+    '</div>';
+  }
+
+  function next(){
+    if (i >= words.length || (overTime() && !extended)) return maybeStop();
+    const w = words[i];
+    const st = beeStat(w.word);
+    host.innerHTML = '';
+    if (!st.seen) return study(w);
+    return onStage(w, (st.x > 0 && st.run === 0) ? makeBlanks(w.word, w.patternId, isHard()?2:1) : null);
+  }
+
+  /* a brand-new word gets a study card first — backstage, before the round */
+  function study(w){
+    const c = el('<div class="card center">'+
+      '<div class="muted">🐝 Backstage · a new word</div>'+
+      '<div class="bigword">'+highlight(w.word, w.patternId)+'</div>'+
+      '<div class="speaker" id="sp">🔊</div>'+
+      '<div class="tip" style="margin-top:14px"><h3>💡 '+w.tip.title+'</h3><p>'+w.tip.rule+'</p>'+
+      '<p class="trick">'+w.tip.trick+'</p></div>'+
+      '<div class="row" style="justify-content:center"><button class="btn grey" id="sl">🐢 Slowly</button>'+
+      '<button class="btn grey" id="hr">🔊 Hear the rule</button></div>'+
+      '<button class="btn big yellow" id="ok" style="margin-top:12px">🎤 Ready — call me up!</button></div>');
+    host.appendChild(c);
+    const sp = c.querySelector('#sp');
+    const play = () => { sp.classList.add('playing'); sayWord(w.word, {onend:()=>sp.classList.remove('playing')}); };
+    sp.onclick = play;
+    c.querySelector('#sl').onclick = () => saySlow(w.word);
+    c.querySelector('#hr').onclick = () => sayRule(w.tip.title+'. '+w.tip.rule+' '+w.tip.trick);
+    c.querySelector('#ok').onclick = () => { sfx('tap'); beeStat(w.word).seen++; save(); onStage(w, null, true); };
+    setTimeout(play, 300);
+  }
+
+  /* the real thing: judge announces the word, kid may ask the bee questions */
+  function onStage(w, blanks, fresh){
+    host.innerHTML = '';
+    const c = el('<div>'+ stageHTML('') +
+      '<div class="card" style="margin-top:12px">'+
+        '<div class="judge">🧑‍⚖️ Your word is… <b id="jw">📣</b></div>'+
+        '<div class="askbacks">'+
+          '<button id="ab-rep">🔁 Repeat it</button>'+
+          '<button id="ab-slow">🐢 Slowly, please</button>'+
+          '<button id="ab-rule">💡 Any hints?</button>'+
+        '</div>'+
+        '<p class="muted center" style="margin-top:8px">'+
+          (blanks ? 'Some letters are already up on the board.' : 'Spell it for the judges.')+'</p>'+
+      '</div></div>');
+    host.appendChild(c);
+
+    const announce = () => { c.querySelector('#jw').textContent = '📣'; sayWord(w.word); };
+    c.querySelector('#ab-rep').onclick  = () => { sfx('tap'); announce(); };
+    c.querySelector('#ab-slow').onclick = () => { sfx('tap'); saySlow(w.word); };
+    c.querySelector('#ab-rule').onclick = () => { sfx('tap'); rulePopup(beeSafeTip(w.tip, w.word), true); };
+    setTimeout(announce, fresh ? 550 : 350);
+
+    const card = c.querySelector('.card');
+    typingRound(card, {
+      word:w.word, patternId:w.patternId, blanks: blanks, noStats:true, noSpell:true,
+      onDone: ok => {
+        beeMark(w.word, ok);
+        if (ok){
+          right++;
+          if (out < field) out++;
+          sfx('clap');
+          toast(out >= field ? '🏆 You are the last one standing!' : '👏 Correct! A rival sits down.', 2400);
+        } else {
+          noteMiss(w.word);
+          sfx('buzz');
+          toast('🔔 The judges say: keep that one on your list.', 2600);
+        }
+        asked++; i++;
+        setTimeout(next, 900);
+      }
+    });
+  }
+
+  function maybeStop(){
+    const p = beeProg();
+    p.days[today()] = { asked, right, when: today() };
+    save();
+    if (i >= words.length) return finish();
+    host.innerHTML = '';
+    sfx('ding');
+    const c = el('<div class="card center">'+
+      '<div style="font-size:52px">🎬</div><h2>Intermission!</h2>'+
+      '<p class="muted">Ten minutes on stage, and '+right+' of '+asked+' spelled right. '+
+      'That\'s a proper practice — but the judges will hear more if you want to carry on.</p>'+
+      '<button class="btn big green" id="stop" style="margin-top:10px">✅ That\'s me for today</button>'+
+      '<button class="btn big blue" id="more" style="margin-top:10px">🎤 One more round!</button></div>');
+    c.querySelector('#stop').onclick = () => { sfx('tap'); finish(); };
+    c.querySelector('#more').onclick = () => { sfx('tap'); extended = true; next(); };
+    host.appendChild(c);
+  }
+
+  function finish(){
+    const p = beeProg();
+    p.days[today()] = { asked, right, when: today(), done:true };
+    save();
+    host.innerHTML = '';
+    const champ = out >= field;
+    if (champ) confetti(140);
+    sfx(champ ? 'win' : 'good');
+    const c = el('<div class="card center">'+
+      '<div style="font-size:56px">'+(champ ? '🏆' : '🐝')+'</div>'+
+      '<h2 style="font-size:24px">'+(champ ? 'Champion of the bee!' : 'Great round on stage!')+'</h2>'+
+      '<p class="muted">'+out+' rival'+(out===1?'':'s')+' knocked out · '+right+' of '+asked+' spelled right</p>'+
+      '<button class="btn big green" id="on" style="margin-top:12px">Next →</button></div>');
+    c.querySelector('#on').onclick = () => beeFinishScreen(right, Math.max(1, asked));
+    host.appendChild(c);
+  }
+
+  next();
+}
+
+/* the bee's own reward flow — paper practice, then stars */
+function beeFinishScreen(correct, total){
+  const d = { key:'bee', n:'Spelling Bee', t:'Today\'s practice', em:'🐝', sub:'Paper practice' };
+  const pct = Math.round(100*correct/total);
+  const st = stars(pct);
+  const xp = correct*10 + (st===3?30:st===2?15:5);
+  const k = kid();
+  k.xp = (k.xp||0) + xp;
+  const tdy = new Date().toISOString().slice(0,10);
+  if (k.lastDay !== tdy){
+    const y = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    k.streak = (k.lastDay === y) ? (k.streak||0)+1 : 1;
+    k.lastDay = tdy;
+  }
+  award('first');
+  if (k.streak >= 3) award('streak3');
+  if (k.streak >= 7) award('streak7');
+  if (level(k) >= 5) award('level5');
+  save();
+
+  writeItScreenBee(d, () => {
+    confetti(90); sfx(st === 3 ? 'win' : 'good');
+    const p = popup(
+      '<div class="em">'+(st===3?'🏆':st===2?'🎉':'👍')+'</div>'+
+      '<h2 style="font-size:26px">'+(st===3?'Brilliant!':st===2?'Great job!':'Good effort!')+'</h2>'+
+      '<div style="font-size:42px;letter-spacing:4px">'+'⭐'.repeat(st)+'<span style="opacity:.2">'+'⭐'.repeat(3-st)+'</span></div>'+
+      '<p style="font-size:19px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
+      '<p class="muted">+'+xp+' stars</p>'+
+      '<button class="btn big green" style="margin-top:14px" data-close>Back to the bee</button>');
+    p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('bee'); });
+  });
+}
+
+/* same paper step as the weekly days, but it returns to the bee */
+function writeItScreenBee(d, done){
+  const a = app();
+  BACK_TO = 'bee';
+  a.innerHTML = '';
+  dayHeader(a, d, 'Paper practice');
+  const missed = MISSED.slice(0, 4);
+  const gotAll = missed.length === 0;
+  const list = gotAll ? shuffle(BEE.allWords).slice(0,2).map(w=>w.word) : missed;
+
+  const c = el('<div class="card center">'+
+    '<div style="font-size:52px">✍️</div><h2 style="font-size:24px">Paper time!</h2>'+
+    '<p style="font-size:17px;line-height:1.5">'+
+      (gotAll ? 'Not a single miss today! 🌟<br>Pick up a pencil and write these <b>2</b> words <b>5 times each</b>.'
+              : 'These are the ones that tricked you today. Write each one <b>5 times</b> on paper.')+'</p>'+
+    '<p class="muted">Tap a star each time you finish writing one.</p>'+
+    '<div id="rows" style="margin-top:14px"></div>'+
+    '<button class="btn big green" id="wdone" disabled>All done! ✅</button></div>');
+  a.appendChild(c);
+
+  const pr = beeProg();
+  pr.write = pr.write || {};
+  const prev = pr.write[today()];
+  const state = {};
+  list.forEach(w => state[w] = (prev && prev.counts && prev.counts[w]) || 0);
+  pr.write[today()] = { words:list.slice(), counts:state, done:false, when:today() };
+  save();
+
+  const rows = c.querySelector('#rows'), btn = c.querySelector('#wdone');
+  function draw(){
+    rows.innerHTML = '';
+    list.forEach(w => {
+      const r = el('<div class="writerow"><div class="ww">'+esc(w)+' <span class="sp">🔊</span></div><div class="tally"></div></div>');
+      r.querySelector('.ww').onclick = () => sayWord(w);
+      const t = r.querySelector('.tally');
+      for (let i=0;i<5;i++){
+        const on = i < state[w];
+        const b = el('<button class="tk'+(on?' on':'')+'">'+(on?'⭐':'☆')+'</button>');
+        b.onclick = () => { state[w] = (i < state[w]) ? i : i+1; pr.write[today()].counts = state; save(); sfx('write'); draw(); };
+        t.appendChild(b);
+      }
+      rows.appendChild(r);
+    });
+    const all = list.every(w => state[w] >= 5);
+    btn.disabled = !all;
+    if (all) btn.textContent = 'All done! ✅  +25 ⭐';
+  }
+  draw();
+  btn.onclick = () => {
+    pr.write[today()].done = true;
+    const k = kid(); k.xp = (k.xp||0) + 25; save();
+    award('writer'); sfx('great'); done();
+  };
+}
+
+/* ---------------- kid: speed round over the whole list ---------------- */
+function actBeeSpeed(a){
+  buildBee();
+  const d = { key:'speed', n:'Speed Round', t:'The whole list', em:'⚡', sub:'How fast can you go?' };
+  BACK_TO = 'bee';
+  dayHeader(a, d);
+  const host = el('<div></div>'); a.appendChild(host);
+  const all = BEE.allWords.slice();
+  if (!all.length) return;
+
+  let queue = shuffle(all), i = 0, score = 0, hits = 0;
+  const t0 = Date.now();
+
+  function step(){
+    if (i >= queue.length) return done();
+    const w = queue[i];
+    const others = shuffle(all.filter(x => x.word !== w.word)).slice(0,3).map(x => x.word);
+    let opts = shuffle([w.word].concat(others));
+    if (opts.length < 2) opts = [w.word].concat(misspell(w.word, w.patternId).slice(0,2));
+    host.innerHTML = '';
+    const c = el('<div class="card center">'+
+      '<div class="muted">⚡ '+(i+1)+' of '+queue.length+' · '+hits+' right</div>'+
+      '<div class="fuel" style="margin-top:8px"><i style="width:'+Math.round(100*i/queue.length)+'%"></i></div>'+
+      '<div class="speaker" id="sp" style="margin-top:12px">🔊</div>'+
+      '<p style="font-weight:800;margin-top:12px">Which word did you hear?</p><div id="ops"></div></div>');
+    host.appendChild(c);
+    c.querySelector('#sp').onclick = () => sayWord(w.word);
+    sayWord(w.word);
+    const ops = c.querySelector('#ops');
+    opts.forEach(o => {
+      const b = el('<button class="btn big blue" style="margin-bottom:8px">'+esc(o)+'</button>');
+      b.onclick = () => {
+        const ok = o === w.word;
+        if (ok){ hits++; score += 10; sfx('good'); b.className='btn big green'; }
+        else { sfx('wrong'); b.className='btn big red'; noteMiss(w.word);
+               Array.from(ops.children).forEach(x=>{ if(x.textContent===w.word) x.className='btn big green'; }); }
+        beeMark(w.word, ok);
+        ops.querySelectorAll('button').forEach(x=>x.disabled=true);
+        i++; setTimeout(step, ok ? 420 : 1200);
+      };
+      ops.appendChild(b);
+    });
+  }
+
+  function done(){
+    const secs = Math.round((Date.now()-t0)/1000);
+    confetti(80); sfx('win');
+    const p = popup('<div class="em">⚡</div><h2>Speed round done!</h2>'+
+      '<p style="font-size:19px;font-weight:800">'+hits+' / '+queue.length+' right</p>'+
+      '<p class="muted">in '+Math.floor(secs/60)+'m '+(secs%60)+'s</p>'+
+      '<button class="btn big green" style="margin-top:12px" data-close>Back to the bee</button>');
+    const k = kid(); k.xp = (k.xp||0) + hits*3; save();
+    p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('bee'); });
+  }
+  step();
+}
+
+/* ---------------- kid: which mode? ---------------- */
+function renderModes(a){
+  const k = kid();
+  const hasWeek = !!String(rawForKid(k)||'').trim();
+  const hasBee = beeHasList(k);
+  if (hasBee && !hasWeek) return renderBeeHome(a);
+  if (!hasBee) return renderHome(a);
+
+  topbar(a);
+  a.appendChild(el('<div class="card center" style="padding:14px">'+
+    '<h2 style="font-size:22px;margin:2px 0 4px">What shall we practise?</h2></div>'));
+
+  buildCurrentWeek();
+  const wk = el('<button class="day d2" style="width:100%;min-height:110px;margin-bottom:12px">'+
+    '<div><span class="em">📅</span><b>This Week\'s Words</b>'+
+    '<small>'+esc(WEEK.title)+' · '+WEEK.allWords.length+' words</small></div></button>');
+  wk.onclick = () => { sfx('tap'); go('home'); };
+  a.appendChild(wk);
+
+  buildBee();
+  const plan = beePlan();
+  const bee = el('<button class="day d4" style="width:100%;min-height:110px">'+
+    '<div><span class="em">🐝</span><b>Spelling Bee</b>'+
+    '<small>'+plan.mastered.length+' of '+plan.words.length+' mastered'+
+    (plan.daysLeft != null ? ' · '+plan.daysLeft+' days to go' : '')+'</small></div></button>');
+  bee.onclick = () => { sfx('tap'); go('bee'); };
+  a.appendChild(bee);
+
+  const foot = el('<div class="center" style="margin-top:16px"><button class="btn ghost">⚙️ Grown-ups</button></div>');
+  foot.querySelector('button').onclick = parentGate;
+  a.appendChild(foot);
+}
 
 </script>
 </body>
