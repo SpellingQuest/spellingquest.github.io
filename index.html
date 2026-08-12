@@ -1031,7 +1031,7 @@ function parseWordText(text){
 /* ===================== SPELLING QUEST — core ===================== */
 
 const STORE_KEY = 'spellingQuest.v1';
-const BUILD = '2026-08-11';
+const BUILD = '2026-08-12';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👋', cls:'d1', sub:'Read them out loud + learn the rule' },
@@ -1078,7 +1078,10 @@ function codeOk(s){ return ACCESS_CODES.indexOf(normCode(s)) >= 0; }
    service actually tells us the subscription has ended. Network trouble never
    locks a child out mid-week. */
 const LS_API = 'https://api.lemonsqueezy.com/v1/licenses';
-const RECHECK_DAYS = 30;
+const RECHECK_DAYS = 7;
+/* Only these mean "this key is genuinely finished". Anything else — a network
+   error, a server wobble, an activation limit — leaves the family alone. */
+const DEAD_KEY = /expired|disabled|inactive|not found|revoked/i;
 
 function looksLikeKey(s){
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(s||'').trim());
@@ -1103,9 +1106,26 @@ function recheckLicence(){
   if (!DB.licence || !DB.licence.key) return;
   const last = DB.licence.checked || 0;
   if (Date.now() - last < RECHECK_DAYS * 86400000) return;
+
+  // A key typed in while offline was never really activated. Finish the job now,
+  // so the device gets a proper instance and a made-up key can't live for ever.
+  if (DB.licence.pending || !DB.licence.instance){
+    activateKey(DB.licence.key, 'Spelling Quest device').then(res => {
+      DB.licence.checked = Date.now();
+      if (res && res.activated){
+        DB.licence.instance = (res.instance && res.instance.id) || null;
+        DB.licence.pending = false;
+      } else if (res && DEAD_KEY.test(res.error || '')){
+        DB.licence.dead = true;
+      }
+      save();
+    }).catch(()=>{});    // still offline: try again next time
+    return;
+  }
+
   validateKey(DB.licence.key, DB.licence.instance).then(res => {
     DB.licence.checked = Date.now();
-    if (res && res.valid === false && /expired|disabled|inactive/i.test(res.error || '')){
+    if (res && res.valid === false && DEAD_KEY.test(res.error || '')){
       DB.licence.dead = true;
     }
     save();
