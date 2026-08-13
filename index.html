@@ -1494,16 +1494,6 @@ const app = () => document.getElementById('app');
 function el(html){ const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-function copyText(txt, okMsg){
-  const fail = () => toast('Ready — long-press the box to copy');
-  try{
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).then(()=>toast(okMsg), fail);
-      return;
-    }
-  }catch(e){}
-  fail();
-}
 
 function toast(msg, ms){
   const t = el('<div class="toast">'+msg+'</div>');
@@ -1986,35 +1976,6 @@ function parentWords(a){
     setTimeout(()=>go('parent','words'), 500);
   };
 
-  // ---- one simple share block ----
-  const sh = el('<div class="card"><h3>📋 Copy this week\'s words to another iPad</h3>'+
-    '<p class="muted">This moves <b>the word lists only</b> — not stars or progress. '+
-    'Tap Copy, then send the code to the other iPad however you normally send text '+
-    '(Messages to yourself, Notes, or email). On the other iPad, open this same screen, '+
-    'paste it in the box below and tap Load.</p>'+
-    '<p class="muted" style="margin-top:6px">Honestly, if it\'s quicker to just paste the '+
-    'teacher\'s list into both iPads, do that — it takes about ten seconds and this is only here to save you typing twice.</p>'+
-    '<button class="btn blue big" id="wcopycode">📋 Copy this week\'s code</button>'+
-    '<textarea class="ta" id="wcode" style="min-height:70px;font-size:12px;margin-top:10px" placeholder="…or paste a code you were sent"></textarea>'+
-    '<button class="btn green big" id="wapply" style="margin-top:8px">📥 Load these words</button></div>');
-  a.appendChild(sh);
-
-  const makeCode = () => btoa(unescape(encodeURIComponent(JSON.stringify({
-    v:2, id: DB.weekId,
-    kids: DB.kids.map(k => ({ n:k.name, w: DB.weekRawByKid[k.id] || '' })).filter(x => x.w)
-  }))));
-  sh.querySelector('#wcopycode').onclick = () => {
-    const code = makeCode();
-    sh.querySelector('#wcode').value = code;
-    copyText(code, '📋 Code copied!');
-  };
-  sh.querySelector('#wapply').onclick = () => {
-    let v = sh.querySelector('#wcode').value.trim();
-    const hm = /[#&]w=([^&\s]+)/.exec(v); if (hm) v = hm[1];
-    if (applyWeekPayload(v)){ buildCurrentWeek(); sfx('good'); toast('✅ New words loaded!');
-      setTimeout(()=>go('parent','words'), 700); }
-    else { sfx('wrong'); toast('❌ That code didn\'t work'); }
-  };
 }
 
 /* apply a base64 week payload (from a code or a #w= link). returns true on success */
@@ -2311,29 +2272,6 @@ function parentMore(a){
   };
 
   // ---------- advanced, tucked away ----------
-  const adv = el('<div class="card"><details><summary>💾 Back up / move everything (advanced)</summary>'+
-    '<p class="muted" style="margin-top:10px">This is the <b>whole app</b> — children, words, stars, badges, '+
-    'bee lists, the lot. It makes a very long code, so send it to yourself by email or Notes rather than '+
-    'trying to retype it. Pasting it on another device <b>replaces</b> everything already there.</p>'+
-    '<p class="muted" style="margin-top:6px">Most families never need this. It is for moving to a new iPad, '+
-    'or keeping a copy somewhere safe.</p>'+
-    '<button class="btn blue big" id="bex">📋 Copy my backup code</button>'+
-    '<textarea class="ta" id="bcode" style="min-height:70px;font-size:11px;margin-top:10px" placeholder="…or paste a backup code"></textarea>'+
-    '<button class="btn green big" id="bim" style="margin-top:8px">📥 Restore</button>'+
-    '</details></div>');
-  a.appendChild(adv);
-  adv.querySelector('#bex').onclick = () => {
-    const code = btoa(unescape(encodeURIComponent(JSON.stringify(DB))));
-    adv.querySelector('#bcode').value = code;
-    copyText(code, '📋 Copied!');
-  };
-  adv.querySelector('#bim').onclick = () => {
-    try{
-      const d = JSON.parse(decodeURIComponent(escape(atob(adv.querySelector('#bcode').value.trim()))));
-      if (!d.kids) throw 0;
-      DB = d; save(); sfx('good'); toast('✅ Restored!'); setTimeout(()=>go('pick'), 800);
-    }catch(e){ sfx('wrong'); toast('❌ That code didn\'t work'); }
-  };
 
   const r = el('<div class="card"><details><summary>🧹 Start over</summary>'+
     '<div class="row" style="margin-top:12px">'+
