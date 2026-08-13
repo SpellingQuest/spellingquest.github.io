@@ -1031,7 +1031,7 @@ function parseWordText(text){
 /* ===================== SPELLING QUEST — core ===================== */
 
 const STORE_KEY = 'spellingQuest.v1';
-const BUILD = '2026-08-12';
+const BUILD = '2026-08-13';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👋', cls:'d1', sub:'Read them out loud + learn the rule' },
@@ -1151,7 +1151,7 @@ let DB = null;
 
 function blankKid(name, avatar, grade){
   return { id:'k'+Math.random().toString(36).slice(2,8), name, avatar, grade,
-           xp:0, streak:0, lastDay:null, badges:[], weeksDone:0, prog:{} };
+           testDay:1, xp:0, streak:0, lastDay:null, badges:[], weeksDone:0, prog:{} };
 }
 
 function defaultDB(){
@@ -1182,7 +1182,9 @@ function load(){
     DB = raw ? JSON.parse(raw) : defaultDB();
   }catch(e){ DB = defaultDB(); }
   if (!DB || !DB.kids || !DB.kids.length) DB = defaultDB();
-  DB.kids.forEach(k => { k.prog = k.prog || {}; k.badges = k.badges || []; });
+  DB.kids.forEach(k => { k.prog = k.prog || {}; k.badges = k.badges || [];
+    // saves made before test days existed were all built around a Monday test
+    if (typeof k.testDay !== 'number') k.testDay = 1; });
   DB.weekRawByKid = DB.weekRawByKid || {};
   DB.beeByKid = DB.beeByKid || {};
   DB.beeTargetByKid = DB.beeTargetByKid || {};
@@ -1234,10 +1236,31 @@ function level(k){ return Math.max(1, Math.floor((k.xp||0)/150) + 1); }
 function levelPct(k){ return Math.round((((k.xp||0)%150)/150)*100); }
 function isHard(){ return (kid().grade || 1) >= 3; }
 
-/* ---------------- day gating ---------------- */
+/* ---------------- the week, anchored to each child's test day ----------------
+   The seven activities are slots, not fixed weekdays. Slot 1 is the day of the
+   test itself — the day the teacher hands out the new list — and slot 7 is the
+   day before the next test. A child tested on Friday gets Friday as Day 1; a
+   child tested on Monday gets Monday, which is how the app has always behaved.
+   Test day is stored per child, so two children in the same house can be on
+   different schedules. */
+const WEEKDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const WEEKDAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function testDayOf(k){
+  const t = k && k.testDay;
+  return (typeof t === 'number' && t >= 0 && t <= 6) ? t : 1;   // Monday by default
+}
+/* which real weekday does slot i fall on, for this child */
+function weekdayForSlot(i, k){ return (testDayOf(k) + i) % 7; }
+function slotName(i, k){ return WEEKDAYS[weekdayForSlot(i, k)]; }
+function slotShort(i, k){ return WEEKDAYS_SHORT[weekdayForSlot(i, k)]; }
+/* the label a child sees on a day card */
+function dayLabel(d, k){ return slotName(DAY_INDEX[d.key], k || kid()); }
+
 function todayKey(){
-  const js = new Date().getDay();           // 0=Sun
-  return ['sun','mon','tue','wed','thu','fri','sat'][js];
+  const js = new Date().getDay();                      // 0=Sun
+  const off = (js - testDayOf(kid()) + 7) % 7;         // how far into their week
+  return DAYS[off].key;
 }
 function dayUnlocked(){ return true; }   // every day is always open
 
@@ -1673,6 +1696,7 @@ function renderHome(a){
       '<div style="font-size:13px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">THIS WEEK</div>'+
       '<h2 style="font-size:24px;margin:2px 0 6px">'+esc(WEEK.title)+'</h2>'+
       '<div class="muted">'+WEEK.allWords.length+' words · '+done+'/7 days done</div>'+
+      '<div class="muted" style="margin-top:4px">📅 Test day: <b>'+WEEKDAYS[testDayOf(kid())]+'</b></div>'+
     '</div>'));
 
   // one-tap "do today's practice"
@@ -1693,11 +1717,11 @@ function renderHome(a){
       '<button class="day '+d.cls+(unlocked?'':' locked')+(isToday&&unlocked?' today':'')+'">'+
         (st.done ? '<span class="tick">✅</span>' : (unlocked?'':'<span class="tick">🔒</span>'))+
         '<div><span class="em">'+d.em+'</span>'+
-        '<b>'+d.n+'</b><small>'+d.t+'</small></div>'+
+        '<b>'+dayLabel(d)+'</b><small>Day '+(DAY_INDEX[d.key]+1)+' · '+d.t+'</small></div>'+
         '<small style="opacity:.85">'+(st.done ? '⭐'.repeat(Math.max(1,st.stars||1)) : d.sub)+'</small>'+
       '</button>');
     c.onclick = () => {
-      if (!unlocked){ sfx('wrong'); toast('🔒 This one unlocks on '+d.n+'!'); return; }
+      if (!unlocked){ sfx('wrong'); toast('🔒 This one unlocks on '+dayLabel(d)+'!'); return; }
       unlockAudio(); sfx('tap'); go('day', d.key);
     };
     grid.appendChild(c);
@@ -2028,11 +2052,22 @@ function parentKids(a){
       '<label class="fl">Grade (sets the difficulty)</label>'+
       '<div class="row" data-f="grade">'+[1,2,3,4,5].map(g =>
         '<button class="btn '+(k.grade===g?'':'grey')+'" data-g="'+g+'" style="flex:1;padding:12px">'+g+'</button>').join('')+'</div>'+
+      '<label class="fl">Spelling test day</label>'+
+      '<div class="row wrap" data-f="testday">'+WEEKDAYS_SHORT.map((n, d) =>
+        '<button class="btn '+(testDayOf(k)===d?'':'grey')+'" data-d="'+d+'" '+
+        'style="flex:1;min-width:40px;padding:11px 2px;font-size:14px">'+n+'</button>').join('')+'</div>'+
+      '<div class="muted" style="margin-top:6px;font-size:13px">The seven days rearrange themselves around this. '+
+        'Day 1 is test day — when the new list comes home — and Day 7 is the night before the next test.</div>'+
       '<label class="fl">Character</label><div class="av-grid"></div>'+
       '<div class="muted" style="margin-top:10px">Level '+level(k)+' · '+(k.xp||0)+' stars · '+(k.badges.length)+' badges</div>'+
     '</div>');
     c.querySelector('[data-f="name"]').onchange = e => { k.name = e.target.value || 'Kid'; save(); };
     c.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { k.grade = +b.dataset.g; save(); go('parent','kids'); });
+    c.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
+      k.testDay = +b.dataset.d; save(); sfx('tap');
+      toast('📅 Day 1 is now ' + WEEKDAYS[k.testDay]);
+      go('parent','kids');
+    });
     const av = c.querySelector('.av-grid');
     AVATARS.forEach(x => {
       const b = el('<button class="av'+(k.avatar===x?' on':'')+'">'+x+'</button>');
@@ -2051,7 +2086,7 @@ function parentProgress(a){
     const p = (k.prog && k.prog[DB.weekId]) || { days:{}, stats:{} };
     const rows = DAYS.map(d => {
       const s = p.days[d.key] || {};
-      return '<tr><td>'+d.em+' '+d.n+'</td><td>'+d.t+'</td><td class="nowrap">'+(s.done ? '✅ '+'⭐'.repeat(Math.max(1,s.stars||1)) : '—')+'</td></tr>';
+      return '<tr><td>'+d.em+' '+dayLabel(d,k)+'</td><td>'+d.t+'</td><td class="nowrap">'+(s.done ? '✅ '+'⭐'.repeat(Math.max(1,s.stars||1)) : '—')+'</td></tr>';
     }).join('');
 
     const shaky = Object.keys(p.stats).map(w => ({ w, s:p.stats[w] }))
@@ -2110,7 +2145,7 @@ function writeLogHtml(k){
           '<b>'+esc(w)+'</b><span class="nowrap" style="letter-spacing:1px">'+
           '⭐'.repeat(n)+'<span style="opacity:.25">'+'☆'.repeat(5-n)+'</span></span></div>';
       }).join('');
-      return '<tr><td style="vertical-align:top;width:34%">'+d.em+' '+d.n+
+      return '<tr><td style="vertical-align:top;width:34%">'+d.em+' '+dayLabel(d,k)+
         '<div class="muted" style="font-size:12px">'+(e.done ? '✅ finished' : '⏳ not finished')+'</div></td>'+
         '<td>'+cells+'</td></tr>';
     }).join('') + '</table>';
@@ -2369,7 +2404,7 @@ let BACK_TO = 'home';
 function dayHeader(a, d, sub){
   const h = el('<div class="topbar">'+
     '<button class="iconbtn" id="bk">⬅️</button>'+
-    '<div class="who"><b>'+d.em+' '+d.n+' — '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
+    '<div class="who"><b>'+d.em+' '+dayLabel(d)+' — '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
     '</div>');
   h.querySelector('#bk').onclick = () => { stopSpeech(); stopMic(); go(BACK_TO || 'home'); };
   a.appendChild(h);
