@@ -242,8 +242,15 @@ h1,h2,h3{ margin:0 0 8px; }
 .tabs button.on{ background:#fff; color:var(--ink); }
 textarea.ta{ width:100%; min-height:170px; border-radius:14px; border:2px solid var(--line); padding:14px;
   font-size:17px; line-height:1.6; resize:vertical; user-select:text; -webkit-user-select:text; }
-input.ti{ width:100%; border-radius:12px; border:2px solid var(--line); padding:13px; font-size:17px;
-  user-select:text; -webkit-user-select:text; }
+input.ti{ width:100%; max-width:100%; min-width:0; border-radius:12px; border:2px solid var(--line);
+  padding:13px; font-size:17px; user-select:text; -webkit-user-select:text; }
+/* iOS Safari gives date inputs their own intrinsic width and refuses to shrink
+   them, which pushed the bee date box out past the edge of the card on a phone.
+   Turning off the native appearance lets width:100% actually apply. */
+input[type=date]{ -webkit-appearance:none; appearance:none; min-width:0; max-width:100%;
+  text-align:left; }
+input[type=date]::-webkit-date-and-time-value{ text-align:left; margin:0; }
+input[type=date]::-webkit-calendar-picker-indicator{ margin-left:auto; }
 label.fl{ display:block; font-weight:800; font-size:14px; margin:12px 0 5px; color:var(--ink-soft); }
 table.pt{ width:100%; border-collapse:collapse; font-size:15px; }
 table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); text-align:left; }
@@ -1564,7 +1571,7 @@ function renderGate(a){
   const expired = left === 0;
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
-      '<div style="font-size:52px">🔤✨</div>'+
+      '<div style="font-size:52px">🐝</div>'+
       '<h1 style="font-size:34px;margin:6px 0 2px">Spelling Quest</h1>'+
       '<p class="muted">Weekly spelling words and spelling-bee practice, for the whole family.</p>'+
     '</div>'));
@@ -1622,7 +1629,7 @@ function renderGate(a){
   if (t) t.onclick = () => { DB.trialStart = Date.now(); save(); sfx('good'); go('pick'); };
 
   a.appendChild(el('<p class="muted center" style="margin-top:14px;color:rgba(255,255,255,.6)">'+
-    'Need access? Visit muslimeenmarket.com</p>'));
+    'No code yet? Tap <b>Have a free look</b> above — a week free, no card needed.</p>'));
 }
 
 /* ---------------- profile picker ---------------- */
@@ -1635,7 +1642,7 @@ function renderPick(a){
   }
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
-      '<div style="font-size:52px">🔤✨</div>'+
+      '<div style="font-size:52px">🐝</div>'+
       '<h1 style="font-size:34px;margin:6px 0 2px">Spelling Quest</h1>'+
       '<p class="muted">Who\'s playing today?</p>'+
     '</div>'));
