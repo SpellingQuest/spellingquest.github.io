@@ -1876,7 +1876,58 @@ function renderParent(a, tab){
   return parentMore(a);
 }
 
+/* ---- first-run voice check ----
+   Apple does not let a website (or any third-party app) download a better voice,
+   or reach the Siri voices — it's an open request on their side, not something we
+   can code around. The good voices are a free download the parent has to make
+   once, in Settings. So instead of hiding that in a tip, we put it in front of
+   every new family on day one, with a Play button either side of it. */
+const VOICE_TEST = 'The light in the night is bright. Can you hear me clearly?';
+
+function voiceCheckCard(){
+  const c = el('<div class="card" style="border:3px solid var(--brand)">'+
+    '<h3>🔊 Check the voice — worth 60 seconds</h3>'+
+    '<p class="muted">This is the voice that reads every word to your child. '+
+    'Press play and listen on the device they\'ll actually use.</p>'+
+    '<button class="btn blue big" id="vcplay" style="margin-top:10px">▶️ Play the test sentence</button>'+
+    '<div class="row" style="margin-top:10px">'+
+      '<button class="btn green" id="vcok" style="flex:1">👍 Sounds fine</button>'+
+      '<button class="btn grey" id="vcbad" style="flex:1">🤖 Sounds robotic</button>'+
+    '</div>'+
+    '<div id="vcfix" style="display:none">'+
+      '<div class="tip" style="margin-top:12px"><h3>🤖 Here\'s the fix — it\'s free</h3>'+
+      '<p>Apple ships phones and iPads with a small, tinny version of each voice, and '+
+      'doesn\'t allow apps to download the good one for you. You have to grab it once, '+
+      'and then every app on the device sounds better.</p>'+
+      '<p><b>On iPhone or iPad:</b> Settings → Accessibility → Spoken Content → Voices → English → '+
+      'tap a voice and download the one marked <b>Enhanced</b> or <b>Premium</b>.</p>'+
+      '<p class="trick">It replaces the tinny one under the same name — come back, press play again, '+
+      'and it will be a different app.</p>'+
+      '<p style="font-size:14px">They\'re 100–500&nbsp;MB. That size <i>is</i> the quality. Use wifi.</p>'+
+      '</div>'+
+      '<button class="btn blue big" id="vcagain" style="margin-top:10px">▶️ I\'ve downloaded it — play again</button>'+
+      '<button class="btn grey big" id="vcskip" style="margin-top:8px">Skip for now</button>'+
+    '</div></div>');
+
+  const play = () => { unlockAudio(); stopSpeech(); say(VOICE_TEST, { rate: 1.0 }); };
+  c.querySelector('#vcplay').onclick = play;
+  c.querySelector('#vcagain').onclick = play;
+  c.querySelector('#vcok').onclick = () => {
+    DB.voiceOk = true; save(); sfx('good'); toast('🔊 Voice sorted'); go('parent','words');
+  };
+  c.querySelector('#vcskip').onclick = () => {
+    DB.voiceOk = true; save(); toast('You can come back to this in More'); go('parent','words');
+  };
+  c.querySelector('#vcbad').onclick = () => {
+    c.querySelector('#vcfix').style.display = 'block';
+    c.querySelector('#vcbad').style.display = 'none';
+    c.querySelector('#vcok').textContent = '👍 Actually it\'s fine';
+  };
+  return c;
+}
+
 function parentWords(a){
+  if (!DB.voiceOk) a.appendChild(voiceCheckCard());
   const lists = DB.kids.map(k => (DB.weekRawByKid[k.id]||'').trim());
   if (DB.kids.length > 1 && lists[0] && lists.every(x => x === lists[0])){
     a.appendChild(el('<div class="card" style="background:#fff4d6;border:3px dashed var(--orange)">'+
