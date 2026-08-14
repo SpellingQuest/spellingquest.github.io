@@ -2429,7 +2429,14 @@ function parentMore(a){
     '<p class="muted" id="vnow" style="margin-top:8px"></p>'+
     '<button class="btn grey" id="vrescan" style="width:100%;margin-top:6px;font-size:14px">'+
       '🔄 I\'ve just downloaded a voice — look again</button>'+
-    '<details style="margin-top:10px"><summary>Hear every voice on this iPad</summary>'+
+    '<details style="margin-top:10px"><summary>What this device reports</summary>'+
+      '<p class="muted" style="margin-top:8px">If a downloaded voice isn\'t being used, this is the '+
+      'page to screenshot — it shows exactly what the device is handing the app.</p>'+
+      '<pre id="vdiag" style="font-size:11px;line-height:1.45;white-space:pre-wrap;word-break:break-all;'+
+        'background:#f6f3ff;border-radius:10px;padding:10px;margin-top:8px;max-height:280px;overflow:auto"></pre>'+
+      '<button class="btn grey" id="vcopy" style="width:100%;font-size:14px">📋 Copy this</button>'+
+    '</details>'+
+    '<details style="margin-top:10px"><summary>Hear every voice on this device</summary>'+
       '<p class="muted" style="margin-top:8px">Tap ▶️ to hear one. Then pin your favourites to the '+
       'Male and Female buttons above — that\'s what the children will hear. '+
       'Any marked <span class="tag">HD</span> are the good ones.</p>'+
@@ -2466,6 +2473,43 @@ function parentMore(a){
     sayRule(TEST_LINE);
   });
   v.querySelector('#vtest').onclick = () => sayRule(TEST_LINE);
+  /* What the device is actually handing us. When a downloaded voice doesn't
+     take, the answer is always in here — either it never arrived, or it arrived
+     under the same name as the basic one. */
+  const diagText = () => {
+    if (!('speechSynthesis' in window)) return 'This browser has no speech at all.';
+    const all = speechSynthesis.getVoices();
+    const en  = all.filter(x => /^en(-|_|$)/i.test(x.lang));
+    const seen = {};
+    en.forEach(x => seen[x.name] = (seen[x.name] || 0) + 1);
+    const dupes = Object.keys(seen).filter(n => seen[n] > 1);
+    return [
+      'Voices in total: ' + all.length + '   English: ' + en.length,
+      'Now using: ' + (VOICE ? voiceLabel(VOICE) : 'none'),
+      'Identifier: ' + (VOICE ? (VOICE.voiceURI || '(none)') : '-'),
+      'Same name twice: ' + (dupes.length ? dupes.join(', ') : 'no'),
+      'Downloaded ones found: ' +
+        (en.filter(x => /Premium|Enhanced|Siri|Neural/.test(voiceTag(x)))
+           .map(x => x.name + ' (' + voiceTag(x) + ')').join(', ') || 'NONE'),
+      '',
+      ...en.map(x => '· ' + x.name + (voiceTag(x) ? ' [' + voiceTag(x) + ']' : '') +
+                     ' ' + x.lang + '  ' + (x.voiceURI || ''))
+    ].join('\n');
+  };
+  const drawDiag = () => {
+    const box = v.querySelector('#vdiag');
+    if (box) box.textContent = diagText();
+  };
+  v.querySelectorAll('details')[0].addEventListener('toggle', drawDiag);
+  v.querySelector('#vcopy').onclick = () => {
+    const t = diagText();
+    try{
+      navigator.clipboard.writeText(t).then(
+        () => toast('📋 Copied — paste it into a message', 3500),
+        () => toast('Couldn\'t copy — screenshot this instead', 3500));
+    }catch(e){ toast('Couldn\'t copy — screenshot this instead', 3500); }
+  };
+
   v.querySelector('#vrescan').onclick = () => {
     const had = ALL_VOICES.length;
     if (RESCAN_VOICES) RESCAN_VOICES();
@@ -2509,7 +2553,7 @@ function parentMore(a){
       box.appendChild(row);
     });
   };
-  v.querySelector('details').addEventListener('toggle', drawList);
+  v.querySelectorAll('details')[1].addEventListener('toggle', drawList);
   paint(); setTimeout(()=>{ paint(); drawList(); }, 800);
 
   // ---------- access ----------
