@@ -1431,7 +1431,7 @@ const SFX = {
 function sfx(n, arg){ try{ const f = SFX[n]; if (f) f(arg); }catch(e){} }
 
 /* ---------------- speech ---------------- */
-let VOICE = null, voiceReady = false, ALL_VOICES = [];
+let VOICE = null, voiceReady = false, ALL_VOICES = [], RESCAN_VOICES = null;
 
 /* Only two choices are offered. Daniel (en-GB) is the male default; the female
    list is ordered to match his pronunciation as closely as possible — en-GB
@@ -1447,10 +1447,32 @@ const BEST_VOICES = 'Evan or Jamie for a male voice, Zoe or Matilda for a female
 
 /* turn our little HTML rule strings into something a voice reads naturally */
 /* find the best available voice for the chosen sex */
+/* iOS ships a compact and an enhanced version of the SAME voice under the SAME
+   display name — "Evan" appears twice once you download the good one. The only
+   thing that tells them apart is the identifier:
+     com.apple.ttsbundle.Evan-compact   vs   com.apple.voice.enhanced.en-GB.Evan
+   So anything judging voice quality has to read the identifier, not the name,
+   or a parent downloads a 400 MB voice and hears no difference whatsoever. */
+function voiceId(v){ return ((v && (v.voiceURI || v.name)) || '').toLowerCase(); }
+function voiceTag(v){
+  const id = voiceId(v) + ' ' + ((v && v.name) || '').toLowerCase();
+  if (/premium/.test(id))                 return 'Premium';
+  if (/enhanced/.test(id))                return 'Enhanced';
+  if (/siri/.test(id))                    return 'Siri';
+  if (/neural|natural|wavenet/.test(id))  return 'Neural';
+  if (/compact/.test(id))                 return 'Basic';
+  return '';
+}
+function voiceLabel(v){
+  if (!v) return '';
+  const t = voiceTag(v);
+  return v.name + (t ? ' · ' + t : '');
+}
 function pickVoiceFor(sex){
   const ov = (DB && DB.voicePick && DB.voicePick[sex]);
   if (ov){
-    const hit = ALL_VOICES.find(v => v.name === ov);
+    // saves made before this stored the name; both are accepted
+    const hit = ALL_VOICES.find(v => v.voiceURI === ov) || ALL_VOICES.find(v => v.name === ov);
     if (hit) return hit;
   }
   const want = VOICE_SETS[sex] || VOICE_SETS.male;
@@ -1495,26 +1517,39 @@ function initVoices(){
     if (!vs.length) return;
     // score voices so we land on the most human-sounding one available
     const score = v => {
-      const n = (v.name || '').toLowerCase();
+      const nm  = (v.name || '').toLowerCase();
+      // quality words live in the identifier on iOS, in the name elsewhere
+      const all = nm + ' ' + voiceId(v);
       let s = 0;
-      if (/enhanced|premium|neural|natural|wavenet/.test(n)) s += 60;   // the good iOS/Android downloads
-      if (/siri/.test(n)) s += 45;
-      if (/samantha|ava|allison|susan|nicky|zoe|joelle|noelle|evan|tom/.test(n)) s += 25;
-      if (/google/.test(n)) s += 22;
-      if (/karen|moira|tessa|daniel|serena|fiona/.test(n)) s += 12;     // fine, but not US
+      if (/premium/.test(all)) s += 90;                                 // the best Apple ships
+      if (/enhanced|neural|natural|wavenet/.test(all)) s += 60;         // the good downloads
+      if (/siri/.test(all)) s += 45;
+      if (/compact/.test(all)) s -= 80;                                 // the tinny built-in
+      if (/samantha|ava|allison|susan|nicky|zoe|joelle|noelle|evan|tom/.test(nm)) s += 25;
+      if (/google/.test(nm)) s += 22;
+      if (/karen|moira|tessa|daniel|serena|fiona/.test(nm)) s += 12;    // fine, but not US
       if (/en-us/i.test(v.lang)) s += 14;
       if (/en-gb/i.test(v.lang)) s += 4;
       if (v.localService) s += 4;
-      // the old novelty / robotic voices
-      if (/compact|eloquence|fred|albert|zarvox|whisper|bells|boing|bad news|good news|junior|organ|trinoids|bubbles|cellos|deranged|hysterical|pipe|princess|ralph|bahh|wobble|superstar|jester|rocko|shelley|sandy|grandma|grandpa|eddy|flo|reed|rishi/.test(n)) s -= 80;
+      // the old novelty / robotic voices — judged on the name only, so a stray
+      // word inside an identifier can't knock out a good voice
+      if (/eloquence|fred|albert|zarvox|whisper|bells|boing|bad news|good news|junior|organ|trinoids|bubbles|cellos|deranged|hysterical|pipe|princess|ralph|bahh|wobble|superstar|jester|rocko|shelley|sandy|grandma|grandpa|eddy|flo|reed|rishi/.test(nm)) s -= 80;
       return s;
     };
+    const before = VOICE && VOICE.voiceURI;
     ALL_VOICES = vs.slice().sort((a,b) => score(b) - score(a));
     VOICE = pickVoiceFor((DB && DB.voiceSex) || 'male');
     voiceReady = true;
+    return !!VOICE && VOICE.voiceURI !== before;
   };
+  RESCAN_VOICES = pick;
   pick();
   speechSynthesis.onvoiceschanged = pick;
+  /* A voice downloaded in Settings won't appear until the app looks again, and
+     an installed web app is usually still running in the background while that
+     happens. Look again every time it comes back to the foreground. */
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pick(); });
+  window.addEventListener('focus', pick);
 }
 function say(text, opts){
   opts = opts || {};
@@ -2392,6 +2427,8 @@ function parentMore(a){
       '<button data-r="1.15">🐇 Faster</button></div>'+
     '<button class="btn blue big" id="vtest" style="margin-top:12px">🔊 Test it</button>'+
     '<p class="muted" id="vnow" style="margin-top:8px"></p>'+
+    '<button class="btn grey" id="vrescan" style="width:100%;margin-top:6px;font-size:14px">'+
+      '🔄 I\'ve just downloaded a voice — look again</button>'+
     '<details style="margin-top:10px"><summary>Hear every voice on this iPad</summary>'+
       '<p class="muted" style="margin-top:8px">Tap ▶️ to hear one. Then pin your favourites to the '+
       'Male and Female buttons above — that\'s what the children will hear. '+
@@ -2416,7 +2453,9 @@ function parentMore(a){
       b.className = (b.dataset.v === (DB.voiceSex||'male')) ? 'on' : '');
     const r = String(DB.rate == null ? 0.85 : DB.rate);
     v.querySelectorAll('#vspd button').forEach(b => b.className = (b.dataset.r === r) ? 'on' : '');
-    v.querySelector('#vnow').textContent = VOICE ? ('Using ' + VOICE.name) : 'Using this device\'s default voice';
+    v.querySelector('#vnow').textContent = VOICE
+      ? ('Using ' + voiceLabel(VOICE))
+      : 'Using this device\'s default voice';
   };
   v.querySelectorAll('#vsex button').forEach(b => b.onclick = () => {
     setVoiceSex(b.dataset.v); paint();
@@ -2427,19 +2466,29 @@ function parentMore(a){
     sayRule(TEST_LINE);
   });
   v.querySelector('#vtest').onclick = () => sayRule(TEST_LINE);
+  v.querySelector('#vrescan').onclick = () => {
+    const had = ALL_VOICES.length;
+    if (RESCAN_VOICES) RESCAN_VOICES();
+    paint(); drawList();
+    const gained = ALL_VOICES.length - had;
+    if (gained > 0){ sfx('good'); toast('🎉 Found ' + gained + ' new voice' + (gained===1?'':'s'), 3500); }
+    else toast('Nothing new yet. Close the app completely — swipe it away — then open it again.', 5000);
+  };
   const drawList = () => {
     const box = v.querySelector('#vlist');
     if (!box) return;
     box.innerHTML = '';
     if (!ALL_VOICES.length){ box.appendChild(el('<p class="muted">No voices found yet — close and reopen this screen.</p>')); return; }
     ALL_VOICES.forEach(vo => {
-      const pickedM = DB.voicePick && DB.voicePick.male === vo.name;
-      const pickedF = DB.voicePick && DB.voicePick.female === vo.name;
-      const good = /enhanced|premium|neural|natural|siri/i.test(vo.name);
+      const is = (s) => DB.voicePick &&
+        (DB.voicePick[s] === vo.voiceURI || DB.voicePick[s] === vo.name);
+      const pickedM = is('male'), pickedF = is('female');
+      const tag = voiceTag(vo);
+      const good = /Premium|Enhanced|Siri|Neural/.test(tag);
       const row = el('<div class="vrow">'+
         '<button class="vplay">▶️</button>'+
         '<div class="vname"><b>'+esc(vo.name)+'</b><span class="muted"> '+esc(vo.lang)+'</span>'+
-          (good ? ' <span class="tag">HD</span>' : '')+'</div>'+
+          (tag ? ' <span class="'+(good ? 'tag' : 'muted')+'">'+esc(good ? tag.toUpperCase() : tag)+'</span>' : '')+
         '<button class="vpin'+(pickedM?' on':'')+'" data-s="male">♂</button>'+
         '<button class="vpin'+(pickedF?' on':'')+'" data-s="female">♀</button></div>');
       row.querySelector('.vplay').onclick = () => {
@@ -2450,10 +2499,11 @@ function parentMore(a){
       };
       row.querySelectorAll('.vpin').forEach(b => b.onclick = () => {
         DB.voicePick = DB.voicePick || {};
-        DB.voicePick[b.dataset.s] = vo.name;
+        // pin the exact voice, not the name — otherwise "Evan" is ambiguous
+        DB.voicePick[b.dataset.s] = vo.voiceURI || vo.name;
         if ((DB.voiceSex||'male') === b.dataset.s) VOICE = vo;
         save(); sfx('good');
-        toast((b.dataset.s === 'male' ? '♂ Male' : '♀ Female') + ' voice set to ' + vo.name, 3500);
+        toast((b.dataset.s === 'male' ? '♂ Male' : '♀ Female') + ' voice set to ' + voiceLabel(vo), 3500);
         drawList(); paint();
       });
       box.appendChild(row);
