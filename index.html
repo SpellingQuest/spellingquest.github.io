@@ -1365,11 +1365,13 @@ let VOICE = null, voiceReady = false, ALL_VOICES = [];
    list is ordered to match his pronunciation as closely as possible — en-GB
    first, then other British-sounding voices, then anything English. */
 const VOICE_SETS = {
-  male:   ['Daniel','Oliver','Arthur','Ryan','Google UK English Male','Microsoft Ryan',
-           'Alex','Aaron','Tom','Fred','Google US English','Microsoft Guy'],
-  female: ['Serena','Kate','Martha','Stephanie','Google UK English Female','Microsoft Sonia',
-           'Moira','Fiona','Karen','Samantha','Ava','Allison','Microsoft Aria']
+  male:   ['Evan','Jamie','Daniel','Oliver','Arthur','Ryan','Google UK English Male',
+           'Microsoft Ryan','Alex','Aaron','Tom','Fred','Google US English','Microsoft Guy'],
+  female: ['Zoe','Matilda','Serena','Kate','Martha','Stephanie','Google UK English Female',
+           'Microsoft Sonia','Moira','Fiona','Karen','Samantha','Ava','Allison','Microsoft Aria']
 };
+/* The four worth downloading, in the order they'll be picked up automatically. */
+const BEST_VOICES = 'Evan or Jamie for a male voice, Zoe or Matilda for a female one';
 
 /* turn our little HTML rule strings into something a voice reads naturally */
 /* find the best available voice for the chosen sex */
@@ -1689,7 +1691,8 @@ function voiceStrip(){
   const c = el('<div class="card" style="padding:12px 14px;border:2px solid var(--brand)">'+
     '<div class="row" style="align-items:center;gap:10px">'+
       '<div style="flex:1;font-size:14.5px;line-height:1.35"><b>🔊 Check the voice first</b>'+
-      '<div class="muted" style="font-size:13px">This reads every word aloud. 60 seconds to make it good.</div></div>'+
+      '<div class="muted" style="font-size:13px">This reads every word aloud. Best ones: '+
+      'Evan, Jamie, Zoe, Matilda.</div></div>'+
       '<button class="btn blue" id="vsplay" style="padding:11px 14px">▶️</button>'+
     '</div>'+
     '<div class="row" style="margin-top:8px">'+
@@ -1925,18 +1928,28 @@ function voiceCheckCard(){
       'at the top, and type <b>voice</b>. It takes you straight there whatever your version calls it.</p>'+
 
       '<p><b>🍎 iPhone / iPad</b><br>'+
-      'Settings → Accessibility → <b>Read &amp; Speak</b> → Voices → English.<br>'+
-      'It sits in the <b>Vision</b> section, a fair way down the Accessibility list — easy to scroll past. '+
-      'On older iPhones and iPads it is called <b>Spoken Content</b> instead; Apple renamed it, '+
-      'which is why older instructions send you round in circles.<br>'+
-      'Tap English, then tap the <b>cloud ☁️</b> next to the <b>Enhanced</b> or <b>Premium</b> version.</p>'+
+      '1. Settings → Accessibility → <b>Read &amp; Speak</b> (it is down in the <b>Vision</b> section, '+
+      'easy to scroll past). On older devices it is called <b>Spoken Content</b>.<br>'+
+      '2. Tap <b>Voices</b>, then <b>English</b>.<br>'+
+      '3. You will land on a screen with Rate and Pitch sliders. <b>Tap the “Voice” row at the very top</b> '+
+      '— the one showing a name like “Voice 1”. This is the step everyone misses: the download icons are '+
+      'not on this screen, they are behind that row.<br>'+
+      '4. Now you get the real list of voices. Tap the <b>cloud ☁️</b> beside one to download it, or tap a '+
+      'name to choose <b>Enhanced</b> or <b>Premium</b> if it offers them. ▶️ plays a sample first.</p>'+
+      '<p class="trick">⭐ The four that sound best for reading spellings to a child: '+
+      '<b>Evan</b> and <b>Jamie</b> (male), <b>Zoe</b> and <b>Matilda</b> (female). '+
+      'Download any of those and the app will use it automatically — you don\'t have to change '+
+      'anything in here.</p>'+
 
       '<p><b>🤖 Android</b><br>'+
       'Settings → Accessibility → <b>Text-to-speech output</b>.<br>'+
       'Check the engine is <b>Google Text-to-Speech</b>, tap the <b>⚙️ gear</b> beside it, then '+
       '<b>Install voice data</b> → English → download a voice. Pick one described as '+
       '<b>Natural</b> or <b>High quality</b> if you get the choice.<br>'+
-      'On Samsung phones it may be under Settings → <b>General management</b> → Text-to-speech instead.</p>'+
+      'On Samsung phones it is usually Settings → <b>General management</b> → <b>Text-to-speech</b> instead.<br>'+
+      '<b>To hear a voice before you keep it:</b> on that screen tap the <b>⚙️ gear</b> next to the engine, '+
+      'set the language and voice, then tap <b>Listen to an example</b>. Samsung has its own engine as well '+
+      'as Google\'s — try both, they sound quite different.</p>'+
 
       '<p class="trick">Whichever device, the new voice replaces the tinny one under the same name — '+
       'come back here, press play again, and it will sound like a different app.</p>'+
@@ -2259,6 +2272,9 @@ function parentMore(a){
       '<p class="muted" style="margin-top:8px">Tap ▶️ to hear one. Then pin your favourites to the '+
       'Male and Female buttons above — that\'s what the children will hear. '+
       'Any marked <span class="tag">HD</span> are the good ones.</p>'+
+      '<p class="muted" style="margin-top:6px">⭐ Worth downloading if you don\'t have them: '+
+      '<b>Evan</b> or <b>Jamie</b> for the male voice, <b>Zoe</b> or <b>Matilda</b> for the female. '+
+      'They are the most natural of the lot, and the app prefers them automatically.</p>'+
       '<div id="vlist"></div>'+
       '<div class="tip" style="margin-top:12px"><h3>🤖 Everything sounds robotic?</h3>'+
       '<p>iPads ship with small, low-quality versions of each voice. The good ones are a free download '+
