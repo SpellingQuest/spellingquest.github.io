@@ -1038,7 +1038,7 @@ function parseWordText(text){
 /* ===================== SPELLING QUEST — core ===================== */
 
 const STORE_KEY = 'spellingQuest.v1';
-const BUILD = '2026-08-13';
+const BUILD = '2026-08-14';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👋', cls:'d1', sub:'Read them out loud + learn the rule' },
@@ -1682,9 +1682,30 @@ function topbar(a, opts){
 }
 
 /* ---------------- home / day map ---------------- */
+/* A quiet one-liner at the top of the child's own screen. Plenty of parents will
+   hand the iPad straight over without opening the grown-up area, and the voice is
+   the first thing they'll judge. */
+function voiceStrip(){
+  const c = el('<div class="card" style="padding:12px 14px;border:2px solid var(--brand)">'+
+    '<div class="row" style="align-items:center;gap:10px">'+
+      '<div style="flex:1;font-size:14.5px;line-height:1.35"><b>🔊 Check the voice first</b>'+
+      '<div class="muted" style="font-size:13px">This reads every word aloud. 60 seconds to make it good.</div></div>'+
+      '<button class="btn blue" id="vsplay" style="padding:11px 14px">▶️</button>'+
+    '</div>'+
+    '<div class="row" style="margin-top:8px">'+
+      '<button class="btn green" id="vsok" style="flex:1;padding:10px;font-size:15px">👍 Fine</button>'+
+      '<button class="btn grey" id="vsbad" style="flex:1;padding:10px;font-size:15px">🤖 Robotic</button>'+
+    '</div></div>');
+  c.querySelector('#vsplay').onclick = () => { unlockAudio(); stopSpeech(); say(VOICE_TEST, { rate:1.0 }); };
+  c.querySelector('#vsok').onclick = () => { DB.voiceOk = true; save(); sfx('good'); toast('🔊 Voice sorted'); go('home'); };
+  c.querySelector('#vsbad').onclick = () => { unlockAudio(); go('parent','words'); };
+  return c;
+}
+
 function renderHome(a){
   buildCurrentWeek();
   topbar(a);
+  if (!DB.voiceOk) a.appendChild(voiceStrip());
   const p = prog();
   const done = DAYS.filter(d => p.days[d.key] && p.days[d.key].done).length;
 
@@ -1897,13 +1918,20 @@ function voiceCheckCard(){
     '<div id="vcfix" style="display:none">'+
       '<div class="tip" style="margin-top:12px"><h3>🤖 Here\'s the fix — it\'s free</h3>'+
       '<p>Apple ships phones and iPads with a small, tinny version of each voice, and '+
-      'doesn\'t allow apps to download the good one for you. You have to grab it once, '+
-      'and then every app on the device sounds better.</p>'+
-      '<p><b>On iPhone or iPad:</b> Settings → Accessibility → Spoken Content → Voices → English → '+
-      'tap a voice and download the one marked <b>Enhanced</b> or <b>Premium</b>.</p>'+
-      '<p class="trick">It replaces the tinny one under the same name — come back, press play again, '+
-      'and it will be a different app.</p>'+
-      '<p style="font-size:14px">They\'re 100–500&nbsp;MB. That size <i>is</i> the quality. Use wifi.</p>'+
+      'doesn\'t allow apps to download the good one for you. You grab it once, and then '+
+      'every app on the device sounds better.</p>'+
+      '<p class="trick">Easiest way, and it works on every iOS version: open <b>Settings</b>, '+
+      'pull down to get the search box, type <b>Voices</b>, and tap the <b>Voices</b> result.</p>'+
+      '<p><b>Or find it by hand:</b> Settings → Accessibility → <b>Read &amp; Speak</b> → Voices → English. '+
+      'On older iPhones and iPads that middle one is called <b>Spoken Content</b> instead — Apple renamed '+
+      'it, which is why older instructions send you round in circles.</p>'+
+      '<p>Then tap <b>English</b>, find a voice, and tap the <b>cloud ☁️ icon</b> next to the '+
+      '<b>Enhanced</b> or <b>Premium</b> version to download it.</p>'+
+      '<p class="trick">It replaces the tinny one under the same name — come back here, press play '+
+      'again, and it will sound like a different app.</p>'+
+      '<p style="font-size:14px">They are around 100–500&nbsp;MB, so use wifi. If a download sticks at '+
+      'nothing for a long time, that is a known iOS bug — leave the Settings screen open, or restart '+
+      'the phone and start it again.</p>'+
       '</div>'+
       '<button class="btn blue big" id="vcagain" style="margin-top:10px">▶️ I\'ve downloaded it — play again</button>'+
       '<button class="btn grey big" id="vcskip" style="margin-top:8px">Skip for now</button>'+
