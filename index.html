@@ -1072,11 +1072,71 @@ const BADGES = [
 /* ---- access ----
    One code per school year, printed on the welcome sheet the store delivers.
    Checked entirely on the device, so it keeps working offline for ever. */
-const ACCESS_CODES = ['BEE2627','BEE2728','BEE2829','BEE2930','BEE3031'];
 const TRIAL_DAYS = 7;
 
+/* Access codes are never stored in this file — only their fingerprints. Someone
+   reading the page source finds 64 hex characters per code and no way back to
+   the code itself, and the codes are long and random enough that guessing is
+   not on the table either.
+
+   A small SHA-256 rather than crypto.subtle: that one is asynchronous and only
+   exists over https, and hasAccess() has to answer before anything renders —
+   including when the page is a saved copy or the network is down. */
+const CODE_SALT = 'SpellingQuest/v1/';
+const CODE_HASHES = [
+  '1bb8b64e5eb98c97d73c967f9cae90deb7d4c26734c85b9179c50e32b5bdd3a5',
+  'cd6f4b3fa5409e2f7f5aa7db9bc12aba396fe9bfc1e9402fa8f598d70ee7eb34',
+  '66aeccf744626884c451df27838361bababe178fa896c429fda643ef40fe5dee',
+  'ac8baf21c7092b7fff2ec75da54bd81fac7e1ac621f8f7dec77220c0b2af1c53',
+  'c22add296c477dd9d621344e1efb1cb2037f2dde595c8b04d53c6f8c645fa420'
+];
+const SHA_K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+function sha256(str){
+  const rr = (v,n) => (v>>>n)|(v<<(32-n));
+  let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,
+           0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const by = [];
+  for (let i=0;i<str.length;i++){
+    const c = str.charCodeAt(i);
+    if (c<128) by.push(c);
+    else if (c<2048) by.push(192|(c>>6),128|(c&63));
+    else by.push(224|(c>>12),128|((c>>6)&63),128|(c&63));
+  }
+  const bits = by.length*8;
+  by.push(0x80);
+  while (by.length % 64 !== 56) by.push(0);
+  by.push(0,0,0,0,(bits>>>24)&255,(bits>>>16)&255,(bits>>>8)&255,bits&255);
+  const w = new Array(64);
+  for (let i=0;i<by.length;i+=64){
+    for (let j=0;j<16;j++)
+      w[j] = (by[i+j*4]<<24)|(by[i+j*4+1]<<16)|(by[i+j*4+2]<<8)|by[i+j*4+3];
+    for (let j=16;j<64;j++){
+      const a1 = w[j-15], a2 = w[j-2];
+      const s0 = rr(a1,7)^rr(a1,18)^(a1>>>3);
+      const s1 = rr(a2,17)^rr(a2,19)^(a2>>>10);
+      w[j] = (w[j-16]+s0+w[j-7]+s1)|0;
+    }
+    let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for (let j=0;j<64;j++){
+      const S1 = rr(e,6)^rr(e,11)^rr(e,25);
+      const t1 = (h + S1 + ((e&f)^(~e&g)) + SHA_K[j] + w[j])|0;
+      const S0 = rr(a,2)^rr(a,13)^rr(a,22);
+      const t2 = (S0 + ((a&b)^(a&c)^(b&c)))|0;
+      h=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0;
+    }
+    H = [(H[0]+a)|0,(H[1]+b)|0,(H[2]+c)|0,(H[3]+d)|0,
+         (H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];
+  }
+  return H.map(x => (x>>>0).toString(16).padStart(8,'0')).join('');
+}
 function normCode(s){ return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
-function codeOk(s){ return ACCESS_CODES.indexOf(normCode(s)) >= 0; }
+function codeFingerprint(s){ return sha256(CODE_SALT + normCode(s)); }
+/* Takes either a typed code or an already-stored fingerprint, so an unlocked
+   device keeps working without the code ever being written to the iPad. */
+function codeOk(s){
+  const v = String(s||'');
+  return CODE_HASHES.indexOf(v) >= 0 || CODE_HASHES.indexOf(codeFingerprint(v)) >= 0;
+}
 
 /* ---- Lemon Squeezy licence keys ----
    Their licence API is callable straight from the browser, so there is still no
@@ -1201,6 +1261,9 @@ function load(){
   DB.kids.forEach(k => { k.prog = k.prog || {}; k.badges = k.badges || [];
     // saves made before test days existed were all built around a Monday test
     if (typeof k.testDay !== 'number') k.testDay = 1; });
+  // saves from before codes were fingerprinted hold a retired plaintext code;
+  // drop it rather than leave a dead value blocking the trial banner
+  if (DB.accessCode && !codeOk(DB.accessCode)) DB.accessCode = '';
   DB.weekRawByKid = DB.weekRawByKid || {};
   DB.beeByKid = DB.beeByKid || {};
   DB.beeTargetByKid = DB.beeTargetByKid || {};
@@ -1661,7 +1724,9 @@ function renderGate(a){
     const v = (c.querySelector('#ac').value || '').trim();
     if (!v) return;
     if (codeOk(v)){                                   // a code you handed out yourself
-      DB.accessCode = normCode(v); save(); return unlocked();
+      // store the fingerprint, never the code — so the code isn't sitting in
+      // localStorage on a child's iPad either
+      DB.accessCode = codeFingerprint(v); save(); return unlocked();
     }
     if (!looksLikeKey(v)) return fail('That doesn\'t look right — check the email');
     btn.disabled = true; btn.textContent = 'Checking…';
@@ -2404,7 +2469,7 @@ function parentMore(a){
       ? '<p class="muted">Unlocked with your licence key. Ends in <b>'+
         esc(String(DB.licence.key).slice(-6))+'</b>'+(DB.licence.pending?' (will confirm when online)':'')+'.</p>'
       : DB.accessCode
-      ? '<p class="muted">Unlocked with code <b>'+esc(DB.accessCode)+'</b>. Nothing expires on this device.</p>'
+      ? '<p class="muted">Unlocked with an access code. Nothing expires on this device.</p>'
       : (left > 0
           ? '<p class="muted">Free look — <b>'+left+' day'+(left===1?'':'s')+'</b> left. Enter your code any time.</p>'
           : '<p class="muted">No code entered yet.</p>'))+
@@ -2414,7 +2479,7 @@ function parentMore(a){
   a.appendChild(acc);
   acc.querySelector('#acsave').onclick = () => {
     const v = (acc.querySelector('#acin').value||'').trim();
-    if (codeOk(v)){ DB.accessCode = normCode(v); save(); sfx('good'); toast('🔑 Unlocked');
+    if (codeOk(v)){ DB.accessCode = codeFingerprint(v); save(); sfx('good'); toast('🔑 Unlocked');
       return setTimeout(()=>go('parent','more'), 500); }
     if (!looksLikeKey(v)) { sfx('wrong'); return toast('❌ That code didn\'t work'); }
     toast('Checking…');
