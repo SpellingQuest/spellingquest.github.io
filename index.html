@@ -1086,6 +1086,15 @@ function codeOk(s){ return ACCESS_CODES.indexOf(normCode(s)) >= 0; }
    locks a child out mid-week. */
 const LS_API = 'https://api.lemonsqueezy.com/v1/licenses';
 const RECHECK_DAYS = 7;
+
+/* ---- how someone buys it ----------------------------------------------
+   CHECKOUT_URL is the Lemon Squeezy link, once the shop is approved and
+   published. Until then it stays empty and the buy button falls back to
+   BUY_EMAIL instead — so there is never a moment where a parent taps
+   "get it" and lands nowhere. Filling either one in is a one-line change. */
+const CHECKOUT_URL = '';                    // e.g. 'https://xxx.lemonsqueezy.com/buy/xxxx'
+const BUY_EMAIL    = '';                    // e.g. 'spellingquest.help@gmail.com'
+const PRICE_LINE   = '$40 for the whole school year';
 /* Only these mean "this key is genuinely finished". Anything else — a network
    error, a server wobble, an activation limit — leaves the family alone. */
 const DEAD_KEY = /expired|disabled|inactive|not found|revoked/i;
@@ -1567,6 +1576,43 @@ function render(arg){
   if (VIEW === 'badges') return renderBadges(a);
 }
 
+/* ---------------- buying it ----------------
+   One button, three possible destinations, decided at tap time:
+   a real checkout if we have one, an email if we don't yet, and a sensible
+   sentence if we have neither. A parent who wants to pay always gets an
+   answer. */
+function buyNow(){
+  sfx('tap');
+  if (CHECKOUT_URL){ window.open(CHECKOUT_URL, '_blank', 'noopener'); return; }
+
+  const sub  = encodeURIComponent('Spelling Quest — I\'d like the full year');
+  const body = encodeURIComponent(
+    'Hi!\n\nWe\'ve been trying Spelling Quest and we\'d like it for the school year.\n\n' +
+    'Could you send me the link to pay and my key?\n\nThank you!');
+
+  const ov = el('<div style="position:fixed;inset:0;background:rgba(30,15,60,.72);z-index:9999;'+
+    'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
+  const box = el('<div class="card" style="max-width:380px;width:100%;text-align:center;margin:0">'+
+      '<div style="font-size:40px">🐝</div>'+
+      '<h2 style="font-size:21px;margin:4px 0 2px">Get the full school year</h2>'+
+      '<p class="muted" style="margin-bottom:10px"><b>'+PRICE_LINE+'.</b><br>'+
+        'Every child in your family. All your devices. No renewals to think about.</p>'+
+      (BUY_EMAIL
+        ? '<a class="btn green big" style="display:block;text-decoration:none" '+
+            'href="mailto:'+BUY_EMAIL+'?subject='+sub+'&body='+body+'">✉️ Ask for your key</a>'+
+          '<p class="muted" style="margin-top:9px;font-size:13px">Or write to<br>'+
+            '<b>'+esc(BUY_EMAIL)+'</b></p>'
+        : '<p class="muted" style="margin-top:4px">Message the parent who shared this link '+
+          'with you — they\'ll get you set up.</p>')+
+      '<button class="btn grey" id="bxno" style="width:100%;margin-top:10px">Not just now</button>'+
+    '</div>');
+  ov.appendChild(box);
+  const shut = () => ov.remove();
+  box.querySelector('#bxno').onclick = shut;
+  ov.onclick = e => { if (e.target === ov) shut(); };
+  document.body.appendChild(ov);
+}
+
 /* ---------------- the way in ---------------- */
 function renderGate(a){
   const left = trialLeft();
@@ -1580,12 +1626,19 @@ function renderGate(a){
 
   const c = el('<div class="card center">'+
     (expired ? '<div style="font-size:44px">⏳</div><h2>Your free week is up</h2>'+
-               '<p class="muted">Hope they enjoyed it! Pop in your access code to carry on.</p>'
+               '<p class="muted">Hope they enjoyed it! Here\'s how to carry on.</p>'+
+               '<button class="btn green big" id="acbuy" style="margin-top:12px">'+
+                 'Get the full school year · $40</button>'+
+               '<p class="muted" style="font-size:13px;margin-top:7px">'+
+                 'Every child in your family. All your devices.</p>'+
+               '<div style="border-top:1px solid rgba(0,0,0,.12);margin:15px 0 11px"></div>'+
+               '<p class="muted" style="font-size:13.5px">Already bought it? Pop your key in.</p>'
              : '<h2 style="font-size:21px">Enter your access code</h2>'+
                '<p class="muted">It came with your welcome email.</p>')+
     '<input class="ti" id="ac" placeholder="Paste your key or code" '+
       'style="text-align:center;font-size:17px;letter-spacing:1px;margin-top:10px">'+
-    '<button class="btn green big" id="acgo" style="margin-top:10px">Unlock</button>'+
+    '<button class="btn '+(expired ? 'blue' : 'green big')+'" id="acgo" '+
+      'style="margin-top:10px'+(expired ? ';width:100%' : '')+'">Unlock</button>'+
     (left === null
       ? '<button class="btn link" id="actry" style="width:100%;margin-top:8px">Have a free look for a week first</button>'
       : (left > 0 ? '<p class="muted" style="margin-top:10px">Free look: '+left+' day'+(left===1?'':'s')+' left</p>' : ''))+
@@ -1629,6 +1682,8 @@ function renderGate(a){
   c.querySelector('#ac').addEventListener('keydown', e => { if (e.key === 'Enter') tryIt(); });
   const t = c.querySelector('#actry');
   if (t) t.onclick = () => { DB.trialStart = Date.now(); save(); sfx('good'); go('pick'); };
+  const bb = c.querySelector('#acbuy');
+  if (bb) bb.onclick = buyNow;
 
   a.appendChild(el('<p class="muted center" style="margin-top:14px;color:rgba(255,255,255,.6)">'+
     'No code yet? Tap <b>Have a free look</b> above — a week free, no card needed.</p>'));
@@ -1639,7 +1694,11 @@ function renderPick(a){
   const left = trialLeft();
   if (left !== null && left > 0 && !DB.accessCode){
     const w = el('<div class="card" style="background:#fff4d6;padding:12px;text-align:center">'+
-      '<b style="color:#8a5a00">Free look · '+left+' day'+(left===1?'':'s')+' left</b></div>');
+      '<b style="color:#8a5a00">Free look · '+left+' day'+(left===1?'':'s')+' left</b>'+
+      '<div><button class="btn link" id="pkbuy" style="color:#8a5a00;font-size:13.5px;'+
+        'padding:3px 2px 0;text-decoration:underline">Loving it? Get the school year · $40</button></div>'+
+      '</div>');
+    w.querySelector('#pkbuy').onclick = buyNow;
     a.appendChild(w);
   }
   a.appendChild(el(
