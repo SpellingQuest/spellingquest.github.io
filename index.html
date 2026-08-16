@@ -1276,7 +1276,187 @@ function load(){
   });
   DB.perKid = true;
 }
-function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){} }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){}
+  try{ scheduleSync(); }catch(e){} }
+
+/* ---------------- keeping the family's devices in step ----------------
+   A child does Monday on the iPad downstairs, then Tuesday on a phone upstairs,
+   and a parent checks from a third device while out. That only works if progress
+   travels between devices, so it does.
+
+   It travels under a FINGERPRINT of the family code — yes, literally a
+   fingerprint: a one-way scramble. The same code always produces the same
+   64-character string, and there is no way back from that string to the code.
+   It's the only thing the server ever sees, so the database cannot say who
+   anybody is. No email, no real name, no birthday, no school.
+
+   During the free trial there is no code, so there's no fingerprint and nothing
+   is stored anywhere at all. */
+const SB_URL = 'https://nkkckcnclqwpvvwujedg.supabase.co';
+const SB_KEY = 'sb_publishable_jTvqG53LAS1LsP7A8evx2Q_RgekRHXZ';
+const FAMILY_SALT = 'SpellingQuest/family/';
+let SYNC = { state:'idle', last:0, timer:null, busy:false, err:'' };
+
+function familyFingerprint(){
+  if (!DB) return null;
+  if (DB.licence && DB.licence.key) return sha256(FAMILY_SALT + normCode(DB.licence.key));
+  if (DB.accessCode) return sha256(FAMILY_SALT + DB.accessCode);
+  return null;                       // free trial — nothing to sync to
+}
+
+function sbRpc(fn, body){
+  return fetch(SB_URL + '/rest/v1/rpc/' + fn, {
+    method:'POST',
+    headers:{ apikey:SB_KEY, Authorization:'Bearer ' + SB_KEY, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  }).then(r => { if (!r.ok) throw new Error('sync ' + r.status); return r.json(); });
+}
+
+/* The same rule the database uses: progress only ever moves forwards. A device
+   that has been offline can add what it did, but can never undo what another
+   device already finished. */
+function forwardMerge(a, b){
+  if (a === null || a === undefined) return b;
+  if (b === null || b === undefined) return a;
+  const objA = typeof a === 'object' && !Array.isArray(a);
+  const objB = typeof b === 'object' && !Array.isArray(b);
+  if (objA && objB){
+    const out = Object.assign({}, a);
+    Object.keys(b).forEach(k => { out[k] = forwardMerge(a[k], b[k]); });
+    return out;
+  }
+  if (typeof a === 'number'  && typeof b === 'number')  return Math.max(a, b);
+  if (typeof a === 'boolean' && typeof b === 'boolean') return a || b;
+  return b;
+}
+
+function syncPayload(fp, k){
+  return { p_family_hash: fp, p_kid_id: k.id, p_nickname: k.name || '',
+    p_grade:    (typeof k.grade   === 'number') ? k.grade   : null,
+    p_test_day: (typeof k.testDay === 'number') ? k.testDay : null,
+    p_xp: k.xp || 0, p_streak: k.streak || 0,
+    p_badges: k.badges || [], p_progress: k.prog || {}, p_missed: [],
+    p_week_words: (DB.weekRawByKid && DB.weekRawByKid[k.id]) || '' };
+}
+
+/* Fold what the other devices know back into this one. */
+function absorb(rows){
+  let changed = false;
+  (rows || []).forEach(r => {
+    let k = DB.kids.find(x => x.id === r.kid_id);
+    if (!k){
+      // a child set up on another device — bring them across
+      k = blankKid(r.nickname || 'Player',
+                   AVATARS[DB.kids.length % AVATARS.length],
+                   (typeof r.grade === 'number') ? r.grade : 1);
+      k.id = r.kid_id;
+      DB.kids.push(k);
+      changed = true;
+    }
+    const xp = Math.max(k.xp || 0, r.xp || 0);
+    const st = Math.max(k.streak || 0, r.streak || 0);
+    if (xp !== (k.xp||0) || st !== (k.streak||0)) changed = true;
+    k.xp = xp; k.streak = st;
+
+    if (!k.name && r.nickname){ k.name = r.nickname; changed = true; }
+    if (typeof k.grade   !== 'number' && typeof r.grade    === 'number'){ k.grade   = r.grade;    changed = true; }
+    if (typeof k.testDay !== 'number' && typeof r.test_day === 'number'){ k.testDay = r.test_day; changed = true; }
+
+    const badges = Array.from(new Set([].concat(k.badges || [], r.badges || [])));
+    if (badges.length !== (k.badges || []).length) changed = true;
+    k.badges = badges;
+
+    const prog = forwardMerge(k.prog || {}, r.progress || {});
+    if (JSON.stringify(prog) !== JSON.stringify(k.prog || {})) changed = true;
+    k.prog = prog;
+
+    // only take the word list if this device hasn't got a real one of its own,
+    // so a parent typing this week's list can't be overwritten mid-sentence
+    DB.weekRawByKid = DB.weekRawByKid || {};
+    const mine = (DB.weekRawByKid[k.id] || '').trim();
+    if (r.week_words && (!mine || mine === SAMPLE.trim())){
+      DB.weekRawByKid[k.id] = r.week_words; changed = true;
+    }
+  });
+
+  /* A new device starts life with two placeholder children ("Player 1",
+     "Player 2"). Once the real family arrives from another device, those
+     placeholders are just clutter — a parent entering the code on their phone
+     should see their own children, not four names. Only ever drop a placeholder
+     that has never been used. */
+  const remoteIds = (rows || []).map(r => r.kid_id);
+  if (remoteIds.length){
+    const untouched = k => /^(Player|Kid) \d+$/.test(k.name || '') &&
+                           !(k.xp > 0) && !(k.streak > 0) &&
+                           !(k.badges || []).length &&
+                           !Object.keys(k.prog || {}).length &&
+                           remoteIds.indexOf(k.id) < 0;
+    const keep = DB.kids.filter(k => !untouched(k));
+    if (keep.length && keep.length !== DB.kids.length){
+      DB.kids.forEach(k => { if (untouched(k) && DB.weekRawByKid) delete DB.weekRawByKid[k.id]; });
+      if (DB.active && !keep.some(k => k.id === DB.active)) DB.active = null;
+      DB.kids = keep;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+function paintSync(){
+  const el = document.getElementById('syncline');
+  if (!el) return;
+  const map = { idle:'', working:'Syncing…', ok:'✅ Up to date on all your devices',
+                offline:'📴 No connection — it will catch up later',
+                later:'⏳ Couldn\'t reach the sync just now — it will retry' };
+  el.textContent = map[SYNC.state] || '';
+}
+
+function syncNow(opts){
+  opts = opts || {};
+  const fp = familyFingerprint();
+  if (!fp) return Promise.resolve(false);
+  if (SYNC.busy) return Promise.resolve(false);
+  if (typeof navigator !== 'undefined' && navigator.onLine === false){
+    SYNC.state = 'offline'; paintSync(); return Promise.resolve(false);
+  }
+  SYNC.busy = true; SYNC.state = 'working'; SYNC.err = ''; paintSync();
+  return sbRpc('pull_progress', { p_family_hash: fp })
+    .then(rows => {
+      const changed = absorb(rows);
+      return Promise.all(DB.kids.map(k => sbRpc('push_progress', syncPayload(fp, k))))
+             .then(() => changed);
+    })
+    .then(changed => {
+      SYNC.busy = false; SYNC.state = 'ok'; SYNC.last = Date.now();
+      // write straight to storage rather than save(), or we'd trigger another sync
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){}
+      paintSync();
+      if (changed && opts.repaint !== false) render();
+      return changed;
+    })
+    .catch(e => {
+      SYNC.busy = false; SYNC.state = 'later'; SYNC.err = String((e && e.message) || e);
+      paintSync();
+      return false;                       // never let a sync problem break a lesson
+    });
+}
+
+/* Every save nudges a sync, debounced so a child racing through a quiz doesn't
+   fire twenty of them. */
+function scheduleSync(){
+  if (!familyFingerprint()) return;
+  clearTimeout(SYNC.timer);
+  SYNC.timer = setTimeout(() => syncNow({ repaint:false }), 2500);
+}
+
+function startSync(){
+  if (!familyFingerprint()) return;
+  syncNow();
+  // coming back to the app is exactly when another device's work should appear
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) syncNow(); });
+  window.addEventListener('online', () => syncNow());
+}
+
 
 function kid(){ return DB.kids.find(k => k.id === DB.active) || DB.kids[0]; }
 
@@ -2569,8 +2749,27 @@ function parentMore(a){
           : '<p class="muted">No code entered yet.</p>'))+
     '<div class="row" style="align-items:center;margin-top:8px">'+
     '<input class="ti" id="acin" placeholder="Access code" style="flex:1;text-align:center;letter-spacing:2px">'+
-    '<button class="btn grey" id="acsave">Save</button></div></div>');
+    '<button class="btn grey" id="acsave">Save</button></div>'+
+    (familyFingerprint()
+      ? '<div style="border-top:1px solid rgba(0,0,0,.1);margin:14px 0 10px"></div>'+
+        '<h3 style="font-size:15px">\ud83d\udd04 Your devices</h3>'+
+        '<p class="muted" style="font-size:13px;margin-top:4px">Stars and finished days follow your '+
+        'children to any device with your code on it \u2014 the iPad, your phone, anywhere. '+
+        'You can check how they\'re getting on without being in the room.</p>'+
+        '<p class="muted" id="syncline" style="margin-top:8px;font-size:13.5px"></p>'+
+        '<button class="btn grey" id="syncgo" style="width:100%;margin-top:6px;font-size:14px">Sync now</button>'+
+        '<p class="muted" style="font-size:12px;margin-top:8px">We never store a real name, email, '+
+        'birthday or school \u2014 only a nickname and their stars, under a scrambled version of your '+
+        'code that can\'t be turned back into it.</p>'
+      : '')+
+    '</div>');
   a.appendChild(acc);
+  const sg = acc.querySelector('#syncgo');
+  if (sg) sg.onclick = () => { sfx('tap'); paintSync(); syncNow().then(ch => {
+    toast(SYNC.state === 'ok' ? (ch ? '\u2705 Brought across from your other device' : '\u2705 Already up to date')
+                              : '\u23f3 Couldn\'t reach it just now \u2014 it will retry', 3500); }); };
+  setTimeout(paintSync, 0);
+
   acc.querySelector('#acsave').onclick = () => {
     const v = (acc.querySelector('#acin').value||'').trim();
     if (codeOk(v)){ DB.accessCode = codeFingerprint(v); save(); sfx('good'); toast('🔑 Unlocked');
@@ -2660,6 +2859,7 @@ function boot(){
   try{ recheckLicence(); }catch(e){}
   DB.active = null;
   go(hasAccess() ? 'pick' : 'gate');
+  try{ startSync(); }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', boot);
 
