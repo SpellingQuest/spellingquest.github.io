@@ -1233,7 +1233,7 @@ function blankKid(name, avatar, grade){
 function defaultDB(){
   return {
     v:1,
-    kids:[ blankKid('Player 1','🦖',1), blankKid('Player 2','🦄',3) ],
+    kids:[ blankKid('Player 1','🦖',1) ],
     active:null,
     unlockAll:false,
     pin:'',
@@ -1332,6 +1332,7 @@ function forwardMerge(a, b){
 
 function syncPayload(fp, k){
   return { p_family_hash: fp, p_kid_id: k.id, p_nickname: k.name || '',
+    p_avatar: k.avatar || '', p_removed: !!k.removed,
     p_grade:    (typeof k.grade   === 'number') ? k.grade   : null,
     p_test_day: (typeof k.testDay === 'number') ? k.testDay : null,
     p_xp: k.xp || 0, p_streak: k.streak || 0,
@@ -1343,11 +1344,20 @@ function syncPayload(fp, k){
 function absorb(rows){
   let changed = false;
   (rows || []).forEach(r => {
+    if (r.removed){                       // removed on another device — take them off this one
+      const i = DB.kids.findIndex(x => x.id === r.kid_id);
+      if (i >= 0){
+        if (DB.active === DB.kids[i].id) DB.active = null;
+        if (DB.weekRawByKid) delete DB.weekRawByKid[r.kid_id];
+        DB.kids.splice(i, 1); changed = true;
+      }
+      return;
+    }
     let k = DB.kids.find(x => x.id === r.kid_id);
     if (!k){
       // a child set up on another device — bring them across
       k = blankKid(r.nickname || 'Player',
-                   AVATARS[DB.kids.length % AVATARS.length],
+                   r.avatar || AVATARS[DB.kids.length % AVATARS.length],
                    (typeof r.grade === 'number') ? r.grade : 1);
       k.id = r.kid_id;
       DB.kids.push(k);
@@ -1359,6 +1369,7 @@ function absorb(rows){
     k.xp = xp; k.streak = st;
 
     if (!k.name && r.nickname){ k.name = r.nickname; changed = true; }
+    if (r.avatar && k.avatar !== r.avatar){ k.avatar = r.avatar; changed = true; }
     if (typeof k.grade   !== 'number' && typeof r.grade    === 'number'){ k.grade   = r.grade;    changed = true; }
     if (typeof k.testDay !== 'number' && typeof r.test_day === 'number'){ k.testDay = r.test_day; changed = true; }
 
@@ -1423,7 +1434,13 @@ function syncNow(opts){
   return sbRpc('pull_progress', { p_family_hash: fp })
     .then(rows => {
       const changed = absorb(rows);
-      return Promise.all(DB.kids.map(k => sbRpc('push_progress', syncPayload(fp, k))))
+      /* Don't send placeholder children. An untouched "Player 2" that nobody has
+         used would otherwise land on every other device in the family, where it
+         can't be recognised as a placeholder any more. */
+      const worthSending = DB.kids.filter(k =>
+        k.removed || (k.xp > 0) || (k.streak > 0) || (k.badges || []).length ||
+        Object.keys(k.prog || {}).length || !/^(Player|Kid) \d+$/.test(k.name || ''));
+      return Promise.all(worthSending.map(k => sbRpc('push_progress', syncPayload(fp, k))))
              .then(() => changed);
     })
     .then(changed => {
@@ -2475,6 +2492,11 @@ function parentKids(a){
         'Day 1 is test day — when the new list comes home — and Day 7 is the night before the next test.</div>'+
       '<label class="fl">Character</label><div class="av-grid"></div>'+
       '<div class="muted" style="margin-top:10px">Level '+level(k)+' · '+(k.xp||0)+' stars · '+(k.badges.length)+' badges</div>'+
+      (DB.kids.length > 1
+        ? '<button class="btn grey" data-f="remove" style="width:100%;margin-top:10px;font-size:14px">'+
+          '🗑️ Remove this child</button>'
+        : '<div class="muted" style="margin-top:10px;font-size:12.5px">Add another child before you '+
+          'can remove this one — the app needs at least one.</div>')+
     '</div>');
     c.querySelector('[data-f="name"]').onchange = e => { k.name = e.target.value || 'Kid'; save(); };
     c.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { k.grade = +b.dataset.g; save(); go('parent','kids'); });
@@ -2483,6 +2505,39 @@ function parentKids(a){
       toast('📅 Day 1 is now ' + WEEKDAYS[k.testDay]);
       go('parent','kids');
     });
+    const rm = c.querySelector('[data-f="remove"]');
+    if (rm) rm.onclick = () => {
+      /* Deliberately two taps and a typed-out warning: this throws away a
+         child's stars everywhere, not just on this device. */
+      const box = el('<div style="position:fixed;inset:0;background:rgba(30,15,60,.72);z-index:9999;'+
+        'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
+      const card = el('<div class="card" style="max-width:360px;width:100%;text-align:center;margin:0">'+
+        '<div style="font-size:38px">'+k.avatar+'</div>'+
+        '<h2 style="font-size:20px;margin:4px 0 6px">Remove '+esc(k.name)+'?</h2>'+
+        '<p class="muted">Their '+(k.xp||0)+' stars and every finished day go for good — on this '+
+        'device and on your other ones. This can\'t be undone.</p>'+
+        '<button class="btn grey" id="rmyes" style="width:100%;margin-top:12px">Yes, remove '+esc(k.name)+'</button>'+
+        '<button class="btn green big" id="rmno" style="width:100%;margin-top:8px">Keep them</button>'+
+      '</div>');
+      box.appendChild(card); document.body.appendChild(box);
+      card.querySelector('#rmno').onclick = () => box.remove();
+      card.querySelector('#rmyes').onclick = () => {
+        box.remove();
+        const gone = { id:k.id, name:k.name, avatar:k.avatar, removed:true,
+                       xp:0, streak:0, badges:[], prog:{} };
+        const i = DB.kids.findIndex(x => x.id === k.id);
+        if (i >= 0) DB.kids.splice(i, 1);
+        if (DB.active === k.id) DB.active = null;
+        if (DB.weekRawByKid) delete DB.weekRawByKid[k.id];
+        save();
+        // tell the other devices, so they don't put the child back
+        const fp = familyFingerprint();
+        if (fp){ try{ sbRpc('push_progress', syncPayload(fp, gone)).catch(()=>{}); }catch(e){} }
+        sfx('tap'); toast('Removed ' + gone.name, 3000);
+        go('parent','kids');
+      };
+    };
+
     const av = c.querySelector('.av-grid');
     AVATARS.forEach(x => {
       const b = el('<button class="av'+(k.avatar===x?' on':'')+'">'+x+'</button>');
@@ -2492,7 +2547,7 @@ function parentKids(a){
     a.appendChild(c);
   });
   const add = el('<button class="btn big blue">➕ Add another child</button>');
-  add.onclick = () => { DB.kids.push(blankKid('Kid '+(DB.kids.length+1), AVATARS[DB.kids.length%AVATARS.length], 2)); save(); go('parent','kids'); };
+  add.onclick = () => { DB.kids.push(blankKid('New child', AVATARS[DB.kids.length%AVATARS.length], 2)); save(); go('parent','kids'); };
   a.appendChild(add);
 }
 
