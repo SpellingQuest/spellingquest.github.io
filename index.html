@@ -1942,6 +1942,26 @@ function renderGate(a){
 
   const unlocked = () => {
     sfx('win'); confetti(70);
+    /* Don't drop them straight onto the profile picker. On a device that has
+       never been used the only name there is a placeholder, so a parent taps
+       into a child that isn't theirs — and then the list changes underneath
+       them a few seconds later when their real family arrives. Wait for the
+       first sync, with something honest on screen while it happens. */
+    if (familyFingerprint()){
+      a.innerHTML = '';
+      a.appendChild(el(
+        '<div class="center white" style="padding:60px 0 10px">'+
+          '<div style="font-size:52px">🐝</div>'+
+          '<h1 style="font-size:26px;margin:10px 0 6px">Unlocked!</h1>'+
+          '<p class="muted" id="fetchline">Just fetching your family…</p>'+
+        '</div>'));
+      let done = false;
+      const onward = () => { if (done) return; done = true; go('pick'); };
+      // never leave anyone staring at this: go through regardless after 6s
+      setTimeout(onward, 6000);
+      syncNow({ repaint:false }).then(onward).catch(onward);
+      return;
+    }
     toast('🎉 Unlocked — enjoy!', 3000);
     setTimeout(()=>go('pick'), 700);
   };
@@ -2002,7 +2022,7 @@ function renderPick(a){
     '<div class="center white" style="padding:26px 0 10px">'+
       '<div style="font-size:52px">🐝</div>'+
       '<h1 style="font-size:34px;margin:6px 0 2px">Spelling Quest</h1>'+
-      '<p class="muted">Who\'s playing today?</p>'+
+      '<p class="muted">'+(DB.kids.length > 1 ? 'Who\'s playing today?' : 'Ready when you are')+'</p>'+
     '</div>'));
   const grid = el('<div class="who-grid"></div>');
   DB.kids.forEach(k => {
