@@ -1141,7 +1141,7 @@ function codeOk(s){
 /* ---- Lemon Squeezy licence keys ----
    Their licence API is callable straight from the browser, so there is still no
    server anywhere. A key is activated once per device, then the device works
-   offline for ever; we re-check quietly every 7 days and only lock up if the
+   offline for ever; we re-check quietly every 30 days and only lock up if the
    service actually tells us the subscription has ended. Network trouble never
    locks a child out mid-week. */
 const LS_API = 'https://api.lemonsqueezy.com/v1/licenses';
@@ -1155,6 +1155,14 @@ const RECHECK_DAYS = 7;
 const CHECKOUT_URL = '';                    // e.g. 'https://xxx.lemonsqueezy.com/buy/xxxx'
 const BUY_EMAIL    = 'spellingquest@gmail.com';
 const PRICE_LINE   = '$40 for the whole school year';
+/* One place for every price, so the app, the buy panel and the website pages
+   can never drift apart. */
+const PRICE_ONE    = '$40';
+const PRICE_TWO    = '$65';
+const PRICE_THREE  = '$89';
+const PRICE_ADDON  = '$25';
+const BUNDLE_LINE  = 'Already have One Ayah At A Time or Muslim Kids Checklist? '+
+                     'Add this one for '+PRICE_ADDON+'. Any two '+PRICE_TWO+', all three '+PRICE_THREE+'.';
 /* Only these mean "this key is genuinely finished". Anything else — a network
    error, a server wobble, an activation limit — leaves the family alone. */
 const DEAD_KEY = /expired|disabled|inactive|not found|revoked/i;
@@ -1892,6 +1900,7 @@ function buyNow(){
       '<h2 style="font-size:21px;margin:4px 0 2px">Get the full school year</h2>'+
       '<p class="muted" style="margin-bottom:10px"><b>'+PRICE_LINE+'.</b><br>'+
         'Every child in your family. All your devices. No renewals to think about.</p>'+
+      '<p class="muted" style="font-size:11.5px;margin-bottom:8px">'+BUNDLE_LINE+'</p>'+
       (BUY_EMAIL
         ? '<a class="btn green big" style="display:block;text-decoration:none" '+
             'href="mailto:'+BUY_EMAIL+'?subject='+sub+'&body='+body+'">✉️ Ask for your key</a>'+
@@ -1906,6 +1915,91 @@ function buyNow(){
   box.querySelector('#bxno').onclick = shut;
   ov.onclick = e => { if (e.target === ov) shut(); };
   document.body.appendChild(ov);
+}
+
+function siteFooter(){
+  return el('<p class="muted center" style="margin-top:18px;font-size:12px;line-height:2">'+
+    '<a href="./about.html" style="color:inherit">About</a> · '+
+    '<a href="./contact.html" style="color:inherit">Contact</a> · '+
+    '<a href="./terms.html" style="color:inherit">Terms</a> · '+
+    '<a href="./privacy.html" style="color:inherit">Privacy</a> · '+
+    '<a href="./refunds.html" style="color:inherit">Refunds</a></p>');
+}
+
+/* A parent who buys on day 2 has to be able to type their key in there and
+   then. Before this, the only key box during a trial was behind the grown-up
+   PIN, which is exactly where nobody looks. */
+function openUnlock(){
+  sfx('tap');
+  const ov = el('<div style="position:fixed;inset:0;background:rgba(30,15,60,.72);z-index:9999;'+
+    'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
+  const box = el('<div class="card" style="max-width:390px;width:100%;text-align:center;margin:0">'+
+      '<div style="font-size:38px">🔑</div>'+
+      '<h2 style="font-size:21px;margin:4px 0 2px">Enter your key</h2>'+
+      '<p class="muted" style="font-size:13.5px">From your purchase email. It works on every '+
+        'device in your family.</p>'+
+      '<input class="ti" id="ulin" placeholder="Paste your key or code" '+
+        'style="text-align:center;font-size:16px;letter-spacing:1px;margin-top:10px">'+
+      '<button class="btn green big" id="ulgo" style="margin-top:10px">Unlock</button>'+
+      '<div style="border-top:1px solid rgba(0,0,0,.12);margin:15px 0 11px"></div>'+
+      '<p class="muted" style="font-size:13.5px">Haven\'t bought it yet?</p>'+
+      '<button class="btn blue" id="ulbuy" style="width:100%;margin-top:8px">'+
+        'Get the school year · '+PRICE_ONE+'</button>'+
+      '<p class="muted" style="font-size:11.5px;margin-top:9px">'+BUNDLE_LINE+'</p>'+
+      '<button class="btn grey" id="ulno" style="width:100%;margin-top:10px">Not now</button>'+
+    '</div>');
+  ov.appendChild(box); document.body.appendChild(ov);
+  const shut = () => ov.remove();
+  box.querySelector('#ulno').onclick = shut;
+  ov.onclick = e => { if (e.target === ov) shut(); };
+  box.querySelector('#ulbuy').onclick = () => { shut(); buyNow(); };
+
+  const inp = box.querySelector('#ulin'), btn = box.querySelector('#ulgo');
+  const bad = msg => { sfx('wrong'); inp.value=''; inp.placeholder = msg;
+                       btn.disabled=false; btn.textContent='Unlock'; };
+  const win = () => { shut(); sfx('win'); confetti(70); toast('🎉 Unlocked — thank you!', 3000);
+                      setTimeout(()=>{ try{ syncNow(); }catch(e){} go('pick'); }, 500); };
+  const tryIt = () => {
+    const v = (inp.value||'').trim();
+    if (!v) return;
+    if (codeOk(v)){ DB.accessCode = codeFingerprint(v); save(); return win(); }
+    if (!looksLikeKey(v)) return bad('That doesn\'t look right — check the email');
+    btn.disabled = true; btn.textContent = 'Checking…';
+    activateKey(v, 'Spelling Quest device').then(res => {
+      if (res && res.activated){
+        DB.licence = { key:v, instance:(res.instance && res.instance.id) || null,
+                       checked:Date.now(), dead:false };
+        save(); return win();
+      }
+      bad('That key didn\'t work');
+    }).catch(() => {                       // offline: let them in, confirm later
+      DB.licence = { key:v, instance:null, checked:0, dead:false, pending:true };
+      save(); win();
+    });
+  };
+  btn.onclick = tryIt;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') tryIt(); });
+  setTimeout(()=>{ try{ inp.focus(); }catch(e){} }, 60);
+}
+
+/* A thin, honest line across the top during the free week. Present every day,
+   never in the way, and gone the moment they have paid. */
+function trialStrip(){
+  const left = trialLeft();
+  if (left === null || left <= 0) return null;
+  if (DB.accessCode || (DB.licence && DB.licence.key)) return null;
+  const w = el('<div class="card" style="background:#fff4d6;padding:9px 12px;margin-bottom:10px">'+
+    '<div class="row" style="align-items:center;gap:8px;flex-wrap:wrap;justify-content:center">'+
+      '<b style="color:#8a5a00;font-size:13.5px">🕐 '+left+' day'+(left===1?'':'s')+
+        ' left in your free trial</b>'+
+      '<button class="btn link" id="tskey" style="color:#8a5a00;font-size:13px;padding:2px 4px;'+
+        'text-decoration:underline">I have a key</button>'+
+      '<button class="btn link" id="tsbuy" style="color:#8a5a00;font-size:13px;padding:2px 4px;'+
+        'text-decoration:underline">Unlock for a year</button>'+
+    '</div></div>');
+  w.querySelector('#tskey').onclick = openUnlock;
+  w.querySelector('#tsbuy').onclick = buyNow;
+  return w;
 }
 
 /* ---------------- the way in ---------------- */
@@ -2004,19 +2098,15 @@ function renderGate(a){
 
   a.appendChild(el('<p class="muted center" style="margin-top:14px;color:rgba(255,255,255,.6)">'+
     'No code yet? Tap <b>Have a free look</b> above — a week free, no card needed.</p>'));
+  a.appendChild(siteFooter());
 }
 
 /* ---------------- profile picker ---------------- */
 function renderPick(a){
   const left = trialLeft();
   if (left !== null && left > 0 && !DB.accessCode){
-    const w = el('<div class="card" style="background:#fff4d6;padding:12px;text-align:center">'+
-      '<b style="color:#8a5a00">Free look · '+left+' day'+(left===1?'':'s')+' left</b>'+
-      '<div><button class="btn link" id="pkbuy" style="color:#8a5a00;font-size:13.5px;'+
-        'padding:3px 2px 0;text-decoration:underline">Loving it? Get the school year · $40</button></div>'+
-      '</div>');
-    w.querySelector('#pkbuy').onclick = buyNow;
-    a.appendChild(w);
+    const w = trialStrip();
+    if (w) a.appendChild(w);
   }
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
@@ -2040,6 +2130,7 @@ function renderPick(a){
   const b = el('<div class="center" style="margin-top:22px"><button class="btn ghost">⚙️ Grown-ups</button></div>');
   b.querySelector('button').onclick = parentGate;
   a.appendChild(b);
+  a.appendChild(siteFooter());
 }
 
 /* ---------------- top bar ---------------- */
@@ -2084,6 +2175,8 @@ function voiceStrip(){
 function renderHome(a){
   buildCurrentWeek();
   topbar(a);
+  const ts = trialStrip();
+  if (ts) a.appendChild(ts);
   if (!DB.voiceOk) a.appendChild(voiceStrip());
   const p = prog();
   const done = DAYS.filter(d => p.days[d.key] && p.days[d.key].done).length;
