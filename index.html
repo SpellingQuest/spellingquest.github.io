@@ -628,6 +628,32 @@ const PATTERNS = [
   { id:'magic_e', label:'Magic e words', g:'', custom:'magic_e',
     title:'Magic e', rule:'The <b>e</b> at the end is silent — it jumps back over one letter and makes the vowel say its own name.',
     trick:'cap → c<b>a</b>p<b>e</b> · kit → k<b>i</b>t<b>e</b> · hop → h<b>o</b>p<b>e</b>', emoji:'✨' },
+
+  // ---------- short vowels: last, so every digraph above wins first ----------
+  { id:'short_a', label:'short a words', g:'', custom:'short_a',
+    title:'Short <b>a</b> says "a", as in cat',
+    rule:'One vowel, shut in by consonants on the outside — so it says its short sound, not its name.',
+    trick:'The c<b>a</b>t s<b>a</b>t on the m<b>a</b>t.', emoji:'🐱' },
+
+  { id:'short_e', label:'short e words', g:'', custom:'short_e',
+    title:'Short <b>e</b> says "e", as in hen',
+    rule:'One vowel, shut in by consonants — a short, quick sound.',
+    trick:'The h<b>e</b>n f<b>e</b>ll in the n<b>e</b>st.', emoji:'🐔' },
+
+  { id:'short_i', label:'short i words', g:'', custom:'short_i',
+    title:'Short <b>i</b> says "i", as in pig',
+    rule:'One vowel, shut in by consonants — a short, quick sound.',
+    trick:'The b<b>i</b>g p<b>i</b>g d<b>i</b>d a j<b>i</b>g.', emoji:'🐷' },
+
+  { id:'short_o', label:'short o words', g:'', custom:'short_o',
+    title:'Short <b>o</b> says "o", as in dog',
+    rule:'One vowel, shut in by consonants — a short, quick sound.',
+    trick:'The d<b>o</b>g got a h<b>o</b>t p<b>o</b>t.', emoji:'🐶' },
+
+  { id:'short_u', label:'short u words', g:'', custom:'short_u',
+    title:'Short <b>u</b> says "u", as in bug',
+    rule:'One vowel, shut in by consonants — a short, quick sound.',
+    trick:'The b<b>u</b>g is in the m<b>u</b>g.', emoji:'🐛' },
 ];
 
 const PATTERN_BY_ID = {};
@@ -695,9 +721,27 @@ function hasMagicE(w){
 }
 
 /* Find where a pattern sits inside a word. Returns {i, len} or null. */
+/* A closed syllable: one vowel, shut in by consonants, so it says its short
+   sound. This is what almost every Year 1 / Grade 1 list is built on — cat, sat,
+   mat — and without it those words fell through as "no rule, learn by heart",
+   which is both wrong and the opposite of what the app is for. */
+function shortVowelWord(w, v){
+  w = String(w || '').toLowerCase();
+  if (!/^[a-z]{2,5}$/.test(w)) return null;
+  const vowels = w.match(/[aeiou]/g) || [];
+  if (vowels.length !== 1 || vowels[0] !== v) return null;
+  if (w.endsWith('e')) return null;                 // that's magic e's job
+  if (!/[bcdfghjklmnpqrstvwxyz]/.test(w)) return null;
+  const i = w.indexOf(v);
+  if (i === w.length - 1 && w.length > 2) return null;   // needs shutting in
+  return { i, len:1 };
+}
+
 function matchPattern(word, p){
   const w = word.toLowerCase();
   if (p.custom === 'magic_e') return hasMagicE(w) ? {i:w.length-3, len:3} : null;
+  if (p.custom && p.custom.indexOf('short_') === 0)
+    return shortVowelWord(w, p.custom.slice(6));
   if (!p.g) return null;
   if (p.start) return w.indexOf(p.g) === 0 ? {i:0, len:p.g.length} : null;
   if (p.end)   return w.endsWith(p.g) && w.length > p.g.length + 1
@@ -720,6 +764,13 @@ function detectPattern(word){
    thing we've got). This stops "the" from creating a "th words" section. */
 function groupWords(words){
   const counts = {};
+  /* Words with a hand-written explanation must never be swept into a phonics
+     pattern. "was" looks like a short-a word and isn't — it says "wuz" — and
+     teaching it as one would be worse than teaching nothing. */
+  words = words.slice();
+  const byHeart = words.filter(w => TRICKY[String(w).toLowerCase()]);
+  const rest    = words.filter(w => !TRICKY[String(w).toLowerCase()]);
+  words = rest;
   words.forEach(w => {
     PATTERNS.forEach(p => {
       if (matchPattern(w, p)){
@@ -754,6 +805,11 @@ function groupWords(words){
 
   // pass 3: words that follow no pattern at all get their OWN rule, one each —
   // never a nameless "extra words" bucket.
+  byHeart.forEach(w => {
+    claimed[w] = 'tricky:' + String(w).toLowerCase();
+    sections.push({ patternId:'tricky:' + String(w).toLowerCase(), words:[w] });
+  });
+
   words.forEach(w => {
     if (claimed[w]) return;
     claimed[w] = 'tricky';
