@@ -1338,6 +1338,26 @@ function forwardMerge(a, b){
   return b;
 }
 
+/* "Has anyone actually used this child?" — one definition, used both for deciding
+   what to send and what to tidy away.
+
+   The old test treated ANY progress object as use. But merely opening a
+   placeholder child builds the week for them, which created an empty progress
+   object — so tapping "Player 1" once promoted it to a real child that then
+   synced to every device in the family and could never be tidied up. A child
+   counts as used only if they have stars, a streak, a badge, a name a grown-up
+   chose, or a day they actually finished. */
+function kidHasBeenUsed(k){
+  if (!k) return false;
+  if ((k.xp || 0) > 0 || (k.streak || 0) > 0 || (k.badges || []).length) return true;
+  if (!/^(Player|Kid) \d+$/.test(k.name || '')) return true;
+  const prog = k.prog || {};
+  return Object.keys(prog).some(w => {
+    const days = (prog[w] && prog[w].days) || {};
+    return Object.keys(days).some(d => days[d] && days[d].done);
+  });
+}
+
 function syncPayload(fp, k){
   return { p_family_hash: fp, p_kid_id: k.id, p_nickname: k.name || '',
     p_avatar: k.avatar || '', p_removed: !!k.removed,
@@ -1405,11 +1425,7 @@ function absorb(rows){
      that has never been used. */
   const remoteIds = (rows || []).map(r => r.kid_id);
   if (remoteIds.length){
-    const untouched = k => /^(Player|Kid) \d+$/.test(k.name || '') &&
-                           !(k.xp > 0) && !(k.streak > 0) &&
-                           !(k.badges || []).length &&
-                           !Object.keys(k.prog || {}).length &&
-                           remoteIds.indexOf(k.id) < 0;
+    const untouched = k => !kidHasBeenUsed(k) && remoteIds.indexOf(k.id) < 0;
     const keep = DB.kids.filter(k => !untouched(k));
     if (keep.length && keep.length !== DB.kids.length){
       DB.kids.forEach(k => { if (untouched(k) && DB.weekRawByKid) delete DB.weekRawByKid[k.id]; });
@@ -1445,9 +1461,7 @@ function syncNow(opts){
       /* Don't send placeholder children. An untouched "Player 2" that nobody has
          used would otherwise land on every other device in the family, where it
          can't be recognised as a placeholder any more. */
-      const worthSending = DB.kids.filter(k =>
-        k.removed || (k.xp > 0) || (k.streak > 0) || (k.badges || []).length ||
-        Object.keys(k.prog || {}).length || !/^(Player|Kid) \d+$/.test(k.name || ''));
+      const worthSending = DB.kids.filter(k => k.removed || kidHasBeenUsed(k));
       return Promise.all(worthSending.map(k => sbRpc('push_progress', syncPayload(fp, k))))
              .then(() => changed);
     })
@@ -1671,7 +1685,9 @@ function voiceTag(v){
 function voiceLabel(v){
   if (!v) return '';
   const t = voiceTag(v);
-  return v.name + (t ? ' · ' + t : '');
+  // some devices already put "(Enhanced)" in the name — don't say it twice
+  if (!t || new RegExp(t, 'i').test(v.name)) return v.name;
+  return v.name + ' · ' + t;
 }
 function pickVoiceFor(sex){
   const ov = (DB && DB.voicePick && DB.voicePick[sex]);
@@ -1899,7 +1915,7 @@ function buyNow(){
       '<div style="font-size:40px">🐝</div>'+
       '<h2 style="font-size:21px;margin:4px 0 2px">Get the full school year</h2>'+
       '<p class="muted" style="margin-bottom:10px"><b>'+PRICE_LINE+'.</b><br>'+
-        'Every child in your family. All your devices. No renewals to think about.</p>'+
+        'Every child in your family. Every device you use. No renewals to think about.</p>'+
       '<p class="muted" style="font-size:11.5px;margin-bottom:8px">'+BUNDLE_LINE+'</p>'+
       (BUY_EMAIL
         ? '<a class="btn green big" style="display:block;text-decoration:none" '+
@@ -1937,7 +1953,7 @@ function openUnlock(){
       '<div style="font-size:38px">🔑</div>'+
       '<h2 style="font-size:21px;margin:4px 0 2px">Enter your key</h2>'+
       '<p class="muted" style="font-size:13.5px">From your purchase email. It works on every '+
-        'device in your family.</p>'+
+        'device in your family \u2014 as many as you like.</p>'+
       '<input class="ti" id="ulin" placeholder="Paste your key or code" '+
         'style="text-align:center;font-size:16px;letter-spacing:1px;margin-top:10px">'+
       '<button class="btn green big" id="ulgo" style="margin-top:10px">Unlock</button>'+
@@ -2168,7 +2184,9 @@ function voiceStrip(){
     '</div></div>');
   c.querySelector('#vsplay').onclick = () => { unlockAudio(); stopSpeech(); say(VOICE_TEST, { rate:1.0 }); };
   c.querySelector('#vsok').onclick = () => { DB.voiceOk = true; save(); sfx('good'); toast('🔊 Voice sorted'); go('home'); };
-  c.querySelector('#vsbad').onclick = () => { unlockAudio(); go('parent','words'); };
+  /* This sits on the child's own screen, so it must not be a side door into the
+     grown-up area. Ask for the code like every other way in. */
+  c.querySelector('#vsbad').onclick = () => { unlockAudio(); parentGate('words'); };
   return c;
 }
 
@@ -2278,8 +2296,37 @@ function unlockAudio(){
 }
 
 /* ---------------- parent ---------------- */
-function parentGate(){
-  if (!DB.pin) return parentPinSetup();
+/* Before this there was no way back in from a forgotten grown-up code except
+   wiping the app and losing everything. Your access key or licence key is proof
+   enough that you're the parent — a child won't have it. */
+function pinRescue(tab){
+  const p = popup(
+    '<div class="em">🔑</div><h2>Set a new code</h2>'+
+    '<p class="muted">Type your access code or licence key — the one from your purchase '+
+      'email — and you can choose a new 4-digit grown-up code.</p>'+
+    '<input class="ti" id="prkey" placeholder="Access code or licence key" '+
+      'style="text-align:center;margin-top:10px">'+
+    '<button class="btn green big" id="prgo" style="margin-top:10px">Continue</button>'+
+    '<button class="btn link" style="margin-top:6px" data-close>Cancel</button>');
+  const inp = p.querySelector('#prkey');
+  p.querySelector('#prgo').onclick = () => {
+    const v = (inp.value||'').trim();
+    const mine = DB.licence && DB.licence.key &&
+                 normCode(v) === normCode(DB.licence.key);
+    if (codeOk(v) || mine){
+      DB.pin = ''; save(); sfx('good'); p.remove();
+      toast('Now choose a new code', 3000);
+      return parentPinSetup(tab);
+    }
+    sfx('wrong'); inp.value = '';
+    inp.placeholder = 'That didn\'t match — check your purchase email';
+  };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') p.querySelector('#prgo').click(); });
+  setTimeout(()=>{ try{ inp.focus(); }catch(e){} }, 60);
+}
+
+function parentGate(tab){
+  if (!DB.pin) return parentPinSetup(tab);
   const pin = String(DB.pin);
   let typed = '';
   const p = popup(
@@ -2287,8 +2334,10 @@ function parentGate(){
     '<p class="muted" id="pgm">Enter your code</p>'+
     '<div class="pindots" id="pd"></div>'+
     '<div class="pinpad" id="pp"></div>'+
-    '<button class="btn link" style="margin-top:4px" data-close>Cancel</button>');
+    '<button class="btn link" id="pgforgot" style="margin-top:4px">Forgotten your code?</button>'+
+    '<button class="btn link" style="margin-top:2px" data-close>Cancel</button>');
   const dots = p.querySelector('#pd'), pad = p.querySelector('#pp');
+  p.querySelector('#pgforgot').onclick = () => { p.remove(); pinRescue(tab); };
   const draw = () => {
     dots.innerHTML = '';
     for (let i = 0; i < pin.length; i++)
@@ -2300,7 +2349,7 @@ function parentGate(){
     typed += v; draw();
     if (typed.length === pin.length){
       setTimeout(() => {
-        if (typed === pin){ sfx('good'); p.remove(); go('parent'); }
+        if (typed === pin){ sfx('good'); p.remove(); go('parent', tab); }
         else { sfx('wrong'); typed = ''; draw();
                p.querySelector('#pgm').textContent = 'Not quite — try again'; }
       }, 180);
@@ -2316,7 +2365,7 @@ function parentGate(){
 }
 
 /* first run on a device: the grown-up picks their own code (nothing is shipped in the file) */
-function parentPinSetup(){
+function parentPinSetup(tab){
   let typed = '';
   const p = popup(
     '<div class="em">🔒</div><h2>Choose a grown-up code</h2>'+
@@ -2336,7 +2385,7 @@ function parentPinSetup(){
     if (typed.length === 4){
       setTimeout(() => {
         DB.pin = typed; save(); sfx('good');
-        p.remove(); toast('🔒 Your code is set to '+typed, 5000); go('parent');
+        p.remove(); toast('🔒 Your code is set to '+typed, 5000); go('parent', tab);
       }, 200);
     }
   };
