@@ -1253,15 +1253,20 @@ function looksLikeKey(s){
 
 /* The only things that mean "this purchase is genuinely over".
 
-   Note what is deliberately NOT here: `subscription_cancelled_at`. Cancelled
-   means they have switched off renewal — they have still paid to the end of the
-   period and the terms page promises them that time. Only `ended_at` (the period
-   actually ran out) or `failed_at` (the payment failed) revokes. Treating
-   "cancelled" as "over" would lock out a parent who has paid, weeks early. */
+   Only three things end access: refunded, disputed/charged back, or the
+   subscription genuinely ended. Note the two that are deliberately NOT here,
+   because getting either wrong quietly locks out a family who has paid:
+
+     subscription_cancelled_at — cancelling means "don't bill me again". They
+       have still paid to the end of the period and the terms page promises them
+       that time.
+     subscription_failed_at — that is a card being retried. Locking someone out
+       mid-retry is the exact moment they would otherwise have gone and fixed it.
+
+   This matches One Ayah At A Time, so all three apps behave the same way. */
 function purchaseIsOver(p){
   if (!p) return false;
-  return !!(p.refunded || p.chargebacked || p.disputed ||
-            p.subscription_failed_at || p.subscription_ended_at);
+  return !!(p.refunded || p.chargebacked || p.disputed || p.subscription_ended_at);
 }
 
 /* Ask Gumroad about a key, trying each product we sell until one recognises it.
