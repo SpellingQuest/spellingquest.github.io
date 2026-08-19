@@ -159,7 +159,7 @@ h1,h2,h3{ margin:0 0 8px; }
   background:linear-gradient(150deg,#fff8e1,#ffeeba); border:3px dashed var(--orange);
   border-radius:20px; padding:16px; margin:12px 0; color:#5c3d00;
 }
-.tip h3{ font-size:20px; display:flex; align-items:center; gap:8px; }
+.tip h3{ font-size:20px; }
 .tip p{ margin:6px 0; font-size:16px; line-height:1.45; }
 .tip .trick{ background:rgba(255,255,255,.75); border-radius:14px; padding:10px 12px; font-size:17px; font-weight:700; }
 
@@ -1194,23 +1194,46 @@ function codeOk(s){
   return CODE_HASHES.indexOf(v) >= 0 || CODE_HASHES.indexOf(codeFingerprint(v)) >= 0;
 }
 
-/* ---- Lemon Squeezy licence keys ----
-   Their licence API is callable straight from the browser, so there is still no
-   server anywhere. A key is activated once per device, then the device works
-   offline for ever; we re-check quietly every 30 days and only lock up if the
-   service actually tells us the subscription has ended. Network trouble never
-   locks a child out mid-week. */
-const LS_API = 'https://api.lemonsqueezy.com/v1/licenses';
-const RECHECK_DAYS = 7;
+/* ---- Gumroad licence keys ----
+   Gumroad's verify endpoint needs no secret and allows calls straight from the
+   browser — confirmed working from spellingquest.github.io — so there is still
+   no server anywhere in this product.
+
+   A key is checked once when it is typed in, and then the device works offline
+   for ever. We re-check quietly every 30 days and only ever lock up if Gumroad
+   actually says the purchase is finished: refunded, charged back, or a
+   subscription that has ended. Network trouble must never lock a child out in
+   the middle of their spelling week — that is what the grace rules below are
+   for. */
+const GUMROAD_VERIFY = 'https://api.gumroad.com/v2/licenses/verify';
+const RECHECK_DAYS   = 30;    // how often we quietly re-check a key
+const GRACE_DAYS     = 21;    // how long a key that stops verifying still works
+
+/* Every Gumroad product whose key should unlock THIS app.
+   Fill in `id` from Gumroad: the product page → Settings → Advanced → Product ID.
+   A bundle that also sells the other apps still belongs in this list, as long as
+   Spelling Quest is one of the things it grants.
+     variantContains — for a bundle sold with variants ("Spelling Quest + One
+     Ayah At A Time", "One Ayah + Muslim Kids Checklist" …), only unlock when the
+     variant the customer actually bought mentions this app. Leave it out for a
+     product where every buyer gets Spelling Quest. */
+const GUMROAD_SKUS = [
+  { id:'', label:'Spelling Quest \u2014 school year' },
+  { id:'', label:'Two apps',       variantContains:'spelling quest' },
+  { id:'', label:'All three apps' }
+];
 
 /* ---- how someone buys it ----------------------------------------------
-   CHECKOUT_URL is the Lemon Squeezy link, once the shop is approved and
+   CHECKOUT_URL is the Gumroad link for the $40 school year, once the product is
    published. Until then it stays empty and the buy button falls back to
-   BUY_EMAIL instead — so there is never a moment where a parent taps
-   "get it" and lands nowhere. Filling either one in is a one-line change. */
-const CHECKOUT_URL = '';                    // e.g. 'https://xxx.lemonsqueezy.com/buy/xxxx'
-const BUY_EMAIL    = 'spellingquest@gmail.com';
-const PRICE_LINE   = '$40 for the whole school year';
+   BUY_EMAIL — so there is never a moment where a parent taps "get it" and lands
+   nowhere. The bundle links are optional: fill one in and it appears as a
+   button, leave it empty and it stays a line of text. */
+const CHECKOUT_URL   = '';    // e.g. 'https://spellingquest.gumroad.com/l/spelling'
+const CHECKOUT_TWO   = '';    // any two apps
+const CHECKOUT_THREE = '';    // all three apps
+const BUY_EMAIL      = 'spellingquest@gmail.com';
+const PRICE_LINE     = '$40 for the whole school year';
 /* One place for every price, so the app, the buy panel and the website pages
    can never drift apart. */
 const PRICE_ONE    = '$40';
@@ -1219,57 +1242,100 @@ const PRICE_THREE  = '$89';
 const PRICE_ADDON  = '$25';
 const BUNDLE_LINE  = 'Already have One Ayah At A Time or Muslim Kids Checklist? '+
                      'Add this one for '+PRICE_ADDON+'. Any two '+PRICE_TWO+', all three '+PRICE_THREE+'.';
-/* Only these mean "this key is genuinely finished". Anything else — a network
-   error, a server wobble, an activation limit — leaves the family alone. */
-const DEAD_KEY = /expired|disabled|inactive|not found|revoked/i;
 
+/* Gumroad keys look like ABCD1234-ABCD1234-ABCD1234-ABCD1234. We also still
+   accept the older UUID shape so nobody who bought early is stranded. */
 function looksLikeKey(s){
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(s||'').trim());
+  const v = String(s||'').trim();
+  return /^[0-9A-Za-z]{8}-[0-9A-Za-z]{8}-[0-9A-Za-z]{8}-[0-9A-Za-z]{8}$/.test(v)
+      || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 }
 
-function activateKey(key, deviceName){
-  const body = new URLSearchParams({ license_key:key.trim(), instance_name:deviceName || 'Family device' });
-  return fetch(LS_API + '/activate', {
-    method:'POST', headers:{ 'Accept':'application/json' }, body
-  }).then(r => r.json());
-}
-function validateKey(key, instanceId){
-  const p = { license_key:key.trim() };
-  if (instanceId) p.instance_id = instanceId;
-  return fetch(LS_API + '/validate', {
-    method:'POST', headers:{ 'Accept':'application/json' }, body:new URLSearchParams(p)
-  }).then(r => r.json());
+/* The only things that mean "this purchase is genuinely over".
+
+   Note what is deliberately NOT here: `subscription_cancelled_at`. Cancelled
+   means they have switched off renewal — they have still paid to the end of the
+   period and the terms page promises them that time. Only `ended_at` (the period
+   actually ran out) or `failed_at` (the payment failed) revokes. Treating
+   "cancelled" as "over" would lock out a parent who has paid, weeks early. */
+function purchaseIsOver(p){
+  if (!p) return false;
+  return !!(p.refunded || p.chargebacked || p.disputed ||
+            p.subscription_failed_at || p.subscription_ended_at);
 }
 
-/* quiet background re-check; only revokes on a definite "no" from the service */
+/* Ask Gumroad about a key, trying each product we sell until one recognises it.
+   increment_uses_count is deliberately false: a family uses as many devices as
+   it likes, and we never want a child locked out for opening the app twice.
+   Returns { ok, reason, sku, purchase } and never throws. */
+function verifyKey(key){
+  const k = String(key||'').trim();
+  const skus = GUMROAD_SKUS.filter(s => s.id);
+  if (!k) return Promise.resolve({ ok:false, reason:'empty' });
+  if (!skus.length) return Promise.resolve({ ok:false, reason:'unconfigured' });
+
+  let reachedGumroad = false;
+  const askOne = (i) => {
+    if (i >= skus.length){
+      return { ok:false, reason: reachedGumroad ? 'notfound' : 'offline' };
+    }
+    const sku = skus[i];
+    return fetch(GUMROAD_VERIFY, { method:'POST', body:new URLSearchParams({
+        product_id: sku.id, license_key: k, increment_uses_count:'false' }) })
+      .then(r => r.json().catch(()=>null))
+      .then(j => {
+        reachedGumroad = true;
+        if (!j || !j.success) return askOne(i+1);      // wrong product, keep looking
+        const p = j.purchase || {};
+        if (purchaseIsOver(p)) return { ok:false, reason:'ended', sku:sku.label };
+        if (sku.variantContains &&
+            String(p.variants||'').toLowerCase().indexOf(sku.variantContains) < 0){
+          return { ok:false, reason:'other-app', sku:sku.label };
+        }
+        return { ok:true, sku:sku.label, purchase:p };
+      })
+      .catch(() => askOne(i+1));                       // offline: try the next
+  };
+  return Promise.resolve(askOne(0));
+}
+
+/* What to write in the app when a key doesn't work. Never blame the parent. */
+function keyProblem(reason){
+  if (reason === 'ended')     return 'That key has ended \u2014 write to us and we\'ll sort it';
+  if (reason === 'other-app') return 'That key is for one of our other apps';
+  return 'That key didn\'t work \u2014 check the email it came in';
+}
+
+/* Quiet background re-check. Only ever revokes on a definite "this is over"
+   from Gumroad, or after three weeks of a key Gumroad no longer recognises. */
 function recheckLicence(){
   if (!DB.licence || !DB.licence.key) return;
   const last = DB.licence.checked || 0;
   if (Date.now() - last < RECHECK_DAYS * 86400000) return;
 
-  // A key typed in while offline was never really activated. Finish the job now,
-  // so the device gets a proper instance and a made-up key can't live for ever.
-  if (DB.licence.pending || !DB.licence.instance){
-    activateKey(DB.licence.key, 'Spelling Quest device').then(res => {
+  verifyKey(DB.licence.key).then(res => {
+    if (res.ok){
       DB.licence.checked = Date.now();
-      if (res && res.activated){
-        DB.licence.instance = (res.instance && res.instance.id) || null;
-        DB.licence.pending = false;
-      } else if (res && DEAD_KEY.test(res.error || '')){
+      DB.licence.sku = res.sku;
+      DB.licence.dead = false;
+      DB.licence.pending = false;
+      DB.licence.failingSince = 0;
+      save(); return;
+    }
+    if (res.reason === 'ended'){          // Gumroad says it is genuinely finished
+      DB.licence.dead = true;
+      DB.licence.checked = Date.now();
+      save(); return;
+    }
+    if (res.reason === 'notfound'){       // we reached Gumroad and it didn't know the key
+      DB.licence.failingSince = DB.licence.failingSince || Date.now();
+      if (Date.now() - DB.licence.failingSince > GRACE_DAYS * 86400000){
         DB.licence.dead = true;
       }
-      save();
-    }).catch(()=>{});    // still offline: try again next time
-    return;
-  }
-
-  validateKey(DB.licence.key, DB.licence.instance).then(res => {
-    DB.licence.checked = Date.now();
-    if (res && res.valid === false && DEAD_KEY.test(res.error || '')){
-      DB.licence.dead = true;
+      save(); return;
     }
-    save();
-  }).catch(()=>{});      // offline or blocked: leave everything alone
+    // offline, or no product ids filled in yet: change nothing at all
+  }).catch(()=>{});
 }
 function trialLeft(){
   if (!DB || !DB.trialStart) return null;
@@ -1958,28 +2024,46 @@ function render(arg){
    answer. */
 function buyNow(){
   sfx('tap');
-  if (CHECKOUT_URL){ window.open(CHECKOUT_URL, '_blank', 'noopener'); return; }
 
-  const sub  = encodeURIComponent('Spelling Quest — I\'d like the full year');
+  const sub  = encodeURIComponent('Spelling Quest \u2014 I\'d like the full year');
   const body = encodeURIComponent(
     'Hi!\n\nWe\'ve been trying Spelling Quest and we\'d like it for the school year.\n\n' +
     'Could you send me the link to pay and my key?\n\nThank you!');
 
+  /* The main button goes straight to Gumroad once CHECKOUT_URL is filled in.
+     Until then it falls back to email, so nobody ever taps "get it" and lands
+     nowhere. The two bundle buttons only appear if their links are set. */
+  const mainBtn = CHECKOUT_URL
+    ? '<a class="btn green big" style="display:block;text-decoration:none" target="_blank" '+
+        'rel="noopener" href="'+esc(CHECKOUT_URL)+'">Get the school year \u00b7 '+PRICE_ONE+'</a>'
+    : (BUY_EMAIL
+        ? '<a class="btn green big" style="display:block;text-decoration:none" '+
+            'href="mailto:'+BUY_EMAIL+'?subject='+sub+'&body='+body+'">\u2709\ufe0f Ask for your key</a>'
+        : '<p class="muted" style="margin-top:4px">Message the parent who shared this link '+
+          'with you \u2014 they\'ll get you set up.</p>');
+
+  const bundleBtn = (url, label) => url
+    ? '<a class="btn grey" style="display:block;text-decoration:none;margin-top:8px" target="_blank" '+
+      'rel="noopener" href="'+esc(url)+'">'+label+'</a>'
+    : '';
+
   const ov = el('<div style="position:fixed;inset:0;background:rgba(30,15,60,.72);z-index:9999;'+
     'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
   const box = el('<div class="card" style="max-width:380px;width:100%;text-align:center;margin:0">'+
-      '<div style="font-size:40px">🐝</div>'+
+      '<div style="font-size:40px">\ud83d\udc1d</div>'+
       '<h2 style="font-size:21px;margin:4px 0 2px">Get the full school year</h2>'+
       '<p class="muted" style="margin-bottom:10px"><b>'+PRICE_LINE+'.</b><br>'+
-        'Every child in your family. Every device you use. No renewals to think about.</p>'+
-      '<p class="muted" style="font-size:11.5px;margin-bottom:8px">'+BUNDLE_LINE+'</p>'+
-      (BUY_EMAIL
-        ? '<a class="btn green big" style="display:block;text-decoration:none" '+
-            'href="mailto:'+BUY_EMAIL+'?subject='+sub+'&body='+body+'">✉️ Ask for your key</a>'+
-          '<p class="muted" style="margin-top:9px;font-size:13px">Or write to<br>'+
+        'Every child in your family. Every device you use.</p>'+
+      mainBtn +
+      bundleBtn(CHECKOUT_TWO,   'Any two of our apps \u00b7 '+PRICE_TWO) +
+      bundleBtn(CHECKOUT_THREE, 'All three apps \u00b7 '+PRICE_THREE) +
+      '<p class="muted" style="font-size:11.5px;margin-top:10px">'+BUNDLE_LINE+'</p>'+
+      (CHECKOUT_URL && BUY_EMAIL
+        ? '<p class="muted" style="margin-top:6px;font-size:13px">Questions? Write to<br>'+
             '<b>'+esc(BUY_EMAIL)+'</b></p>'
-        : '<p class="muted" style="margin-top:4px">Message the parent who shared this link '+
-          'with you — they\'ll get you set up.</p>')+
+        : (BUY_EMAIL && !CHECKOUT_URL
+            ? '<p class="muted" style="margin-top:9px;font-size:13px">Or write to<br>'+
+              '<b>'+esc(BUY_EMAIL)+'</b></p>' : ''))+
       '<button class="btn grey" id="bxno" style="width:100%;margin-top:10px">Not just now</button>'+
     '</div>');
   ov.appendChild(box);
@@ -2037,15 +2121,20 @@ function openUnlock(){
     if (codeOk(v)){ DB.accessCode = codeFingerprint(v); save(); return win(); }
     if (!looksLikeKey(v)) return bad('That doesn\'t look right — check the email');
     btn.disabled = true; btn.textContent = 'Checking…';
-    activateKey(v, 'Spelling Quest device').then(res => {
-      if (res && res.activated){
-        DB.licence = { key:v, instance:(res.instance && res.instance.id) || null,
-                       checked:Date.now(), dead:false };
+    verifyKey(v).then(res => {
+      if (res.ok){
+        DB.licence = { key:v, sku:res.sku, checked:Date.now(), dead:false,
+                       pending:false, failingSince:0 };
         save(); return win();
       }
-      bad('That key didn\'t work');
-    }).catch(() => {                       // offline: let them in, confirm later
-      DB.licence = { key:v, instance:null, checked:0, dead:false, pending:true };
+      if (res.reason === 'offline' || res.reason === 'unconfigured'){
+        // no internet right now: let them straight in and confirm later
+        DB.licence = { key:v, sku:null, checked:0, dead:false, pending:true, failingSince:0 };
+        save(); return win();
+      }
+      bad(keyProblem(res.reason));
+    }).catch(() => {
+      DB.licence = { key:v, sku:null, checked:0, dead:false, pending:true, failingSince:0 };
       save(); win();
     });
   };
@@ -2100,7 +2189,10 @@ function renderGate(a){
       'style="text-align:center;font-size:17px;letter-spacing:1px;margin-top:10px">'+
     '<button class="btn '+(expired ? 'blue' : 'green big')+'" id="acgo" '+
       'style="margin-top:10px'+(expired ? ';width:100%' : '')+'">Unlock</button>'+
-    (left === null
+    /* The free week is offered once, to someone who has never had one and has
+       never held a key. A family whose subscription lapses must not be handed a
+       fresh trial — that is a free week on every lapse, for ever. */
+    ((left === null && !(DB.licence && DB.licence.key))
       ? '<button class="btn link" id="actry" style="width:100%;margin-top:8px">Have a free look for a week first</button>'
       : (left > 0 ? '<p class="muted" style="margin-top:10px">Free look: '+left+' day'+(left===1?'':'s')+' left</p>' : ''))+
   '</div>');
@@ -2148,23 +2240,30 @@ function renderGate(a){
     }
     if (!looksLikeKey(v)) return fail('That doesn\'t look right — check the email');
     btn.disabled = true; btn.textContent = 'Checking…';
-    activateKey(v, 'Spelling Quest device').then(res => {
-      if (res && res.activated){
-        DB.licence = { key:v, instance:(res.instance && res.instance.id) || null,
-                       checked:Date.now(), dead:false };
+    verifyKey(v).then(res => {
+      if (res.ok){
+        DB.licence = { key:v, sku:res.sku, checked:Date.now(), dead:false,
+                       pending:false, failingSince:0 };
         save(); return unlocked();
       }
-      fail((res && res.error) ? 'That key didn\'t work' : 'That key didn\'t work');
+      if (res.reason === 'offline' || res.reason === 'unconfigured'){
+        // no internet, or nothing configured yet — let them in and check later
+        DB.licence = { key:v, sku:null, checked:0, dead:false, pending:true, failingSince:0 };
+        save(); return unlocked();
+      }
+      fail(keyProblem(res.reason));
     }).catch(() => {
-      // no internet, or the browser blocked the call — let them in and check later
-      DB.licence = { key:v, instance:null, checked:0, dead:false, pending:true };
+      DB.licence = { key:v, sku:null, checked:0, dead:false, pending:true, failingSince:0 };
       save(); unlocked();
     });
   };
   c.querySelector('#acgo').onclick = tryIt;
   c.querySelector('#ac').addEventListener('keydown', e => { if (e.key === 'Enter') tryIt(); });
   const t = c.querySelector('#actry');
-  if (t) t.onclick = () => { DB.trialStart = Date.now(); save(); sfx('good'); go('pick'); };
+  if (t) t.onclick = () => {
+    if (DB.trialStart) return;                 // one free week per device, ever
+    DB.trialStart = Date.now(); save(); sfx('good'); go('pick');
+  };
   const bb = c.querySelector('#acbuy');
   if (bb) bb.onclick = buyNow;
 
@@ -3049,13 +3148,20 @@ function parentMore(a){
       return setTimeout(()=>go('parent','more'), 500); }
     if (!looksLikeKey(v)) { sfx('wrong'); return toast('❌ That code didn\'t work'); }
     toast('Checking…');
-    activateKey(v, 'Spelling Quest device').then(res => {
-      if (res && res.activated){
-        DB.licence = { key:v, instance:(res.instance&&res.instance.id)||null, checked:Date.now(), dead:false };
-        save(); sfx('good'); toast('🔑 Unlocked'); setTimeout(()=>go('parent','more'), 500);
-      } else { sfx('wrong'); toast('❌ That key didn\'t work'); }
+    verifyKey(v).then(res => {
+      if (res.ok){
+        DB.licence = { key:v, sku:res.sku, checked:Date.now(), dead:false,
+                       pending:false, failingSince:0 };
+        save(); sfx('good'); toast('🔑 Unlocked'); return setTimeout(()=>go('parent','more'), 500);
+      }
+      if (res.reason === 'offline' || res.reason === 'unconfigured'){
+        DB.licence = { key:v, sku:null, checked:0, dead:false, pending:true, failingSince:0 };
+        save(); sfx('good'); toast('🔑 Saved — will confirm when online');
+        return setTimeout(()=>go('parent','more'), 500);
+      }
+      sfx('wrong'); toast('❌ ' + keyProblem(res.reason));
     }).catch(()=>{
-      DB.licence = { key:v, instance:null, checked:0, dead:false, pending:true };
+      DB.licence = { key:v, sku:null, checked:0, dead:false, pending:true, failingSince:0 };
       save(); sfx('good'); toast('🔑 Saved — will confirm when online');
       setTimeout(()=>go('parent','more'), 500);
     });
