@@ -1133,8 +1133,8 @@ const BADGES = [
   { id:'first',    em:'🌟', n:'First Star',     d:'Finish your first day' },
   { id:'week',     em:'🏅', n:'Week Champion',  d:'Finish all 7 days' },
   { id:'perfect',  em:'💯', n:'Perfect Quiz',   d:'100% on the Champion Quiz' },
-  { id:'streak3',  em:'🔥', n:'3-Day Streak',   d:'Practise 3 days in a row' },
-  { id:'streak7',  em:'⚡', n:'7-Day Streak',   d:'Practise 7 days in a row' },
+  { id:'streak3',  em:'🔥', n:'3-Day Streak',   d:'Practice 3 days in a row' },
+  { id:'streak7',  em:'⚡', n:'7-Day Streak',   d:'Practice 7 days in a row' },
   { id:'boss',     em:'⚔️', n:'Boss Slayer',    d:'Clear the whole tricky pile' },
   { id:'arcade',   em:'🎮', n:'Arcade Master',  d:'Play all three games' },
   { id:'reader',   em:'📣', n:'Loud Reader',    d:'Read every word out loud' },
@@ -2121,6 +2121,7 @@ function buyNow(){
 function siteFooter(){
   return el('<p class="muted center" style="margin-top:18px;font-size:12px;line-height:2">'+
     '<a href="./about.html" style="color:inherit">About</a> · '+
+    '<a href="./schools.html" style="color:inherit">Schools</a> · '+
     '<a href="./contact.html" style="color:inherit">Contact</a> · '+
     '<a href="./terms.html" style="color:inherit">Terms</a> · '+
     '<a href="./privacy.html" style="color:inherit">Privacy</a> · '+
@@ -2708,7 +2709,7 @@ function parentWords(a){
   const boxes = {};
   const card = el('<div class="card"><h3>📝 This week\'s words</h3>'+
     '<p class="muted">Paste them straight from the teacher — any layout works. '+
-    'The rules, chunks and puzzles are worked out for you.</p><div id="kb"></div>'+
+    'The patterns, chunks, and practice path are worked out for you.</p><div id="kb"></div>'+
     '<button class="btn green big" id="wsave" style="margin-top:6px">💾 Save &amp; start the week</button>'+
     '<label style="display:flex;gap:9px;align-items:center;font-size:14px;margin-top:12px;color:var(--ink-soft)">'+
       '<input type="checkbox" id="fw" style="width:20px;height:20px" checked> Start a fresh week (resets the day map)</label>'+
@@ -2720,7 +2721,7 @@ function parentWords(a){
     const w = el('<div style="margin-top:14px">'+
       '<label class="fl">'+k.avatar+' '+esc(k.name)+' · grade '+(k.grade||1)+'</label>'+
       '<textarea class="ta" style="min-height:120px" spellcheck="false" placeholder="Paste '+esc(k.name)+'\'s words…"></textarea>'+
-      '<details style="margin-top:6px"><summary>See the rules they\'ll get</summary><div class="pvbox"></div></details>'+
+      '<details style="margin-top:6px"><summary>See the patterns they\'ll learn</summary><div class="pvbox"></div></details>'+
       '</div>');
     const ta = w.querySelector('textarea');
     ta.value = DB.weekRawByKid[k.id] || '';
@@ -3815,7 +3816,7 @@ function actWednesday(a, d){
       '<div class="row" style="justify-content:center;margin:10px 0">'+
         '<button class="btn blue" id="hear">🔊 Hear it</button>'+
         '<button class="btn grey" id="slow">🐢 Slowly</button>'+
-        '<button class="btn grey" id="tip">💡 Rule</button>'+
+        '<button class="btn grey" id="tip">💡 Pattern</button>'+
       '</div></div>');
     host.appendChild(c);
     c.querySelector('#hear').onclick = () => sayWord(w.word);
@@ -4230,7 +4231,7 @@ window.addEventListener('hashchange', () => location.reload());
 <script>
 /* ===================== SPELLING QUEST — Bee Prep =====================
    A long word list with a target date. The app splits it into weekly
-   sections, carries missed words forward, and in the last fortnight
+   sections, carries missed words forward, and in the last two weeks
    swings the balance towards misses while bringing back the words they
    had already mastered, so nothing goes stale.
    Thursday's "Spelling Bee" activity is a different thing and untouched.
@@ -4238,7 +4239,7 @@ window.addEventListener('hashchange', () => location.reload());
 
 const BEE_SESSION_MS = 10 * 60 * 1000;      // the 10-minute cap
 const BEE_MASTER_RUN = 3;                   // right this many times in a row = mastered
-const BEE_FINAL_DAYS = 14;                  // "the final fortnight"
+const BEE_FINAL_DAYS = 14;                  // "the final two weeks"
 
 let BEE = null;
 
@@ -4297,7 +4298,7 @@ function beePlan(){
   const started = p.started || today();
   const weekIndex = Math.max(0, Math.floor(daysBetween(started, today()) / 7));
 
-  // how many weeks of NEW material: everything except the last fortnight
+  // how many weeks of NEW material: everything except the last two weeks
   let totalWeeks = daysLeft != null ? Math.ceil((daysLeft + 1) / 7) : 4;
   let newWeeks = Math.max(1, totalWeeks - 2);
   const perChunk = Math.max(1, Math.ceil(words.length / newWeeks));
@@ -4442,7 +4443,7 @@ function actBeePlay(a){
   MISSED = [];
 
   let words = beeSessionWords();
-  if (!words.length){ a.appendChild(el('<div class="card center"><h2>Nothing to practise!</h2></div>')); return; }
+  if (!words.length){ a.appendChild(el('<div class="card center"><h2>Nothing to practice!</h2></div>')); return; }
 
   const host = el('<div></div>'); a.appendChild(host);
   const started = Date.now();
@@ -4731,7 +4732,7 @@ function renderModes(a){
 
   topbar(a);
   a.appendChild(el('<div class="card center" style="padding:14px">'+
-    '<h2 style="font-size:22px;margin:2px 0 4px">What shall we practise?</h2></div>'));
+    '<h2 style="font-size:22px;margin:2px 0 4px">What shall we practice?</h2></div>'));
 
   buildCurrentWeek();
   const wk = el('<button class="day d2" style="width:100%;min-height:110px;margin-bottom:12px">'+
