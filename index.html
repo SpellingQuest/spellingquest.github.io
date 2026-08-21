@@ -6,6 +6,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="A cute, gamified weekly spelling practice app for kids.">
 <meta name="theme-color" content="#221252">
+
+<!-- Link preview: the card that shows when someone texts or posts this link.
+     og:* is the general standard (iMessage, WhatsApp, Slack, Facebook);
+     twitter:* is a near-duplicate set some platforms look for instead.
+     Both point at the same image. og.png must stay 1200x630. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://spellingquest.github.io/">
+<meta property="og:site_name" content="Spelling Quest">
+<meta property="og:title" content="Spelling Quest — their spelling words, made to stick">
+<meta property="og:description" content="Paste your child's actual spelling list. Spelling Quest finds the patterns and builds a seven-day practice path they can do on their own.">
+<meta property="og:image" content="https://spellingquest.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Spelling Quest — their spelling words, made to stick">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Spelling Quest — their spelling words, made to stick">
+<meta name="twitter:description" content="Paste your child's actual spelling list. Spelling Quest finds the patterns and builds a seven-day practice path they can do on their own.">
+<meta name="twitter:image" content="https://spellingquest.github.io/og.png">
+<meta name="twitter:image:alt" content="Spelling Quest — their spelling words, made to stick">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1210,7 +1230,8 @@ const RECHECK_DAYS   = 30;    // how often we quietly re-check a key
 const GRACE_DAYS     = 21;    // how long a key that stops verifying still works
 
 /* Every Gumroad product whose key should unlock THIS app.
-   Fill in `id` from Gumroad: the product page → Settings → Advanced → Product ID.
+   Fill in `id` from Gumroad: product → Content tab → Insert → License key. The ID is
+   shown inside that block. (It is NOT under Settings → Advanced — that UI is gone.)
    A bundle that also sells the other apps still belongs in this list, as long as
    Spelling Quest is one of the things it grants.
      variantContains — for a bundle sold with variants ("Spelling Quest + One
