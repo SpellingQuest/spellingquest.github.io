@@ -1277,13 +1277,15 @@ const GUMROAD_SKUS = [
      the chosen app (see variantContains above) \u2014 do that going forward, and
      these entries keep faith with everyone who bought before it existed. */
   { id:'6TLtDTxe19Rgypj9kASU1A==', label:'One Ayah \u2014 add one more app' },
-  { id:'MDGCYGOYZKbezd3K0JXnfg==', label:'Muslim Kids Checklist \u2014 add one more app' }
+  { id:'MDGCYGOYZKbezd3K0JXnfg==', label:'Muslim Kids Checklist \u2014 add one more app' },
+  { id:'Tdm6Qct7EyMbAC36l6-zMg==', label:'One Ayah \u2014 add two more apps' }
 
-  /* ⚠️ STILL MISSING: the siblings' $49 "add two" product IDs.
-     One Ayah has this product live (permalink `gieimmq`, currently misnamed
-     "add a second app") but its product ID is recorded nowhere. Muslim Kids
-     Checklist has no $49 tier yet. Until both are added here, a family who buys
-     a sibling's "add two" cannot open Spelling Quest. */
+  /* ⚠️ STILL MISSING: Muslim Kids Checklist's $49 "add two" product — it does
+     not exist on their Gumroad account yet. Until it is built and its ID lands
+     in ../Universal Files/PRODUCT-IDS.md, a family who buys that tier from them
+     cannot open Spelling Quest.
+     Note a sibling's $40 is deliberately NOT in this list: that price buys that
+     app on its own and grants nothing here. */
 ];
 
 /* Products that PROVE someone already owns a sibling app, which is what
@@ -1291,7 +1293,8 @@ const GUMROAD_SKUS = [
    qualification, so every sibling product counts here \u2014 unlike GUMROAD_SKUS
    above, a wrong answer here only shows a cheaper price, never opens the app. */
 const OWNERSHIP_PRODUCT_IDS = [
-  '5K-rSAFj42TdAX3vlGNQsQ==',   // One Ayah \u2014 family access $40
+  '5K-rSAFj42TdAX3vIGNQsQ==',   // One Ayah \u2014 family access $40  (16 = uppercase I, not l)
+  'Tdm6Qct7EyMbAC36l6-zMg==',   // One Ayah \u2014 add two apps $49
   '6TLtDTxe19Rgypj9kASU1A==',   // One Ayah \u2014 second app $25
   'wDMOSJIqK40DaP5STkK7Pw==',   // One Ayah \u2014 all three $89
   '7e8uIMFPPfgCWGpda9OIsQ==',   // Muslim Kids Checklist \u2014 family access $40
@@ -2173,13 +2176,27 @@ function buyNow(){
 }
 
 function siteFooter(){
-  return el('<p class="muted center" style="margin-top:18px;font-size:12px;line-height:2">'+
+  /* Where a family's progress actually lives. One Ayah carries the same line in
+     the same place, and it answers the question a parent on a free trial is
+     quietly asking: "if I set this up on the iPad, do we lose it?" */
+  const unlocked = !!(DB.accessCode || (DB.licence && DB.licence.key));
+  const storage = unlocked
+    ? 'Your words and progress are saved in this browser, and they travel to '+
+      'your other devices on their own.'
+    : 'Your words and progress are saved in this browser. Once you have a '+
+      'license key they travel to your other devices on their own.';
+  const wrap = el('<div></div>');
+  wrap.appendChild(el('<p class="muted center" style="margin-top:20px;font-size:12px;'+
+    'line-height:1.6;max-width:420px;margin-left:auto;margin-right:auto;opacity:.85">'+
+    storage+'</p>'));
+  wrap.appendChild(el('<p class="muted center" style="margin-top:10px;font-size:12px;line-height:2">'+
     '<a href="./about.html" style="color:inherit">About</a> · '+
     '<a href="./schools.html" style="color:inherit">Schools</a> · '+
     '<a href="./contact.html" style="color:inherit">Contact</a> · '+
     '<a href="./terms.html" style="color:inherit">Terms</a> · '+
     '<a href="./privacy.html" style="color:inherit">Privacy</a> · '+
-    '<a href="./refunds.html" style="color:inherit">Refunds</a></p>');
+    '<a href="./refunds.html" style="color:inherit">Refunds</a></p>'));
+  return wrap;
 }
 
 /* A parent who buys on day 2 has to be able to type their key in there and
@@ -2269,8 +2286,8 @@ function renderGate(a){
   const expired = left === 0;
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
-      '<div style="font-size:52px">🐝</div>'+
-      '<h1 style="font-size:34px;margin:6px 0 2px">Spelling Quest</h1>'+
+      '<img src="./logo.png" alt="Spelling Quest" width="640" height="160" '+
+        'style="display:block;width:74%;max-width:300px;height:auto;margin:0 auto 4px">'+
       '<p class="muted">Weekly spelling words and spelling-bee practice, for the whole family.</p>'+
     '</div>'));
 
