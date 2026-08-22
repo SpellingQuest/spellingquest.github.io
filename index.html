@@ -14,18 +14,18 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://spellingquest.github.io/">
 <meta property="og:site_name" content="Spelling Quest">
-<meta property="og:title" content="Spelling Quest — seven short goes. One confident speller.">
+<meta property="og:title" content="Spelling Quest — their teacher's words, your child's learning path">
 <meta property="og:description" content="Paste your child's actual spelling list — the one in their backpack this week. Spelling Quest finds the patterns and builds a seven-day practice path they can do on their own.">
 <meta property="og:image" content="https://spellingquest.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Spelling Quest — seven short goes. One confident speller.">
+<meta property="og:image:alt" content="Spelling Quest — their teacher's words, your child's learning path">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Spelling Quest — seven short goes. One confident speller.">
+<meta name="twitter:title" content="Spelling Quest — their teacher's words, your child's learning path">
 <meta name="twitter:description" content="Paste your child's actual spelling list — the one in their backpack this week. Spelling Quest finds the patterns and builds a seven-day practice path they can do on their own.">
 <meta name="twitter:image" content="https://spellingquest.github.io/og.png">
-<meta name="twitter:image:alt" content="Spelling Quest — seven short goes. One confident speller.">
+<meta name="twitter:image:alt" content="Spelling Quest — their teacher's words, your child's learning path">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1239,10 +1239,54 @@ const GRACE_DAYS     = 21;    // how long a key that stops verifying still works
      variant the customer actually bought mentions this app. Leave it out for a
      product where every buyer gets Spelling Quest. */
 const GUMROAD_SKUS = [
-  { id:'', label:'Spelling Quest \u2014 family access' },   // $40  first app
-  { id:'', label:'Add one more app'  },                     // $25  owns 1, wants 1 more
-  { id:'', label:'Add two more apps' },                     // $49  owns 1, wants 2 more
-  { id:'', label:'All three apps'    }                      // $89  owns none, wants all 3
+  /* --- Spelling Quest's own four products (created 21 Aug 2026) --- */
+  { id:'a-vmFHoWlZ86_4FnmjP_0g==', label:'Spelling Quest \u2014 family access' }, // $40
+  { id:'-Kkbtx5LoSOHKvijvnUBMA==', label:'Add one more app'  },                    // $25
+  { id:'D3bRQBthRlnS8BRwHt-w7A==', label:'Add two more apps' },                    // $49
+  { id:'yL1qS3O7D10z5bb_dFOACg==', label:'All three apps'    },                    // $89
+
+  /* --- The siblings' all-three bundles ---------------------------------
+     A family who buys "all three" from One Ayah or Muslim Kids Checklist gets
+     a key issued by THAT app's product. Spelling Quest has to accept it, or a
+     paying customer simply cannot open this app and sees no reason why. */
+  { id:'wDMOSJIqK40DaP5STkK7Pw==', label:'One Ayah \u2014 all three apps' },
+  { id:'32mLygvh97ZA0_hkLiqHSA==', label:'Muslim Kids Checklist \u2014 all three apps' },
+
+  /* --- The siblings' "add one" and "add two" tiers -----------------------
+     DECIDED 21 Aug 2026. These products can grant Spelling Quest, but they do
+     not record WHICH app the buyer picked, so accepting them means someone who
+     chose a different app also gets in.
+
+     We accept them anyway, because the two mistakes are not the same size:
+       - Accepting wrongly costs a little revenue from someone who has already
+         paid us for something.
+       - Refusing wrongly locks a paying family out of an app they bought, with
+         no error that explains why, and they leave without telling us.
+     The standing rule is that a failure must never lock a paying family out, so
+     the leak is the cheaper error. Precision comes from adding a variant naming
+     the chosen app (see variantContains above) \u2014 do that going forward, and
+     these entries keep faith with everyone who bought before it existed. */
+  { id:'6TLtDTxe19Rgypj9kASU1A==', label:'One Ayah \u2014 add one more app' },
+  { id:'MDGCYGOYZKbezd3K0JXnfg==', label:'Muslim Kids Checklist \u2014 add one more app' }
+
+  /* ⚠️ STILL MISSING: the siblings' $49 "add two" product IDs.
+     One Ayah has this product live (permalink `gieimmq`, currently misnamed
+     "add a second app") but its product ID is recorded nowhere. Muslim Kids
+     Checklist has no $49 tier yet. Until both are added here, a family who buys
+     a sibling's "add two" cannot open Spelling Quest. */
+];
+
+/* Products that PROVE someone already owns a sibling app, which is what
+   unlocks the $25 and $49 checkout links. Owning a sibling app is the whole
+   qualification, so every sibling product counts here \u2014 unlike GUMROAD_SKUS
+   above, a wrong answer here only shows a cheaper price, never opens the app. */
+const OWNERSHIP_PRODUCT_IDS = [
+  '5K-rSAFj42TdAX3vlGNQsQ==',   // One Ayah \u2014 family access $40
+  '6TLtDTxe19Rgypj9kASU1A==',   // One Ayah \u2014 second app $25
+  'wDMOSJIqK40DaP5STkK7Pw==',   // One Ayah \u2014 all three $89
+  '7e8uIMFPPfgCWGpda9OIsQ==',   // Muslim Kids Checklist \u2014 family access $40
+  'MDGCYGOYZKbezd3K0JXnfg==',   // Muslim Kids Checklist \u2014 second app $25
+  '32mLygvh97ZA0_hkLiqHSA=='    // Muslim Kids Checklist \u2014 all three $89
 ];
 
 /* ---- how someone buys it ----------------------------------------------
@@ -1251,10 +1295,10 @@ const GUMROAD_SKUS = [
    BUY_EMAIL — so there is never a moment where a parent taps "get it" and lands
    nowhere. The bundle links are optional: fill one in and it appears as a
    button, leave it empty and it stays a line of text. */
-const CHECKOUT_URL   = '';    // $40  family access  e.g. 'https://spellingquest.gumroad.com/l/…'
-const CHECKOUT_ADDON = '';    // $25  already own one app, adding this one
-const CHECKOUT_TWO   = '';    // $49  already own one app, adding the other two
-const CHECKOUT_THREE = '';    // $89  own none, want all three
+const CHECKOUT_URL   = 'https://spellingquest.gumroad.com/l/mlshxz';  // $40 family access
+const CHECKOUT_ADDON = 'https://spellingquest.gumroad.com/l/xgcjen';  // $25 add one more app
+const CHECKOUT_TWO   = 'https://spellingquest.gumroad.com/l/miyhub';  // $49 add two more apps
+const CHECKOUT_THREE = 'https://spellingquest.gumroad.com/l/ihzywn';  // $89 all three apps
 const BUY_EMAIL      = 'spellingquest@gmail.com';
 const PRICE_LINE     = '$40 for the whole school year';
 /* One place for every price, so the app, the buy panel and the website pages
