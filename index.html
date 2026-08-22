@@ -43,6 +43,7 @@
   --ink-soft:#6b5f92;
   --line:#e8e3f7;
   --brand:#7c3aed;
+  --word:#0d5c55;   /* the word being learned — used nowhere else */
   --brand2:#a855f7;
   --pink:#ff5fa2;
   --yellow:#ffc93c;
@@ -161,10 +162,19 @@ h1,h2,h3{ margin:0 0 8px; }
 
 /* ---------- big word display ---------- */
 .bigword{
-  font-size:clamp(38px,11vw,72px); font-weight:900; letter-spacing:2px; text-align:center;
-  color:var(--ink); margin:10px 0 6px; line-height:1.1; word-break:break-word;
+  /* Much bigger than the surrounding text, and in a colour used nowhere else in
+     the app, so the word a child is meeting is unmistakably the main event. */
+  font-size:clamp(52px,15vw,104px); font-weight:900; letter-spacing:2px; text-align:center;
+  color:var(--word); margin:14px 0 10px; line-height:1.05; word-break:break-word;
 }
-.bigword .hi{ color:var(--brand); }
+/* The pattern inside the word is marked by BOTH colour and an underline —
+   colour must never be the only cue. */
+.bigword .hi{
+  color:var(--brand);
+  text-decoration:underline;
+  text-decoration-thickness:.085em;
+  text-underline-offset:.14em;
+}
 .speaker{
   width:110px; height:110px; border-radius:50%; background:linear-gradient(150deg,var(--brand2),var(--brand));
   color:#fff; font-size:46px; display:flex; align-items:center; justify-content:center; margin:0 auto;
@@ -481,7 +491,7 @@ const PATTERNS = [
     trick:'i before e, except after c. Receive, and ceiling.', emoji:'🧾' },
 
   { id:'ai', label:'ai words', g:'ai',
-    title:'ai sounds like the letter <b>a</b> — in the middle', rule:'When two vowels go walking, the first one does the talking.',
+    title:'"ai" sounds like the letter <b>a</b> — in the middle', rule:'When two vowels go walking, the first one does the talking.',
     trick:'ai hides in the middle. Rain, train, paint.', emoji:'🌧️' },
 
   { id:'ay', label:'ay words', g:'ay',
@@ -547,7 +557,7 @@ const PATTERNS = [
 
   // ---------- r-controlled ----------
   { id:'ar', label:'ar words', g:'ar',
-    title:'ar sounds like <b>arrr</b>', rule:'The <b>r</b> bosses the vowel around.',
+    title:'"ar" sounds like <b>arrr</b>', rule:'The <b>r</b> bosses the vowel around.',
     trick:'The car is parked far. Arrr, just like a pirate.', emoji:'🏴‍☠️' },
 
   { id:'or', label:'or words', g:'or',
@@ -3689,6 +3699,19 @@ function startMic(bar, note, onSpoke){
     const data = new Uint8Array(an.frequencyBinCount);
     let loudFrames = 0;
     const tick = () => {
+      /* The app's own voice comes out of the speaker and straight back into the
+         microphone, which sounds exactly like a child reading aloud. Without
+         this guard, tapping "\ud83d\udc22 Slowly" — or even the automatic first
+         playback — completes the round by itself, so the slow reading appears to
+         do nothing. Day 1 is the only stage that runs the mic, which is why the
+         bug looked specific to Day 1. While the app is talking we stop counting
+         and reset, so only the child's own voice can finish the round. */
+      if ('speechSynthesis' in window && (speechSynthesis.speaking || speechSynthesis.pending)){
+        loudFrames = 0;
+        if (bar) bar.style.width = '0%';
+        micRaf = requestAnimationFrame(tick);
+        return;
+      }
       an.getByteFrequencyData(data);
       let sum = 0; for (let i=0;i<data.length;i++) sum += data[i];
       const avg = sum/data.length;
@@ -3696,7 +3719,10 @@ function startMic(bar, note, onSpoke){
       if (bar) bar.style.width = pct + '%';
       if (avg > 20){ loudFrames++; if (note) note.textContent = '🗣️ I can hear you — great reading!'; }
       else loudFrames = Math.max(0, loudFrames-1);
-      if (loudFrames > 45){ if (onSpoke) onSpoke(); return; }
+      /* ~1.2s of the child's own voice, not ~0.7s. A word read properly out
+         loud lasts about this long; the old threshold fired on a cough, a
+         chair scrape, or the first syllable. */
+      if (loudFrames > 75){ if (onSpoke) onSpoke(); return; }
       micRaf = requestAnimationFrame(tick);
     };
     tick();
