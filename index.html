@@ -1184,7 +1184,7 @@ const BADGES = [
 ];
 
 /* ---- access ----
-   One code per school year, printed on the welcome sheet the store delivers.
+   One code per year, printed on the welcome sheet the store delivers.
    Checked entirely on the device, so it keeps working offline for ever. */
 const TRIAL_DAYS = 7;
 
@@ -1331,7 +1331,7 @@ const OWNERSHIP_PRODUCT_IDS = [
 ];
 
 /* ---- how someone buys it ----------------------------------------------
-   CHECKOUT_URL is the Gumroad link for the $40 school year, once the product is
+   CHECKOUT_URL is the Gumroad link for the $40 a year plan, once the product is
    published. Until then it stays empty and the buy button falls back to
    BUY_EMAIL — so there is never a moment where a parent taps "get it" and lands
    nowhere. The bundle links are optional: fill one in and it appears as a
@@ -1341,7 +1341,7 @@ const CHECKOUT_ADDON = 'https://spellingquest.gumroad.com/l/xgcjen';  // $25 add
 const CHECKOUT_TWO   = 'https://spellingquest.gumroad.com/l/miyhub';  // $49 add two more apps
 const CHECKOUT_THREE = 'https://spellingquest.gumroad.com/l/ihzywn';  // $89 all three apps
 const BUY_EMAIL      = 'spellingquest@gmail.com';
-const PRICE_LINE     = '$40 for the whole school year';
+const PRICE_LINE     = '$40 a year';
 /* One place for every price, so the app, the buy panel and the website pages
    can never drift apart. */
 const PRICE_ONE    = '$40';
@@ -2148,7 +2148,7 @@ function buyNow(){
 
   const sub  = encodeURIComponent('Spelling Quest \u2014 I\'d like the full year');
   const body = encodeURIComponent(
-    'Hi!\n\nWe\'ve been trying Spelling Quest and we\'d like it for the school year.\n\n' +
+    'Hi!\n\nWe\'ve been trying Spelling Quest and we\'d like the full year.\n\n' +
     'Could you send me the link to pay and my key?\n\nThank you!');
 
   /* The main button goes straight to Gumroad once CHECKOUT_URL is filled in.
@@ -2172,7 +2172,7 @@ function buyNow(){
     'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
   const box = el('<div class="card" style="max-width:380px;width:100%;text-align:center;margin:0">'+
       '<div style="font-size:40px">\ud83d\udc1d</div>'+
-      '<h2 style="font-size:21px;margin:4px 0 2px">Get the full school year</h2>'+
+      '<h2 style="font-size:21px;margin:4px 0 2px">Get the full year</h2>'+
       '<p class="muted" style="margin-bottom:10px"><b>'+PRICE_LINE+'.</b><br>'+
         'Every child in your family. Every device you use.</p>'+
       mainBtn +
@@ -2245,7 +2245,7 @@ function openUnlock(){
       '<div style="border-top:1px solid rgba(0,0,0,.12);margin:15px 0 11px"></div>'+
       '<p class="muted" style="font-size:13.5px">Haven\'t bought it yet?</p>'+
       '<button class="btn blue" id="ulbuy" style="width:100%;margin-top:8px">'+
-        'Get the school year · '+PRICE_ONE+'</button>'+
+        'Get the full year · '+PRICE_ONE+'</button>'+
       '<p class="muted" style="font-size:11.5px;margin-top:9px">'+BUNDLE_LINE+'</p>'+
       '<button class="btn grey" id="ulno" style="width:100%;margin-top:10px">Not now</button>'+
     '</div>');
@@ -2323,7 +2323,7 @@ function renderGate(a){
     (expired ? '<div style="font-size:44px">⏳</div><h2>Your free week is up</h2>'+
                '<p class="muted">Hope they enjoyed it! Here\'s how to carry on.</p>'+
                '<button class="btn green big" id="acbuy" style="margin-top:12px">'+
-                 'Get the full school year · $40</button>'+
+                 'Get the full year · $40</button>'+
                '<p class="muted" style="font-size:13px;margin-top:7px">'+
                  'Every child in your family. All your devices.</p>'+
                '<div style="border-top:1px solid rgba(0,0,0,.12);margin:15px 0 11px"></div>'+
@@ -2539,7 +2539,18 @@ function renderHome(a){
   // word list preview
   const list = el('<div class="card"><h3 style="font-size:18px">📋 This week\'s words</h3></div>');
   WEEK.sections.forEach(s => {
-    list.appendChild(el('<div style="margin-top:10px;font-weight:900;color:var(--brand)">'+s.emoji+' '+esc(s.label)+'</div>'));
+    list.appendChild(el('<div style="margin-top:12px;font-weight:900;color:var(--brand)">'+s.emoji+' '+esc(s.label)+'</div>'));
+    /* The heading says what the group is called. The rule says why those words
+       are together, which is the thing the week is actually teaching. Kathryn
+       asked for the rule next to the pattern.
+
+       It gets its own line rather than being appended to the heading, because
+       some rules are a full sentence and would wrap badly beside a short label.
+       The text is not escaped on purpose: these are the app's own rule strings
+       from PATTERNS, and they carry deliberate <b> and <i> around the letters
+       being taught. No parent input ever reaches here. */
+    if (s.tip && s.tip.rule)
+      list.appendChild(el('<div class="muted" style="margin-top:2px;line-height:1.45">'+s.tip.rule+'</div>'));
     const row = el('<div style="margin-top:6px"></div>');
     s.words.forEach(w => {
       const st = p.stats[w.word];
@@ -3401,11 +3412,100 @@ function highlight(word, patternId){
   return esc(word.slice(0,m.i)) + '<span class="hi">' + esc(word.slice(m.i, m.i+m.len)) + '</span>' + esc(word.slice(m.i+m.len));
 }
 
+/* ---------------- resuming an exercise left part-way ----------------
+   A child who accidentally taps back should come back to the word she was on,
+   not to word one. Reported from real use on 25 Aug: word 8 of 12, one stray
+   tap, seven words to redo.
+
+   This is deliberately NOT stored in the synced progress object. Two reasons.
+   The sync layer merges numbers with Math.max and arrays by last-writer-wins,
+   so a half-finished exercise on the iPad could come back carrying the phone's
+   word order and the iPad's position — a different word every time. And the
+   behaviour we actually want is device-local anyway: you resume where you left
+   off on the device you left it on. So it lives in its own localStorage key,
+   outside DB, and never leaves the device. */
+const RESUME_KEY = 'sq.resume.v1';
+const RESUME_MAX_AGE_MS = 3 * 24 * 60 * 60 * 1000;   /* three days */
+
+function resumeAll(){
+  try{ return JSON.parse(localStorage.getItem(RESUME_KEY) || '{}') || {}; }
+  catch(e){ return {}; }
+}
+function resumeWrite(all){
+  try{ localStorage.setItem(RESUME_KEY, JSON.stringify(all)); }catch(e){}
+}
+function resumeId(dayKey){
+  const k = kid();
+  return ((k && k.id) || '?') + ':' + (DB.weekId || '?') + ':' + dayKey;
+}
+/* i is where to pick up. Nothing is stored at position 0 — there is no such
+   thing as resuming an exercise nobody has started. */
+function resumeSave(dayKey, order, i, extra){
+  const all = resumeAll(), id = resumeId(dayKey);
+  if (!i || i <= 0){ delete all[id]; resumeWrite(all); return; }
+  all[id] = { order: order || null, i: i, at: Date.now(), extra: extra || {} };
+  resumeWrite(all);
+}
+function resumeClear(dayKey){
+  const all = resumeAll(); delete all[resumeId(dayKey)]; resumeWrite(all);
+}
+
+/* Work out what to run and where to start.
+
+   `pool` is the full word list. If a saved slot matches it exactly, the words
+   come back in the order they were in. If the week's words changed underneath
+   us — a grown-up pasted a new list — the slot is thrown away rather than
+   half-honoured, because resuming into a list that no longer exists is worse
+   than starting again. */
+function resumePlan(dayKey, pool){
+  const slot = resumeAll()[resumeId(dayKey)];
+  const fresh = { words: shuffle(pool), start: 0, extra: {}, resumed: false };
+  if (!slot || !slot.order) return fresh;
+  if (Date.now() - (slot.at || 0) > RESUME_MAX_AGE_MS){ resumeClear(dayKey); return fresh; }
+  const byWord = {}; pool.forEach(w => byWord[w.word] = w);
+  const order = slot.order.map(x => byWord[x]).filter(Boolean);
+  if (order.length !== slot.order.length || order.length !== pool.length){
+    resumeClear(dayKey); return fresh;
+  }
+  const start = Math.min(slot.i, order.length);
+  if (start <= 0) return fresh;
+  return { words: order, start: start, extra: slot.extra || {}, resumed: true };
+}
+
+/* Same idea for the two activities that walk a fixed queue rather than a
+   shuffled word list — Monday and Tuesday. There is no order to remember, so
+   only the position is stored. */
+function resumeQueuePlan(dayKey, queueLength){
+  const slot = resumeAll()[resumeId(dayKey)];
+  if (!slot || slot.order) return { start: 0, extra: {}, resumed: false };
+  if (Date.now() - (slot.at || 0) > RESUME_MAX_AGE_MS){ resumeClear(dayKey); return { start:0, extra:{}, resumed:false }; }
+  if (slot.len !== queueLength){ resumeClear(dayKey); return { start:0, extra:{}, resumed:false }; }
+  const start = Math.min(slot.i, queueLength);
+  if (start <= 0) return { start: 0, extra: {}, resumed: false };
+  return { start: start, extra: slot.extra || {}, resumed: true };
+}
+function resumeQueueSave(dayKey, i, queueLength, extra){
+  const all = resumeAll(), id = resumeId(dayKey);
+  if (!i || i <= 0){ delete all[id]; resumeWrite(all); return; }
+  all[id] = { order: null, len: queueLength, i: i, at: Date.now(), extra: extra || {} };
+  resumeWrite(all);
+}
+/* Said once, gently, so a child is not confused about why she is on word 8. */
+function resumeToast(plan){
+  if (plan && plan.resumed) setTimeout(() => toast('👋 Picking up where you left off', 2600), 500);
+}
+
 let BACK_TO = 'home';
 function dayHeader(a, d, sub){
   const h = el('<div class="topbar">'+
     '<button class="iconbtn" id="bk">⬅️</button>'+
-    '<div class="who"><b>'+d.em+' '+dayLabel(d)+' — '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
+    /* No day name in here. It used to read "Tuesday — Arcade" and went stale the
+       moment a parent changed the test day, because it was static while the home
+       page label was not. Kathryn's option B: the day belongs on the home page,
+       where it is worked out from the child's real test day. A label that does
+       not exist cannot go stale — and the app has to stop assuming seven days
+       anyway, so there is no correct day name to write here. */
+    '<div class="who"><b>'+d.em+' '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
     '</div>');
   h.querySelector('#bk').onclick = () => { stopSpeech(); stopMic(); go(BACK_TO || 'home'); };
   a.appendChild(h);
@@ -3650,13 +3750,18 @@ function actMonday(a, d){
   // walk sections, showing the tip card before each group
   let queue = [];
   WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s})); });
-  let qi = 0;
+  const plan = resumeQueuePlan('mon', queue.length);
+  let qi = plan.start;
+  readCount = plan.extra.readCount || 0;
+  resumeToast(plan);
 
   function next(){
     if (qi >= queue.length){
+      resumeClear('mon');
       if (readCount >= words.length) award('reader');
       return finishScreen(d, readCount, words.length);
     }
+    resumeQueueSave('mon', qi, queue.length, {readCount});
     const item = queue[qi++];
     host.innerHTML = '';
     if (item.tip) return showTip(item.tip);
@@ -3786,15 +3891,21 @@ function actTuesday(a, d){
   const host = el('<div></div>'); a.appendChild(host);
   let queue = [];
   WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s})); });
-  let qi = 0, correct = 0, total = WEEK.allWords.length, firstTry = 0;
+  const plan = resumeQueuePlan('tue', queue.length);
+  let qi = plan.start, correct = plan.extra.correct || 0,
+      total = WEEK.allWords.length, firstTry = plan.extra.firstTry || 0;
   const dd = dots(total, a);
-  let di = 0;
+  let di = plan.extra.di || 0;
+  for (let j = 0; j < di; j++) setDot(dd, j, true);
+  resumeToast(plan);
 
   function next(){
     if (qi >= queue.length){
+      resumeClear('tue');
       if (correct === total) award('builder');
       return finishScreen(d, firstTry, total);
     }
+    resumeQueueSave('tue', qi, queue.length, {correct, firstTry, di});
     const item = queue[qi++];
     host.innerHTML = '';
     if (item.tip){
@@ -3846,7 +3957,19 @@ function actTuesday(a, d){
       slots.innerHTML = '';
       for (let i=0;i<chunks.length;i++){
         const v = placed[i];
-        slots.appendChild(el('<div class="slot'+(v?' filled':'')+(state?' '+state:'')+'">'+(v?esc(v.txt):'')+'</div>'));
+        const sl = el('<div class="slot'+(v?' filled':'')+(state?' '+state:'')+'">'+(v?esc(v.txt):'')+'</div>');
+        if (v && !state){
+          sl.style.cursor = 'pointer';
+          sl.title = 'Tap to put this piece back';
+          sl.onclick = () => {
+            const at = placed.indexOf(v);
+            if (at < 0) return;
+            sfx('pop');
+            placed.splice(at, 1);
+            drawSlots(); drawTray();
+          };
+        }
+        slots.appendChild(sl);
       }
     }
     function drawTray(){
@@ -3864,6 +3987,14 @@ function actTuesday(a, d){
         tray.appendChild(b);
       });
     }
+    /* Tapping a piece already in the word sends it back to the tray.
+       Kathryn's son tried this unprompted at six and was surprised it did
+       nothing — which is the strongest case there is for building it.
+
+       ⚠️ Undo stays. This is an addition, not a replacement: the older child
+       may be using undo happily. The two do different things — undo steps back
+       through history, tapping removes one specific piece wherever it sits —
+       and both are worth having. */
     c.querySelector('#undo').onclick = () => { placed.pop(); drawSlots(); drawTray(); };
 
     function check(){
@@ -3916,13 +4047,16 @@ function actTuesday(a, d){
    ============================================================ */
 function actWednesday(a, d){
   const host = el('<div></div>'); a.appendChild(host);
-  const words = shuffle(WEEK.allWords);
+  const plan = resumePlan('wed', WEEK.allWords);
+  const words = plan.words;
   const lvl = isHard() ? 3 : 1;
-  let i = 0, right = 0;
+  let i = plan.start, right = plan.extra.right || 0;
   const dd = dots(words.length, a);
+  for (let j = 0; j < i; j++) setDot(dd, j, true);
+  resumeToast(plan);
 
   function next(){
-    if (i >= words.length) return finishScreen(d, right, words.length);
+    if (i >= words.length){ resumeClear('wed'); return finishScreen(d, right, words.length); }
     const w = words[i];
     host.innerHTML = '';
     const c = el('<div class="card center">'+
@@ -3942,7 +4076,8 @@ function actWednesday(a, d){
     typingRound(c, {
       word: w.word, patternId: w.patternId,
       blanks: makeBlanks(w.word, w.patternId, lvl),
-      onDone: ok => { if (ok) right++; setDot(dd, i, ok); i++; next(); }
+      onDone: ok => { if (ok) right++; setDot(dd, i, ok); i++;
+        resumeSave('wed', words.map(x => x.word), i, {right}); next(); }
     });
   }
   next();
@@ -3953,12 +4088,15 @@ function actWednesday(a, d){
    ============================================================ */
 function actThursday(a, d){
   const host = el('<div></div>'); a.appendChild(host);
-  const words = shuffle(WEEK.allWords);
-  let i = 0, right = 0;
+  const plan = resumePlan('thu', WEEK.allWords);
+  const words = plan.words;
+  let i = plan.start, right = plan.extra.right || 0;
   const dd = dots(words.length, a);
+  for (let j = 0; j < i; j++) setDot(dd, j, true);
+  resumeToast(plan);
 
   function next(){
-    if (i >= words.length) return finishScreen(d, right, words.length);
+    if (i >= words.length){ resumeClear('thu'); return finishScreen(d, right, words.length); }
     const w = words[i];
     host.innerHTML = '';
     const c = el('<div class="card center">'+
@@ -3979,7 +4117,8 @@ function actThursday(a, d){
 
     typingRound(c, {
       word: w.word, patternId: w.patternId, blanks: null,
-      onDone: ok => { if (ok) right++; setDot(dd, i, ok); i++; next(); }
+      onDone: ok => { if (ok) right++; setDot(dd, i, ok); i++;
+        resumeSave('thu', words.map(x => x.word), i, {right}); next(); }
     });
   }
   next();
@@ -4018,10 +4157,17 @@ function actFriday(a, d){
     }
   }
 
-  function record(id, score){
+  /* `early` means the child cleared the whole list before the clock ran out.
+     Same ending, same summary, same feel — it just arrives sooner, because the
+     work is done. It should read as a win, not as a clock cut short. */
+  function record(id, score, early){
     p.games[id] = Math.max(p.games[id]||0, score); save();
-    confetti(50); sfx('win');
-    const pp = popup('<div class="em">🎉</div><h2>Score: '+score+'</h2><p class="muted">Nice playing!</p>'+
+    confetti(early ? 90 : 50); sfx('win');
+    const pp = popup('<div class="em">'+(early ? '\ud83c\udfc1' : '\ud83c\udf89')+'</div>'+
+      '<h2>Score: '+score+'</h2>'+
+      '<p class="muted">'+(early
+        ? 'You got through every single word before the timer! That\'s the whole list.'
+        : 'Nice playing!')+'</p>'+
       '<button class="btn big green" data-close>Back to Arcade</button>');
     pp.addEventListener('click', e => { if (e.target.dataset.close !== undefined) menu(); });
   }
@@ -4087,8 +4233,24 @@ function actFriday(a, d){
       const ans = c.querySelector('#ans'), tr = c.querySelector('#tr');
       function draw(state){
         ans.innerHTML = '';
-        for (let j=0;j<w.length;j++)
-          ans.appendChild(el('<div class="lbox blank'+(state||'')+'">'+(picked[j]?esc(picked[j].c):'')+'</div>'));
+        for (let j=0;j<w.length;j++){
+          const v = picked[j];
+          const bx = el('<div class="lbox blank'+(state||'')+'">'+(v?esc(v.c):'')+'</div>');
+          /* Same tap-to-return as Sound & Build — it applies everywhere letters
+             are placed, not only on the screen he happened to be using. */
+          if (v && !state){
+            bx.style.cursor = 'pointer';
+            bx.title = 'Tap to put this letter back';
+            bx.onclick = () => {
+              const at = picked.indexOf(v);
+              if (at < 0) return;
+              sfx('key');
+              picked.splice(at, 1);
+              draw();
+            };
+          }
+          ans.appendChild(bx);
+        }
         tr.innerHTML = '';
         letters.forEach((c2, li) => {
           const used = picked.some(p2 => p2.li === li);
@@ -4112,8 +4274,24 @@ function actFriday(a, d){
 
   /* --- Speed Match --- */
   function gameSpeed(id){
+    /* Two defects, reported from real use on 25 Aug when Kathryn's daughter
+       finished every word before the clock ran out.
+
+       One: there was only ever one way to finish — the timer. Finishing the
+       list did nothing, so it kept going. There are two ways to finish a race,
+       and only one was built.
+
+       Two: the next word was picked with Math.random() over the whole list
+       every time, with replacement and no memory. Over a short list that lands
+       on the same two or three words again and again, which is what she saw.
+       A shuffled queue fixes both: it cannot repeat, and running out of it is
+       the finish line.
+
+       ⚠️ The timer is NOT shortened. Kathryn was explicit. The clock stays at
+       45 seconds; what changed is that the exercise now has a second exit. */
     let score = 0, left = 45, timer = null;
     const all = WEEK.allWords;
+    let queue = shuffle(all.slice()), qi = 0, cleared = 0;
     host.innerHTML = '';
     const c = el('<div class="card center">'+
       '<div class="muted">⚡ Speed Match</div>'+
@@ -4129,9 +4307,17 @@ function actFriday(a, d){
       if (left <= 0){ clearInterval(timer); sfx('win'); record(id, score); }
     }, 1000);
 
+    function finishEarly(){
+      if (timer){ clearInterval(timer); timer = null; }
+      sfx('win');
+      record(id, score, true);
+    }
+
     function step(){
       if (left <= 0) return;
-      const w = all[Math.floor(Math.random()*all.length)];
+      if (qi >= queue.length) return finishEarly();
+      const w = queue[qi++];
+      cleared++;
       const others = shuffle(all.filter(x=>x.word!==w.word)).slice(0,3).map(x=>x.word);
       const opts = shuffle([w.word].concat(others));
       c.querySelector('#sp').onclick = () => sayWord(w.word);
@@ -4234,8 +4420,10 @@ function actSaturday(a, d){
    ============================================================ */
 function actSunday(a, d){
   const host = el('<div></div>'); a.appendChild(host);
-  const words = shuffle(WEEK.allWords);
-  let i = 0, right = 0, combo = 0, best = 0, fuel = 0;
+  const plan = resumePlan('sun', WEEK.allWords);
+  const words = plan.words;
+  let i = plan.start, right = plan.extra.right || 0, combo = 0,
+      best = plan.extra.best || 0, fuel = plan.extra.fuel || 0;
 
   function intro(){
     host.innerHTML = '';
@@ -4251,9 +4439,11 @@ function actSunday(a, d){
     c.querySelector('#go').onclick = () => { sfx('tap'); next(); };
     host.appendChild(c);
   }
+  /* Straight back into the countdown if she was already flying. */
+  if (plan.resumed) resumeToast(plan);
 
   function next(){
-    if (i >= words.length) return launch();
+    if (i >= words.length){ resumeClear('sun'); return launch(); }
     const w = words[i];
     const pct = Math.round(100 * fuel / words.length);
     host.innerHTML = '';
@@ -4286,7 +4476,9 @@ function actSunday(a, d){
           if (combo === 3) toast('🔥 Three in a row! Double stars!', 2600);
           if (combo === 5) toast('🔥🔥 FIVE in a row — you\'re on fire!', 2600);
         } else { combo = 0; }
-        i++; next();
+        i++;
+        resumeSave('sun', words.map(x => x.word), i, {right, best, fuel});
+        next();
       }
     });
   }
