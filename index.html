@@ -127,6 +127,7 @@ input,textarea{ font-family:inherit; }
 .btn.green{ background:var(--green); } .btn.pink{ background:var(--pink); }
 .btn.blue{ background:var(--blue); } .btn.yellow{ background:var(--yellow); color:#4a3200; }
 .btn.orange{ background:var(--orange); } .btn.red{ background:var(--red); }
+.btn.revisit{ background:#f2eefd; color:var(--ink); outline:2px dashed var(--brand); outline-offset:-3px; }
 .btn.ghost{ background:rgba(255,255,255,.14); color:#fff; box-shadow:none; font-size:15px; padding:11px 16px; min-height:0;}
 .btn.grey{ background:#ece8f8; color:var(--ink); }
 .btn[disabled]{ opacity:.45; pointer-events:none; }
@@ -248,7 +249,7 @@ h1,h2,h3{ margin:0 0 8px; }
 .lbox.blank{ background:#fff; border-color:var(--brand2); }
 .lbox.blank.cur{ border-color:var(--pink); box-shadow:0 0 0 4px rgba(255,95,162,.25); }
 .lbox.good{ background:#dcfce7; border-color:var(--green); color:#15803d; }
-.lbox.bad{ background:#fee2e2; border-color:var(--red); color:#b91c1c; animation:shake .35s; }
+.lbox.bad{ background:#f2eefd; border-color:var(--brand); color:var(--ink); border-style:dashed; }
 @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
 
 .keyboard{ display:flex; flex-direction:column; gap:7px; align-items:center; margin-top:10px; }
@@ -265,7 +266,7 @@ h1,h2,h3{ margin:0 0 8px; }
 /* ---------- progress dots ---------- */
 .dots{ display:flex; gap:6px; justify-content:center; margin:4px 0 12px; }
 .dots i{ width:11px; height:11px; border-radius:50%; background:#ddd6f3; }
-.dots i.on{ background:var(--brand); } .dots i.miss{ background:var(--red); }
+.dots i.on{ background:var(--brand); } .dots i.miss{ background:transparent; border:2px dashed var(--brand); }
 
 /* ---------- feedback overlay ---------- */
 .pop{
@@ -402,7 +403,7 @@ details[open] > summary::before{ content:'▾ '; }
 .vrow .vpin.on{ background:var(--brand); color:#fff; }
 .tag{ background:var(--green); color:#fff; font-size:10px; font-weight:900; padding:2px 6px;
   border-radius:6px; letter-spacing:.5px; vertical-align:middle; }
-.wordchip.bad{ background:#ffe4e4; border-color:var(--red); }
+.wordchip.bad{ background:#f2eefd; border-color:var(--brand); border-style:dashed; }
 .wordchip.dim{ opacity:.5; }
 
 /* ---------- the hive: one hexagon per word ---------- */
@@ -2188,8 +2189,7 @@ function cheer(){
   return s[Math.floor(Math.random()*s.length)];
 }
 function encourage(){
-  const s = ['Almost! Try again.','So close!','Not quite — have another go.','Keep going, you\'ve got this!'];
-  return s[Math.floor(Math.random()*s.length)];
+  return 'Almost. Let\'s find the tricky part.';
 }
 
 function shuffle(a){ a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
@@ -3321,14 +3321,14 @@ function parentProgress(a){
       pastHtml+
       writeLogHtml(k)+
       beeLogHtml(k)+
-      '<h3 style="margin-top:16px;font-size:17px">🔴 Still shaky</h3>'+
+      '<h3 style="margin-top:16px;font-size:17px">Words to revisit</h3>'+
       (shaky.length
         ? '<table class="pt">'+shaky.map(o =>
             '<tr><td><b>'+esc(o.w)+'</b></td><td class="nowrap">'+o.s.x+' miss'+(o.s.x>1?'es':'')+'</td>'+
             '<td style="width:40%"><div class="bar"><i style="width:'+Math.round(100*o.s.r/Math.max(1,o.s.r+o.s.x))+'%"></i></div></td></tr>').join('')+'</table>'
-        : '<p class="muted">Nothing missed yet.</p>')+
-      '<h3 style="margin-top:16px;font-size:17px">🟢 Locked in</h3>'+
-      '<p class="muted">'+(solid.length ? solid.map(esc).join(', ') : 'Nothing yet — keep going!')+'</p>'+
+        : '<p class="muted">No words to revisit from the practice recorded so far.</p>')+
+      '<h3 style="margin-top:16px;font-size:17px">Practiced successfully</h3>'+
+      '<p class="muted">'+(solid.length ? solid.map(esc).join(', ') : 'No words recorded here yet.')+'</p>'+
     '</div>');
     a.appendChild(c);
   });
@@ -3340,7 +3340,7 @@ function writeLogHtml(k){
   const wl = p.write || {};
   const days = DAYS.filter(d => wl[d.key] && wl[d.key].words && wl[d.key].words.length);
   if (!days.length) return '<h3 style="margin-top:16px;font-size:17px">✍️ Paper Power-Up</h3>'+
-    '<p class="muted">Nothing yet this week.</p>';
+    '<p class="muted">No Paper Power-Up practice recorded this week.</p>';
   return '<h3 style="margin-top:16px;font-size:17px">✍️ Paper Power-Up — look, spot, say, cover, '+
     'write, check, fix</h3>'+
     '<table class="pt">'+ days.map(d => {
@@ -3862,15 +3862,15 @@ function paperPowerUp(host, items, store, onSave, onFinish){
       let prompt = '', primary = 'Done — next step', secondary = '';
       if (st.k === 'look')  prompt = 'Read the whole word to yourself. No writing yet.';
       if (st.k === 'spot')  prompt = hard
-        ? 'Which bit would be easy to get wrong? Say it out loud, then tap to check.'
-        : 'This is the tricky part — the bit that is easy to get wrong.';
+        ? 'Which part needs a closer look? Say it out loud, then tap to check.'
+        : 'Here is the tricky part. Take a closer look.';
       if (st.k === 'say')   { prompt = 'Say it out loud, in your normal voice.'; primary = 'I said it'; }
       if (st.k === 'cover') { prompt = 'It is hidden now. Keep it in your head.'; primary = 'It is covered'; }
       if (st.k === 'write') { prompt = 'Write it on paper, once, without peeking.'; primary = 'I wrote it'; }
       if (st.k === 'check') { prompt = 'Here it is. Compare it with what you wrote.';
                               primary = 'I got it right'; secondary = 'Not quite'; }
-      if (st.k === 'fix')   { prompt = 'Almost. Look hard at the coloured part, then write it once more.';
-                              primary = 'Written — I have got it now'; }
+      if (st.k === 'fix')   { prompt = 'Almost. Look at the tricky part. Then cover the word and try again.';
+                              primary = 'Cover and try again'; }
 
       host.innerHTML = '';
       const c = el('<div class="card center">'+
@@ -3900,7 +3900,11 @@ function paperPowerUp(host, items, store, onSave, onFinish){
              rather than shown as an empty ritual. */
           bump(word, PPU_TOTAL); sfx('good'); drawWord(); return;
         }
-        if (st.k === 'fix'){ bump(word, PPU_TOTAL); sfx('good'); drawWord(); return; }
+        if (st.k === 'fix'){
+          // A retry must hide the model before asking for fresh retrieval.
+          step = PPU_STEPS.findIndex(s => s.k === 'cover');
+          store.counts[word] = step; onSave(); draw(); return;
+        }
         step++; bump(word, step); draw();
       };
       const miss = c.querySelector('#pmiss');
@@ -3979,7 +3983,7 @@ function rewardScreen(d, correct, total, s, xp, extra){
   sfx(s === 3 ? 'win' : 'good');
   const p = popup(
     '<div class="em">'+(s===3?'🏆':s===2?'🎉':'👍')+'</div>'+
-    '<h2 style="font-size:26px">'+(s===3?'Perfect work!':s===2?'Great job!':'Nice try!')+'</h2>'+
+    '<h2 style="font-size:26px">'+'Quest step complete.'+'</h2>'+
     '<div style="font-size:42px;letter-spacing:4px">'+'⭐'.repeat(s)+'<span style="opacity:.2">'+'⭐'.repeat(3-s)+'</span></div>'+
     '<p style="font-size:19px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
     '<p class="muted">+'+xp+' stars '+(extra||'')+'</p>'+
@@ -4089,6 +4093,7 @@ function typingRound(host, opts){
       draw('bad');
       sfx('wrong');
       if (tries === 1){ if (!opts.noStats) wordStat(word).x++; noteMiss(word); save(); }
+      toast(encourage(), 3200);
       setTimeout(()=>{
         if (tries >= 2){
           locked = true;
@@ -4422,7 +4427,8 @@ function actTuesday(a, d){
     const typedLine = c.querySelector('#typed');
     function showBuf(bad){
       typedLine.innerHTML = buf ? esc(buf) : '';
-      typedLine.style.color = bad ? 'var(--red)' : '';
+      typedLine.style.color = bad ? 'var(--brand)' : '';
+      if (bad) toast(encourage(), 3000);
     }
     function typeLetter(ch){
       if (placed.length >= chunks.length) return;
@@ -4651,7 +4657,7 @@ function actFriday(a, d){
         b.onclick = () => {
           if (o === w.word){ score += 10; wordStat(w.word).r++; b.className='btn big green'; b.textContent='✅ '+o;
                  sfx('pop'); setTimeout(()=>sfx('great'), 90); setTimeout(()=>sayWord(w.word), 320); }
-          else { wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.className='btn big red'; b.textContent='❌ '+o;
+          else { wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.className='btn big revisit'; b.textContent=o; toast(encourage(), 3000);
                  Array.from(ops.children).forEach(x => { if (x.textContent.indexOf(w.word)>=0) x.className='btn big green'; }); }
           save();
           ops.querySelectorAll('button').forEach(x=>x.disabled=true);
@@ -4790,7 +4796,7 @@ function actFriday(a, d){
         const b = el('<button class="btn big blue" style="margin-bottom:8px">'+esc(o)+'</button>');
         b.onclick = () => {
           if (o === w.word){ score += 5; wordStat(w.word).r++; sfx('good'); b.className = 'btn big green'; }
-          else { score = Math.max(0, score-2); wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.className = 'btn big red'; }
+          else { score = Math.max(0, score-2); wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.className = 'btn big revisit'; toast(encourage(), 3000); }
           save();
           c.querySelector('#sc').textContent = score;
           ops.querySelectorAll('button').forEach(x=>x.disabled=true);
@@ -4851,7 +4857,7 @@ function actSaturday(a, d){
       word:w.word, patternId:w.patternId, blanks:null,
       onDone: ok => {
         if (ok){ beaten++; sfx('great'); toast('💥 Direct hit!', 2200); }
-        else { hearts--; sfx('hurt'); toast('The boss blocked that one — now you know its tricky part.', 2800); }
+        else { hearts--; sfx('hurt'); toast('That word needs another look. Ready for a rematch?', 2800); }
         i++; setTimeout(round, 1300);
       }
     });
@@ -4868,9 +4874,8 @@ function actSaturday(a, d){
   function lose(){
     sfx('lose');
     const p = popup('<div class="em">🛡️</div><h2>The boss is still standing!</h2>'+
-      '<p class="muted">You beat '+beaten+' of '+pile.length+' words, and those stay beaten. '+
-      'Want another go at the rest?</p>'+
-      '<button class="btn big green" id="again">🔁 Try again</button>'+
+      '<p class="muted">You practiced these words. Ready for another round?</p>'+
+      '<button class="btn big green" id="again">🔁 Another round</button>'+
       '<button class="btn big grey" style="margin-top:8px" data-close>Back to the map</button>');
     p.querySelector('#again').onclick = () => { p.remove(); hearts=3; i=0; beaten=0; pile=shuffle(pile); round(); };
     p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('home'); });
@@ -5232,7 +5237,7 @@ function actBeePlay(a){
   MISSED = [];
 
   let words = beeSessionWords();
-  if (!words.length){ a.appendChild(el('<div class="card center"><h2>Nothing to practice!</h2></div>')); return; }
+  if (!words.length){ a.appendChild(el('<div class="card center"><h2>No words are ready here yet. Ask a grown-up to add a spelling-bee list.</h2></div>')); return; }
 
   const host = el('<div></div>'); a.appendChild(host);
   const started = Date.now();
@@ -5302,7 +5307,7 @@ function actBeePlay(a){
         '<p class="muted center" style="margin-top:8px">'+
           (blanks ? 'Some letters are already up on the board.' : 'Spell it for the judges.')+'</p>'+
         '<p class="muted center" style="margin-top:4px;font-size:12.5px">'+
-          'In a real bee you are always allowed to ask. Asking is not cheating.</p>'+
+          'Practice asking for help here. Your grown-up can check which questions your bee allows.</p>'+
       '</div></div>');
     host.appendChild(c);
 
@@ -5319,8 +5324,8 @@ function actBeePlay(a){
     c.querySelector('#ab-mean').onclick = () => { sfx('tap');
       popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:20px">Well asked</h2>'+
         '<p class="muted" style="line-height:1.6">Asking what a word means is exactly right, and in a '+
-        'real bee the judge would tell you. I do not know the meanings of your teacher\'s words — '+
-        'so ask a grown-up after this round, and I will give you the pattern instead.</p>'+
+        'practice round you can ask for help. I do not have a definition for this word. '+
+        'Ask a grown-up after this round. You can look at its spelling pattern here.</p>'+
         '<button class="btn big green" style="margin-top:12px" id="mrule">💡 Show me the pattern</button>'+
         '<button class="btn grey" style="margin-top:8px;width:100%" data-close>Back to the microphone</button>')
       .addEventListener('click', e => {
@@ -5328,12 +5333,10 @@ function actBeePlay(a){
         else if (e.target.dataset.close !== undefined) e.currentTarget.remove();
       }); };
     c.querySelector('#ab-sent').onclick = () => { sfx('tap');
-      const line = 'Please spell ' + w.word + ' for us.';
+      const line = 'I do not have an example sentence for this word. Ask a grown-up to help after this round.';
       say(line);
       popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:20px">Well asked</h2>'+
-        '<p class="muted" style="line-height:1.6">In a real bee you can always ask for the word in a '+
-        'sentence. I only have the one the judge uses:</p>'+
-        '<p style="font-weight:800;font-size:17px;line-height:1.5">\u201cPlease spell '+esc(w.word)+' for us.\u201d</p>'+
+        '<p class="muted" style="line-height:1.6">'+esc(line)+'</p>'+
         '<button class="btn big green" style="margin-top:10px" data-close>Ready</button>')
       .addEventListener('click', e => { if (e.target.dataset.close !== undefined) e.currentTarget.remove(); }); };
     setTimeout(announce, fresh ? 550 : 350);
@@ -5521,7 +5524,7 @@ function actBeeSpeed(a){
       b.onclick = () => {
         const ok = o === w.word;
         if (ok){ hits++; score += 10; sfx('good'); b.className='btn big green'; }
-        else { sfx('wrong'); b.className='btn big red'; noteMiss(w.word);
+        else { sfx('wrong'); b.className='btn big revisit'; noteMiss(w.word); toast(encourage(), 3000);
                Array.from(ops.children).forEach(x=>{ if(x.textContent===w.word) x.className='btn big green'; }); }
         beeMark(w.word, ok);
         ops.querySelectorAll('button').forEach(x=>x.disabled=true);
