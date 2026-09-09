@@ -323,7 +323,12 @@ table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); t
 
 /* ---------- profile picker ---------- */
 .who-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.who-card{ background:#fff; border-radius:22px; padding:20px 12px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.2); }
+.who-card{ background:#fff; border-radius:22px; padding:20px 12px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.2);
+  /* This card is a <button>, so without this the child's own name renders in the
+     browser's default black - the only pure black anywhere in the app, and on the
+     one screen where a child sees their own name at 19px. Nobody chose it; it is
+     a UA default leaking through. Every other card is a <div> and inherits --ink. */
+  color:var(--ink); }
 .who-card .em{ font-size:52px; display:block; }
 .who-card b{ font-size:19px; }
 .av-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
@@ -1153,7 +1158,13 @@ function parseWordText(text){
 /* ===================== SPELLING QUEST — core ===================== */
 
 const STORE_KEY = 'spellingQuest.v1';
-const BUILD = '2026-08-14';
+/* ⚠️ BUMP THIS ON EVERY DEPLOY. It is shown to parents as "Version" in the
+   grown-up area, and it is the stamp the verify-after-push standard asks you to
+   read off the page before testing anything. It sat at 2026-08-14 for nearly a
+   month while the app shipped repeatedly, so the 9 September audit had to hash
+   the served file instead of trusting it. A stale stamp is worse than none:
+   it answers "which build am I on?" confidently and wrongly. */
+const BUILD = '2026-09-09';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👋', cls:'d1', sub:'Read them out loud + learn the rule' },
