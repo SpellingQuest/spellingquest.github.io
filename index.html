@@ -1596,7 +1596,7 @@ function kidHasBeenUsed(k){
   if ((k.xp || 0) > 0 || (k.streak || 0) > 0 || (k.badges || []).length) return true;
   if (!/^(Player|Kid) \d+$/.test(k.name || '')) return true;
   const prog = k.prog || {};
-  return Object.keys(prog).some(w => {
+  return Object.keys(prog).filter(isWeekKey).some(w => {
     const days = (prog[w] && prog[w].days) || {};
     return Object.keys(days).some(d => days[d] && days[d].done);
   });
@@ -1652,6 +1652,12 @@ function absorb(rows){
     const prog = forwardMerge(k.prog || {}, r.progress || {});
     if (JSON.stringify(prog) !== JSON.stringify(k.prog || {})) changed = true;
     k.prog = prog;
+
+    /* The review window travels inside progress — see stampReviewNights(). The
+       merge above has already picked the newer stamp, so all that is left is to
+       read the count back out of it. */
+    const rn = readStampedNights(k);
+    if (rn !== null && rn !== k.reviewNights){ k.reviewNights = rn; changed = true; }
 
     // only take the word list if this device hasn't got a real one of its own,
     // so a parent typing this week's list can't be overwritten mid-sentence
@@ -1809,6 +1815,47 @@ function reviewNightsOf(k){
   const n = k && k.reviewNights;
   return (typeof n === 'number' && n >= MIN_NIGHTS && n <= MAX_NIGHTS) ? n : 7;
 }
+
+/* ---- making the review window travel between devices, without a migration ----
+   The conflict rule, said out loud as `Child-Profile-Identity-and-Sync.md` requires:
+   THE NEWEST HUMAN EDIT WINS. Same rule One Ayah gets from its `profile_at` column.
+
+   Spelling Quest has no such column and `push_progress` takes fourteen arguments
+   with no room for a fifteenth, so this rides inside `progress`, which already
+   syncs — and it is shaped to survive the merge that field is given. The server
+   runs `jsonb_forward_merge`, and the client's `forwardMerge` does the same:
+   for two numbers it keeps `Math.max`. So a bare night count would be wrong in
+   exactly one direction — seven could never be lowered to four, because four is
+   the smaller number and would lose for ever.
+
+   Encoding the millisecond of the edit ABOVE the count makes max mean newest:
+
+       stamp = Date.now() * 100 + nights          nights is 4..14, so two digits
+       nights = stamp % 100
+
+   Max on the stamp picks the later edit whichever device it came from, and the
+   count rides along in the low digits. Date.now()*100 is ~1.8e14 — comfortably
+   inside a double's exact-integer range, good until roughly the year 4800.
+
+   ⚠️ Stamp on human intent only, never in a sync write. A stamping sync write
+   just makes two devices race with timestamps instead of without them.
+
+   The key starts with `__` so it is skipped everywhere `prog` is walked as a
+   list of weeks. */
+const RN_KEY = '__rn';
+function stampReviewNights(k, n){
+  k.reviewNights = n;
+  k.prog = k.prog || {};
+  k.prog[RN_KEY] = Date.now() * 100 + n;
+}
+function readStampedNights(k){
+  const v = k && k.prog && k.prog[RN_KEY];
+  if (typeof v !== 'number' || !isFinite(v)) return null;
+  const n = v % 100;
+  return (n >= MIN_NIGHTS && n <= MAX_NIGHTS) ? n : null;
+}
+/* a real week id, not one of our reserved keys */
+function isWeekKey(id){ return typeof id === 'string' && id.slice(0,2) !== '__'; }
 /* 1 = lighter (reading, games), 2 = effortful (building, spelling, quizzing).
    Two effortful stages on one evening is what makes a child quit, so the
    pairing below spends the light stages first and only doubles up on effort
@@ -3236,7 +3283,8 @@ function parentKids(a){
       go('parent','kids');
     });
     c.querySelectorAll('[data-n]').forEach(b => b.onclick = () => {
-      k.reviewNights = +b.dataset.n; save(); sfx('tap');
+      /* a tap is human intent, so this is where the stamp is set */
+      stampReviewNights(k, +b.dataset.n); save(); sfx('tap');
       toast('Plans changed. Here\'s the best route from today to quiz day.', 3200);
       go('parent','kids');
     });
@@ -3299,7 +3347,7 @@ function parentProgress(a){
     const solid = Object.keys(p.stats).filter(w => p.stats[w].r >= 2 && p.stats[w].x === 0);
 
     const log = DB.weekLog || {};
-    const past = Object.keys(k.prog || {}).filter(id => id !== DB.weekId).slice(-6).reverse();
+    const past = Object.keys(k.prog || {}).filter(id => isWeekKey(id) && id !== DB.weekId).slice(-6).reverse();
     const pastHtml = past.length
       ? '<h3 style="margin-top:16px;font-size:17px">📅 Earlier weeks</h3><table class="pt">'+
         past.map(id => {
@@ -3610,6 +3658,7 @@ function parentMore(a){
     '<button class="btn red" id="ra" style="flex:1">Erase everything</button></div></details></div>');
   a.appendChild(r);
   r.querySelector('#rw').onclick = () => { DB.kids.forEach(k => { delete k.prog[DB.weekId]; }); save(); toast('Week reset'); };
+  /* (the review window lives under a reserved key, so a week reset leaves it alone) */
   r.querySelector('#ra').onclick = () => {
     const p = popup('<div class="em">⚠️</div><h2>Erase everything?</h2>'+
       '<p class="muted">All words, stars and badges will be deleted.</p>'+
