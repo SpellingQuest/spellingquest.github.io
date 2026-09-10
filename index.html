@@ -5382,8 +5382,6 @@ function actBeePlay(a){
         '<div class="askbacks">'+
           '<button id="ab-rep">🔁 Repeat it, please</button>'+
           '<button id="ab-slow">🐢 Slowly, please</button>'+
-          '<button id="ab-mean">📖 What does it mean?</button>'+
-          '<button id="ab-sent">📝 In a sentence, please</button>'+
           '<button id="ab-rule">💡 Any hints?</button>'+
         '</div>'+
         '<p class="muted center" style="margin-top:8px">'+
@@ -5397,30 +5395,23 @@ function actBeePlay(a){
     c.querySelector('#ab-rep').onclick  = () => { sfx('tap'); announce(); };
     c.querySelector('#ab-slow').onclick = () => { sfx('tap'); saySlow(w.word); };
     c.querySelector('#ab-rule').onclick = () => { sfx('tap'); rulePopup(beeSafeTip(w.tip, w.word), true); };
-    /* ⚠️ Spelling Quest has no dictionary — the words come from a teacher's list,
-       not from a wordlist we control. Inventing a definition on a children's
-       spelling app is exactly the kind of confident, false sentence this project
-       has been burned by before, so the judge says plainly that they cannot give
-       one. The point of these two buttons is to teach the ASK, which is the part
-       a nervous child never tries. A real definition source is an open item. */
-    c.querySelector('#ab-mean').onclick = () => { sfx('tap');
-      popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:22px;line-height:28px">Well asked</h2>'+
-        '<p class="muted" style="line-height:1.6">Asking what a word means is exactly right, and in a '+
-        'practice round you can ask for help. I do not have a definition for this word. '+
-        'Ask a grown-up after this round. You can look at its spelling pattern here.</p>'+
-        '<button class="btn big green" style="margin-top:12px" id="mrule">💡 Show me the pattern</button>'+
-        '<button class="btn grey" style="margin-top:8px;width:100%" data-close>Back to the microphone</button>')
-      .addEventListener('click', e => {
-        if (e.target.id === 'mrule'){ e.currentTarget.remove(); rulePopup(beeSafeTip(w.tip, w.word), true); }
-        else if (e.target.dataset.close !== undefined) e.currentTarget.remove();
-      }); };
-    c.querySelector('#ab-sent').onclick = () => { sfx('tap');
-      const line = 'I do not have an example sentence for this word. Ask a grown-up to help after this round.';
-      say(line);
-      popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:22px;line-height:28px">Well asked</h2>'+
-        '<p class="muted" style="line-height:1.6">'+esc(line)+'</p>'+
-        '<button class="btn big green" style="margin-top:10px" data-close>Ready</button>')
-      .addEventListener('click', e => { if (e.target.dataset.close !== undefined) e.currentTarget.remove(); }); };
+    /* 🔴 STANDING CONSTRAINT — Kathryn, 10 September 2026.
+       "Remove the option for them to look up definitions, don't let them ask this."
+
+       Both the definition and the example-sentence ask-backs are gone, and neither
+       may come back with an invented definition or sentence. Spelling Quest has no
+       dictionary: the words come from a teacher's list, not from a wordlist we
+       control, so anything it said here would be made up.
+
+       The refusal was not a safe middle ground either. It shipped as "I do not have
+       a definition for this word" and "I do not have an example sentence for this
+       word" — a child asks the judge a fair question and is told no, twice, by the
+       app that invited the question. Teaching the ask is worth nothing if the ask
+       always fails.
+
+       Three ask-backs remain and all three can actually be answered: repeat it,
+       say it slowly, and show the spelling pattern. If a real definition source is
+       ever wired in, this is a new decision with Kathryn — not a restoration. */
     setTimeout(announce, fresh ? 550 : 350);
 
     const card = c.querySelector('.card');
