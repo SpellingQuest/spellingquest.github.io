@@ -1164,7 +1164,7 @@ const STORE_KEY = 'spellingQuest.v1';
    month while the app shipped repeatedly, so the 9 September audit had to hash
    the served file instead of trusting it. A stale stamp is worse than none:
    it answers "which build am I on?" confidently and wrongly. */
-const BUILD = '2026-09-09';
+const BUILD = '2026-09-10';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👋', cls:'d1', sub:'Read them out loud + learn the rule' },
@@ -4019,7 +4019,15 @@ function writeItScreen(d, done){
   const prev = pr.write[d.key];
   const counts = {};
   items.forEach(it => counts[it.word] = (prev && prev.counts && prev.counts[it.word]) || 0);
-  const store = { words: items.map(i2=>i2.word), counts: counts, done:false, steps: PPU_TOTAL,
+  /* A day can be replayed from the map — the home screen offers "play it again?" — and
+     this store used to be rebuilt with done:false the moment the intro card drew, before
+     the child had tapped anything. That flipped a finished stage in the Grown-up Zone
+     back to "not finished" for work she had actually done. So carry the finished state
+     from what is already banked: finished means every word in tonight's set is already
+     at its seventh step. A fresh set of words starts at zero and reads unfinished, which
+     is true. */
+  const alreadyDone = items.length > 0 && items.every(it => counts[it.word] >= PPU_TOTAL);
+  const store = { words: items.map(i2=>i2.word), counts: counts, done:alreadyDone, steps: PPU_TOTAL,
                   when:new Date().toISOString().slice(0,10) };
   pr.write[d.key] = store;
   save();
@@ -4031,8 +4039,13 @@ function writeItScreen(d, done){
     dayHeader(a, d, 'Paper Power-Up');
     a.appendChild(host);
     paperPowerUp(host, items, store, save, () => {
+      /* If every word was already banked, paperPowerUp finishes on the spot without
+         asking for a single step. Celebrate it, but do not pay for it twice — the
+         day's own activity already re-awards its own stars on a replay. */
+      const wasAlreadyDone = alreadyDone;
       store.done = true;
-      const k = kid(); k.xp = (k.xp||0) + 25; save();
+      if (!wasAlreadyDone){ const k = kid(); k.xp = (k.xp||0) + 25; }
+      save();
       award('writer'); sfx('great'); confetti(50); done();
     });
   };
@@ -4881,6 +4894,12 @@ function actSaturday(a, d){
   if (!pile.length) pile = shuffle(WEEK.allWords).slice(0, Math.min(6, WEEK.allWords.length));
   pile = shuffle(pile);
   let i = 0, hearts = 3, beaten = 0;
+  /* Which words were actually beaten this battle. A win only needs one heart left,
+     so a child can miss up to two words and still win — and clearing the whole pile
+     took the tricky flag off the very words she just got wrong, which then dropped
+     out of the parent's "Words to revisit" and out of next week's pile. A miss here
+     counts against the word like any other miss, and a win does not clear it. */
+  let beatenWords = new Set();
 
   function intro(){
     host.innerHTML = '';
@@ -4916,7 +4935,7 @@ function actSaturday(a, d){
     typingRound(c, {
       word:w.word, patternId:w.patternId, blanks:null,
       onDone: ok => {
-        if (ok){ beaten++; sfx('great'); toast('💥 Direct hit!', 2200); }
+        if (ok){ beaten++; beatenWords.add(w.word); sfx('great'); toast('💥 Direct hit!', 2200); }
         else { hearts--; sfx('hurt'); toast('That word needs another look. Ready for a rematch?', 2800); }
         i++; setTimeout(round, 1300);
       }
@@ -4925,9 +4944,9 @@ function actSaturday(a, d){
 
   function win(){
     sfx('win'); award('boss');
-    // clear the tricky flags for words that were beaten
+    // clear the tricky flags for the words that were actually beaten — only those
     const p = prog();
-    pile.forEach(w => { if (p.stats[w.word]) p.stats[w.word].x = 0; });
+    pile.forEach(w => { if (beatenWords.has(w.word) && p.stats[w.word]) p.stats[w.word].x = 0; });
     save();
     finishScreen(d, beaten, pile.length, '· Tricky pile cleared! 🎯');
   }
@@ -4937,7 +4956,7 @@ function actSaturday(a, d){
       '<p class="muted">You practiced these words. Ready for another round?</p>'+
       '<button class="btn big green" id="again">🔁 Another round</button>'+
       '<button class="btn big grey" style="margin-top:8px" data-close>Back to the map</button>');
-    p.querySelector('#again').onclick = () => { p.remove(); hearts=3; i=0; beaten=0; pile=shuffle(pile); round(); };
+    p.querySelector('#again').onclick = () => { p.remove(); hearts=3; i=0; beaten=0; beatenWords = new Set(); pile=shuffle(pile); round(); };
     p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('home'); });
   }
 
@@ -5532,7 +5551,15 @@ function writeItScreenBee(d, done){
   const prev = pr.write[today()];
   const counts = {};
   items.forEach(it => counts[it.word] = (prev && prev.counts && prev.counts[it.word]) || 0);
-  const store = { words: items.map(i2=>i2.word), counts: counts, done:false, steps: PPU_TOTAL, when:today() };
+  /* A day can be replayed from the map — the home screen offers "play it again?" — and
+     this store used to be rebuilt with done:false the moment the intro card drew, before
+     the child had tapped anything. That flipped a finished stage in the Grown-up Zone
+     back to "not finished" for work she had actually done. So carry the finished state
+     from what is already banked: finished means every word in tonight's set is already
+     at its seventh step. A fresh set of words starts at zero and reads unfinished, which
+     is true. */
+  const alreadyDone = items.length > 0 && items.every(it => counts[it.word] >= PPU_TOTAL);
+  const store = { words: items.map(i2=>i2.word), counts: counts, done:alreadyDone, steps: PPU_TOTAL, when:today() };
   pr.write[today()] = store;
   save();
 
@@ -5543,8 +5570,13 @@ function writeItScreenBee(d, done){
     dayHeader(a, d, 'Paper Power-Up');
     a.appendChild(host);
     paperPowerUp(host, items, store, save, () => {
+      /* If every word was already banked, paperPowerUp finishes on the spot without
+         asking for a single step. Celebrate it, but do not pay for it twice — the
+         day's own activity already re-awards its own stars on a replay. */
+      const wasAlreadyDone = alreadyDone;
       store.done = true;
-      const k = kid(); k.xp = (k.xp||0) + 25; save();
+      if (!wasAlreadyDone){ const k = kid(); k.xp = (k.xp||0) + 25; }
+      save();
       award('writer'); sfx('great'); confetti(50); done();
     });
   };
