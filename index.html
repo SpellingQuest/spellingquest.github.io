@@ -124,18 +124,19 @@ input,textarea{ font-family:inherit; }
 }
 .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.22); }
 .btn.big{ width:100%; font-size:22px; padding:20px; }
-.btn.green{ background:var(--green); } .btn.pink{ background:var(--pink); }
-.btn.blue{ background:var(--blue); } .btn.yellow{ background:var(--yellow); color:#4a3200; }
+.btn.green{ background:var(--green); color:var(--ink); } .btn.pink{ background:var(--pink); }
+.btn.blue{ background:var(--blue); } .btn.yellow{ background:var(--yellow); color:#5c3d00; }
 .btn.orange{ background:var(--orange); } .btn.red{ background:var(--red); }
 .btn.revisit{ background:#f2eefd; color:var(--ink); outline:2px dashed var(--brand); outline-offset:-3px; }
-.btn.ghost{ background:rgba(255,255,255,.14); color:#fff; box-shadow:none; font-size:15px; padding:11px 16px; min-height:0;}
-.btn.grey{ background:#ece8f8; color:var(--ink); }
+.btn.ghost{ background:rgba(255,255,255,.14); color:#fff; box-shadow:none; font-size:16px; line-height:24px; padding:11px 16px; min-height:0;}
+.btn.grey{ background:#f2eefd; color:var(--ink); }
 .btn[disabled]{ opacity:.45; pointer-events:none; }
 .row{ display:flex; gap:10px; flex-wrap:wrap; }
 .center{ text-align:center; }
 .hide{ display:none !important; }
 h1,h2,h3{ margin:0 0 8px; }
-.muted{ color:var(--ink-soft); font-size:14px; }
+h3{ font-size:18px; line-height:22px; }
+.muted{ color:var(--ink-soft); font-size:14px; line-height:20px; }
 .white{ color:#fff; } .white .muted{ color:rgba(255,255,255,.75); }
 
 /* ---------- top bar ---------- */
@@ -143,10 +144,10 @@ h1,h2,h3{ margin:0 0 8px; }
 .topbar .avatar{ font-size:34px; background:rgba(255,255,255,.15); border-radius:50%; width:54px; height:54px;
   display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
 .topbar .who{ flex:1; min-width:0; }
-.topbar .who b{ font-size:19px; display:block; }
-.topbar .who span{ font-size:13px; opacity:.8; }
+.topbar .who b{ font-size:18px; line-height:22px; display:block; }
+.topbar .who span{ font-size:14px; line-height:20px; opacity:.8; }
 .pill{ background:rgba(255,255,255,.16); color:#fff; border-radius:999px; padding:8px 13px;
-  font-weight:800; font-size:15px; display:inline-flex; align-items:center; gap:5px; }
+  font-weight:800; font-size:16px; line-height:24px; display:inline-flex; align-items:center; gap:5px; }
 .iconbtn{ background:rgba(255,255,255,.16); color:#fff; width:44px; height:44px; border-radius:14px; font-size:20px;
   display:flex; align-items:center; justify-content:center; }
 
@@ -167,7 +168,7 @@ h1,h2,h3{ margin:0 0 8px; }
 .day:active{ transform:translateY(3px); }
 .day .em{ font-size:30px; line-height:1; }
 .day b{ font-size:17px; display:block; margin-top:6px; }
-.day small{ font-size:12px; opacity:.9; display:block; line-height:1.3; }
+.day small{ font-size:14px; opacity:.9; display:block; line-height:20px; }
 .day .tick{ position:absolute; top:9px; right:10px; font-size:19px; }
 .day.locked{ filter:grayscale(.75) brightness(.75); }
 .day.today{ outline:4px solid var(--yellow); outline-offset:2px; animation:pulse 1.6s infinite; }
@@ -182,8 +183,8 @@ h1,h2,h3{ margin:0 0 8px; }
 
 /* ---------- word chips ---------- */
 .wordchip{
-  display:inline-flex; align-items:center; gap:8px; background:#f4f1fe; color:var(--ink);
-  border-radius:14px; padding:12px 15px; font-size:19px; font-weight:800; margin:0 8px 8px 0;
+  display:inline-flex; align-items:center; gap:8px; background:#f2eefd; color:var(--ink);
+  border-radius:14px; padding:12px 15px; font-size:18px;line-height:22px; font-weight:800; margin:0 8px 8px 0;
   border:2px solid transparent;
 }
 .wordchip.done{ background:#e2fbf0; border-color:var(--green); }
@@ -193,7 +194,7 @@ h1,h2,h3{ margin:0 0 8px; }
 .bigword{
   /* Much bigger than the surrounding text, and in a colour used nowhere else in
      the app, so the word a child is meeting is unmistakably the main event. */
-  font-size:clamp(52px,15vw,104px); font-weight:900; letter-spacing:2px; text-align:center;
+  font-size:clamp(52px,15vw,104px); font-weight:800; letter-spacing:2px; text-align:center;
   color:var(--word); margin:14px 0 10px; line-height:1.05; word-break:break-word;
 }
 /* The pattern inside the word is marked by BOTH colour and an underline —
@@ -218,7 +219,7 @@ h1,h2,h3{ margin:0 0 8px; }
   background:linear-gradient(150deg,#fff8e1,#ffeeba); border:3px dashed var(--orange);
   border-radius:20px; padding:16px; margin:12px 0; color:#5c3d00;
 }
-.tip h3{ font-size:20px; }
+.tip h3{ font-size:22px; line-height:28px; }
 .tip p{ margin:6px 0; font-size:16px; line-height:1.45; }
 .tip .trick{ background:rgba(255,255,255,.75); border-radius:14px; padding:10px 12px; font-size:17px; font-weight:700; }
 
@@ -226,14 +227,14 @@ h1,h2,h3{ margin:0 0 8px; }
 .slots{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:14px 0; min-height:74px; }
 .slot{
   min-width:74px; height:70px; border-radius:16px; border:4px dashed #cfc6ee; background:#faf8ff;
-  display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; color:var(--ink);
+  display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; color:var(--ink);
   padding:0 12px;
 }
 .slot.filled{ border-style:solid; border-color:var(--brand); background:#efe8ff; }
 .tray{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
 .chunk{
   min-width:74px; height:66px; border-radius:16px; background:linear-gradient(160deg,#fff,#f0ebff);
-  border:3px solid var(--brand2); color:var(--ink); font-size:25px; font-weight:900;
+  border:3px solid var(--brand2); color:var(--ink); font-size:25px; font-weight:800;
   display:flex; align-items:center; justify-content:center; padding:0 14px;
   box-shadow:0 5px 0 rgba(124,58,237,.35);
 }
@@ -244,7 +245,7 @@ h1,h2,h3{ margin:0 0 8px; }
 .boxes{ display:flex; gap:7px; justify-content:center; flex-wrap:wrap; margin:18px 0; }
 .lbox{
   width:52px; height:64px; border-radius:12px; display:flex; align-items:center; justify-content:center;
-  font-size:30px; font-weight:900; background:#f2eefd; color:var(--ink); border:3px solid transparent;
+  font-size:30px; font-weight:800; background:#f2eefd; color:var(--ink); border:3px solid transparent;
 }
 .lbox.blank{ background:#fff; border-color:var(--brand2); }
 .lbox.blank.cur{ border-color:var(--pink); box-shadow:0 0 0 4px rgba(255,95,162,.25); }
@@ -260,7 +261,7 @@ h1,h2,h3{ margin:0 0 8px; }
   box-shadow:0 3px 0 rgba(0,0,0,.18);
 }
 .key:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.18); }
-.key.wide{ flex:2 1 0; max-width:110px; font-size:16px; background:#ece8f8; }
+.key.wide{ flex:2 1 0; max-width:110px; font-size:16px; background:#f2eefd; }
 .key.del{ background:#ffe1e1; }
 
 /* ---------- progress dots ---------- */
@@ -297,7 +298,7 @@ h1,h2,h3{ margin:0 0 8px; }
 
 /* ---------- parent ---------- */
 .tabs{ display:flex; gap:6px; margin-bottom:12px; }
-.tabs button{ flex:1; background:rgba(255,255,255,.14); color:#fff; padding:12px; border-radius:14px; font-weight:800; font-size:15px; }
+.tabs button{ flex:1 1 0; min-width:0; background:rgba(255,255,255,.14); color:#fff; padding:12px 6px; border-radius:14px; font-weight:800; font-size:16px; line-height:24px; }
 .tabs button.on{ background:#fff; color:var(--ink); }
 textarea.ta{ width:100%; min-height:170px; border-radius:14px; border:2px solid var(--line); padding:14px;
   font-size:17px; line-height:1.6; resize:vertical; user-select:text; -webkit-user-select:text; }
@@ -311,13 +312,13 @@ input[type=date]{ -webkit-appearance:none; appearance:none; min-width:0; max-wid
 input[type=date]::-webkit-date-and-time-value{ text-align:left; margin:0; }
 input[type=date]::-webkit-calendar-picker-indicator{ margin-left:auto; }
 label.fl{ display:block; font-weight:800; font-size:14px; margin:12px 0 5px; color:var(--ink-soft); }
-table.pt{ width:100%; border-collapse:collapse; font-size:15px; }
+table.pt{ width:100%; border-collapse:collapse; font-size:16px; line-height:24px; }
 table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); text-align:left; }
 .bar{ height:9px; background:var(--line); border-radius:9px; overflow:hidden; min-width:70px; }
 .bar > i{ display:block; height:100%; background:var(--green); }
 
 .badgegrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:10px; }
-.badge{ background:#f6f3ff; border-radius:16px; padding:10px 6px; text-align:center; font-size:12px; font-weight:800; color:var(--ink-soft); }
+.badge{ background:#f6f3ff; border-radius:16px; padding:10px 6px; text-align:center; font-size:14px; line-height:20px; font-weight:800; color:var(--ink-soft); }
 .badge .em{ font-size:30px; display:block; }
 .badge.got{ background:linear-gradient(150deg,#fff2c9,#ffd76e); color:#6b4b00; }
 
@@ -330,9 +331,9 @@ table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); t
      a UA default leaking through. Every other card is a <div> and inherits --ink. */
   color:var(--ink); }
 .who-card .em{ font-size:52px; display:block; }
-.who-card b{ font-size:19px; }
+.who-card b{ font-size:18px; line-height:22px; }
 .av-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
-.av{ font-size:28px; padding:8px 0; border-radius:12px; background:#f4f1fe; }
+.av{ font-size:28px; padding:8px 0; border-radius:12px; background:#f2eefd; }
 .av.on{ background:var(--brand); }
 
 .scroll-x{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
@@ -341,7 +342,7 @@ table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); t
 /* ---------- Paper Power-Up (look, spot, say, cover, write, check, fix) ---------- */
 .writerow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:space-between;
   background:#f7f4ff; border-radius:16px; padding:12px 14px; margin-bottom:10px; }
-.writerow .ww{ font-size:24px; font-weight:900; color:var(--ink); }
+.writerow .ww{ font-size:24px; font-weight:800; color:var(--ink); }
 .writerow .ww .sp{ font-size:17px; }
 .tally{ display:flex; gap:4px; }
 .tally .tk{ width:42px; height:42px; border-radius:11px; background:#fff; font-size:20px;
@@ -362,15 +363,15 @@ table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); t
 .fuel{ height:16px; background:#ece7fb; border-radius:99px; overflow:hidden; margin:10px 0 3px; }
 .fuel > i{ display:block; height:100%; border-radius:99px;
   background:linear-gradient(90deg,#22c98b,#ffc93c,#ff5fa2); transition:width .5s ease; }
-.fuel-lbl{ font-size:12px; letter-spacing:1px; font-weight:800; }
-.combo{ font-weight:900; font-size:15px; color:var(--ink-soft); }
+.fuel-lbl{ font-size:12px; line-height:16px; letter-spacing:1px; font-weight:800; }
+.combo{ font-weight:800; font-size:16px; line-height:24px; color:var(--ink-soft); }
 .combo.hot{ color:var(--orange); animation:pulse2 .8s ease-in-out infinite; }
 @keyframes pulse2{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
 .rocketbox.mini{ height:96px; margin:8px 0 2px; }
 .rocketbox.mini .rk{ font-size:32px; }
 .rocketbox.mini .moon{ font-size:24px; top:5px; right:10px; }
 /* subtle text button for use INSIDE white cards (ghost is for dark backgrounds) */
-.btn.link{ background:transparent; color:var(--ink-soft); box-shadow:none; font-size:15px;
+.btn.link{ background:transparent; color:var(--ink-soft); box-shadow:none; font-size:16px; line-height:24px;
   padding:10px 14px; min-height:0; text-decoration:underline; }
 
 /* ---------- PIN pad ---------- */
@@ -378,7 +379,7 @@ table.pt td,table.pt th{ padding:8px 6px; border-bottom:1px solid var(--line); t
 .pindots i{ width:16px; height:16px; border-radius:50%; background:#e4defa; }
 .pindots i.on{ background:var(--brand); }
 .pinpad{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:280px; margin:0 auto; }
-.pinpad .pk{ height:62px; border-radius:16px; background:#f4f1fe; color:var(--ink);
+.pinpad .pk{ height:62px; border-radius:16px; background:#f2eefd; color:var(--ink);
   font-size:26px; font-weight:800; box-shadow:0 4px 0 rgba(0,0,0,.12); }
 .pinpad .pk:active{ transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.12); }
 .pinpad .pk.del{ background:#ffe1e1; font-size:22px; }
@@ -387,7 +388,7 @@ input[type=range]{ accent-color:var(--brand); height:34px; }
 
 /* ---------- segmented two/three-way picker ---------- */
 .seg{ display:flex; gap:8px; margin-top:8px; }
-.seg button{ flex:1; padding:14px 6px; border-radius:14px; background:#f0ecfb; color:var(--ink);
+.seg button{ flex:1; padding:14px 6px; border-radius:14px; background:#f2eefd; color:var(--ink);
   font-weight:800; font-size:16px; box-shadow:0 3px 0 rgba(0,0,0,.10); }
 .seg button.on{ background:var(--brand); color:#fff; box-shadow:0 3px 0 rgba(0,0,0,.2); }
 .seg button:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.1); }
@@ -402,11 +403,11 @@ details[open] > summary::before{ content:'▾ '; }
 /* ---------- voice audition list ---------- */
 .vrow{ display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line); }
 .vrow .vplay{ width:46px; height:46px; border-radius:12px; background:#eaf5ff; font-size:18px; flex:0 0 auto; }
-.vrow .vname{ flex:1; min-width:0; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.vrow .vpin{ width:44px; height:44px; border-radius:12px; background:#f0ecfb; color:var(--ink);
-  font-size:19px; font-weight:900; flex:0 0 auto; }
+.vrow .vname{ flex:1; min-width:0; font-size:16px; line-height:24px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vrow .vpin{ width:44px; height:44px; border-radius:12px; background:#f2eefd; color:var(--ink);
+  font-size:18px;line-height:22px; font-weight:800; flex:0 0 auto; }
 .vrow .vpin.on{ background:var(--brand); color:#fff; }
-.tag{ background:var(--green); color:#fff; font-size:10px; font-weight:900; padding:2px 6px;
+.tag{ background:var(--green); color:#fff; font-size:12px; line-height:16px; font-weight:800; padding:2px 6px;
   border-radius:6px; letter-spacing:.5px; vertical-align:middle; }
 .wordchip.bad{ background:#f2eefd; border-color:var(--brand); border-style:dashed; }
 .wordchip.dim{ opacity:.5; }
@@ -427,15 +428,15 @@ details[open] > summary::before{ content:'▾ '; }
   width:230px; height:230px; border-radius:50%;
   background:radial-gradient(circle, rgba(255,224,130,.55) 0%, rgba(255,224,130,0) 70%); pointer-events:none; }
 .stage .micon{ font-size:52px; line-height:64px; height:64px; position:relative; z-index:1; }
-.stage .rnd{ color:#ffd76e; font-weight:900; letter-spacing:1px; font-size:13px; position:relative; z-index:1; }
-.stage .rivals{ color:#fff; font-size:15px; font-weight:800; margin-top:4px; position:relative; z-index:1; }
+.stage .rnd{ color:#ffd76e; font-weight:800; letter-spacing:1px; font-size:14px; line-height:20px; position:relative; z-index:1; }
+.stage .rivals{ color:#fff; font-size:16px; line-height:24px; font-weight:800; margin-top:4px; position:relative; z-index:1; }
 .stage .crowd{ font-size:19px; letter-spacing:-3px; margin-top:8px; position:relative; z-index:1; opacity:.9; }
 .stage .out{ opacity:.18; }
 .judge{ background:#fffdf5; border:3px solid #ffd76e; border-radius:18px; padding:12px 14px;
   margin:12px 0 4px; font-weight:800; color:#5c3d00; font-size:17px; }
 .askbacks{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:10px 0 2px; }
 .askbacks button{ background:#fff5d6; color:#5c3d00; border-radius:14px; padding:11px 14px;
-  font-weight:800; font-size:15px; box-shadow:0 3px 0 rgba(0,0,0,.13); }
+  font-weight:800; font-size:16px; line-height:24px; box-shadow:0 3px 0 rgba(0,0,0,.13); }
 .askbacks button:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.13); }
 
 </style>
@@ -2305,7 +2306,7 @@ function buyNow(){
     'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
   const box = el('<div class="card" style="max-width:380px;width:100%;text-align:center;margin:0">'+
       '<div style="font-size:40px">\ud83d\udc1d</div>'+
-      '<h2 style="font-size:21px;margin:4px 0 2px">Get the full year</h2>'+
+      '<h2 style="font-size:22px;line-height:28px;margin:4px 0 2px">Get the full year</h2>'+
       '<p class="muted" style="margin-bottom:10px"><b>'+PRICE_LINE+'.</b><br>'+
         'Every child in your family. Every device you use.</p>'+
       mainBtn +
@@ -2314,18 +2315,18 @@ function buyNow(){
          that gate is NOT built yet, so for now they simply stay hidden until
          their links are filled in. Wire the gate before filling these in. */
       ((CHECKOUT_ADDON || CHECKOUT_TWO)
-        ? '<p class="muted" style="font-size:12px;margin-top:12px;margin-bottom:2px">'+
+        ? '<p class="muted" style="font-size:14px;line-height:20px;margin-top:12px;margin-bottom:2px">'+
             'Already have One Ayah At A Time or Muslim Kids Checklist?</p>' : '')+
       bundleBtn(CHECKOUT_ADDON, 'Add one \u2014 '+PRICE_ADDON+' a year') +
       bundleBtn(CHECKOUT_TWO,   'Add two \u2014 '+PRICE_TWO+' a year') +
       bundleBtn(CHECKOUT_THREE, 'Get all three \u2014 '+PRICE_THREE+' a year') +
-      '<p class="muted" style="font-size:11.5px;margin-top:10px">'+BUNDLE_LINE+'</p>'+
-      '<p class="muted" style="font-size:11px;margin-top:6px">'+RENEW_LINE+'</p>'+
+      '<p class="muted" style="font-size:14px;line-height:20px;margin-top:10px">'+BUNDLE_LINE+'</p>'+
+      '<p class="muted" style="font-size:14px;line-height:20px;margin-top:6px">'+RENEW_LINE+'</p>'+
       (CHECKOUT_URL && BUY_EMAIL
-        ? '<p class="muted" style="margin-top:6px;font-size:13px">Questions? Write to<br>'+
+        ? '<p class="muted" style="margin-top:6px;font-size:14px;line-height:20px">Questions? Write to<br>'+
             '<b>'+esc(BUY_EMAIL)+'</b></p>'
         : (BUY_EMAIL && !CHECKOUT_URL
-            ? '<p class="muted" style="margin-top:9px;font-size:13px">Or write to<br>'+
+            ? '<p class="muted" style="margin-top:9px;font-size:14px;line-height:20px">Or write to<br>'+
               '<b>'+esc(BUY_EMAIL)+'</b></p>' : ''))+
       '<button class="btn grey" id="bxno" style="width:100%;margin-top:10px">Not just now</button>'+
     '</div>');
@@ -2376,8 +2377,8 @@ function installCard(){
     '<div class="row" style="align-items:flex-start;gap:10px">'+
       '<div style="font-size:26px;line-height:1">📲</div>'+
       '<div style="flex:1">'+
-        '<b style="font-size:15px">Put Spelling Quest on the home screen</b>'+
-        '<div class="muted" style="font-size:13px;margin-top:2px">'+
+        '<b style="font-size:16px;line-height:24px">Put Spelling Quest on the home screen</b>'+
+        '<div class="muted" style="font-size:14px;line-height:20px;margin-top:2px">'+
           (deferred
             ? 'It opens like an app and keeps working without internet.'
             : 'Tap <b>Share</b>, then <b>Add to Home Screen</b>. It opens like an app '+
@@ -2407,7 +2408,7 @@ function installCard(){
   };
   const how = c.querySelector('#ihow');
   if (how) how.onclick = () => { sfx('tap'); popup('<div class="em">📲</div>'+
-    '<h2 style="font-size:20px">Two taps</h2>'+
+    '<h2 style="font-size:22px;line-height:28px">Two taps</h2>'+
     '<p class="muted" style="line-height:1.6">1. Tap the <b>Share</b> button at the bottom of Safari.<br>'+
     '2. Scroll down and tap <b>Add to Home Screen</b>.</p>'+
     '<button class="btn big green" style="margin-top:12px" data-close>Got it</button>')
@@ -2451,8 +2452,8 @@ function runTour(){
     const t = TOUR[i];
     box.innerHTML =
       '<div style="font-size:44px">'+t.em+'</div>'+
-      '<h2 style="font-size:21px;margin:6px 0 4px">'+t.h+'</h2>'+
-      '<p class="muted" style="font-size:14.5px;line-height:1.6">'+t.p+'</p>'+
+      '<h2 style="font-size:22px;line-height:28px;margin:6px 0 4px">'+t.h+'</h2>'+
+      '<p class="muted" style="font-size:16px;line-height:24px">'+t.p+'</p>'+
       '<div class="muted" style="margin-top:12px;letter-spacing:3px;font-size:12px">'+
         TOUR.map((_,j)=> j===i ? '●' : '○').join('')+'</div>'+
       '<button class="btn green big" id="tnext" style="width:100%;margin-top:10px">'+
@@ -2478,13 +2479,13 @@ function siteFooter(){
   const storage = unlocked
     ? 'Your words and progress are saved in this browser, and they travel to '+
       'your other devices on their own.'
-    : 'Your words and progress are saved in this browser. Once you have a '+
-      'license key they travel to your other devices on their own.';
+    : 'During your free week, words and progress stay in this browser on this '+
+      'device. After purchase, use your license key to activate your other devices.';
   const wrap = el('<div></div>');
-  wrap.appendChild(el('<p class="muted center" style="margin-top:20px;font-size:12px;'+
-    'line-height:1.6;max-width:420px;margin-left:auto;margin-right:auto;opacity:.85">'+
+  wrap.appendChild(el('<p class="center" style="margin-top:20px;font-size:14px;'+
+    'line-height:20px;font-weight:500;color:#fff;max-width:420px;margin-left:auto;margin-right:auto">'+
     storage+'</p>'));
-  wrap.appendChild(el('<p class="muted center" style="margin-top:10px;font-size:12px;line-height:2">'+
+  wrap.appendChild(el('<p class="center" style="margin-top:10px;font-size:14px;line-height:20px;font-weight:500;color:#fff">'+
     '<a href="./about.html" style="color:inherit">About</a> · '+
     '<a href="./schools.html" style="color:inherit">Schools</a> · '+
     '<a href="./contact.html" style="color:inherit">Contact</a> · '+
@@ -2503,17 +2504,17 @@ function openUnlock(){
     'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
   const box = el('<div class="card" style="max-width:390px;width:100%;text-align:center;margin:0">'+
       '<div style="font-size:38px">🔑</div>'+
-      '<h2 style="font-size:21px;margin:4px 0 2px">Enter your key</h2>'+
-      '<p class="muted" style="font-size:13.5px">From your purchase email. It works on every '+
+      '<h2 style="font-size:22px;line-height:28px;margin:4px 0 2px">Enter your key</h2>'+
+      '<p class="muted" style="font-size:14px;line-height:20px">From your purchase email. It works on every '+
         'device in your family \u2014 as many as you like.</p>'+
       '<input class="ti" id="ulin" placeholder="Paste your key or code" '+
         'style="text-align:center;font-size:16px;letter-spacing:1px;margin-top:10px">'+
       '<button class="btn green big" id="ulgo" style="margin-top:10px">Unlock</button>'+
       '<div style="border-top:1px solid rgba(0,0,0,.12);margin:15px 0 11px"></div>'+
-      '<p class="muted" style="font-size:13.5px">Haven\'t bought it yet?</p>'+
+      '<p class="muted" style="font-size:14px;line-height:20px">Haven\'t bought it yet?</p>'+
       '<button class="btn blue" id="ulbuy" style="width:100%;margin-top:8px">'+
         'Get the full year · '+PRICE_ONE+'</button>'+
-      '<p class="muted" style="font-size:11.5px;margin-top:9px">'+BUNDLE_LINE+'</p>'+
+      '<p class="muted" style="font-size:14px;line-height:20px;margin-top:9px">'+BUNDLE_LINE+'</p>'+
       '<button class="btn grey" id="ulno" style="width:100%;margin-top:10px">Not now</button>'+
     '</div>');
   ov.appendChild(box); document.body.appendChild(ov);
@@ -2563,11 +2564,11 @@ function trialStrip(){
   if (DB.accessCode || (DB.licence && DB.licence.key)) return null;
   const w = el('<div class="card" style="background:#fff4d6;padding:9px 12px;margin-bottom:10px">'+
     '<div class="row" style="align-items:center;gap:8px;flex-wrap:wrap;justify-content:center">'+
-      '<b style="color:#8a5a00;font-size:13.5px">🕐 '+left+' day'+(left===1?'':'s')+
+      '<b style="color:#5c3d00;font-size:14px;line-height:20px">🕐 '+left+' day'+(left===1?'':'s')+
         ' left in your free trial</b>'+
-      '<button class="btn link" id="tskey" style="color:#8a5a00;font-size:13px;padding:2px 4px;'+
+      '<button class="btn link" id="tskey" style="color:#5c3d00;font-size:14px;line-height:20px;padding:2px 4px;'+
         'text-decoration:underline">I have a key</button>'+
-      '<button class="btn link" id="tsbuy" style="color:#8a5a00;font-size:13px;padding:2px 4px;'+
+      '<button class="btn link" id="tsbuy" style="color:#5c3d00;font-size:14px;line-height:20px;padding:2px 4px;'+
         'text-decoration:underline">Unlock for a year</button>'+
     '</div></div>');
   w.querySelector('#tskey').onclick = openUnlock;
@@ -2583,7 +2584,8 @@ function renderGate(a){
     '<div class="center white" style="padding:26px 0 10px">'+
       '<img src="./logo.png" alt="Spelling Quest" width="640" height="160" '+
         'style="display:block;width:74%;max-width:300px;height:auto;margin:0 auto 4px">'+
-      '<p class="muted">Weekly spelling words and spelling-bee practice, for the whole family.</p>'+
+      '<p class="muted" style="font-size:16px;line-height:24px;font-weight:500">'+
+        'Their teacher\u2019s words. Your child\u2019s unique learning path.</p>'+
     '</div>'));
 
   const c = el('<div class="card center">'+
@@ -2591,21 +2593,24 @@ function renderGate(a){
                '<p class="muted">Hope they enjoyed it! Here\'s how to carry on.</p>'+
                '<button class="btn green big" id="acbuy" style="margin-top:12px">'+
                  'Get the full year · $40</button>'+
-               '<p class="muted" style="font-size:13px;margin-top:7px">'+
+               '<p class="muted" style="font-size:14px;line-height:20px;margin-top:7px">'+
                  'Every child in your family. All your devices.</p>'+
                '<div style="border-top:1px solid rgba(0,0,0,.12);margin:15px 0 11px"></div>'+
-               '<p class="muted" style="font-size:13.5px">Already bought it? Pop your key in.</p>'
-             : '<h2 style="font-size:21px">Enter your access code</h2>'+
-               '<p class="muted">It came with your welcome email.</p>')+
+               '<p class="muted" style="font-size:14px;line-height:20px">Already bought it? Pop your key in.</p>'
+             : '<h2 style="font-size:22px;line-height:28px;font-weight:800">Already have a key or a code?</h2>'+
+               '<p class="muted" style="font-size:16px;line-height:24px;font-weight:500">'+
+                 'Paste your license key or access code to continue.</p>')+
     '<input class="ti" id="ac" placeholder="Paste your key or code" '+
-      'style="text-align:center;font-size:17px;letter-spacing:1px;margin-top:10px">'+
+      'style="text-align:center;font-size:18px;line-height:22px;letter-spacing:1px;margin-top:10px">'+
     '<button class="btn '+(expired ? 'blue' : 'green big')+'" id="acgo" '+
-      'style="margin-top:10px'+(expired ? ';width:100%' : '')+'">Unlock</button>'+
+      'style="margin-top:10px;font-size:18px;line-height:22px'+(expired ? ';width:100%' : '')+'">Unlock</button>'+
     /* The free week is offered once, to someone who has never had one and has
        never held a key. A family whose subscription lapses must not be handed a
        fresh trial — that is a free week on every lapse, for ever. */
     ((left === null && !(DB.licence && DB.licence.key))
-      ? '<button class="btn link" id="actry" style="width:100%;margin-top:8px">Have a free look for a week first</button>'
+      ? '<button class="btn link" id="actry" style="width:100%;margin-top:8px;font-size:18px;line-height:22px;font-weight:700">Begin my 7 free days</button>'+
+        '<p class="muted" style="font-size:14px;line-height:20px;font-weight:500;margin-top:6px">'+
+          'No card, no account, nothing to cancel \u2014 just start.</p>'
       : (left > 0 ? '<p class="muted" style="margin-top:10px">Free look: '+left+' day'+(left===1?'':'s')+' left</p>' : ''))+
   '</div>');
   a.appendChild(c);
@@ -2622,7 +2627,7 @@ function renderGate(a){
       a.appendChild(el(
         '<div class="center white" style="padding:60px 0 10px">'+
           '<div style="font-size:52px">🐝</div>'+
-          '<h1 style="font-size:26px;margin:10px 0 6px">Unlocked!</h1>'+
+          '<h1 style="font-size:22px;line-height:28px;margin:10px 0 6px">Unlocked!</h1>'+
           '<p class="muted" id="fetchline">Just fetching your family…</p>'+
         '</div>'));
       let done = false;
@@ -2682,8 +2687,6 @@ function renderGate(a){
   const bb = c.querySelector('#acbuy');
   if (bb) bb.onclick = buyNow;
 
-  a.appendChild(el('<p class="muted center" style="margin-top:14px;color:rgba(255,255,255,.6)">'+
-    'No code yet? Tap <b>Have a free look</b> above — a week free, no card needed.</p>'));
   a.appendChild(siteFooter());
 }
 
@@ -2697,7 +2700,7 @@ function renderPick(a){
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
       '<div style="font-size:52px">🐝</div>'+
-      '<h1 style="font-size:34px;margin:6px 0 2px">Spelling Quest</h1>'+
+      '<h1 style="font-size:30px;line-height:36px;margin:6px 0 2px">Spelling Quest</h1>'+
       '<p class="muted">'+(DB.kids.length > 1 ? 'Who\'s playing today?' : 'Ready when you are')+'</p>'+
     '</div>'));
   const grid = el('<div class="who-grid"></div>');
@@ -2743,14 +2746,14 @@ function topbar(a, opts){
 function voiceStrip(){
   const c = el('<div class="card" style="padding:12px 14px;border:2px solid var(--brand)">'+
     '<div class="row" style="align-items:center;gap:10px">'+
-      '<div style="flex:1;font-size:14.5px;line-height:1.35"><b>🔊 Check the voice first</b>'+
-      '<div class="muted" style="font-size:13px">This reads every word aloud. Best ones: '+
+      '<div style="flex:1;font-size:16px;line-height:24px"><b>🔊 Check the voice first</b>'+
+      '<div class="muted" style="font-size:14px;line-height:20px">This reads every word aloud. Best ones: '+
       'Evan, Jamie, Zoe, Matilda.</div></div>'+
       '<button class="btn blue" id="vsplay" style="padding:11px 14px">▶️</button>'+
     '</div>'+
     '<div class="row" style="margin-top:8px">'+
-      '<button class="btn green" id="vsok" style="flex:1;padding:10px;font-size:15px">👍 Fine</button>'+
-      '<button class="btn grey" id="vsbad" style="flex:1;padding:10px;font-size:15px">🤖 Robotic</button>'+
+      '<button class="btn green" id="vsok" style="flex:1;padding:10px;font-size:16px;line-height:24px">👍 Fine</button>'+
+      '<button class="btn grey" id="vsbad" style="flex:1;padding:10px;font-size:16px;line-height:24px">🤖 Robotic</button>'+
     '</div></div>');
   c.querySelector('#vsplay').onclick = () => { unlockAudio(); stopSpeech(); say(VOICE_TEST, { rate:1.0 }); };
   c.querySelector('#vsok').onclick = () => { DB.voiceOk = true; save(); sfx('good'); toast('🔊 Voice sorted'); go('home'); };
@@ -2772,13 +2775,13 @@ function renderHome(a){
 
   a.appendChild(el(
     '<div class="card center" style="padding:14px">'+
-      '<div style="font-size:13px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">THIS WEEK</div>'+
-      '<h2 style="font-size:24px;margin:2px 0 6px">'+esc(WEEK.title)+'</h2>'+
+      '<div style="font-size:14px;line-height:20px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">THIS WEEK</div>'+
+      '<h2 style="font-size:22px;line-height:28px;margin:2px 0 6px">'+esc(WEEK.title)+'</h2>'+
       '<div class="muted">'+WEEK.allWords.length+' words · '+done+'/7 stages done</div>'+
       '<div class="muted" style="margin-top:4px">📅 Test day: <b>'+WEEKDAYS[testDayOf(kid())]+'</b>'+
         ' · '+nights.length+' night'+(nights.length===1?'':'s')+' to practice</div>'+
       (nights.length !== 7
-        ? '<div class="muted" style="margin-top:4px;font-size:12.5px">Words come home <b>'+
+        ? '<div class="muted" style="margin-top:4px;font-size:14px;line-height:20px">Words come home <b>'+
           WEEKDAYS[startDayOf(kid())]+'</b>. Same seven stages — just spread to fit.</div>'
         : '')+
     '</div>'));
@@ -2801,16 +2804,16 @@ function renderHome(a){
     const isTonight = reviewNightsOf(kid()) <= 7 && weekdayForNight(ni, kid()) === todayW;
     if (nights.length !== 7 || night.length !== 1){
       grid.appendChild(el('<div class="muted" style="margin:12px 2px 4px;font-weight:800;'+
-        'font-size:12.5px;letter-spacing:1px;text-transform:uppercase">'+
+        'font-size:14px;line-height:20px;letter-spacing:1px;text-transform:uppercase">'+
         esc(nightLabel(ni, kid()))+(isTonight?' · tonight':'')+
-        (night.length > 1 ? ' <span style="text-transform:none;letter-spacing:0;font-weight:600">'+
+        (night.length > 1 ? ' <span style="text-transform:none;letter-spacing:0;font-weight:500">'+
           '— two short goes, whenever suits</span>' : '')+
-        (night.length === 0 ? ' <span style="text-transform:none;letter-spacing:0;font-weight:600">'+
+        (night.length === 0 ? ' <span style="text-transform:none;letter-spacing:0;font-weight:500">'+
           '— free practice night</span>' : '')+'</div>'));
     }
     if (!night.length){
       grid.appendChild(el('<div class="card" style="padding:12px 14px"><div class="muted" '+
-        'style="font-size:13.5px">Nothing new tonight. Play the arcade or take on the tricky '+
+        'style="font-size:14px;line-height:20px">Nothing new tonight. Play the arcade or take on the tricky '+
         'pile if they are keen.</div></div>'));
       return;
     }
@@ -2832,7 +2835,7 @@ function renderHome(a){
     });
     grid.appendChild(dg);
     if (night.length > 1)
-      grid.appendChild(el('<p class="muted center" style="margin:6px 0 0;font-size:12.5px">'+
+      grid.appendChild(el('<p class="muted center" style="margin:6px 0 0;font-size:14px;line-height:20px">'+
         'One now is plenty. Come back for the other one later.</p>'));
   });
   a.appendChild(grid);
@@ -2840,7 +2843,7 @@ function renderHome(a){
   // word list preview
   const list = el('<div class="card"><h3 style="font-size:18px">📋 This week\'s words</h3></div>');
   WEEK.sections.forEach(s => {
-    list.appendChild(el('<div style="margin-top:12px;font-weight:900;color:var(--brand)">'+s.emoji+' '+esc(s.label)+'</div>'));
+    list.appendChild(el('<div style="margin-top:12px;font-weight:800;color:var(--brand)">'+s.emoji+' '+esc(s.label)+'</div>'));
     /* The heading says what the group is called. The rule says why those words
        are together, which is the thing the week is actually teaching. Kathryn
        asked for the rule next to the pattern.
@@ -2894,7 +2897,7 @@ function renderBadges(a){
   BADGES.forEach(b => {
     const got = k.badges.indexOf(b.id) >= 0;
     g.appendChild(el('<div class="badge'+(got?' got':'')+'"><span class="em">'+(got?b.em:'🔒')+'</span>'+esc(b.n)+
-      '<div style="font-weight:600;font-size:10px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>'));
+      '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>'));
   });
   a.appendChild(card);
   const back = el('<button class="btn big grey">⬅️ Back</button>');
@@ -3120,8 +3123,8 @@ function parentWords(a){
   const lists = DB.kids.map(k => (DB.weekRawByKid[k.id]||'').trim());
   if (DB.kids.length > 1 && lists[0] && lists.every(x => x === lists[0])){
     a.appendChild(el('<div class="card" style="background:#fff4d6;border:3px dashed var(--orange)">'+
-      '<h3 style="color:#8a5a00">⚠️ Both children have the same words</h3>'+
-      '<p class="muted" style="color:#8a5a00">Paste each child\'s own list below and tap Save.</p></div>'));
+      '<h3 style="color:#5c3d00">⚠️ Both children have the same words</h3>'+
+      '<p class="muted" style="color:#5c3d00">Paste each child\'s own list below and tap Save.</p></div>'));
   }
 
   const boxes = {};
@@ -3154,8 +3157,8 @@ function parentWords(a){
         wk.sections.reduce((n,x)=>n+x.words.length,0)+' words</p>'));
       wk.sections.forEach(sec => box.appendChild(el(
         '<div class="tip" style="padding:12px"><h3 style="font-size:17px">'+sec.emoji+' '+esc(sec.label)+'</h3>'+
-        '<p style="font-size:15px"><b>'+sec.tip.title+'</b> — '+sec.tip.rule+'</p>'+
-        '<p class="trick" style="font-size:15px">💡 '+sec.tip.trick+'</p></div>')));
+        '<p style="font-size:16px;line-height:24px"><b>'+sec.tip.title+'</b> — '+sec.tip.rule+'</p>'+
+        '<p class="trick" style="font-size:16px;line-height:24px">💡 '+sec.tip.trick+'</p></div>')));
     };
     w.querySelector('details').addEventListener('toggle', preview);
     ta.addEventListener('blur', preview);
@@ -3269,12 +3272,12 @@ function parentKids(a){
       '<div class="row wrap" data-f="testday">'+WEEKDAYS_SHORT.map((n, d) =>
         '<button class="btn '+(testDayOf(k)===d?'':'grey')+'" data-d="'+d+'" '+
         'style="flex:1;min-width:40px;padding:11px 2px;font-size:14px">'+n+'</button>').join('')+'</div>'+
-      '<div class="muted" style="margin-top:6px;font-size:13px">The route rearranges itself around this.</div>'+
+      '<div class="muted" style="margin-top:6px;font-size:14px;line-height:20px">The route rearranges itself around this.</div>'+
       '<label class="fl">Review nights before the test</label>'+
       '<div class="row wrap" data-f="nights">'+[4,5,6,7,10,14].map(n =>
         '<button class="btn '+(reviewNightsOf(k)===n?'':'grey')+'" data-n="'+n+'" '+
         'style="flex:1;min-width:44px;padding:11px 2px;font-size:14px">'+n+'</button>').join('')+'</div>'+
-      '<div class="muted" style="margin-top:6px;font-size:13px">How many <b>nights</b> they have to '+
+      '<div class="muted" style="margin-top:6px;font-size:14px;line-height:20px">How many <b>nights</b> they have to '+
         'practice. Words home Monday, test Friday is <b>4</b>. All seven stages are always taught — '+
         'a short window just puts two short goes on some nights, and they never have to be done '+
         'back to back.</div>'+
@@ -3283,7 +3286,7 @@ function parentKids(a){
       (DB.kids.length > 1
         ? '<button class="btn grey" data-f="remove" style="width:100%;margin-top:10px;font-size:14px">'+
           '🗑️ Remove this child</button>'
-        : '<div class="muted" style="margin-top:10px;font-size:12.5px">Add another child before you '+
+        : '<div class="muted" style="margin-top:10px;font-size:14px;line-height:20px">Add another child before you '+
           'can remove this one — the app needs at least one.</div>')+
     '</div>');
     c.querySelector('[data-f="name"]').onchange = e => { k.name = e.target.value || 'Kid'; save(); };
@@ -3307,7 +3310,7 @@ function parentKids(a){
         'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
       const card = el('<div class="card" style="max-width:360px;width:100%;text-align:center;margin:0">'+
         '<div style="font-size:38px">'+k.avatar+'</div>'+
-        '<h2 style="font-size:20px;margin:4px 0 6px">Remove '+esc(k.name)+'?</h2>'+
+        '<h2 style="font-size:22px;line-height:28px;margin:4px 0 6px">Remove '+esc(k.name)+'?</h2>'+
         '<p class="muted">Their '+(k.xp||0)+' stars and every finished day go for good — on this '+
         'device and on your other ones. This can\'t be undone.</p>'+
         '<button class="btn grey" id="rmyes" style="width:100%;margin-top:12px">Yes, remove '+esc(k.name)+'</button>'+
@@ -3365,7 +3368,7 @@ function parentProgress(a){
           const pp = k.prog[id] || {days:{}};
           const n = DAYS.filter(d => pp.days[d.key] && pp.days[d.key].done).length;
           const info = log[id] || {};
-          return '<tr><td><b>'+esc(pp.title || 'Week')+'</b><div class="muted" style="font-size:12px">'+esc(pp.date || info.date || '')+'</div></td>'+
+          return '<tr><td><b>'+esc(pp.title || 'Week')+'</b><div class="muted" style="font-size:14px;line-height:20px">'+esc(pp.date || info.date || '')+'</div></td>'+
                  '<td class="nowrap">'+n+'/7 stages</td>'+
                  '<td style="width:35%"><div class="bar"><i style="width:'+Math.round(100*n/7)+'%"></i></div></td></tr>';
         }).join('')+'</table>'
@@ -3414,7 +3417,7 @@ function writeLogHtml(k){
           '⭐'.repeat(n)+'<span style="opacity:.25">'+'☆'.repeat(outOf-n)+'</span></span></div>';
       }).join('');
       return '<tr><td style="vertical-align:top;width:34%">'+d.em+' '+dayLabel(d,k)+
-        '<div class="muted" style="font-size:12px">'+(e.done ? '✅ finished' : '⏳ not finished')+'</div></td>'+
+        '<div class="muted" style="font-size:14px;line-height:20px">'+(e.done ? '✅ finished' : '⏳ not finished')+'</div></td>'+
         '<td>'+cells+'</td></tr>';
     }).join('') + '</table>';
 }
@@ -3605,13 +3608,13 @@ function parentMore(a){
     '<button class="btn grey" id="acsave">Save</button></div>'+
     (familyFingerprint()
       ? '<div style="border-top:1px solid rgba(0,0,0,.1);margin:14px 0 10px"></div>'+
-        '<h3 style="font-size:15px">\ud83d\udd04 Your devices</h3>'+
-        '<p class="muted" style="font-size:13px;margin-top:4px">Stars and finished days follow your '+
+        '<h3 style="font-size:16px;line-height:24px">\ud83d\udd04 Your devices</h3>'+
+        '<p class="muted" style="font-size:14px;line-height:20px;margin-top:4px">Stars and finished days follow your '+
         'children to any device with your code on it \u2014 the iPad, your phone, anywhere. '+
         'You can check how they\'re getting on without being in the room.</p>'+
-        '<p class="muted" id="syncline" style="margin-top:8px;font-size:13.5px"></p>'+
+        '<p class="muted" id="syncline" style="margin-top:8px;font-size:14px;line-height:20px"></p>'+
         '<button class="btn grey" id="syncgo" style="width:100%;margin-top:6px;font-size:14px">Sync now</button>'+
-        '<p class="muted" style="font-size:12px;margin-top:8px">We never store a real name, email, '+
+        '<p class="muted" style="font-size:14px;line-height:20px;margin-top:8px">We never store a real name, email, '+
         'birthday or school \u2014 only a nickname and their stars, under a scrambled version of your '+
         'code that can\'t be turned back into it.</p>'
       : '')+
@@ -3934,15 +3937,15 @@ function paperPowerUp(host, items, store, onSave, onFinish){
 
       host.innerHTML = '';
       const c = el('<div class="card center">'+
-        '<div class="muted" style="font-size:12.5px;letter-spacing:1px">WORD '+(wi+1)+' OF '+items.length+'</div>'+
+        '<div class="muted" style="font-size:14px;line-height:20px;letter-spacing:1px">WORD '+(wi+1)+' OF '+items.length+'</div>'+
         '<div class="ppu-steps" style="margin:8px 0 4px">'+
           PPU_STEPS.slice(0, 6).map((x, i) =>
             '<span style="font-size:'+(i===step?'21px':'16px')+';opacity:'+(i<step?'.45':(i===step?'1':'.22'))+
             ';margin:0 3px">'+x.em+'</span>').join('')+
         '</div>'+
-        '<h2 style="font-size:20px;margin:2px 0 2px">'+st.em+' '+st.t+'</h2>'+
+        '<h2 style="font-size:22px;line-height:28px;margin:2px 0 2px">'+st.em+' '+st.t+'</h2>'+
         '<div class="bigword" style="margin:10px 0 6px">'+shown+'</div>'+
-        '<p class="muted" style="font-size:14.5px;line-height:1.5">'+esc(prompt)+'</p>'+
+        '<p class="muted" style="font-size:17px;line-height:24px">'+esc(prompt)+'</p>'+
         '<div class="row" style="justify-content:center;margin-top:8px">'+
           '<button class="btn grey" id="phear">🔊 Hear it</button>'+
         '</div>'+
@@ -4001,7 +4004,7 @@ function writeItScreen(d, done){
 
   const intro = el('<div class="card center">'+
     '<div style="font-size:52px">✍️</div>'+
-    '<h2 style="font-size:24px">Paper Power-Up</h2>'+
+    '<h2 style="font-size:22px;line-height:28px">Paper Power-Up</h2>'+
     '<p style="font-size:16.5px;line-height:1.5">'+
       (gotAll
         ? 'You didn\'t miss a single one! 🌟<br>Two words, seven quick steps each — your hand remembers what your eyes forget.'
@@ -4009,7 +4012,7 @@ function writeItScreen(d, done){
     '</p>'+
     '<p class="muted" style="font-size:14px;line-height:1.8">'+
       PPU_STEPS.slice(0,6).map(x => x.em+' '+x.t).join(' → ')+'</p>'+
-    '<p class="muted" style="font-size:13px">You will need paper and a pencil.</p>'+
+    '<p class="muted" style="font-size:14px;line-height:20px">You will need paper and a pencil.</p>'+
     '<button class="btn big green" id="pgo" style="margin-top:10px;width:100%">I have my pencil ✏️</button>'+
   '</div>');
   a.appendChild(intro);
@@ -4056,9 +4059,9 @@ function rewardScreen(d, correct, total, s, xp, extra){
   sfx(s === 3 ? 'win' : 'good');
   const p = popup(
     '<div class="em">'+(s===3?'🏆':s===2?'🎉':'👍')+'</div>'+
-    '<h2 style="font-size:26px">'+'Quest step complete.'+'</h2>'+
+    '<h2 style="font-size:22px;line-height:28px">'+'Quest step complete.'+'</h2>'+
     '<div style="font-size:42px;letter-spacing:4px">'+'⭐'.repeat(s)+'<span style="opacity:.2">'+'⭐'.repeat(3-s)+'</span></div>'+
-    '<p style="font-size:19px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
+    '<p style="font-size:18px;line-height:22px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
     '<p class="muted">+'+xp+' stars '+(extra||'')+'</p>'+
     '<button class="btn big green" style="margin-top:14px" data-close>Back to the map</button>');
   p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('home'); });
@@ -4265,7 +4268,7 @@ function actMonday(a, d){
   function showTip(s){
     const c = el('<div class="card">'+
       '<div class="center" style="font-size:46px">'+s.emoji+'</div>'+
-      '<h2 class="center" style="font-size:24px">'+esc(s.label)+'</h2>'+
+      '<h2 class="center" style="font-size:22px;line-height:28px">'+esc(s.label)+'</h2>'+
       '<div class="tip"><h3>💡 '+s.tip.title+'</h3><p>'+s.tip.rule+'</p>'+
       '<p class="trick">'+s.tip.trick+'</p></div>'+
       '<div class="center"><button class="btn" id="hear">🔊 Hear the trick</button></div>'+
@@ -4285,7 +4288,7 @@ function actMonday(a, d){
       '<div class="speaker" id="sp">🔊</div>'+
       '<p class="muted" style="margin-top:14px">Tap to hear it, then <b>read it out loud</b>!</p>'+
       '<div class="mic"><i id="lvl"></i></div>'+
-      '<div id="micnote" class="muted" style="font-size:13px">🎤 Listening for your voice…</div>'+
+      '<div id="micnote" class="muted" style="font-size:14px;line-height:20px">🎤 Listening for your voice…</div>'+
       '<button class="btn big green" id="done" style="margin-top:12px">✅ I read it out loud!</button>'+
       '<div class="row" style="margin-top:8px;justify-content:center">'+
         '<button class="btn grey" id="sl">🐢 Slowly</button>'+
@@ -4405,7 +4408,7 @@ function actTuesday(a, d){
     if (item.tip){
       const c = el('<div class="card center">'+
         '<div style="font-size:44px">'+item.tip.emoji+'</div>'+
-        '<h2 style="font-size:23px">'+esc(item.tip.label)+'</h2>'+
+        '<h2 style="font-size:22px;line-height:28px">'+esc(item.tip.label)+'</h2>'+
         '<div class="tip"><h3>💡 '+item.tip.tip.title+'</h3>'+
           '<p>'+item.tip.tip.rule+'</p><p class="trick">'+item.tip.tip.trick+'</p></div>'+
         '<button class="btn" id="hear">🔊 Hear the rule</button>'+
@@ -4679,7 +4682,7 @@ function actFriday(a, d){
     games.forEach(g => {
       const b = el('<button class="btn big '+g.cls+'" style="margin-bottom:10px;justify-content:flex-start;text-align:left">'+
         '<span style="font-size:30px">'+g.em+'</span><span><b>'+g.n+'</b>'+
-        '<div style="font-size:13px;font-weight:600;opacity:.9">'+g.s+(p.games[g.id]?' · ✅ best '+p.games[g.id]:'')+'</div></span></button>');
+        '<div style="font-size:14px;line-height:20px;font-weight:500;opacity:.9">'+g.s+(p.games[g.id]?' · ✅ best '+p.games[g.id]:'')+'</div></span></button>');
       b.onclick = () => g.fn(g.id);
       host.appendChild(b);
     });
@@ -4837,7 +4840,7 @@ function actFriday(a, d){
     host.innerHTML = '';
     const c = el('<div class="card center">'+
       '<div class="muted">⚡ Speed Match</div>'+
-      '<div style="font-size:34px;font-weight:900" id="clk">45</div>'+
+      '<div style="font-size:34px;font-weight:800" id="clk">45</div>'+
       '<div class="muted">Score: <b id="sc">0</b></div>'+
       '<div class="speaker" id="sp" style="margin-top:10px">🔊</div>'+
       '<p style="font-weight:800;margin-top:12px">Which word did you hear?</p>'+
@@ -4978,7 +4981,7 @@ function actSunday(a, d){
     const c = el('<div class="card center">'+
       '<div class="rocketbox"><div class="rk" style="bottom:0%">🚀</div>'+
         '<div class="moon">🌕</div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
-      '<h2 style="font-size:26px">Launch Day! 🚀</h2>'+
+      '<h2 style="font-size:22px;line-height:28px">Launch Day! 🚀</h2>'+
       '<p style="font-size:17px;line-height:1.5">Every word you spell right adds <b>fuel</b> to the rocket. '+
       'Fill it up and you fly to the moon!</p>'+
       '<p class="muted">Get words right <b>in a row</b> for a 🔥 <b>combo</b> — combos are worth extra stars.</p>'+
@@ -5224,8 +5227,8 @@ function renderBeeHome(a){
   const doneToday = p.days[today()];
 
   a.appendChild(el('<div class="card center">'+
-    '<div style="font-size:13px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">SPELLING BEE</div>'+
-    '<h2 style="font-size:23px;margin:2px 0 8px">'+
+    '<div style="font-size:14px;line-height:20px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">SPELLING BEE</div>'+
+    '<h2 style="font-size:22px;line-height:28px;margin:2px 0 8px">'+
       (plan.daysLeft == null ? 'Practice pool'
         : plan.daysLeft === 0 ? '🐝 The bee is today!'
         : plan.daysLeft + ' day'+(plan.daysLeft===1?'':'s')+' to go')+'</h2>'+
@@ -5385,7 +5388,7 @@ function actBeePlay(a){
         '</div>'+
         '<p class="muted center" style="margin-top:8px">'+
           (blanks ? 'Some letters are already up on the board.' : 'Spell it for the judges.')+'</p>'+
-        '<p class="muted center" style="margin-top:4px;font-size:12.5px">'+
+        '<p class="muted center" style="margin-top:4px;font-size:14px;line-height:20px">'+
           'Practice asking for help here. Your grown-up can check which questions your bee allows.</p>'+
       '</div></div>');
     host.appendChild(c);
@@ -5401,7 +5404,7 @@ function actBeePlay(a){
        one. The point of these two buttons is to teach the ASK, which is the part
        a nervous child never tries. A real definition source is an open item. */
     c.querySelector('#ab-mean').onclick = () => { sfx('tap');
-      popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:20px">Well asked</h2>'+
+      popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:22px;line-height:28px">Well asked</h2>'+
         '<p class="muted" style="line-height:1.6">Asking what a word means is exactly right, and in a '+
         'practice round you can ask for help. I do not have a definition for this word. '+
         'Ask a grown-up after this round. You can look at its spelling pattern here.</p>'+
@@ -5414,7 +5417,7 @@ function actBeePlay(a){
     c.querySelector('#ab-sent').onclick = () => { sfx('tap');
       const line = 'I do not have an example sentence for this word. Ask a grown-up to help after this round.';
       say(line);
-      popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:20px">Well asked</h2>'+
+      popup('<div class="em">🧑‍⚖️</div><h2 style="font-size:22px;line-height:28px">Well asked</h2>'+
         '<p class="muted" style="line-height:1.6">'+esc(line)+'</p>'+
         '<button class="btn big green" style="margin-top:10px" data-close>Ready</button>')
       .addEventListener('click', e => { if (e.target.dataset.close !== undefined) e.currentTarget.remove(); }); };
@@ -5479,7 +5482,7 @@ function actBeePlay(a){
     sfx(full ? 'win' : 'good');
     const c = el('<div class="card center">'+
       '<div style="font-size:56px">'+(full ? '🏆' : '🐝')+'</div>'+
-      '<h2 style="font-size:24px">'+(full ? 'You went all the way through!' : 'Great turn on stage!')+'</h2>'+
+      '<h2 style="font-size:22px;line-height:28px">'+(full ? 'You went all the way through!' : 'Great turn on stage!')+'</h2>'+
       '<p class="muted">'+asked+' word'+(asked===1?'':'s')+' at the microphone · '+
         right+' spelled right first time</p>'+
       '<button class="btn big green" id="on" style="margin-top:12px">Next →</button></div>');
@@ -5514,9 +5517,9 @@ function beeFinishScreen(correct, total){
     confetti(90); sfx(st === 3 ? 'win' : 'good');
     const p = popup(
       '<div class="em">'+(st===3?'🏆':st===2?'🎉':'👍')+'</div>'+
-      '<h2 style="font-size:26px">'+(st===3?'Brilliant!':st===2?'Great job!':'Good effort!')+'</h2>'+
+      '<h2 style="font-size:22px;line-height:28px">'+(st===3?'Brilliant!':st===2?'Great job!':'Good effort!')+'</h2>'+
       '<div style="font-size:42px;letter-spacing:4px">'+'⭐'.repeat(st)+'<span style="opacity:.2">'+'⭐'.repeat(3-st)+'</span></div>'+
-      '<p style="font-size:19px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
+      '<p style="font-size:18px;line-height:22px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
       '<p class="muted">+'+xp+' stars</p>'+
       '<button class="btn big green" style="margin-top:14px" data-close>Back to the bee</button>');
     p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('bee'); });
@@ -5535,13 +5538,13 @@ function writeItScreenBee(d, done){
 
   const intro = el('<div class="card center">'+
     '<div style="font-size:52px">✍️</div>'+
-    '<h2 style="font-size:24px">Paper Power-Up</h2>'+
+    '<h2 style="font-size:22px;line-height:28px">Paper Power-Up</h2>'+
     '<p style="font-size:16.5px;line-height:1.5">'+
       (gotAll ? 'Not a single miss today! 🌟<br>Two words, seven quick steps each.'
               : 'These are the ones that tricked you today. Seven quick steps each.')+'</p>'+
     '<p class="muted" style="font-size:14px;line-height:1.8">'+
       PPU_STEPS.slice(0,6).map(x => x.em+' '+x.t).join(' → ')+'</p>'+
-    '<p class="muted" style="font-size:13px">You will need paper and a pencil.</p>'+
+    '<p class="muted" style="font-size:14px;line-height:20px">You will need paper and a pencil.</p>'+
     '<button class="btn big green" id="pgo" style="margin-top:10px;width:100%">I have my pencil ✏️</button>'+
   '</div>');
   a.appendChild(intro);
@@ -5630,7 +5633,7 @@ function actBeeSpeed(a){
     const secs = Math.round((Date.now()-t0)/1000);
     confetti(80); sfx('win');
     const p = popup('<div class="em">⚡</div><h2>Speed round done!</h2>'+
-      '<p style="font-size:19px;font-weight:800">'+hits+' / '+queue.length+' right</p>'+
+      '<p style="font-size:18px;line-height:22px;font-weight:800">'+hits+' / '+queue.length+' right</p>'+
       '<p class="muted">in '+Math.floor(secs/60)+'m '+(secs%60)+'s</p>'+
       '<button class="btn big green" style="margin-top:12px" data-close>Back to the bee</button>');
     const k = kid(); k.xp = (k.xp||0) + hits*3; save();
