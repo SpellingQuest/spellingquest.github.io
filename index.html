@@ -124,9 +124,9 @@ input,textarea{ font-family:inherit; }
 }
 .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.22); }
 .btn.big{ width:100%; font-size:22px; padding:20px; }
-.btn.green{ background:var(--green); color:var(--ink); } .btn.pink{ background:var(--pink); }
-.btn.blue{ background:var(--blue); } .btn.yellow{ background:var(--yellow); color:#5c3d00; }
-.btn.orange{ background:var(--orange); } .btn.red{ background:var(--red); }
+.btn.green{ background:var(--green); color:var(--ink); } .btn.pink{ background:var(--pink); color:var(--ink); }
+.btn.blue{ background:var(--blue); color:var(--ink); } .btn.yellow{ background:var(--yellow); color:#5c3d00; }
+.btn.orange{ background:var(--orange); color:var(--ink); } .btn.red{ background:var(--red); color:var(--ink); }
 .btn.revisit{ background:#f2eefd; color:var(--ink); outline:2px dashed var(--brand); outline-offset:-3px; }
 .btn.ghost{ background:rgba(255,255,255,.14); color:#fff; box-shadow:none; font-size:16px; line-height:24px; padding:11px 16px; min-height:0;}
 .btn.grey{ background:#f2eefd; color:var(--ink); }
@@ -1165,7 +1165,7 @@ const STORE_KEY = 'spellingQuest.v1';
    month while the app shipped repeatedly, so the 9 September audit had to hash
    the served file instead of trusting it. A stale stamp is worse than none:
    it answers "which build am I on?" confidently and wrongly. */
-const BUILD = '2026-09-10';
+const BUILD = '2026-09-11';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👋', cls:'d1', sub:'Read them out loud + learn the rule' },
