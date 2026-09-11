@@ -5405,7 +5405,14 @@ function actBeePlay(a){
         '<p class="muted center" style="margin-top:8px">'+
           (blanks ? 'Some letters are already up on the board.' : 'Spell it for the judges.')+'</p>'+
         '<p class="muted center" style="margin-top:4px;font-size:14px;line-height:20px">'+
-          'Practice asking for help here. Your grown-up can check which questions your bee allows.</p>'+
+          'Practice asking for help here. In a real bee you are always allowed to ask.</p>'+
+        /* This line used to say a grown-up could check which questions the bee allows.
+           There is no such control and never has been - no setting, no code, no card asking
+           for one. A children's screen promising a feature that is not there is the same
+           defect as the privacy page promising a deletion the code never did, pointing the
+           other way. Replaced with something true that the voice guide already says. Every
+           button beside it answers with something real: the word again, the word slowly,
+           the pattern. */
       '</div></div>');
     host.appendChild(c);
 
