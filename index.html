@@ -2797,12 +2797,28 @@ function renderHome(a){
 
   /* The route, night by night. A short window puts two stages on one night —
      they are drawn as two separate cards under one night heading, on purpose:
-     two sittings, not one long evening. Nothing is ever dropped. */
+     two sittings, not one long evening. Nothing is ever dropped.
+
+     ⚠️ A night only gets its OWN grid when it carries a heading of its own.
+     The ordinary seven-night week prints no headings, so its seven cards must
+     share one grid — a grid holding a single card is one full-width row, and
+     seven of those stacked is the long ribbon of cards Kathryn flagged on
+     9 September 2026. Sharing the grid puts them back at two across on a phone
+     and three on a wider screen, which is what `.daygrid` is for. */
   const grid = el('<div></div>');
   const todayW = new Date().getDay();
+  let openGrid = null;                 // the unheaded grid still accepting cards
+  const gridFor = headed => {
+    if (headed){ openGrid = null; const g = el('<div class="daygrid"></div>');
+                 grid.appendChild(g); return g; }
+    if (!openGrid){ openGrid = el('<div class="daygrid"></div>'); grid.appendChild(openGrid); }
+    return openGrid;
+  };
   nights.forEach((night, ni) => {
     const isTonight = reviewNightsOf(kid()) <= 7 && weekdayForNight(ni, kid()) === todayW;
-    if (nights.length !== 7 || night.length !== 1){
+    const headed = nights.length !== 7 || night.length !== 1;
+    if (headed){
+      openGrid = null;
       grid.appendChild(el('<div class="muted" style="margin:12px 2px 4px;font-weight:800;'+
         'font-size:14px;line-height:20px;letter-spacing:1px;text-transform:uppercase">'+
         esc(nightLabel(ni, kid()))+(isTonight?' · tonight':'')+
@@ -2812,12 +2828,13 @@ function renderHome(a){
           '— free practice night</span>' : '')+'</div>'));
     }
     if (!night.length){
+      openGrid = null;
       grid.appendChild(el('<div class="card" style="padding:12px 14px"><div class="muted" '+
         'style="font-size:14px;line-height:20px">Nothing new tonight. Play the arcade or take on the tricky '+
         'pile if they are keen.</div></div>'));
       return;
     }
-    const dg = el('<div class="daygrid"></div>');
+    const dg = gridFor(headed);
     night.forEach((key, pos) => {
       const d = DAYS[DAY_INDEX[key]];
       const st = p.days[key] || {};
@@ -2833,10 +2850,11 @@ function renderHome(a){
       c.onclick = () => { unlockAudio(); sfx('tap'); go('day', key); };
       dg.appendChild(c);
     });
-    grid.appendChild(dg);
-    if (night.length > 1)
+    if (night.length > 1){
+      openGrid = null;
       grid.appendChild(el('<p class="muted center" style="margin:6px 0 0;font-size:14px;line-height:20px">'+
         'One now is plenty. Come back for the other one later.</p>'));
+    }
   });
   a.appendChild(grid);
 
