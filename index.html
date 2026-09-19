@@ -3466,7 +3466,7 @@ function beeLogHtml(k){
       mastered.length+' of '+words.length+' mastered</div>'+
     '<div class="bar" style="margin-bottom:8px"><i style="width:'+
       Math.round(100*mastered.length/Math.max(1,words.length))+'%"></i></div>'+
-    (shaky.length ? '<p class="muted"><b style="color:var(--red)">Needs work:</b> '+shaky.map(esc).join(', ')+'</p>' : '')+
+    (shaky.length ? '<p class="muted"><b style="color:var(--red)">Words to revisit:</b> '+shaky.map(esc).join(', ')+'</p>' : '')+
     (untouched.length ? '<p class="muted"><b>Not started yet:</b> '+untouched.length+' word'+(untouched.length===1?'':'s')+'</p>' : '');
 }
 
@@ -5255,7 +5255,7 @@ function renderBeeHome(a){
     (plan.finalStretch
       ? '<p class="muted" style="margin-top:10px">🔥 Final stretch — every word is back in the mix, with extra time on the tricky ones.</p>'
       : '<p class="muted" style="margin-top:10px">This week\'s section: <b>'+plan.thisWeek.length+' new words</b>'+
-        (plan.shaky.length ? ' plus <b>'+plan.shaky.length+'</b> to fix' : '')+'</p>')+
+        (plan.shaky.length ? ' plus <b>'+plan.shaky.length+'</b> to revisit' : '')+'</p>')+
   '</div>'));
 
   const hive = a.querySelector('#hive');
