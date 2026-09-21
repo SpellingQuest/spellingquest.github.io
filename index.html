@@ -2486,6 +2486,7 @@ function siteFooter(){
     'line-height:20px;font-weight:500;color:#fff;max-width:420px;margin-left:auto;margin-right:auto">'+
     storage+'</p>'));
   wrap.appendChild(el('<p class="center" style="margin-top:10px;font-size:14px;line-height:20px;font-weight:500;color:#fff">'+
+    '<a href="./" style="color:inherit">Home</a> · '+
     '<a href="./about.html" style="color:inherit">About</a> · '+
     '<a href="./schools.html" style="color:inherit">Schools</a> · '+
     '<a href="./contact.html" style="color:inherit">Contact</a> · '+
@@ -2729,9 +2730,11 @@ function topbar(a, opts){
     '<div class="topbar">'+
       '<div class="avatar">'+k.avatar+'</div>'+
       '<div class="who"><b>'+esc(k.name)+'</b><span>Level '+level(k)+' · '+(k.xp||0)+' ⭐'+(k.streak?' · 🔥'+k.streak:'')+'</span></div>'+
+      '<button class="iconbtn" id="tb-home">🏠</button>'+
       '<button class="iconbtn" id="tb-badge">🏅</button>'+
       '<button class="iconbtn" id="tb-swap">🔄</button>'+
     '</div>');
+  bar.querySelector('#tb-home').onclick = () => { location.href = './'; };
   bar.querySelector('#tb-swap').onclick = () => go('pick');
   bar.querySelector('#tb-badge').onclick = () => go('badges');
   a.appendChild(bar);
@@ -3042,7 +3045,9 @@ let PTAB = 'words';
 function renderParent(a, tab){
   if (tab) PTAB = tab;
   a.appendChild(el('<div class="topbar"><div class="who"><b>⚙️ Grown-up Zone</b><span>Set the week\'s words &amp; check progress</span></div>'+
+    '<button class="iconbtn" id="ph">🏠</button>'+
     '<button class="iconbtn" id="px">✖️</button></div>'));
+  a.querySelector('#ph').onclick = () => { location.href = './'; };
   a.querySelector('#px').onclick = () => go(DB.active ? 'home' : 'pick');
 
   const tabs = el('<div class="tabs">'+
