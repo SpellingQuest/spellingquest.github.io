@@ -1654,8 +1654,26 @@ function absorb(rows){
 
     if (!k.name && r.nickname){ k.name = r.nickname; changed = true; }
     if (r.avatar && k.avatar !== r.avatar){ k.avatar = r.avatar; changed = true; }
-    if (typeof k.grade   !== 'number' && typeof r.grade    === 'number'){ k.grade   = r.grade;    changed = true; }
-    if (typeof k.testDay !== 'number' && typeof r.test_day === 'number'){ k.testDay = r.test_day; changed = true; }
+    /* TASK-423, 21 Sep 2026: grade/testDay/word-list all read their stamp from
+       k.prog BEFORE the forwardMerge below folds the remote stamp in, so
+       "genuinely newer" can be told apart from "merge already happened". */
+    const localProgBefore = k.prog || {};
+    const localGAt  = (typeof localProgBefore[G_AT_KEY]  === 'number') ? localProgBefore[G_AT_KEY]  : 0;
+    const localTdAt = (typeof localProgBefore[TD_AT_KEY] === 'number') ? localProgBefore[TD_AT_KEY] : 0;
+    const localWwAt = (typeof localProgBefore[WW_AT_KEY] === 'number') ? localProgBefore[WW_AT_KEY] : 0;
+    const remoteProg = r.progress || {};
+    const remoteGAt  = (typeof remoteProg[G_AT_KEY]  === 'number') ? remoteProg[G_AT_KEY]  : 0;
+    const remoteTdAt = (typeof remoteProg[TD_AT_KEY] === 'number') ? remoteProg[TD_AT_KEY] : 0;
+    const remoteWwAt = (typeof remoteProg[WW_AT_KEY] === 'number') ? remoteProg[WW_AT_KEY] : 0;
+
+    if (typeof r.grade === 'number' && r.grade !== k.grade &&
+        (typeof k.grade !== 'number' || (remoteGAt > 0 && remoteGAt > localGAt))){
+      k.grade = r.grade; changed = true;
+    }
+    if (typeof r.test_day === 'number' && r.test_day !== k.testDay &&
+        (typeof k.testDay !== 'number' || (remoteTdAt > 0 && remoteTdAt > localTdAt))){
+      k.testDay = r.test_day; changed = true;
+    }
 
     const badges = Array.from(new Set([].concat(k.badges || [], r.badges || [])));
     if (badges.length !== (k.badges || []).length) changed = true;
@@ -1671,11 +1689,21 @@ function absorb(rows){
     const rn = readStampedNights(k);
     if (rn !== null && rn !== k.reviewNights){ k.reviewNights = rn; changed = true; }
 
-    // only take the word list if this device hasn't got a real one of its own,
-    // so a parent typing this week's list can't be overwritten mid-sentence
+    /* TASK-423, 21 Sep 2026: a device that already has its own real word list
+       used to never take a newer one typed on another device — "keep mine"
+       beat timestamp, regardless of which was actually newer, which is the
+       bug Kathryn hit (words added on desktop never reached the iPad). Now:
+       take the remote list when it is stamped strictly newer than ours AND
+       it differs from ours. Keep the original safety net underneath — if
+       neither side has a stamp yet (data saved before this fix shipped) or
+       remote has no stamp, fall back to only taking remote when mine is
+       missing or still the sample, so an empty/default value still can't
+       stomp something real, same spirit as the MKC sync guard. */
     DB.weekRawByKid = DB.weekRawByKid || {};
     const mine = (DB.weekRawByKid[k.id] || '').trim();
-    if (r.week_words && (!mine || mine === SAMPLE.trim())){
+    const remoteWords = (r.week_words || '').trim();
+    const remoteIsNewer = remoteWwAt > 0 && remoteWwAt > localWwAt;
+    if (remoteWords && remoteWords !== mine && (remoteIsNewer || !mine || mine === SAMPLE.trim())){
       DB.weekRawByKid[k.id] = r.week_words; changed = true;
     }
   });
@@ -1860,6 +1888,18 @@ function stampReviewNights(k, n){
   k.prog = k.prog || {};
   k.prog[RN_KEY] = Date.now() * 100 + n;
 }
+/* TASK-423, 21 Sep 2026: same idiom as RN_KEY above, for the two other fields
+   that get "keep mine unless mine is unset" treatment instead of a real
+   merge — the weekly word list, grade and test day. There is no timestamp
+   column for these on kid_progress and no plan to add one (that would be a
+   Supabase-side change needing Kathryn's own word); these stamps live
+   entirely inside `progress`, which already round-trips through both the
+   client's forwardMerge() and the server's jsonb_forward_merge() and already
+   takes the max() of any number it finds — so no schema or RPC change. Stamp
+   on human intent only, exactly like RN_KEY: never inside a sync write. */
+const WW_AT_KEY = '__wwAt';
+const G_AT_KEY  = '__gAt';
+const TD_AT_KEY = '__tdAt';
 function readStampedNights(k){
   const v = k && k.prog && k.prog[RN_KEY];
   if (typeof v !== 'number' || !isFinite(v)) return null;
@@ -3190,7 +3230,12 @@ function parentWords(a){
 
   card.querySelector('#wsave').onclick = () => {
     let any = false;
-    DB.kids.forEach(k => { const v = boxes[k.id].value.trim(); if (v){ DB.weekRawByKid[k.id] = v; any = true; } });
+    DB.kids.forEach(k => { const v = boxes[k.id].value.trim(); if (v){
+      DB.weekRawByKid[k.id] = v;
+      /* a save here is human intent, so this is where the word-list stamp is set */
+      k.prog = k.prog || {}; k.prog[WW_AT_KEY] = Date.now();
+      any = true;
+    } });
     if (!any){ toast('Add some words first!'); return; }
     if (card.querySelector('#fw').checked) newWeekId(); else logWeek();
     save(); buildCurrentWeek(); sfx('good');
@@ -3259,14 +3304,15 @@ function applyWeekPayload(code){
       d.kids.forEach((entry, i) => {
         const match = DB.kids.find(k => k.name.toLowerCase().trim() === String(entry.n||'').toLowerCase().trim())
                    || DB.kids[i];
-        if (match) DB.weekRawByKid[match.id] = entry.w;
+        if (match){ DB.weekRawByKid[match.id] = entry.w; match.prog = match.prog || {}; match.prog[WW_AT_KEY] = Date.now(); }
       });
       DB.weekRaw = d.kids[0].w;
     } else if (d.pk){
       DB.weekRawByKid = d.r;
+      DB.kids.forEach(k => { k.prog = k.prog || {}; k.prog[WW_AT_KEY] = Date.now(); });
     } else {
       DB.weekRaw = d.r;
-      DB.kids.forEach(k => DB.weekRawByKid[k.id] = d.r);
+      DB.kids.forEach(k => { DB.weekRawByKid[k.id] = d.r; k.prog = k.prog || {}; k.prog[WW_AT_KEY] = Date.now(); });
     }
     DB.weekId = d.id || ('w'+Date.now());
     logWeek(); save();
@@ -3313,9 +3359,13 @@ function parentKids(a){
           'can remove this one — the app needs at least one.</div>')+
     '</div>');
     c.querySelector('[data-f="name"]').onchange = e => { k.name = e.target.value || 'Kid'; save(); };
-    c.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { k.grade = +b.dataset.g; save(); go('parent','kids'); });
+    c.querySelectorAll('[data-g]').forEach(b => b.onclick = () => {
+      k.grade = +b.dataset.g; k.prog = k.prog || {}; k.prog[G_AT_KEY] = Date.now();
+      save(); go('parent','kids');
+    });
     c.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
-      k.testDay = +b.dataset.d; save(); sfx('tap');
+      k.testDay = +b.dataset.d; k.prog = k.prog || {}; k.prog[TD_AT_KEY] = Date.now();
+      save(); sfx('tap');
       toast('Plans changed. Here\'s the best route from today to quiz day.', 3200);
       go('parent','kids');
     });
