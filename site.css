@@ -417,3 +417,31 @@ details.q .a a{color:var(--link-on-card);font-weight:700}
 .card.offer{display:flex;flex-direction:column}
 .card.offer p{flex:1}
 .head-cta .signin[aria-current="page"]{background:rgba(255,255,255,.1)}
+
+/* ---------- Scout (approved artwork, 27 Sep 2026) ---------- */
+.flip{transform:scaleX(-1)}
+.hero-art img.flip{filter:drop-shadow(0 30px 50px rgba(124,58,237,.5))}
+.step{padding-right:28px}
+.step-scout{position:absolute;right:14px;top:-34px;width:104px;height:auto;pointer-events:none;
+  filter:drop-shadow(0 10px 16px rgba(20,8,60,.25))}
+.side-scout{width:190px;margin-top:10px;filter:drop-shadow(0 18px 30px rgba(124,58,237,.45))}
+.hero-scout{width:150px;margin:0 auto 6px;filter:drop-shadow(0 16px 28px rgba(124,58,237,.5))}
+.scout-art img{width:100%;max-width:300px;filter:drop-shadow(0 24px 44px rgba(124,58,237,.5))}
+@media (max-width:900px){ .side-scout{width:140px;margin-left:auto;margin-right:auto} }
+@media (max-width:640px){ .step-scout{width:88px;top:-28px} .hero-scout{width:120px} }
+
+/* ---------- founder story (About) ---------- */
+.founder{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:start;max-width:980px;margin:10px auto 56px}
+.founder-photo{position:relative;justify-self:center}
+.founder-photo .frame{width:280px;height:280px;border-radius:50%;overflow:hidden;background:#fdf1e4;
+  box-shadow:0 0 0 6px rgba(255,201,60,.9),0 24px 50px rgba(8,3,30,.5)}
+/* the photo file has a dark square around a cream circle; scale it so only the circle shows */
+.founder-photo .frame img{width:100%;height:100%;object-fit:cover;transform:scale(1.2)}
+.founder-scout{position:absolute;right:-30px;bottom:-26px;width:120px;filter:drop-shadow(0 12px 20px rgba(20,8,60,.45))}
+.founder-story p{font-size:18px;line-height:1.7;color:var(--on-night-soft)}
+.founder-story em{font-style:italic;color:#fff}
+.founder-story .hl-ink{color:var(--gold-soft);font-weight:800}
+.founder-story .signoff{font-family:var(--font-head);font-weight:900;color:var(--gold);font-size:20px;margin-top:20px}
+.founder-story .signoff::before{content:"— "}
+@media (max-width:860px){ .founder{grid-template-columns:1fr;gap:34px;text-align:left} .founder-story .eyebrow,.founder-story h2{text-align:center;display:block} }
+.founder-story p.eyebrow{color:var(--gold);font-size:14px;line-height:1.6}

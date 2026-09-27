@@ -22,6 +22,7 @@ def pricing():
         twelve months.</p>
       <p class="note">The twelve months are twelve months, not a school year, so spelling bee season and
         summer practice keep working too.</p>
+      <img class="side-scout" src="img/scout-cheering.webp" alt="" width="560" height="560">
     </div>
     <div class="card price-card">
       <span class="label-sm" style="color:var(--brand)">Family access</span>
@@ -212,6 +213,7 @@ def faq():
                 extra_ld=ld) + header("faq.html") + f"""
 <section class="page-hero">
   <div class="wrap">
+    <img class="hero-scout" src="img/scout-thinking.webp" alt="" width="560" height="560">
     <p class="eyebrow">FAQ</p>
     <h1>Questions, <span class="hl">answered.</span></h1>
     <p class="lede">Short answers to what parents ask most. Can't find yours?
@@ -241,8 +243,8 @@ def signin():
 <div class="wrap">
   <div class="signin-grid">
     <div class="signin-art">
-      <!-- ART SLOT signin: replace with the approved Scout-at-the-honeycomb-door illustration (SQ Website Image Plan, S1). -->
-      <img src="img/sq-badge.webp" alt="" width="720" height="720">
+      <!-- S1 stand-in: Scout pose 01, pointing toward the form. Swap for the honeycomb-door art if it's made. -->
+      <img src="img/scout-pointing.webp" alt="Scout the Bee pointing to the sign-in box" width="560" height="560">
       <h1 style="font-size:clamp(30px,4vw,44px)">Your quest is <span class="hl">right where you left it.</span></h1>
       <p class="lede" style="max-width:440px;margin-left:auto;margin-right:auto">Stars, finished days and this week's
         words follow your family onto every device.</p>

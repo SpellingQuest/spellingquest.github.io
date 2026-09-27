@@ -1,11 +1,13 @@
 from common import *
 
 
-def hero(eyebrow, title_html, lede):
+def hero(eyebrow, title_html, lede, scout=None):
+    scout_img = (f'<img class="hero-scout" src="img/scout-{scout}.webp" alt="" width="560" height="560">\n    '
+                 if scout else '')
     return f"""
 <section class="page-hero">
   <div class="wrap">
-    <p class="eyebrow">{eyebrow}</p>
+    {scout_img}<p class="eyebrow">{eyebrow}</p>
     <h1>{title_html}</h1>
     <p class="lede">{lede}</p>
   </div>
@@ -33,6 +35,39 @@ def about():
         "About Spelling Quest", 'Made by a parent, <span class="hl">for families.</span>',
         "Spelling Quest turns the weekly spelling list into seven short goes, about ten minutes a day, so a child can get on with it largely by themselves, and a parent gets their evening back.") + f"""
 <div class="wrap">
+  <section class="founder" aria-labelledby="why">
+    <div class="founder-photo">
+      <div class="frame"><img src="img/kathryn.webp" alt="Kathryn, founder of Spelling Quest" width="360" height="360"></div>
+      <img class="founder-scout" src="img/scout-waving.webp" alt="" width="560" height="560" loading="lazy">
+    </div>
+    <div class="founder-story">
+      <p class="eyebrow">Why I built this</p>
+      <h2 id="why">It started at <span class="hl">my kitchen table.</span></h2>
+      <p>Every week my kids came home with a spelling list, and every week we did the same thing. Copy the
+        words out. Call them out loud. Hope they stuck until test day. It sort of worked, but it didn't feel
+        like learning, and it definitely didn't feel fun, for them or for me.</p>
+      <p>The spelling apps my kids enjoyed had their own word lists, so practice turned into new work on words
+        that weren't even their focus that week. And the drills we did at home taught them to memorize a word
+        until Friday, not to understand it. I wanted them to know <em>why</em> <b>light</b> and <b>night</b> are
+        spelled the same way, so the next <b>igh</b> word they meet isn't a mystery. Learn the pattern once, and
+        it keeps helping with words they haven't even seen yet.</p>
+      <p>So I built something for us. Their teacher's words, nothing extra. Games that are genuinely fun but
+        always practice spelling. Patterns and rules explained in plain language. And a route they can follow
+        on their own, so they feel capable and proud, and I'm not the one calling out words at 7 p.m.</p>
+      <p>I kept thinking about the parents I know who grew up speaking another language. Helping with English
+        spelling is hard when the rules feel like a mystery to you too. Spelling Quest says each word out loud,
+        shows the pattern and walks your child through it, so you can support them without having to be the
+        spelling teacher.</p>
+      <p>Then came the spelling bee. A list of hundreds of words is overwhelming for anyone, let alone a
+        young speller. Breaking it into small groups, a few focus areas at a time, turned “I can’t learn all
+        of these” into “I can do this week’s.”</p>
+      <p>Spelling Quest is what my own kids practice with now. I hope it brings your family what it brought
+        mine: a child who thinks <span class="hl-ink">“I can figure words out,”</span> and a calmer evening
+        for everyone.</p>
+      <p class="signoff">Kathryn, founder</p>
+    </div>
+  </section>
+
   <article class="card doc">
     <p class="updated">Last updated 27 September 2026</p>
 
@@ -152,7 +187,7 @@ def contact():
     return head(path="contact.html", title="Contact: Spelling Quest",
                 description="Get in touch with Spelling Quest. A real person reads every message, usually within a day.") + header("contact.html") + hero(
         "Contact", 'A real person <span class="hl">reads these.</span>',
-        "Usually within a day, or two if it lands on a weekend.") + f"""
+        "Usually within a day, or two if it lands on a weekend.", scout="pencil") + f"""
 <div class="wrap">
   <div class="grid-2" style="max-width:980px;margin:0 auto 30px">
     <div class="card">
@@ -348,7 +383,7 @@ def notfound():
                 description="That page wandered off.", noindex=True) + header("") + f"""
 <section class="closing">
   <div class="wrap">
-    <div style="font-size:72px;line-height:1" aria-hidden="true">🐝</div>
+    <img class="hero-scout" src="img/scout-thinking.webp" alt="" width="560" height="560">
     <p class="statement">That page <span class="hl">flew off.</span></p>
     <p class="lede">Let's get you back on the path.</p>
     <div class="btn-row" style="justify-content:center">

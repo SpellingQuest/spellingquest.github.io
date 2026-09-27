@@ -36,8 +36,8 @@ def page():
     </div>
     <div class="hero-art">
       <div class="halo" aria-hidden="true"></div>
-      <!-- ART SLOT home-hero: replace with the approved Scout game-map illustration (SQ Website Image Plan, H1). -->
-      <img src="img/sq-badge.webp" alt="The Spelling Quest badge: a bee flying toward a gold star above a row of honeycomb letter tiles" width="720" height="720" fetchpriority="high">
+      <!-- H1: Scout-homepage-main-flying-guide (approved 27 Sep 2026), mirrored so Scout points toward the headline. -->
+      <img class="flip" src="img/scout-hero.webp" alt="Scout the Bee flying ahead and pointing the way" width="960" height="960" fetchpriority="high">
     </div>
   </div>
 </section>
@@ -80,18 +80,21 @@ def page():
     </div>
     <div class="grid-3 steps">
       <div class="card step">
+        <img class="step-scout" src="img/scout-pencil.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">1</div>
         <h3>Paste this week's list</h3>
         <p>Any layout the teacher sent. Just the words is fine. Tell it the test day and how many
           nights your child has.</p>
       </div>
       <div class="card step">
+        <img class="step-scout" src="img/scout-thinking.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">2</div>
         <h3>It builds the route</h3>
         <p>Spelling Quest finds the patterns, splits words into chunks, writes a memory trick and spreads
           seven short stages across the nights you actually have.</p>
       </div>
       <div class="card step">
+        <img class="step-scout" src="img/scout-cheering.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">3</div>
         <h3>They play, you step back</h3>
         <p>About ten minutes a day, largely on their own. You can check what's done from your own phone,
@@ -193,8 +196,8 @@ def page():
   <div class="wrap">
     <div class="scout">
       <div class="scout-art">
-        <!-- ART SLOT scout-intro: replace with the approved Scout pose (SQ Website Image Plan, H4). -->
-        <div class="placeholder" role="img" aria-label="Scout the Bee">🐝</div>
+        <!-- H4: Scout pose 02, waving (approved 27 Sep 2026). -->
+        <img src="img/scout-waving.webp" alt="Scout the Bee waving hello" width="560" height="560" loading="lazy">
       </div>
       <div>
         <p class="eyebrow plain">Meet Scout</p>

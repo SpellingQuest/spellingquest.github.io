@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap"></noscript>
-<link rel="stylesheet" href="site.css?v=1">
+<link rel="stylesheet" href="site.css?v=2">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Spelling Quest", "url": "https://spellingquest.github.io/", "logo": "https://spellingquest.github.io/icon-512.png", "email": "spellingquest@gmail.com"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Spelling Quest", "applicationCategory": "EducationalApplication", "operatingSystem": "Web browser (iPad, iPhone, Android, laptop)", "description": "Spelling practice built from the list your child brought home this week. It finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick.", "url": "https://spellingquest.github.io/", "offers": {"@type": "Offer", "price": "40.00", "priceCurrency": "USD", "description": "Twelve months for the whole family, every device. Seven free days first."}}</script>
 </head>
@@ -89,8 +89,8 @@
     </div>
     <div class="hero-art">
       <div class="halo" aria-hidden="true"></div>
-      <!-- ART SLOT home-hero: replace with the approved Scout game-map illustration (SQ Website Image Plan, H1). -->
-      <img src="img/sq-badge.webp" alt="The Spelling Quest badge: a bee flying toward a gold star above a row of honeycomb letter tiles" width="720" height="720" fetchpriority="high">
+      <!-- H1: Scout-homepage-main-flying-guide (approved 27 Sep 2026), mirrored so Scout points toward the headline. -->
+      <img class="flip" src="img/scout-hero.webp" alt="Scout the Bee flying ahead and pointing the way" width="960" height="960" fetchpriority="high">
     </div>
   </div>
 </section>
@@ -133,18 +133,21 @@
     </div>
     <div class="grid-3 steps">
       <div class="card step">
+        <img class="step-scout" src="img/scout-pencil.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">1</div>
         <h3>Paste this week's list</h3>
         <p>Any layout the teacher sent. Just the words is fine. Tell it the test day and how many
           nights your child has.</p>
       </div>
       <div class="card step">
+        <img class="step-scout" src="img/scout-thinking.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">2</div>
         <h3>It builds the route</h3>
         <p>Spelling Quest finds the patterns, splits words into chunks, writes a memory trick and spreads
           seven short stages across the nights you actually have.</p>
       </div>
       <div class="card step">
+        <img class="step-scout" src="img/scout-cheering.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">3</div>
         <h3>They play, you step back</h3>
         <p>About ten minutes a day, largely on their own. You can check what's done from your own phone,
@@ -246,8 +249,8 @@
   <div class="wrap">
     <div class="scout">
       <div class="scout-art">
-        <!-- ART SLOT scout-intro: replace with the approved Scout pose (SQ Website Image Plan, H4). -->
-        <div class="placeholder" role="img" aria-label="Scout the Bee">🐝</div>
+        <!-- H4: Scout pose 02, waving (approved 27 Sep 2026). -->
+        <img src="img/scout-waving.webp" alt="Scout the Bee waving hello" width="560" height="560" loading="lazy">
       </div>
       <div>
         <p class="eyebrow plain">Meet Scout</p>
