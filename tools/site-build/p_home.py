@@ -1,77 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Spelling Quest: their teacher's words, your child's learning path</title>
-<meta name="description" content="Paste the spelling list from your child's backpack. Spelling Quest finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick. 7 free days.">
-<link rel="canonical" href="https://spellingquest.github.io/">
-<meta name="theme-color" content="#221252">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+from common import *
 
-<!-- Link preview (the card a texted or shared link shows). og:image MUST be an
-     absolute URL; iMessage and some other scrapers fail silently on a relative one. -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Spelling Quest">
-<meta property="og:url" content="https://spellingquest.github.io/">
-<meta property="og:title" content="Spelling Quest: their teacher's words, your child's learning path">
-<meta property="og:description" content="Paste the spelling list from your child's backpack. Spelling Quest finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick. 7 free days.">
-<meta property="og:image" content="https://spellingquest.github.io/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Spelling Quest: their teacher's words, your child's learning path">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Spelling Quest: their teacher's words, your child's learning path">
-<meta name="twitter:description" content="Paste the spelling list from your child's backpack. Spelling Quest finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick. 7 free days.">
-<meta name="twitter:image" content="https://spellingquest.github.io/og.png">
+LD = [{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Spelling Quest",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web browser (iPad, iPhone, Android, laptop)",
+    "description": "Spelling practice built from the list your child brought home this week. It finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick.",
+    "url": f"{SITE}/",
+    "offers": {"@type": "Offer", "price": "40.00", "priceCurrency": "USD",
+               "description": "Twelve months for the whole family, every device. Seven free days first."},
+}]
 
-<!-- Nunito for headings (approved 27 Sep 2026). Loaded without blocking the page. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap"></noscript>
-<link rel="stylesheet" href="site.css?v=1">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Spelling Quest", "url": "https://spellingquest.github.io/", "logo": "https://spellingquest.github.io/icon-512.png", "email": "spellingquest@gmail.com"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Spelling Quest", "applicationCategory": "EducationalApplication", "operatingSystem": "Web browser (iPad, iPhone, Android, laptop)", "description": "Spelling practice built from the list your child brought home this week. It finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick.", "url": "https://spellingquest.github.io/", "offers": {"@type": "Offer", "price": "40.00", "priceCurrency": "USD", "description": "Twelve months for the whole family, every device. Seven free days first."}}</script>
-</head>
-<body>
-<a class="skip" href="#main">Skip to the content</a>
-<!-- Site header: identical on every page. If you change it, change it everywhere. -->
-<header class="site-head">
-  <div class="wrap">
-    <a class="brand" href="index.html" aria-label="Spelling Quest home">
-      <img src="img/sq-logo-horizontal.webp" alt="Spelling Quest" width="640" height="160">
-    </a>
-    <nav class="nav" aria-label="Main">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="index.html#how">How it works</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="faq.html">FAQ</a>
-      <a href="schools.html">Schools</a>
-      <a href="about.html">About</a>
-    </nav>
-    <div class="head-cta">
-      <a class="signin" href="signin.html" data-signin>Sign in</a>
-      <a class="btn" href="app/#start=trial">Start free</a>
-      <details class="menu">
-        <summary aria-label="Open menu">Menu</summary>
-        <div class="panel">
-        <a href="index.html" aria-current="page">Home</a>
-        <a href="index.html#how">How it works</a>
-        <a href="pricing.html">Pricing</a>
-        <a href="faq.html">FAQ</a>
-        <a href="schools.html">Schools</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="signin.html">Sign in</a>
-        </div>
-      </details>
-    </div>
-  </div>
-</header>
-<main id="main">
-
+def page():
+    return head(
+        path="index.html",
+        title="Spelling Quest: their teacher's words, your child's learning path",
+        description="Paste the spelling list from your child's backpack. Spelling Quest finds the patterns, builds a short daily route to test day, and brings tricky words back until they stick. 7 free days.",
+        extra_ld=LD,
+    ) + header("index.html") + f"""
 <section class="hero">
   <div class="wrap grid">
     <div>
@@ -81,7 +28,7 @@
         practices the tricky words, and builds a short daily route to test day that your child can
         follow by themselves.</p>
       <div class="btn-row">
-        <a class="btn" href="app/#start=trial">Start my 7 free days</a>
+        <a class="btn" href="{TRIAL}">Start my 7 free days</a>
         <a class="btn-ghost" href="#how">See how it works</a>
       </div>
       <p class="reassure">Free for 7 days, then $40 a year for the whole family. No card, no account.<br>
@@ -289,7 +236,7 @@
         <li>All seven stages, the arcade and spelling bee prep</li>
         <li>Twelve months, summer included</li>
       </ul>
-      <a class="btn" href="app/#start=trial" style="width:100%">Start my 7 free days</a>
+      <a class="btn" href="{TRIAL}" style="width:100%">Start my 7 free days</a>
       <p class="fine">No card, no account. If you do nothing, the free week simply ends.
         <a href="pricing.html">See pricing and bundles</a></p>
     </div>
@@ -301,52 +248,9 @@
     <p class="statement">Help them think, <span class="hl">“I can figure words out.”</span></p>
     <p class="lede narrow">And give yourself the evening back.</p>
     <div class="btn-row" style="justify-content:center">
-      <a class="btn" href="app/#start=trial">Start my 7 free days</a>
+      <a class="btn" href="{TRIAL}">Start my 7 free days</a>
       <a class="btn-ghost" href="signin.html" data-signin>Sign in</a>
     </div>
   </div>
 </section>
-</main>
-
-<!-- Site footer: identical on every page. -->
-<footer class="site-foot">
-  <div class="wrap">
-    <img class="mark" src="img/sq-icon.webp" alt="" width="256" height="256" loading="lazy">
-    <div class="name">Spelling Quest</div>
-    <div class="tag">Follow the clue. Build the pattern. Reach the next star.</div>
-    <nav class="foot-links" aria-label="Footer">
-    <a href="index.html">Home</a>
-    <a href="index.html#how">How it works</a>
-    <a href="pricing.html">Pricing</a>
-    <a href="faq.html">FAQ</a>
-    <a href="schools.html">Schools</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-    <a href="privacy.html">Privacy</a>
-    <a href="terms.html">Terms</a>
-    <a href="refunds.html">Refunds</a>
-    <a href="signin.html">Sign in</a>
-    </nav>
-    <p class="mail">Questions? <a href="mailto:spellingquest@gmail.com">spellingquest@gmail.com</a></p>
-    <p class="small">Made by a parent, for families. &copy; 2026 Spelling Quest</p>
-  </div>
-</footer>
-<script>
-(function () {
-  try {
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-      location.replace('app/' + location.hash);
-    }
-  } catch (e) {}
-  /* This device already has Spelling Quest set up: offer the app, not a sign-in. */
-  try {
-    if (localStorage.getItem('spellingQuest.v1')) {
-      document.querySelectorAll('[data-signin]').forEach(function (a) {
-        a.textContent = 'Open the app'; a.setAttribute('href', 'app/');
-      });
-    }
-  } catch (e) {}
-})();
-</script>
-</body>
-</html>
+""" + footer(root=True)

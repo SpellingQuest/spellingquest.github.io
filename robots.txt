@@ -1,0 +1,6 @@
+# Spelling Quest — everyone is welcome to read the website, search engines and AI assistants alike.
+User-agent: *
+Allow: /
+Disallow: /app/
+
+Sitemap: https://spellingquest.github.io/sitemap.xml

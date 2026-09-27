@@ -1,0 +1,19 @@
+# Spelling Quest
+
+> Spelling practice built from the exact list a child brings home from school each week. A parent pastes in the list; Spelling Quest finds the letter patterns, splits words into chunks, writes memory tricks and builds a short daily route of seven stages up to the child's test day. About ten minutes a day, designed so an elementary-school child can practice largely on their own.
+
+- Price: 7 free days (no card, no account), then $40 a year for the whole household, every child and every device. $25 a year for families who already own One Ayah At A Time or Muslim Kids Checklist; $89 a year for all three apps.
+- Works in any web browser: iPad, iPhone, Android, laptop. Works offline once loaded.
+- Seven stages: Meet the Words, Sound & Build, Missing Letters, Spelling Bee, Arcade, Boss Battle (the words a child missed), Champion Quiz.
+- Every day ends with a Paper Power-Up: look, say, cover, write from memory, check, fix.
+- Spelling bee mode: spreads a long list across the weeks to a bee date and practices on a stage with judges.
+- Privacy: children are known by nickname only; no real names, birthdays, schools or email addresses in the app; no ads, analytics or tracking; no leaderboards or rankings.
+
+## Pages
+
+- [Home](https://spellingquest.github.io/): what it is and how it works
+- [Pricing](https://spellingquest.github.io/pricing.html): prices and bundles
+- [FAQ](https://spellingquest.github.io/faq.html): common questions
+- [Schools](https://spellingquest.github.io/schools.html): classrooms, groups and tutors
+- [Privacy](https://spellingquest.github.io/privacy.html): what is and isn't stored
+- [Contact](https://spellingquest.github.io/contact.html): spellingquest@gmail.com

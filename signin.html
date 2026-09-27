@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Privacy: Spelling Quest</title>
-<meta name="description" content="No accounts, no email addresses, and never your child's real name, school or birthday. How Spelling Quest handles children's data.">
-<link rel="canonical" href="https://spellingquest.github.io/privacy.html">
+<title>Sign in: Spelling Quest</title>
+<meta name="description" content="Open your family's Spelling Quest on any device with the key from your purchase email.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://spellingquest.github.io/signin.html">
 <meta name="theme-color" content="#221252">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -14,16 +15,16 @@
      absolute URL; iMessage and some other scrapers fail silently on a relative one. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Spelling Quest">
-<meta property="og:url" content="https://spellingquest.github.io/privacy.html">
-<meta property="og:title" content="Privacy: Spelling Quest">
-<meta property="og:description" content="No accounts, no email addresses, and never your child's real name, school or birthday. How Spelling Quest handles children's data.">
+<meta property="og:url" content="https://spellingquest.github.io/signin.html">
+<meta property="og:title" content="Sign in: Spelling Quest">
+<meta property="og:description" content="Open your family's Spelling Quest on any device with the key from your purchase email.">
 <meta property="og:image" content="https://spellingquest.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Spelling Quest: their teacher's words, your child's learning path">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Privacy: Spelling Quest">
-<meta name="twitter:description" content="No accounts, no email addresses, and never your child's real name, school or birthday. How Spelling Quest handles children's data.">
+<meta name="twitter:title" content="Sign in: Spelling Quest">
+<meta name="twitter:description" content="Open your family's Spelling Quest on any device with the key from your purchase email.">
 <meta name="twitter:image" content="https://spellingquest.github.io/og.png">
 
 <!-- Nunito for headings (approved 27 Sep 2026). Loaded without blocking the page. -->
@@ -51,7 +52,7 @@
       <a href="about.html">About</a>
     </nav>
     <div class="head-cta">
-      <a class="signin" href="signin.html" data-signin>Sign in</a>
+      <a class="signin" href="signin.html" data-signin aria-current="page">Sign in</a>
       <a class="btn" href="app/#start=trial">Start free</a>
       <details class="menu">
         <summary aria-label="Open menu">Menu</summary>
@@ -63,7 +64,7 @@
         <a href="schools.html">Schools</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
-        <a href="signin.html">Sign in</a>
+        <a href="signin.html" aria-current="page">Sign in</a>
         </div>
       </details>
     </div>
@@ -71,69 +72,53 @@
 </header>
 <main id="main">
 
-<section class="page-hero">
-  <div class="wrap">
-    <p class="eyebrow">Privacy</p>
-    <h1>Built for children, <span class="hl">private by design.</span></h1>
-    <p class="lede">No accounts, no email addresses, and we never ask for your child's name, school or birthday.</p>
-  </div>
-</section>
-
 <div class="wrap">
-  <article class="card doc">
-    <p class="updated">Last updated 9 September 2026</p>
-    <div class="summary-box">
-      <span class="label-sm">The short version</span>
-      <p>A nickname and a grade are all the app asks a child for. Progress is stored under a one-way
-        fingerprint that can't be traced to a person. No ads, no analytics, no tracking. Email us and
-        we'll erase everything.</p>
+  <div class="signin-grid">
+    <div class="signin-art">
+      <!-- ART SLOT signin: replace with the approved Scout-at-the-honeycomb-door illustration (SQ Website Image Plan, S1). -->
+      <img src="img/sq-badge.webp" alt="" width="720" height="720">
+      <h1 style="font-size:clamp(30px,4vw,44px)">Your quest is <span class="hl">right where you left it.</span></h1>
+      <p class="lede" style="max-width:440px;margin-left:auto;margin-right:auto">Stars, finished days and this week's
+        words follow your family onto every device.</p>
     </div>
-    <nav class="jump" aria-label="On this page">
-      <a href="#asks">What we ask</a><a href="#stored">What is stored</a><a href="#never">Never collected</a>
-      <a href="#email">Your email</a><a href="#delete">Deleting</a><a href="#children">Children's privacy</a>
-    </nav>
 
-    <h2 id="asks">What the app asks a child for</h2>
-    <p>A nickname and a school grade. That's it. The nickname doesn't have to be a real name and the app
-      suggests it isn't one. There is no sign-up, no password and no profile.</p>
+    <div class="card signin-card">
+      <span class="label-sm" style="color:var(--brand)">Welcome back</span>
+      <h2 style="font-size:30px;margin-bottom:6px">Pick up where you left off</h2>
+      <p>Paste the key from your purchase email, or the access code you were given. No email address or
+        password needed.</p>
+      <form id="signin" autocomplete="off" novalidate>
+        <label class="field" for="key">Your key or code</label>
+        <input class="input" id="key" name="key" type="text" inputmode="text" autocapitalize="characters"
+          spellcheck="false" placeholder="Paste your key or code" required>
+        <button class="btn" type="submit">Open our quest</button>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      </form>
+      <p class="fine center">Capitals and hyphens don't matter. Lost your key? It's in your Gumroad receipt email,
+        or <a href="contact.html">write to us</a>.</p>
 
-    <h2 id="stored">What is stored, and where</h2>
-    <p>So that progress can follow your family between devices, this much is kept on a server:</p>
-    <ul>
-      <li>The nickname, and the grade, test day and avatar you chose</li>
-      <li>Stars, streak and badges</li>
-      <li>Which days are finished</li>
-      <li>The word list you pasted in</li>
-    </ul>
-    <p>Which words your child found tricky is worked out on their device and never sent anywhere.</p>
-    <p>It is filed under a fingerprint of your family code: a one-way scramble that cannot be
-      turned back into the code. There is no name, no email and no address attached to it, so the records
-      cannot be traced to a person.</p>
-
-    <h2 id="never">What is never collected</h2>
-    <p>Email addresses inside the app, real names, birthdays, schools, locations, photos, contacts, or
-      anything about a child's device. There is no advertising, no analytics and no third-party tracking
-      of any kind.</p>
-
-    <h2 id="email">Your email, when you buy</h2>
-    <p>If you buy, Gumroad collects your email to send your key and receipt, and I may email
-      you about the app. That is a parent's address, given by a parent, never a child's. You can
-      unsubscribe from any of those emails.</p>
-
-    <h2 id="delete">Removing a child, and deleting for good</h2>
-    <p>Removing a child in <b>Grown-ups &rarr; Kids</b> takes them out of the app on every device in your
-      family, and it can't be undone from inside the app. On the server their record is marked as removed
-      rather than wiped: the nickname, word list and progress stay in place, unused, so that a child
-      removed by mistake can be put back by hand.</p>
-    <p>If you want it gone for good, one child or your whole family, email
-      <a href="mailto:spellingquest@gmail.com">spellingquest@gmail.com</a> and I'll erase it and confirm.</p>
-
-    <h2 id="children">Children's privacy</h2>
-    <p>The app is designed so that a child cannot hand over personal information even if they try:
-      there is nowhere to type it. Parents buy, parents set it up. If you believe any personal information
-      about a child has reached me, write to me and I will delete it.</p>
-  </article>
+      <div class="or">New to Spelling Quest?</div>
+      <a class="btn-outline-ink" href="app/#start=trial">Start 7 free days</a>
+      <p class="fine center">No card, no account. <a href="index.html">What is Spelling Quest?</a></p>
+      <p class="fine center" id="already" hidden>This device is already set up. <a href="app/">Open the app</a></p>
+    </div>
+  </div>
 </div>
+<script>
+(function () {
+  var f = document.getElementById('signin'), k = document.getElementById('key'), m = document.getElementById('msg');
+  try { if (localStorage.getItem('spellingQuest.v1')) document.getElementById('already').hidden = false; } catch (e) {}
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = (k.value || '').trim();
+    if (!v) { m.textContent = 'Paste your key or code first.'; k.focus(); return; }
+    m.textContent = 'Opening your quest…';
+    /* The key goes to the app in the #hash, which browsers never send to a server.
+       The app checks it exactly as its own key box does. */
+    location.href = 'app/#key=' + encodeURIComponent(v);
+  });
+})();
+</script>
 </main>
 
 <!-- Site footer: identical on every page. -->
