@@ -151,9 +151,13 @@ FAQ = [
          "<p>Never. There are no leaderboards, no rankings and no side-by-side scores. Each child only ever sees "
          "their own progress.</p>"),
         ("What happens when my child gets a word wrong?",
-         "<p>A miss is treated as a clue, not a verdict. Words that caught them out are gathered into the Boss "
+         "<p>A miss is treated as a clue, not a verdict. Any word your child misses is gathered into the Boss "
          "Battle, so the extra practice goes exactly where it's needed, and they show up for you under "
          "<b>Words to revisit</b>.</p>"),
+        ("Can I check my child's progress from my phone?",
+         "<p>Yes. Open the Grown-up Zone (behind a grown-up PIN) on any of your devices to see which stages each child "
+         "has finished this week, their stars and streak, the words to revisit, earlier weeks and spelling bee progress. "
+         "Progress follows your family across devices once you unlock with your key.</p>"),
         ("The voice sounds robotic. Can I fix it?",
          "<p>That's your device's basic built-in voice, and a better one is a free download. In the app, go to "
          "<b>Grown-ups &rarr; More &rarr; Voice</b> and it shows you exactly where to get one on iPhone, iPad and Android.</p>"),

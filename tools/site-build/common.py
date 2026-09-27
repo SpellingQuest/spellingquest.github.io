@@ -2,7 +2,7 @@
 import json
 
 SITE = "https://spellingquest.github.io"
-CSS_V = "2"
+CSS_V = "3"
 EMAIL = "spellingquest@gmail.com"
 CHECKOUT = "https://spellingquest.gumroad.com/l/mlshxz"      # $40 family access
 CHECKOUT_ADDON = "https://spellingquest.gumroad.com/l/xgcjen"  # $25 add Spelling Quest

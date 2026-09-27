@@ -165,7 +165,7 @@ def schools():
     <ul>
       <li><b>No rankings.</b> A teacher might see that a class is practicing. Never a leaderboard of who
         is ahead.</li>
-      <li><b>No child's misses on display.</b> The words that caught someone out stay between that
+      <li><b>No child's misses on display.</b> The words a child misses stay between that
         child and the app.</li>
       <li><b>No red flags.</b> A missed word is a clue, not a verdict, and a quiet week is not
         something that surfaces as a warning to an adult in charge.</li>

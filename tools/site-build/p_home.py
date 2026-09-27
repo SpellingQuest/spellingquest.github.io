@@ -83,36 +83,73 @@ def page():
         <img class="step-scout" src="img/scout-pencil.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">1</div>
         <h3>Paste this week's list</h3>
-        <p>Any layout the teacher sent. Just the words is fine. Tell it the test day and how many
-          nights your child has.</p>
+        <p>Any layout the teacher sent. Just the words is fine. Tell Scout the bee their test day and how
+          many nights of practice your child has.</p>
       </div>
       <div class="card step">
         <img class="step-scout" src="img/scout-thinking.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">2</div>
         <h3>It builds the route</h3>
-        <p>Spelling Quest finds the patterns, splits words into chunks, writes a memory trick and spreads
-          seven short stages across the nights you actually have.</p>
+        <p>Scout finds the patterns, splits words into chunks, writes a memory trick and creates daily
+          sprints across the nights you have.</p>
       </div>
       <div class="card step">
         <img class="step-scout" src="img/scout-cheering.webp" alt="" width="560" height="560" loading="lazy">
         <div class="num" aria-hidden="true">3</div>
         <h3>They play, you step back</h3>
-        <p>About ten minutes a day, largely on their own. You can check what's done from your own phone,
-          without being in the room.</p>
+        <p>About ten minutes a day, largely on their own. You can check what's done from your own phone or
+          another device, without having to drive the practice.</p>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="card center mt-40 narrow">
-      <span class="label-sm" style="color:var(--brand)">Spelling Quest notices things like this</span>
-      <div class="pattern-demo" aria-label="Example words with shared letter patterns highlighted">
-        <span class="tile">l<mark>igh</mark>t</span><span class="tile">n<mark>igh</mark>t</span>
-        <span class="tile p2">pl<mark>ay</mark></span><span class="tile p2">st<mark>ay</mark></span>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">See it in action</p>
+      <h2>Not just <em>what</em> to spell. <span class="hl">Why it's spelled that way.</span></h2>
+      <p class="lede">Here's what Scout does with a list like this one. Each pattern gets a plain-language rule
+        and a memory trick, so the learning carries over to words that were never on the list.</p>
+    </div>
+
+    <div class="card demo">
+      <span class="label-sm" style="color:var(--brand)">This week's list</span>
+      <div class="pattern-demo" aria-label="Example list: light, night, bright, rain, train, play, stay">
+        <span class="tile">l<mark>igh</mark>t</span><span class="tile">n<mark>igh</mark>t</span><span class="tile">br<mark>igh</mark>t</span>
         <span class="tile p3">r<mark>ai</mark>n</span><span class="tile p3">tr<mark>ai</mark>n</span>
+        <span class="tile p2">pl<mark>ay</mark></span><span class="tile p2">st<mark>ay</mark></span>
       </div>
-      <p class="mb-0"><b>light</b> and <b>night</b> share <b>igh</b>, <b>play</b> and <b>stay</b> share <b>ay</b>,
-        and <b>rain</b> and <b>train</b> share <b>ai</b>. Connecting words through shared patterns makes the list
-        feel less random, and easier to practice.</p>
-      <p class="demo-caption mt-24 mb-0">Example list. Not a real child's or teacher's data.</p>
+
+      <div class="pattern-cards">
+        <div class="pcard pc1">
+          <div class="ptitle"><span class="big">igh</span> says the letter <b>i</b></div>
+          <p><span class="plabel">The rule</span>The <b>gh</b> is silent. It just sits there!</p>
+          <p class="trick"><span class="plabel">Memory trick</span>“The l<b>igh</b>t in the n<b>igh</b>t is br<b>igh</b>t.”</p>
+          <p class="carry"><span class="plabel">Now they can spell</span>high · sigh · fight</p>
+        </div>
+        <div class="pcard pc3">
+          <div class="ptitle"><span class="big">ai</span> says the letter <b>a</b></div>
+          <p><span class="plabel">The rule</span><b>ai</b> hides in the <b>middle</b> of a word.</p>
+          <p class="trick"><span class="plabel">Memory trick</span>“ai hides in the middle. R<b>ai</b>n, tr<b>ai</b>n, p<b>ai</b>nt.”</p>
+          <p class="carry"><span class="plabel">Now they can spell</span>wait · snail · paint</p>
+        </div>
+        <div class="pcard pc2">
+          <div class="ptitle"><span class="big">ay</span> says the letter <b>a</b> too</div>
+          <p><span class="plabel">The rule</span><b>ay</b> likes to play at the <b>end</b> of a word.</p>
+          <p class="trick"><span class="plabel">Memory trick</span>“Day, play, stay. <b>Ay</b> goes away, at the end.”</p>
+          <p class="carry"><span class="plabel">Now they can spell</span>day · tray · away</p>
+        </div>
+      </div>
+
+      <div class="why-box">
+        <img src="img/scout-thinking.webp" alt="" width="560" height="560" loading="lazy">
+        <p><b>Why this matters:</b> <i>rain</i> and <i>play</i> make the same sound, so memorizing alone leaves
+          a child guessing. Knowing that <b>ai</b> sits in the middle and <b>ay</b> sits at the end means they
+          can spell <i>snail</i> and <i>away</i> correctly, even though neither was on this week's list.</p>
+      </div>
+      <p class="demo-caption center mb-0">Example list. Rules and tricks shown are the ones the app uses.
+        Not a real child's or teacher's data.</p>
     </div>
   </div>
 </section>
@@ -121,19 +158,20 @@ def page():
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">The quest</p>
-      <h2>Seven short stages, <span class="hl">one confident speller.</span></h2>
-      <p class="lede">Each stage practices the same words a different way, from first look to spelling them
-        from memory. A short week never drops a stage; some nights simply get two short goes.</p>
+      <h2>Seven stages, <span class="hl">one confident speller.</span></h2>
+      <p class="lede">Each stage practices the same words a different way, from hearing them for the first time
+        to spelling them from memory. Scout turns them into daily sprints across the nights you have, so a
+        short week never skips a stage.</p>
     </div>
-    <div class="stages">
-      <div class="stage s1"><div class="em" aria-hidden="true">👋</div><div class="n">Stage 1</div><h3>Meet the Words</h3><p>Read them aloud and learn the pattern</p></div>
-      <div class="stage s2"><div class="em" aria-hidden="true">🧩</div><div class="n">Stage 2</div><h3>Sound &amp; Build</h3><p>Hear it, build it from chunks</p></div>
-      <div class="stage s3"><div class="em" aria-hidden="true">✏️</div><div class="n">Stage 3</div><h3>Missing Letters</h3><p>Fill in the gaps</p></div>
-      <div class="stage s4"><div class="em" aria-hidden="true">🐝</div><div class="n">Stage 4</div><h3>Spelling Bee</h3><p>Type the whole word from memory</p></div>
-      <div class="stage s5"><div class="em" aria-hidden="true">🎮</div><div class="n">Stage 5</div><h3>Arcade</h3><p>Three silly games, all spelling</p></div>
-      <div class="stage s6"><div class="em" aria-hidden="true">⚔️</div><div class="n">Stage 6</div><h3>Boss Battle</h3><p>Take on the tricky words</p></div>
-      <div class="stage s7"><div class="em" aria-hidden="true">🏆</div><div class="n">Stage 7</div><h3>Champion Quiz</h3><p>The big one, and a badge</p></div>
-    </div>
+    <ol class="hive" aria-label="The seven stages">
+      <li class="cell c1"><div class="in"><!-- STAGE ART 1 --><div class="em" aria-hidden="true">👂</div><div class="n">Stage 1</div><h3>Meet the Words</h3><p>Hear them aloud and learn the pattern</p></div></li>
+      <li class="cell c2"><div class="in"><!-- STAGE ART 2 --><div class="em" aria-hidden="true">🧩</div><div class="n">Stage 2</div><h3>Sound Out &amp; Build</h3><p>Hear each sound, then build the word</p></div></li>
+      <li class="cell c3"><div class="in"><!-- STAGE ART 3 --><div class="em" aria-hidden="true">✏️</div><div class="n">Stage 3</div><h3>Missing Letters</h3><p>Fill in the gaps</p></div></li>
+      <li class="cell c4"><div class="in"><!-- STAGE ART 4 --><div class="em" aria-hidden="true">🐝</div><div class="n">Stage 4</div><h3>Spelling Bee</h3><p>Spell it from memory by tapping or typing</p></div></li>
+      <li class="cell c5"><div class="in"><!-- STAGE ART 5 --><div class="em" aria-hidden="true">🎮</div><div class="n">Stage 5</div><h3>Arcade</h3><p>Fun spelling games</p></div></li>
+      <li class="cell c6"><div class="in"><!-- STAGE ART 6 --><div class="em" aria-hidden="true">⚔️</div><div class="n">Stage 6</div><h3>Boss Battle</h3><p>Take on the tricky words</p></div></li>
+      <li class="cell c7"><div class="in"><!-- STAGE ART 7 --><div class="em" aria-hidden="true">🏆</div><div class="n">Stage 7</div><h3>Champion Quiz</h3><p>The final challenge. Earn a badge!</p></div></li>
+    </ol>
   </div>
 </section>
 
@@ -158,11 +196,45 @@ def page():
         <span class="label-sm">With Spelling Quest</span>
         <h3>Notice, build, remember</h3>
         <ul>
-          <li>Look, say, cover, write, check, and fix only what needs fixing</li>
+          <li>Quick handwriting practice that zooms in on the tricky part</li>
           <li>Words that need another look keep coming back</li>
           <li>A miss becomes a clue for what to practice next</li>
           <li>Your child follows the route by themselves</li>
         </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="checkin">
+      <div>
+        <p class="eyebrow plain">For grown-ups</p>
+        <h2>Check in from <span class="hl">any device.</span></h2>
+        <p class="lede">Your child practices on the iPad; you peek from your phone. The Grown-up Zone shows
+          each child's progress, without you having to sit beside them.</p>
+        <ul class="ticks on-night">
+          <li>Which stages are done this week, with stars and streaks</li>
+          <li>The words to revisit, so you know exactly where they need help</li>
+          <li>Earlier weeks, at a glance</li>
+          <li>Spelling bee countdown and how many words are mastered</li>
+        </ul>
+        <p class="note">Progress follows your family across devices once you unlock with your key. The Grown-up Zone
+          sits behind a grown-up PIN.</p>
+      </div>
+      <div class="card mock" aria-label="Example of the Grown-up Zone progress view">
+        <div class="mock-head"><span class="av" aria-hidden="true">🦊</span><div><b>Sam</b>
+          <span>Level 4 · 42 stars · 🔥 4-day streak</span></div></div>
+        <span class="label-sm" style="color:var(--brand)">This week: long vowel teams</span>
+        <div class="mock-stages" aria-label="5 of 7 stages done">
+          <i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i>
+          <span>5 of 7 stages</span>
+        </div>
+        <div class="mock-row"><b>Words to revisit</b><span class="chips"><em>bright</em><em>stay</em></span></div>
+        <div class="mock-row"><b>🐝 Spelling bee</b><span>18 of 60 mastered · 21 days to go</span></div>
+        <div class="bar"><i style="width:30%"></i></div>
+        <p class="demo-caption mb-0">Example. Sam is a made-up speller.</p>
       </div>
     </div>
   </div>
@@ -175,17 +247,17 @@ def page():
       <h2>Everything the week needs, <span class="hl">nothing it doesn't.</span></h2>
     </div>
     <div class="grid-3">
-      <div class="card"><div class="hex" aria-hidden="true">👧</div><h3>Every child, their own words</h3>
+      <div class="card"><div class="hex" aria-hidden="true"><!-- FEATURE ART F1 -->👧</div><h3>Every child, their own words</h3>
         <p>One purchase covers the whole family. Each child gets their own list, their own stars and their own test day.</p></div>
-      <div class="card"><div class="hex white" aria-hidden="true">📝</div><h3>Paper Power-Up</h3>
-        <p>Every day ends with a short handwriting routine: look, say, cover, write, check. Writing by hand, done in a way that teaches.</p></div>
-      <div class="card"><div class="hex violet" aria-hidden="true">🎤</div><h3>Spelling bee prep</h3>
-        <p>Give it a long list and a date. It spreads the words across the weeks and practices on a stage with judges. It hints; it never spells the word for them.</p></div>
-      <div class="card"><div class="hex" aria-hidden="true">📱</div><h3>Every device you own</h3>
+      <div class="card"><div class="hex white" aria-hidden="true"><!-- FEATURE ART F2 -->📝</div><h3>Paper Power-Up</h3>
+        <p>Every day ends with a quick pencil-and-paper challenge that zooms in on the tricky part of each word. Writing by hand that teaches, not just repeats.</p></div>
+      <div class="card"><div class="hex violet" aria-hidden="true"><!-- FEATURE ART F3 -->🎤</div><h3>Spelling bee prep</h3>
+        <p>Give it a long list and a date. It breaks the list into small weekly groups, and the words your child finds tricky keep coming back, week after week, until they're confident. Then it practices on a stage with judges.</p></div>
+      <div class="card"><div class="hex" aria-hidden="true"><!-- FEATURE ART F4 -->📱</div><h3>Every device you own</h3>
         <p>Start on the iPad, carry on with a phone. Stars and finished days follow your family code across every device.</p></div>
-      <div class="card"><div class="hex white" aria-hidden="true">🔁</div><h3>Tricky words, handled</h3>
-        <p>Words that caught them out get their own Boss Battle, so practice goes where it's needed instead of the same drill for every word.</p></div>
-      <div class="card"><div class="hex violet" aria-hidden="true">🛡️</div><h3>Private by design</h3>
+      <div class="card"><div class="hex white" aria-hidden="true"><!-- FEATURE ART F5 -->🔁</div><h3>Tricky words, handled</h3>
+        <p>Any word your child misses gets extra practice in the Boss Battle, so time goes where it's needed instead of the same drill for every word.</p></div>
+      <div class="card"><div class="hex violet" aria-hidden="true"><!-- FEATURE ART F6 -->🛡️</div><h3>Private by design</h3>
         <p>Nicknames only, never real names. No ads, no tracking, no email address inside the app.
           <a href="privacy.html">How we handle data</a></p></div>
     </div>
@@ -236,8 +308,8 @@ def page():
       <ul class="ticks" style="text-align:left">
         <li>Every child in your household</li>
         <li>Every device you use, as many as you like</li>
-        <li>All seven stages, the arcade and spelling bee prep</li>
-        <li>Twelve months, summer included</li>
+        <li>All seven stages, fun spelling games and spelling bee prep</li>
+        <li>Twelve months of access</li>
       </ul>
       <a class="btn" href="{TRIAL}" style="width:100%">Start my 7 free days</a>
       <p class="fine">No card, no account. If you do nothing, the free week simply ends.
@@ -248,7 +320,7 @@ def page():
 
 <section class="closing">
   <div class="wrap">
-    <p class="statement">Help them think, <span class="hl">“I can figure words out.”</span></p>
+    <p class="statement">Help them think,<br><span class="hl">“I can figure words out.”</span></p>
     <p class="lede narrow">And give yourself the evening back.</p>
     <div class="btn-row" style="justify-content:center">
       <a class="btn" href="{TRIAL}">Start my 7 free days</a>
