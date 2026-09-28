@@ -2449,7 +2449,7 @@ async function scoutPlay(text, opts){
   return scoutPlayUrl(made, token, opts && opts.onend);
 }
 /* Record the week's words, rules and tricks ahead of time, a couple at a time,
-   so tonight's sprint never waits on a first recording. */
+   so today's sprint never waits on a first recording. */
 let SCOUT_WARMED = {};
 function scoutWarm(texts){
   if (SCOUT_OK === false || !navigator.onLine || !(window.crypto && crypto.subtle)) return;
@@ -2805,7 +2805,7 @@ const TOUR = [
     p:'Every word is read aloud by your device. Some built-in voices are much better than others — '+
       'there is a play button on the home screen to try it.' },
   { em:'▶️', h:'Then hand it over',
-    p:'One green button starts tonight\'s practice. They can do it on their own; you do not need to '+
+    p:'One green button starts today\'s practice. They can do it on their own; you do not need to '+
       'sit with them.' },
   { em:'📈', h:'Look in whenever you like',
     p:'Grown-ups → Progress shows which words are sticking and which are still tricky. No alerts, '+
@@ -3155,7 +3155,7 @@ function renderHome(a){
     const quiet = scoutMood() === 'quiet';
     const line = doneToday
       ? (quiet ? 'Today\'s sprint is done. Nice work.' : 'We did today\'s sprint! Want to play a game while we\'re here?')
-      : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Tonight we\'re doing ' + td.t + ' together. Ready?');
+      : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Today we\'re doing ' + td.t + ' together. Ready?');
     a.appendChild(scoutCard(doneToday ? 'cheering' : 'pointing', line, { speak: introFresh('home-' + tk0 + (doneToday?'-done':'')) }));
     // the week's honey jar: one drop for every word won this week, in any sprint
     const drops = Object.keys(pp.stats || {}).reduce((n, w) => n + ((pp.stats[w] && pp.stats[w].r) || 0), 0);
@@ -3220,16 +3220,16 @@ function renderHome(a){
       openGrid = null;
       grid.appendChild(el('<div class="muted" style="margin:12px 2px 4px;font-weight:800;'+
         'font-size:14px;line-height:20px;letter-spacing:1px;text-transform:uppercase">'+
-        esc(nightLabel(ni, kid()))+(isTonight?' · tonight':'')+
+        esc(nightLabel(ni, kid()))+(isTonight?' · today':'')+
         (night.length > 1 ? ' <span style="text-transform:none;letter-spacing:0;font-weight:500">'+
           '— two short sprints, whenever suits</span>' : '')+
         (night.length === 0 ? ' <span style="text-transform:none;letter-spacing:0;font-weight:500">'+
-          '— free practice night</span>' : '')+'</div>'));
+          '— free practice day</span>' : '')+'</div>'));
     }
     if (!night.length){
       openGrid = null;
       grid.appendChild(el('<div class="card" style="padding:12px 14px"><div class="muted" '+
-        'style="font-size:14px;line-height:20px">Nothing new tonight. Play the arcade or take on the tricky '+
+        'style="font-size:14px;line-height:20px">Nothing new today. Play the arcade or take on the tricky '+
         'pile if they are keen.</div></div>'));
       return;
     }
@@ -4491,8 +4491,8 @@ function writeItScreen(d, done){
     '<h2 style="font-size:22px;line-height:28px">Paper Power-Up</h2>'+
     '<p style="font-size:16.5px;line-height:1.5">'+
       (gotAll
-        ? 'You didn\'t miss a single one! 🌟<br>Two words, seven quick steps each — your hand remembers what your eyes forget.'
-        : 'These are the ones that tricked you today. Seven quick steps each.')+
+        ? 'You didn\'t miss a single one! 🌟<br>Look, write, check — your hand remembers what your eyes forget.'
+        : 'These are the ones that tricked us today. Look, write, check for each one.')+
     '</p>'+
     '<p class="muted" style="font-size:14px;line-height:1.8">'+
       PPU_STEPS.map(x => x.em+' '+x.t).join(' → ')+'</p>'+
@@ -6228,8 +6228,8 @@ function writeItScreenBee(d, done){
     '<div style="font-size:52px">✍️</div>'+
     '<h2 style="font-size:22px;line-height:28px">Paper Power-Up</h2>'+
     '<p style="font-size:16.5px;line-height:1.5">'+
-      (gotAll ? 'Not a single miss today! 🌟<br>Two words, seven quick steps each.'
-              : 'These are the ones that tricked you today. Seven quick steps each.')+'</p>'+
+      (gotAll ? 'Not a single miss today! 🌟<br>Look, write, check — your hand remembers what your eyes forget.'
+              : 'These are the ones that tricked us today. Look, write, check for each one.')+'</p>'+
     '<p class="muted" style="font-size:14px;line-height:1.8">'+
       PPU_STEPS.map(x => x.em+' '+x.t).join(' → ')+'</p>'+
     '<p class="muted" style="font-size:14px;line-height:20px">You will need paper and a pencil.</p>'+
