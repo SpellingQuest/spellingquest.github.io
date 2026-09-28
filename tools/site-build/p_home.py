@@ -158,19 +158,19 @@ def page():
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">The quest</p>
-      <h2>Seven stages, <span class="hl">one confident speller.</span></h2>
-      <p class="lede">Each stage practices the same words a different way, from hearing them for the first time
+      <h2>Seven sprints, <span class="hl">one confident speller.</span></h2>
+      <p class="lede">Each sprint practices the same words a different way, from hearing them for the first time
         to spelling them from memory. Scout turns them into daily sprints across the nights you have, so a
-        short week never skips a stage.</p>
+        short week never skips a sprint.</p>
     </div>
-    <ol class="hive" aria-label="The seven stages">
-      <li class="cell c1"><div class="in"><!-- STAGE ART 1 --><div class="em" aria-hidden="true">👂</div><div class="n">Stage 1</div><h3>Meet the Words</h3><p>Hear them aloud and learn the pattern</p></div></li>
-      <li class="cell c2"><div class="in"><!-- STAGE ART 2 --><div class="em" aria-hidden="true">🧩</div><div class="n">Stage 2</div><h3>Sound Out &amp; Build</h3><p>Hear each sound, then build the word</p></div></li>
-      <li class="cell c3"><div class="in"><!-- STAGE ART 3 --><div class="em" aria-hidden="true">✏️</div><div class="n">Stage 3</div><h3>Missing Letters</h3><p>Fill in the gaps</p></div></li>
-      <li class="cell c4"><div class="in"><!-- STAGE ART 4 --><div class="em" aria-hidden="true">🐝</div><div class="n">Stage 4</div><h3>Spelling Bee</h3><p>Spell it from memory by tapping or typing</p></div></li>
-      <li class="cell c5"><div class="in"><!-- STAGE ART 5 --><div class="em" aria-hidden="true">🎮</div><div class="n">Stage 5</div><h3>Arcade</h3><p>Fun spelling games</p></div></li>
-      <li class="cell c6"><div class="in"><!-- STAGE ART 6 --><div class="em" aria-hidden="true">⚔️</div><div class="n">Stage 6</div><h3>Boss Battle</h3><p>Take on the tricky words</p></div></li>
-      <li class="cell c7"><div class="in"><!-- STAGE ART 7 --><div class="em" aria-hidden="true">🏆</div><div class="n">Stage 7</div><h3>Champion Quiz</h3><p>The final challenge. Earn a badge!</p></div></li>
+    <ol class="hive" aria-label="The seven sprints">
+      <li class="cell c1"><div class="in"><!-- STAGE ART 1 --><div class="em" aria-hidden="true">👂</div><div class="n">Sprint 1</div><h3>Meet the Words</h3><p>Hear them aloud and learn the pattern</p></div></li>
+      <li class="cell c2"><div class="in"><!-- STAGE ART 2 --><div class="em" aria-hidden="true">🧩</div><div class="n">Sprint 2</div><h3>Sound Out &amp; Build</h3><p>Hear each sound, then build the word</p></div></li>
+      <li class="cell c3"><div class="in"><!-- STAGE ART 3 --><div class="em" aria-hidden="true">✏️</div><div class="n">Sprint 3</div><h3>Missing Letters</h3><p>Fill in the gaps</p></div></li>
+      <li class="cell c4"><div class="in"><!-- STAGE ART 4 --><div class="em" aria-hidden="true">🐝</div><div class="n">Sprint 4</div><h3>Spelling Bee</h3><p>Spell it from memory by tapping or typing</p></div></li>
+      <li class="cell c5"><div class="in"><!-- STAGE ART 5 --><div class="em" aria-hidden="true">🎮</div><div class="n">Sprint 5</div><h3>Arcade</h3><p>Fun spelling games</p></div></li>
+      <li class="cell c6"><div class="in"><!-- STAGE ART 6 --><div class="em" aria-hidden="true">⚔️</div><div class="n">Sprint 6</div><h3>Boss Battle</h3><p>Take on the tricky words</p></div></li>
+      <li class="cell c7"><div class="in"><!-- STAGE ART 7 --><div class="em" aria-hidden="true">🏆</div><div class="n">Sprint 7</div><h3>Champion Quiz</h3><p>The final challenge. Earn a badge!</p></div></li>
     </ol>
   </div>
 </section>
@@ -215,7 +215,7 @@ def page():
         <p class="lede">Your child practices on the iPad; you peek from your phone. The Grown-up Zone shows
           each child's progress, without you having to sit beside them.</p>
         <ul class="ticks on-night">
-          <li>Which stages are done this week, with stars and streaks</li>
+          <li>Which sprints are done this week, with stars and streaks</li>
           <li>The words to revisit, so you know exactly where they need help</li>
           <li>Earlier weeks, at a glance</li>
           <li>Spelling bee countdown and how many words are mastered</li>
@@ -227,9 +227,9 @@ def page():
         <div class="mock-head"><span class="av" aria-hidden="true">🦊</span><div><b>Sam</b>
           <span>Level 4 · 42 stars · 🔥 4-day streak</span></div></div>
         <span class="label-sm" style="color:var(--brand)">This week: long vowel teams</span>
-        <div class="mock-stages" aria-label="5 of 7 stages done">
+        <div class="mock-stages" aria-label="5 of 7 sprints done">
           <i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i></i><i></i>
-          <span>5 of 7 stages</span>
+          <span>5 of 7 sprints</span>
         </div>
         <div class="mock-row"><b>Words to revisit</b><span class="chips"><em>bright</em><em>stay</em></span></div>
         <div class="mock-row"><b>🐝 Spelling bee</b><span>18 of 60 mastered · 21 days to go</span></div>
@@ -308,7 +308,7 @@ def page():
       <ul class="ticks" style="text-align:left">
         <li>Every child in your household</li>
         <li>Every device you use, as many as you like</li>
-        <li>All seven stages, fun spelling games and spelling bee prep</li>
+        <li>All seven sprints, fun spelling games and spelling bee prep</li>
         <li>Twelve months of access</li>
       </ul>
       <a class="btn" href="{TRIAL}" style="width:100%">Start my 7 free days</a>
