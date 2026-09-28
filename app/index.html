@@ -717,6 +717,7 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 .badge .em{ position:relative; }
 .badge:not(.got) .em{ filter:grayscale(1); opacity:.6; }
 .badge .lk{ position:absolute; right:14px; bottom:10px; font-size:16px; }
+.badge > div{ color:#5a4e84 !important; opacity:1 !important; }
 
 /* the child picker */
 .who-card{ transition:transform .1s; }
@@ -734,6 +735,14 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 .seg button{ font-family:var(--font-head); font-weight:900; }
 .seg button.on{ background:linear-gradient(180deg,#9d5cff,var(--brand)); box-shadow:0 3px 0 var(--brand-deep); }
 .gamebar{ background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.05)); }
+
+/* the app's own icons, standing in for emoji (28 Sep 2026) */
+img.ic{ display:inline-block; width:1.2em; height:1.2em; vertical-align:-.22em; object-fit:contain; }
+.iconbtn img.ic{ width:30px; height:30px; vertical-align:middle; }
+.speaker img.ic{ width:66px; height:66px; vertical-align:middle; }
+.drop img.ic{ width:30px; height:30px; }
+.hcell .hstars img.ic{ width:15px; height:15px; }
+.pop .em img.ic{ width:72px; height:72px; }
 </style>
 </head>
 <body>
@@ -2741,6 +2750,54 @@ function confetti(n){
    third, stepping back for fourth and fifth (shorter lines, smaller, never
    babyish). The artwork lives on the website: ../img/scout-*.webp. */
 const SCOUT_IMG = pose => '../img/scout-' + pose + '.webp';
+
+/* ---- the app's own icons (Kathryn's ChatGPT set, 28 Sep 2026) ----
+   Each of these emoji is swapped for its matching picture wherever it appears,
+   so every screen gets the new icons without touching each string. The alt
+   text keeps what the emoji used to say out loud to a screen reader.
+   Add a line here as each new batch arrives (files live in img/ui/). */
+const UI_ICONS = {
+  '⭐':'star|star', '🔥':'flame|streak', '🍯':'honey-drop|honey', '🏠':'home|home',
+  '🔄':'switch-kid|switch child', '✖':'close|close', '🔊':'speaker|hear it', '🎤':'mic|microphone',
+  '🔁':'again|again', '💡':'tip|tip',
+};
+const UI_ICON_RE = new RegExp('(' + Object.keys(UI_ICONS).join('|') + ')️?', 'g');
+function uiIcon(ch){
+  const [f, alt] = UI_ICONS[ch].split('|');
+  const i = document.createElement('img');
+  i.className = 'ic'; i.src = '../img/ui/icon-' + f + '.webp'; i.alt = alt; i.draggable = false;
+  return i;
+}
+function iconize(root){
+  if (!root || root.nodeType !== 1 && root.nodeType !== 3) return;
+  const texts = [];
+  if (root.nodeType === 3) texts.push(root);
+  else {
+    if (root.closest && root.closest('textarea,input,script,style,.no-ic')) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (w.nextNode()) texts.push(w.currentNode);
+  }
+  texts.forEach(t => {
+    const v = t.nodeValue;
+    if (!v || !(UI_ICON_RE.lastIndex = 0, UI_ICON_RE.test(v))) return;
+    const par = t.parentNode;
+    if (!par || (par.closest && par.closest('textarea,input,script,style,title,option,.no-ic'))) return;
+    const frag = document.createDocumentFragment();
+    let last = 0; UI_ICON_RE.lastIndex = 0; let m;
+    while ((m = UI_ICON_RE.exec(v))){
+      if (m.index > last) frag.appendChild(document.createTextNode(v.slice(last, m.index)));
+      frag.appendChild(uiIcon(m[1]));
+      last = m.index + m[0].length;
+    }
+    if (last < v.length) frag.appendChild(document.createTextNode(v.slice(last)));
+    par.replaceChild(frag, t);
+  });
+}
+new MutationObserver(ms => ms.forEach(m => {
+  if (m.type === 'characterData') iconize(m.target);
+  else m.addedNodes.forEach(iconize);
+})).observe(document.documentElement, { childList:true, subtree:true, characterData:true });
+document.addEventListener('DOMContentLoaded', () => iconize(document.body));
 function scoutMood(){
   const g = (kid() && kid().grade) || 1;
   return g <= 1 ? 'chatty' : g <= 3 ? 'normal' : 'quiet';
@@ -3268,7 +3325,7 @@ function topbar(a, opts){
       '<div class="avatar">'+k.avatar+'</div>'+
       '<div class="who"><b>'+esc(k.name)+'</b><span>Level '+level(k)+' · '+(k.xp||0)+' ⭐'+(k.streak?' · 🔥'+k.streak:'')+'</span></div>'+
       '<button class="iconbtn" id="tb-home">🏠</button>'+
-      '<button class="iconbtn" id="tb-badge">🏅</button>'+
+      '<button class="iconbtn" id="tb-badge" aria-label="Scout\'s Backpack"><img class="ic" src="../img/ui/icon-backpack.webp" alt=""></button>'+
       '<button class="iconbtn" id="tb-swap">🔄</button>'+
     '</div>');
   bar.querySelector('#tb-home').onclick = () => { location.href = './'; };
@@ -3425,7 +3482,7 @@ function renderHome(a){
             sprintIco(d, 46)+
             '<span class="n">Sprint '+n+(night.length > 1 ? ' · '+(pos===0?'1st':'2nd') : '')+'</span>'+
             '<b>'+esc(d.t)+'</b>'+
-            (st.done ? '<span class="hstars">'+'★'.repeat(Math.max(1,st.stars||1))+'</span>' : '')+
+            (st.done ? '<span class="hstars">'+'⭐'.repeat(Math.max(1,st.stars||1))+'</span>' : '')+
           '</span>'+
         '</button>');
       c.onclick = () => { unlockAudio(); sfx('tap'); go('day', key); };
