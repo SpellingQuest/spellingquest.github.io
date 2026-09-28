@@ -124,7 +124,7 @@ FAQ = [
          "<p>Kindergarten through fifth grade: children who bring home a weekly spelling list. It adapts to the words "
          "you paste in, so it grows with them.</p>"),
     ]),
-    ("📝", "The words", [
+    ('<img class="ui-ic" src="img/ui/icon-pencil.webp" alt="" width="160" height="160" loading="lazy">', "The words", [
         ("What if the teacher's list is in a strange layout?",
          "<p>Paste it as it is. Any layout works, and just the words is fine.</p>"),
         ("Does my child need to practice every day of the week?",

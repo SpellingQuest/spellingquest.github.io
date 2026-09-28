@@ -516,3 +516,9 @@ details.q .a a{color:var(--link-on-card);font-weight:700}
 
 /* bold text inside white FAQ answers (they aren't .card, so they need their own ink) */
 details.q b,details.q strong{color:var(--ink)}
+
+/* the app's own icons on the website (29 Sep 2026) */
+.ui-ic{ width:62%; height:auto; display:block; margin:0 auto; }
+.ui-ic.inline{ display:inline-block; width:1.35em; height:1.35em; vertical-align:-.3em; margin:0; object-fit:contain; }
+.familiar .ico .ui-ic{ width:34px; }
+.faq-group > h2 .hex .ui-ic{ width:70%; }

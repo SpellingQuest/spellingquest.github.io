@@ -1,6 +1,11 @@
 // Spelling Quest: Scout the Bee's voice (28 Sep 2026).
 //
-// POST { text, speed: "normal" | "slow" | "sounds" }  ->  { url }
+// POST { text, speed: "normal" | "slow" | "sounds" | "align" }  ->  { url }
+//
+// "align" (29 Sep 2026): the word said slowly, plus the moment each letter is
+// spoken (ElevenLabs with-timestamps). Stored as .mp3 and .json side by side.
+// The app plays slices of Scout's own recording for Sound it out, which gives
+// real letter sounds in her voice (the phoneme tags in "sounds" were ignored).
 //
 // "sounds" (29 Sep 2026): letter SOUNDS rather than letter names. The app sends
 // SSML <phoneme alphabet="ipa"> and <break> tags (nothing else is allowed through)
@@ -70,7 +75,7 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return json({ error: "bad json" }, 400); }
   // The app sends text already tidied the same way; tidy again so the key is stable.
   const text = String(body.text || "").replace(/\s+/g, " ").trim();
-  const speed = body.speed === "slow" ? "slow" : body.speed === "sounds" ? "sounds" : "normal";
+  const speed = body.speed === "slow" ? "slow" : body.speed === "sounds" ? "sounds" : body.speed === "align" ? "align" : "normal";
   if (!text || text.length > (speed === "sounds" ? 900 : MAX_CHARS)) return json({ error: "text" }, 400);
   // sounds mode: only phoneme and break tags, nothing else that looks like markup
   if (speed === "sounds") {
@@ -88,6 +93,7 @@ Deno.serve(async (req) => {
      word said on its own. A full stop plus the sentence it lives in (not spoken)
      gives it a clean start. */
   const words = text.split(" ").length;
+  if (speed === "align" && (words !== 1 || !/^[A-Za-z'-]+$/.test(text))) return json({ error: "text" }, 400);
   const say = speed !== "sounds" && words === 1 && /^[A-Za-z'-]+$/.test(text) ? text + "." : text;
   const context = speed !== "sounds" && words <= 3
     ? { previous_text: "Okay, here is our next word.", next_text: "Can you say it with me?" } : {};
@@ -97,8 +103,33 @@ Deno.serve(async (req) => {
   const publicUrl = supa.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 
   // Already recorded? (Another device may have asked a moment ago.)
-  const head = await fetch(publicUrl, { method: "HEAD" });
-  if (head.ok) return json({ url: publicUrl, cached: true });
+  const head = await fetch(speed === "align" ? publicUrl.replace(/\.mp3$/, ".json") : publicUrl, { method: "HEAD" });
+  if (head.ok) return json({ url: publicUrl, cached: true, ...(speed === "align" ? { align: publicUrl.replace(/\.mp3$/, ".json") } : {}) });
+
+  if (speed === "align") {
+    const r = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/with-timestamps?output_format=mp3_44100_64`,
+      {
+        method: "POST",
+        headers: { "xi-api-key": apiKey, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: say, model_id: model, ...context,
+          voice_settings: { stability: 0.6, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true, speed: 0.7 },
+        }),
+      },
+    );
+    if (!r.ok) { console.error("elevenlabs align", r.status, (await r.text()).slice(0, 300)); return json({ error: "tts", status: r.status }, 502); }
+    const j = await r.json();
+    const audio = Uint8Array.from(atob(j.audio_base64), (c) => c.charCodeAt(0));
+    const al = j.alignment || j.normalized_alignment || {};
+    const meta = { text: say, chars: al.characters || [], start: al.character_start_times_seconds || [], end: al.character_end_times_seconds || [] };
+    const jsonPath = path.replace(/\.mp3$/, ".json");
+    const up1 = await supa.storage.from(BUCKET).upload(jsonPath, new TextEncoder().encode(JSON.stringify(meta)),
+      { contentType: "application/json", cacheControl: "31536000", upsert: true });
+    const up2 = await supa.storage.from(BUCKET).upload(path, audio, { contentType: "audio/mpeg", cacheControl: "31536000", upsert: true });
+    if (up1.error || up2.error) { console.error("upload", (up1.error || up2.error)!.message); return json({ error: "store" }, 500); }
+    return json({ url: publicUrl, align: publicUrl.replace(/\.mp3$/, ".json"), cached: false });
+  }
 
   const tts = await fetch(
     `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}?output_format=mp3_44100_64`,

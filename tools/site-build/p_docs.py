@@ -203,7 +203,7 @@ def contact():
       </ul>
     </div>
     <div class="card">
-      <div class="hex white" aria-hidden="true">💡</div>
+      <div class="hex white" aria-hidden="true"><img class="ui-ic" src="img/ui/icon-tip.webp" alt="" width="160" height="160" loading="lazy"></div>
       <h2 style="font-size:26px">Before you write, two quick ones</h2>
       <h3 style="font-size:18px">The voice sounds robotic.</h3>
       <p>That is your device's basic voice, and a better one is a free download. In the app:
