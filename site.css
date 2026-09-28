@@ -511,3 +511,6 @@ details.q .a a{color:var(--link-on-card);font-weight:700}
 .card .bar{height:10px;border-radius:99px;background:#ece6fb;overflow:hidden;margin:4px 0 12px}
 .card .bar i{display:block;height:100%;background:linear-gradient(90deg,#a855f7,#7c3aed)}
 @media (max-width:860px){ .checkin{grid-template-columns:1fr;gap:26px} }
+
+/* bold text inside white FAQ answers (they aren't .card, so they need their own ink) */
+details.q b,details.q strong{color:var(--ink)}

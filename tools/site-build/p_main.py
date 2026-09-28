@@ -85,11 +85,9 @@ def pricing():
       <p class="eyebrow">The small print, in plain words</p>
       <h2>No surprises.</h2>
     </div>
-    <div class="grid-3">
+    <div class="grid-2" style="max-width:820px;margin:0 auto">
       <div class="glass"><h3>Renewal</h3><p>It renews once a year until you cancel. Cancel any time from
         the link in your purchase email; you keep full access to the end of the year you paid for.</p></div>
-      <div class="glass"><h3>Refunds</h3><p>The free week is there so you can decide first. A renewal you
-        meant to cancel, or an app that won't work for you, gets refunded. <a href="refunds.html">Refund policy</a></p></div>
       <div class="glass"><h3>Checkout</h3><p>Payments go through Gumroad, who handle card details and sales
         tax. Your key arrives by email and works on every device.</p></div>
     </div>
