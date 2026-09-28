@@ -719,6 +719,8 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 .badge:not(.got) .em{ filter:grayscale(1); opacity:.6; }
 .badge .lk{ position:absolute; right:14px; bottom:10px; font-size:16px; }
 .badge > div{ color:#5a4e84 !important; opacity:1 !important; }
+.avem{ display:inline-block; line-height:1; }
+.avem.up{ transform:scale(1.3); }
 /* round patches (batch 4): the patch is the badge, no honeycomb behind it */
 .badge .em img.patch{ width:80px; height:80px; display:block; }
 .badge.art .em, .badge.locked .em{ background:none!important; clip-path:none; width:84px; height:84px; }
@@ -883,7 +885,7 @@ body[data-view=day] .dots{ margin:0 0 8px; }
 @keyframes scoutBobFlip{ 0%,100%{ transform:scaleX(-1) translateY(0) rotate(2deg); } 50%{ transform:scaleX(-1) translateY(-6px) rotate(-2deg); } }
 
 /* Sprint 4: the stage, letter tiles and the crowd (29 Sep 2026) */
-.stage-card .host{ width:58px; height:auto; animation:scoutBob 3s ease-in-out infinite; }
+.stage-card .host{ width:58px; height:auto; animation:scoutBob 3s ease-in-out infinite; scale:-1 1; }   /* she stands on the right, so she faces in */
 .stage-tiles{ display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin:12px auto 4px; max-width:340px; }
 .stage-tiles .stile{ width:52px; height:60px; font-size:26px; background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
 .stage-tiles .stile.used{ opacity:.18; transform:scale(.85); pointer-events:none; }
@@ -918,11 +920,11 @@ body[data-view=day] .dots{ margin:0 0 8px; }
 .scout-pop.at-tl{ left:10px; right:auto; top:84px; bottom:auto; align-items:flex-start; }
 .scout-pop.at-tr{ left:auto; right:10px; top:84px; bottom:auto; align-items:flex-start; flex-direction:row-reverse; }
 .scout-pop.at-tl .bubble,.scout-pop.at-tr .bubble{ margin-bottom:0; margin-top:26px; }
-.scout-pop.at-br img,.scout-pop.at-tr img{ transform:scaleX(-1); }
+.scout-pop.at-br img,.scout-pop.at-tr img{ scale:-1 1; }   /* scale, not transform: her bobbing animation overwrote transform, so she faced away */
 
 /* Sprint 1's header card already has Scout on the left, so the trick's Scout sits on the right */
 .pintro .pi-scout{ flex-direction:row-reverse; }
-.pintro .pi-scout img{ transform:scaleX(-1); }
+.pintro .pi-scout img{ scale:-1 1; }
 .pintro .pi-scout .bubble{ border-radius:20px 20px 6px 20px; }
 .pintro .pi-scout .bubble::before{ left:auto; right:-9px; border-right-color:transparent; border-left:9px solid #ffe1a1; border-right:0; }
 /* Paper Power-Up: Scout right under the word */
@@ -1030,7 +1032,12 @@ details.psec > summary{ font:900 16px/1.3 var(--font-head); color:var(--ink); pa
 
 .row.daypick{ flex-wrap:nowrap; gap:4px; }
 .row.daypick .btn{ flex:1 1 0; min-width:0; padding:11px 0; font-size:14px; min-height:46px; border-radius:12px; }
-select.ti[data-f="nights"]{ font-weight:800; }
+/* review nights: looks like something you can change (29 Sep 2026) */
+select.ti[data-f="nights"]{ display:block; width:100%; font:800 17px/22px var(--font-head, inherit); color:var(--ink);
+  padding:13px 48px 13px 16px; border:2px solid #d9cdfb; border-radius:14px; cursor:pointer;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%237c3aed'/%3E%3Cpath d='M7 10l5 5 5-5' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  box-shadow:0 3px 0 #e6ddff; }
+select.ti[data-f="nights"]:hover, select.ti[data-f="nights"]:focus{ border-color:var(--brand, #7c3aed); outline:none; }
 
 /* walk-me (after RBTL) */
 body.walking .wrap{ z-index:auto; }
@@ -1049,6 +1056,28 @@ body.walking .wrap{ z-index:auto; }
 .keepclose{ border:2px solid var(--gold); background:linear-gradient(160deg,#fffdf5,#fff6d8); }
 .keepclose .kc-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .keepclose .kc-head img{ width:56px; height:56px; border-radius:14px; }
+/* Keep Scout close: numbered steps with real icons, like RBTL */
+.kc-os{ margin-top:10px; }
+.kc-os-h{ font:900 16px/22px var(--font-head); color:var(--ink); }
+.kc-steps{ list-style:none; padding:0; margin:6px 0 0; }
+.kc-steps li{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-top:1px solid rgba(124,58,237,.12); font-size:15px; line-height:22px; color:var(--ink); }
+.kc-steps li:first-child{ border-top:0; }
+.kc-n{ flex:0 0 26px; width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font:900 13px/1 var(--font-head);
+  color:#3b2400; background:linear-gradient(135deg,#ffe08a,#ffb31a); }
+.kc-note{ font-size:13px!important; line-height:19px!important; color:#6b6190!important; margin-top:4px!important; }
+.kc-other{ margin-top:10px; font-size:14px; } .kc-other summary{ cursor:pointer; color:#6d28d9; font-weight:800; }
+#sqWalk .kc-os-h{ font-size:15px; } #sqWalk .kc-steps li{ font-size:14px; line-height:20px; padding:5px 0; }
+#sqWalk{ max-height:calc(100vh - 24px); overflow:auto; }
+/* the small install bar on the child's home screen */
+.installbar{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); border-radius:16px; margin:0 0 12px; color:#fff; }
+.installbar summary{ color:#fff!important; list-style:none; display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; font-weight:800; font-size:15px; }
+.installbar summary::-webkit-details-marker{ display:none; }
+.installbar summary span{ flex:1; }
+.installbar summary b{ background:var(--gold); color:#3b2400; border-radius:999px; padding:3px 12px; font-size:14px; }
+.installbar[open] summary b{ display:none; }
+.installbar .ib-x{ background:none; border:0; color:#ddd6fb; font-size:16px; padding:2px 6px; cursor:pointer; }
+.installbar .ib-body{ background:#fff; color:var(--ink); border-radius:0 0 16px 16px; padding:4px 14px 14px; }
+.installbar .ib-body p{ color:var(--ink-soft); }
 /* the free-week strip */
 .trialbar{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 10px; background:rgba(255,201,60,.12);
   border:1px solid rgba(255,201,60,.5); border-radius:16px; padding:10px 12px; margin-bottom:12px; color:#fff; font-size:15px; text-align:center; }
@@ -1903,7 +1932,11 @@ function sprintIco(d, px){
          'style="width:'+px+'px;height:'+px+'px;vertical-align:middle">';
 }
 
-const AVATARS = ['🦊','🐼','🐸','🦄','🐙','🦁','🐨','🐬','🦖','🐝','🦉','🐳','🐯','🦋','🐢','🚀','⭐','🌈'];
+const AVATARS = ['🦊','🐼','🐸','🦄','🐙','🦁','🐨','🐬','🦖','🐝','🦉','🐳','🐯','🦋','🐢','🚀','⭐','🤖'];   // 29 Sep 2026: 🌈 → 🤖 (Kathryn: more for the boys)
+/* Emoji aren't drawn the same size: the frog is a face that fills the square,
+   the dinosaur is a whole little animal. These are nudged up so they match. */
+const SMALL_AVATARS = '🦖🐢🦋🐙🐬🐳🦉🐝🚀🦄🤖';
+function avEm(a){ return '<span class="avem'+(a && SMALL_AVATARS.indexOf(a) >= 0 ? ' up' : '')+'">'+(a || '')+'</span>'; }
 
 const BADGES = [
   { id:'first',    em:'🌟', n:'First Star',     d:'Finish your first day', art:'first-star' },
@@ -1940,7 +1973,15 @@ const BADGES = [
 /* a badge's picture: Kathryn's round patch when there is one (batch 4, 29 Sep
    2026), otherwise its emoji on the gold honeycomb */
 function badgeFace(b){
-  return b.art ? '<img class="patch" src="../img/ui/badge-'+b.art+'.webp" alt="" draggable="false">' : b.em;
+  /* if the picture can't load (offline, first visit), the emoji stands in */
+  return b.art ? '<img class="patch" src="../img/ui/badge-'+b.art+'.webp" alt="" draggable="false" '+
+    'data-em="'+b.em+'" onerror="badgeImgErr(this)">' : b.em;
+}
+/* try once more (a new file can take a moment to reach every server), then use the emoji */
+function badgeImgErr(img){
+  if (!img.dataset.retry){ img.dataset.retry = '1'; img.src = img.src.split('?')[0] + '?r=' + Date.now(); return; }
+  const box = img.closest('.badge'); if (box) box.classList.remove('art');
+  img.replaceWith(document.createTextNode(img.dataset.em || '🏅'));
 }
 
 /* ---- access ----
@@ -2482,7 +2523,7 @@ function absorb(rows){
 function paintSync(){
   const el = document.getElementById('syncline');
   if (!el) return;
-  const map = { idle:'', working:'Syncing…', ok:'✅ Up to date on all your devices',
+  const map = { idle:'It syncs by itself whenever the app is open.', working:'Syncing…', ok:'✅ Up to date on all your devices. It syncs by itself, no button needed.',
                 offline:'📴 No connection — it will catch up later',
                 later:'⏳ Couldn\'t reach the sync just now — it will retry' };
   el.textContent = map[SYNC.state] || '';
@@ -2565,6 +2606,7 @@ function buildCurrentWeek(){
       let k = 0; const ws = WEEK.allWords.map(w => w.word.toLowerCase());
       const nextAlign = () => { if (k < ws.length) wordAlign(ws[k++]).then(() => setTimeout(nextAlign, 150)); };
       nextAlign();
+      Object.keys(STOP_CARRIER).forEach(ch => stopSample(ch));      // the six clear pops
     }, 6000);
   }catch(e){}
   return WEEK;
@@ -3196,6 +3238,7 @@ function inUserTap(){
 function speechBusy(){ return !!(SPEAK_CUR && !SPEAK_CUR.done); }
 function sayNow(text, opts){
   opts = opts || {};
+  if (window.__walking){ if (opts.onend) setTimeout(opts.onend, 0); return; }
   try{ speechSynthesis.cancel(); }catch(e){}
   if (SPEAK_CUR) SPEAK_CUR.done = true;               // superseded
   const cur = { done:false, t0:Date.now(), heard:false };
@@ -3237,6 +3280,7 @@ function pumpSpeech(){
   }
 }
 function sayQueued(text, opts, maxWait){
+  if (window.__walking) return;                      // Scout keeps quiet during the walk-me
   SPEAK_Q.push({ text, opts: opts || {}, gen: SPEAK_GEN, at: Date.now(), maxWait: maxWait || 0 });
   pumpSpeech();
 }
@@ -3526,6 +3570,34 @@ function edgeNear(fx, t, L, R){
   }
   return t;
 }
+/* the clear pops, recorded once: Scout saying pah, bah, tah, dah, kah, gah */
+const STOP_CARRIER = { p:'pah', b:'bah', t:'tah', d:'dah', k:'kah', c:'kah', q:'kah', g:'gah' };
+function stopLetter(g, ipa){
+  if (ipa && /^[ptkbdg]$/.test(ipa)) return ipa;
+  g = String(g || '').toLowerCase();
+  if (g === 'ed') return null;
+  const ch = g === 'ck' || g === 'qu' ? 'k' : g.slice(-1);
+  return STOP_CARRIER[ch] ? ch : null;
+}
+const STOP_SAMPLES = {};
+function stopSample(ch){
+  const syl = STOP_CARRIER[ch]; if (!syl) return Promise.resolve(null);
+  if (STOP_SAMPLES[syl]) return STOP_SAMPLES[syl];
+  return (STOP_SAMPLES[syl] = wordAlign(syl).then(got => {
+    const fx = got && audioFx(got); if (!fx){ delete STOP_SAMPLES[syl]; return null; }
+    let on = -1, vo = -1;
+    for (let i = 0; i < fx.n; i++){
+      const r = fx.rms[i] / fx.maxr;
+      if (on < 0 && (r > .15 || r > .015 && fx.zcr[i] > 2000)) on = i;
+      if (on >= 0 && r > .3){ vo = i; break; }
+    }
+    if (on < 0 || vo < 0) return null;
+    const voiced = /^[bdg]/.test(syl), H = fx.hop;
+    let pk = 0; for (let i = on; i < vo; i++) pk = Math.max(pk, fx.rms[i]);
+    return { buf: got.buf, a: Math.max(0, on * H - .01), duck: vo * H, z: vo * H + (voiced ? .05 : .03),
+             gain: voiced ? 1 : Math.max(1, Math.min(5, fx.maxr * .35 / (pk || 1))) };
+  }).catch(() => { delete STOP_SAMPLES[syl]; return null; }));
+}
 /* where each part (grapheme or chunk) sits in the word, skipping silent letters */
 function partSpans(word, parts, got){
   const al = got.al, fx = audioFx(got);
@@ -3595,9 +3667,25 @@ function partSpans(word, parts, got){
       let pk = 0; for (let i = Math.round(a0 / fx.hop); i < Math.min(fx.n, Math.round(z0 / fx.hop)); i++) pk = Math.max(pk, fx.rms[i]);
       if (pk > 0) gain = Math.max(1, Math.min(6, fx.maxr * .45 / pk));
     }
-    out.push({ g, span:[a0, z0], gain, stretch: !single && p.ks !== 'stop' && p.ke !== 'stop' && /[aeiouyfslmnrvzwh]/.test(g) && (p.one || g.length === 1) });
+    /* pops (p, t, k, b, d, g) come from Scout saying "pah", "tah"… where the pop
+       is always clear, instead of from the word, where a final p is often
+       barely there (29 Sep 2026: "no p sound in trap"). A piece that ends in a
+       pop ("ap") plays up to the pop, then the clear one. */
+    const stopCh = single ? stopLetter(g, p.ipa) : (p.ke === 'stop' ? stopLetter(g.replace(/e$/, '').slice(-1)) : null);
+    if (fx && stopCh && !single){
+      const cl = findClosure(fx, Math.max(a0 + .05, z0 - .3), z0);
+      if (cl != null) z0 = Math.max(a0 + .06, cl);
+    }
+    // no more holding a sound by looping it: that was the "record scratch"
+    out.push({ g, span:[a0, z0], gain, stretch:false, carrier: single ? stopCh : null, tail: single ? null : stopCh });
   });
   return out;
+}
+async function attachPops(spans){
+  for (const p of spans){
+    if (p.carrier) p.carrierSmp = await stopSample(p.carrier);
+    if (p.tail) p.tailSmp = await stopSample(p.tail);
+  }
 }
 const PLAYING_SLICES = [];
 function stopSlices(){ PLAYING_SLICES.splice(0).forEach(n => { try{ n.stop(); }catch(e){} }); }
@@ -3607,6 +3695,18 @@ function playSlices(got, spans, withWord){
   stopSlices();
   let t = c.currentTime + .08;
   const out = master() || c.destination;
+  /* a clear pop from the pah/tah/kah recordings: loud for the pop itself, then
+     the vowel after it fades straight out, so it's "p", not "pah" */
+  const pop = smp => {
+    const src = c.createBufferSource(); src.buffer = smp.buf;
+    const g = c.createGain(); src.connect(g); g.connect(out);
+    const dur = smp.z - smp.a, lv = 1.6 * smp.gain, dk = t + (smp.duck - smp.a);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(lv, t + .006);
+    g.gain.setValueAtTime(lv, dk); g.gain.linearRampToValueAtTime(1.4, dk + .008); g.gain.linearRampToValueAtTime(0, t + dur);
+    src.start(t, smp.a); src.stop(t + dur + .01);
+    PLAYING_SLICES.push(src);
+    t += dur;
+  };
   const one = (a, z, stretch, boost) => {
     const src = c.createBufferSource(); src.buffer = buf;
     const g = c.createGain(); src.connect(g); g.connect(out);
@@ -3623,7 +3723,11 @@ function playSlices(got, spans, withWord){
     PLAYING_SLICES.push(src);
     t += dur;
   };
-  spans.forEach(p => { one(p.span[0], p.span[1], p.stretch, p.gain); t += .42; });
+  spans.forEach(p => {
+    if (p.carrierSmp) pop(p.carrierSmp);
+    else { one(p.span[0], p.span[1], p.stretch, p.gain); if (p.tailSmp){ t += .02; pop(p.tailSmp); } }
+    t += .42;
+  });
   if (withWord){
     t += .25;
     const last = al.chars.length - 1, fx = audioFx(got);
@@ -3646,6 +3750,7 @@ function sayChunk(chunk, word){
     // which occurrence? the first one not before the pieces already used is good enough
     const spans = partSpans(w, [c], got);
     if (!spans) return 0;
+    await attachPops(spans);
     return playSlices(got, spans, false);
   };
   say(c, { rate:.8, custom });
@@ -3659,6 +3764,7 @@ function saySounds(w){
     const parts = beats(word) >= 3 ? speechSyllables(word).map(g => ({ g })) : (wordSounds(word) || speechSyllables(word).map(g => ({ g })));
     const spans = partSpans(word, parts, got);
     if (!spans) return 0;
+    await attachPops(spans);
     return playSlices(got, spans, true);
   };
   say(word, { custom, rate:.62 });
@@ -3729,6 +3835,7 @@ const UI_ICONS = {
   // batches 5 and 6 (29 Sep 2026)
   '🔑':'key|key', '⚙':'settings|settings', '📋':'list|word list', '⚠':'warning|heads up', '🔒':'lock|locked',
   '📅':'calendar|calendar', '🗓':'calendar|calendar', '✉':'envelope|email', '💳':'card|payment',
+  '🎒':'backpack|backpack', '👧':'child|child',
 };
 const UI_ICON_RE = new RegExp('(' + Object.keys(UI_ICONS).join('|') + ')️?', 'g');
 function uiIcon(ch){
@@ -4161,97 +4268,165 @@ function installCard(){
    For the grown-up, not the child, and it runs once. Five steps, because the app
    has exactly five things a parent has to know before handing over the iPad. It
    can be replayed from Grown-ups → More, so dismissing it is never a loss. */
-/* ---- the walk-me (29 Sep 2026) ----
+/* ---- the walk-me (29 Sep 2026, v2 after Kathryn's review) ----
    Modelled on Read Between The Lines: the real buttons light up one at a time,
-   with a short note beside each, "2 OF 7", Skip tour and Next. It runs over the
-   home screen the first time a family lands there, and any time from
-   Grown-ups → More. */
+   "2 OF 12", Skip tour and Next. It starts on the home screen, then (for a
+   grown-up) opens the Grown-up Zone and shows where the words go, test day,
+   adding a child, progress, the access key and Keep Scout close, the way RBTL
+   walks through My Reader DNA. Scout stays quiet while it runs. */
+function walkNightsText(){
+  const k = kid(), n = k ? reviewNightsOf(k) : 7;
+  return 'All seven sprints, spread across the ' + n + ' practice nights before test day' +
+    (n < 7 ? ' (some nights have two short ones).' : n === 7 ? ' (one a night).' : ', with review nights mixed in.') +
+    ' Each one turns to honey when it\'s done. The number of nights is yours to set.';
+}
 const WALKME = [
-  { t:'Meet Scout', target:'.home-bubble', d:'Scout is your child\'s spelling buddy. She greets them, says every word out loud, and cheers them on.' },
-  { t:'Today\'s sprint', target:'.hcell.today', d:'Scout points at today\'s sprint. One tap and they\'re off, on their own. You don\'t need to sit with them.' },
-  { t:'The week at a glance', target:'.hmap', d:'Seven short sprints between the words coming home and test day. Each one turns to honey when it\'s done.' },
-  { t:'The honey pot', target:'.honeypot', d:'Every word they win adds a drop of honey. Little wins along the way keep them going.' },
-  { t:'Scout\'s Backpack', target:'#tb-badge', d:'Badges they earn hide in here as gold surprises they get to open.' },
-  { t:'The Grown-up Zone', target:'#gu', d:'Paste this week\'s words, set the test day, and see which words are sticking. It sits behind your grown-up code.' },
-  { t:'Keep Scout close', target:null, install:true, d:'' },
+  { t:'Meet Scout', view:'home', target:'.home-bubble', d:'Scout is your child\'s spelling buddy. She greets them, says every word out loud, and cheers them on.' },
+  { t:'Today\'s sprint', view:'home', target:'.hcell.today', d:'Scout points at today\'s sprint. One tap and they\'re off, on their own. You don\'t need to sit with them.' },
+  { t:'The week at a glance', view:'home', target:'.hmap', d:walkNightsText },
+  { t:'The honey pot', view:'home', target:'.honeypot', d:'Every word they win adds a drop of honey. Little wins along the way keep them going.' },
+  { t:'Scout\'s Backpack', view:'home', target:'#tb-badge', d:'Badges they earn hide in here as gold surprises they get to open.' },
+  { t:'The Grown-up Zone', view:'home', target:'#gu', d:'Everything for you sits behind your grown-up code. Let\'s look inside.' },
+  { t:'This week\'s words', view:'parent:words', grown:true, target:'#wk-words', d:'Paste the words straight from the teacher\'s list, any layout. Tap Save & start the week, and Scout builds the whole week from them.' },
+  { t:'Test day and nights', view:'parent:kids', grown:true, target:'.kidcard', d:'Pick the grade, the test day, and how many nights they have to practice. The week rearranges itself around it.' },
+  { t:'Add a child', view:'parent:kids', grown:true, target:'#addkid', d:'One purchase covers the whole family. Each child gets their own words, stars and test day.' },
+  { t:'See how they\'re doing', view:'parent:prog', grown:true, target:'.kidprog', open:true, d:'Tap a child to open their week: sprints done, words to revisit, words they\'ve got, and their Paper Power-Up.' },
+  { t:'Your access key', view:'parent:more', grown:true, target:'#wk-access', d:'Your free week starts straight away, no key needed. When you buy, your key goes here, and you can add it any time. Nothing is lost.' },
+  { t:'Keep Scout close', view:'parent:more', grown:true, target:'.keepclose', install:true, d:'' },
+  { t:'Any time you need it', view:'parent:more', grown:true, target:'#wk-tour', d:'This tour lives here. Run it again whenever someone new is setting things up.' },
 ];
 function tourSeen(){ try { return localStorage.getItem('sq_tour_v1') === '1'; } catch(e){ return true; } }
 function tourMarkSeen(){ try { localStorage.setItem('sq_tour_v1','1'); } catch(e){} }
-let WALK_PREV = null;
+let WALK_PREV = null, WALKING = false, WALK_GROWN = false, WALK_TOKEN = 0;
 function walkClear(){
   document.querySelectorAll('#sqWalk,#sqWalkBg').forEach(n => n.remove());
   document.body.classList.remove('walking');
   if (WALK_PREV){ try{ WALK_PREV.el.classList.remove('walk-hi'); }catch(e){} WALK_PREV = null; }
 }
-function walkEnd(){ walkClear(); tourMarkSeen(); }
-function runTour(){
-  if (VIEW !== 'home'){
-    // the tour lives on the home screen: take them there first
-    if (!kid() && DB.kids.length){ DB.active = DB.kids[0].id; save(); buildCurrentWeek(); }
-    go('home');
-    setTimeout(() => walkStep(0), 1800);
-    return;
-  }
-  setTimeout(() => walkStep(0), 300);
+function walkEnd(){
+  walkClear(); tourMarkSeen(); WALKING = window.__walking = false; WALK_TOKEN++;
+  if (VIEW === 'parent' && !WALK_GROWN_STAY){ go(DB.active ? 'home' : 'pick'); }
 }
-function walkStep(i){
+let WALK_GROWN_STAY = false;
+/* fromParent: started inside the Grown-up Zone, so the grown-up steps are allowed.
+   On a family's first visit there is no code yet, so they're allowed then too. */
+function runTour(fromParent){
+  WALK_GROWN = !!fromParent || !DB.pin;
+  WALK_GROWN_STAY = false;
+  WALKING = window.__walking = true; stopSpeech();
+  if (!kid() && DB.kids.length){ DB.active = DB.kids[0].id; save(); buildCurrentWeek(); }
+  walkStep(0);
+}
+function walkSteps(){
+  return WALKME.filter(w => (!w.grown || WALK_GROWN) && (!w.install || true));
+}
+function walkStep(i, tries){
   walkClear();
-  const steps = WALKME.filter(w => w.install ? installNeeded() : (!w.target || document.querySelector(w.target)));
+  WALKING = window.__walking = true; stopSpeech();
+  const steps = walkSteps();
   if (i >= steps.length) return walkEnd();
-  const w = steps[i];
+  const w = steps[i], tok = ++WALK_TOKEN;
+  // go to the screen this step is on, then wait for its button to appear
+  const [v, tab] = (w.view || 'home').split(':');
+  if (VIEW !== v || (v === 'parent' && PTAB !== tab)){
+    if (!tries){ if (v === 'parent') go('parent', tab); else go('home'); }
+    if ((tries || 0) < 30){ setTimeout(() => { if (tok === WALK_TOKEN) walkStep(i, (tries || 0) + 1); }, 150); return; }
+  }
+  let tgt = w.target ? document.querySelector(w.target) : null;
+  if (!tgt && !w.install){
+    if ((tries || 0) < 20){ setTimeout(() => { if (tok === WALK_TOKEN) walkStep(i, (tries || 0) + 1); }, 150); return; }
+    return walkStep(i + 1);                            // not on this device (no children yet, etc.)
+  }
+  if (w.open && tgt && tgt.tagName === 'DETAILS') tgt.open = true;
   const bg = el('<div id="sqWalkBg"></div>'); bg.onclick = walkEnd; document.body.appendChild(bg);
   document.body.classList.add('walking');
-  const tgt = w.target ? document.querySelector(w.target) : null;
   if (tgt){ try{ tgt.scrollIntoView({ block:'center' }); }catch(e){} tgt.classList.add('walk-hi'); WALK_PREV = { el:tgt }; }
-  const body = w.install ? installStepsHtml(true) : '<p>'+esc(w.d)+'</p>';
+  // the install step shows the steps in the popover when the card isn't there (a computer)
+  const d = typeof w.d === 'function' ? w.d() : w.d;
+  const body = w.install ? (tgt ? '<p>Put Spelling Quest on your Home Screen so it opens like an app, one tap away. The steps are right here, for iPhone and Android.</p>'
+                                : installStepsHtml(true, true))
+                         : '<p>'+esc(d)+'</p>';
+  const last = i === steps.length - 1;
   const ov = el('<div id="sqWalk" role="dialog" aria-label="'+esc(w.t)+'">'+
     '<div class="wk-n">'+(i+1)+' OF '+steps.length+'</div>'+
     '<h2>'+esc(w.t)+'</h2>'+body+
-    '<div class="wk-btns"><button class="btn link" id="wkskip">Skip tour</button>'+
-      '<button class="btn green" id="wknext">'+(i === steps.length - 1 ? 'Got it, Scout!' : 'Next')+'</button></div></div>');
+    '<div class="wk-btns">'+(i > 0 ? '<button class="btn link" id="wkback">Back</button>' : '')+
+      '<button class="btn link" id="wkskip">Skip tour</button>'+
+      '<button class="btn green" id="wknext">'+(last ? 'Got it, Scout!' : 'Next')+'</button></div></div>');
   document.body.appendChild(ov);
   ov.querySelector('#wkskip').onclick = walkEnd;
+  const bk = ov.querySelector('#wkback'); if (bk) bk.onclick = () => { sfx('tap'); walkStep(i - 1); };
   ov.querySelector('#wknext').onclick = () => { sfx('tap'); walkStep(i + 1); };
-  const ib = ov.querySelector('#sqInstallBtn'); if (ib) ib.onclick = installNow;
+  ov.querySelectorAll('.sqInstallBtn').forEach(b => b.onclick = installNow);
   requestAnimationFrame(() => {
     const vw = innerWidth, vh = innerHeight, ow = ov.offsetWidth || 320, oh = ov.offsetHeight || 180;
     if (tgt){
       const r = tgt.getBoundingClientRect();
       const left = Math.min(Math.max(12, r.left + r.width/2 - ow/2), vw - ow - 12);
       let top = r.top > vh/2 ? r.top - oh - 14 : r.bottom + 14;
+      if (r.height > vh * .55) top = vh - oh - 12;            // a tall card: sit at the bottom, over it
       top = Math.min(Math.max(12, top), vh - oh - 12);
       ov.style.left = left + 'px'; ov.style.top = top + 'px';
     } else { ov.style.left = Math.max(12, (vw - ow)/2) + 'px'; ov.style.top = Math.max(12, (vh - oh)/2) + 'px'; }
   });
 }
 
-/* ---- Keep Scout close: Add to Home Screen (29 Sep 2026, after RBTL) ----
-   iPhone and iPad need the Share-sheet steps; Android gets a real Install
-   button when the browser offers one. Hidden once installed or on a computer. */
+/* ---- Keep Scout close: Add to Home Screen (29 Sep 2026, mirrors RBTL) ----
+   Numbered steps with the real icons, for iPhone/iPad and for Android, this
+   device's first and the other one tucked underneath. Android gets a real
+   Install button when the browser offers one. Hidden once installed. */
 let INSTALL_EVT = null;
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALL_EVT = e;
-  document.querySelectorAll('#sqInstallBtn').forEach(b => b.style.display = 'inline-flex'); });
+  document.querySelectorAll('.sqInstallBtn').forEach(b => b.style.display = 'inline-flex'); });
+window.addEventListener('appinstalled', () => { document.querySelectorAll('.installbar,.keepclose').forEach(n => n.remove()); });
 function isInstalled(){ try{ return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; }catch(e){ return false; } }
 function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
-function installNeeded(){ return !isInstalled() && (isIOS() || /android/i.test(navigator.userAgent)); }
+function isAndroid(){ return /android/i.test(navigator.userAgent); }
+function installNeeded(){ return !isInstalled() && (isIOS() || isAndroid()); }
 function installNow(){ if (!INSTALL_EVT) return; INSTALL_EVT.prompt(); INSTALL_EVT.userChoice.finally(() => { INSTALL_EVT = null;
-  document.querySelectorAll('#sqInstallBtn').forEach(b => b.style.display = 'none'); }); }
-function installStepsHtml(short){
-  const dots = '<b class="kbd">•••</b>', share = '<b class="kbd">Share ⬆</b>', plus = '<b class="kbd">＋ Add to Home Screen</b>';
-  return '<p>'+(short ? 'Put Spelling Quest on your Home Screen so it opens like an app, one tap away.' : 'So Spelling Quest opens like an app, one tap away.')+'</p>'+
-    (isIOS()
-      ? '<ol class="steps-mini"><li>In Safari, tap '+dots+' at the bottom (or '+share+' on older phones).</li>'+
-        '<li>Tap '+share+', then <b>View More</b> if you see it.</li><li>Tap '+plus+', then <b>Add</b>.</li></ol>'+
-        '<p class="muted" style="font-size:14px">Opening it from the Home Screen for the first time? Pop your family code in once more. That\'s normal.</p>'
-      : '<p>Tap the <b class="kbd">⋮</b> menu, then <b>Install app</b> or <b>Add to Home screen</b>.</p>'+
-        '<button class="btn yellow" id="sqInstallBtn" style="display:'+(INSTALL_EVT ? 'inline-flex' : 'none')+'">📲 Add to Home Screen</button>');
+  document.querySelectorAll('.sqInstallBtn').forEach(b => b.style.display = 'none'); }); }
+const IC_SVG = p => '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px;margin:0 2px">'+p+'</svg>';
+const IC_SHARE = '<svg aria-label="Share" width="16" height="19" viewBox="0 0 15 18" style="vertical-align:-4px;margin:0 2px"><path d="M7.5 1v10M4 4.5 7.5 1 11 4.5" fill="none" stroke="#7c3aed" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 7H2.5A1.5 1.5 0 0 0 1 8.5v7A1.5 1.5 0 0 0 2.5 17h10a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 12.5 7H10" fill="none" stroke="#7c3aed" stroke-width="1.7" stroke-linecap="round"/></svg>';
+function installStepsHtml(short, both){
+  const step = (n, html) => '<li><span class="kc-n">'+n+'</span><span>'+html+'</span></li>';
+  const dots = '<b class="kbd">•••</b>', more = IC_SVG('<path d="m6 9 6 6 6-6"/>'),
+        plus = IC_SVG('<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/>'),
+        kebab = '<b class="kbd">⋮</b>';
+  const ios = '<div class="kc-os"><div class="kc-os-h"> iPhone or iPad <span class="muted">(Safari)</span></div><ol class="kc-steps">'+
+      step(1, 'Tap '+dots+' at the bottom of Safari (on older phones, skip to step 2).')+
+      step(2, 'Tap '+IC_SHARE+' <b>Share</b>.')+
+      step(3, 'Tap '+more+' <b>View More</b> if you see it.')+
+      step(4, 'Tap '+plus+' <b>Add to Home Screen</b>, then <b>Add</b>.')+'</ol>'+
+      '<p class="kc-note">When you open it from your Home Screen the first time, you may need to pop your family code in once more. That\'s normal, and it only happens once.</p></div>';
+  const android = '<div class="kc-os"><div class="kc-os-h">🤖 Android <span class="muted">(Chrome)</span></div><ol class="kc-steps">'+
+      step(1, 'Tap the '+kebab+' menu at the top right.')+
+      step(2, 'Tap <b>Install app</b> or <b>Add to Home screen</b>.')+
+      step(3, 'Tap <b>Install</b> to finish.')+'</ol>'+
+      '<button class="btn yellow sqInstallBtn" style="display:'+(INSTALL_EVT ? 'inline-flex' : 'none')+'">📲 Add to Home Screen</button></div>';
+  const intro = '<p>'+(short ? 'Put Spelling Quest on your Home Screen so it opens like an app, one tap away.'
+                             : 'So Spelling Quest opens like an app, one tap away, and your child can find Scout on their own.')+'</p>';
+  if (both || (!isIOS() && !isAndroid())) return intro + ios + android;
+  return intro + (isAndroid()
+    ? android + '<details class="kc-other"><summary>On an iPhone or iPad instead?</summary>'+ios+'</details>'
+    : ios + '<details class="kc-other"><summary>On an Android phone instead?</summary>'+android+'</details>');
+}
+/* a small bar on the child's home screen until this device has Scout on its
+   Home Screen; tap it to see how. Gone once it's installed. */
+function installBar(){
+  if (!installNeeded()) return null;
+  try{ if (sessionStorage.getItem('sq_ib_x') === '1') return null; }catch(e){}
+  const b = el('<details class="installbar"><summary><span>📲 Put Scout on your Home Screen</span><b>How?</b>'+
+    '<button class="ib-x" aria-label="Hide for now">✕</button></summary><div class="ib-body">'+installStepsHtml(false)+'</div></details>');
+  b.querySelector('.ib-x').onclick = e => { e.preventDefault(); e.stopPropagation(); try{ sessionStorage.setItem('sq_ib_x','1'); }catch(x){} b.remove(); };
+  b.querySelectorAll('.sqInstallBtn').forEach(x => x.onclick = installNow);
+  return b;
 }
 function installCard(){
   if (!installNeeded()) return null;
   const c = el('<div class="card keepclose"><div class="kc-head"><div><h3>Keep Scout close ✨</h3>'+
     '<div class="muted">One quick step</div></div><img src="../img/sq-icon.webp" alt="" width="56" height="56"></div>'+
     installStepsHtml(false)+'</div>');
-  const b = c.querySelector('#sqInstallBtn'); if (b) b.onclick = installNow;
+  c.querySelectorAll('.sqInstallBtn').forEach(b => b.onclick = installNow);
   return c;
 }
 
@@ -4495,7 +4670,7 @@ function renderPick(a){
   DB.kids.forEach(k => {
     const c = el(
       '<button class="who-card">'+
-        '<span class="em">'+k.avatar+'</span>'+
+        '<span class="em">'+avEm(k.avatar)+'</span>'+
         '<b>'+esc(k.name)+'</b>'+
         '<div class="muted">Level '+level(k)+' · '+(k.xp||0)+' ⭐</div>'+
         (k.streak ? '<div class="muted">🔥 '+k.streak+' day streak</div>' : '')+
@@ -4515,7 +4690,7 @@ function topbar(a, opts){
   const k = kid();
   const bar = el(
     '<div class="topbar">'+
-      '<div class="avatar">'+k.avatar+'</div>'+
+      '<div class="avatar">'+avEm(k.avatar)+'</div>'+
       '<div class="who"><b>'+esc(k.name)+'</b><span>Level '+level(k)+' · '+(k.xp||0)+' ⭐'+(k.streak?' · 🔥'+k.streak:'')+'</span></div>'+
       '<button class="iconbtn" id="tb-home">🏠</button>'+
       '<button class="iconbtn" id="tb-badge" aria-label="Scout\'s Backpack"><img class="ic" src="../img/ui/icon-backpack.webp" alt=""></button>'+
@@ -4573,7 +4748,7 @@ let AFTER_MAP = [], HOME_SCOUT = null;
 /* Scout lands next to today's sprint cell and points at it */
 let WALK_PENDING = false;
 function placeHomeScout(grid){
-  if (WALK_PENDING || !tourSeen()){ WALK_PENDING = false; setTimeout(() => { if (VIEW === 'home' && !tourSeen()) walkStep(0); }, 2600); }
+  if (WALK_PENDING || !tourSeen()){ WALK_PENDING = false; setTimeout(() => { if (VIEW === 'home' && !tourSeen()) runTour(false); }, 2600); }
   const hs = HOME_SCOUT; HOME_SCOUT = null;
   if (!hs) return;
   grid.style.position = 'relative';
@@ -4613,6 +4788,8 @@ function renderHome(a){
   topbar(a);
   const ts = trialStrip();
   if (ts) a.appendChild(ts);
+  const ib = installBar();
+  if (ib) a.appendChild(ib);
   {
     const k = kid(), pp = prog(), tk0 = todayKey();
     const td = DAYS[DAY_INDEX[tk0]];
@@ -4895,13 +5072,24 @@ function pinRescue(tab){
   setTimeout(()=>{ try{ inp.focus(); }catch(e){} }, 60);
 }
 
+/* the grown-up code can be typed on a keyboard too, not only tapped (29 Sep 2026) */
+function pinKeys(p, press){
+  const h = e => {
+    if (!p.isConnected){ document.removeEventListener('keydown', h, true); return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)){ e.preventDefault(); e.stopImmediatePropagation(); sfx('key'); press(e.key); }
+    else if (e.key === 'Backspace'){ e.preventDefault(); e.stopImmediatePropagation(); press('del'); }
+    else if (e.key === 'Escape'){ const c = p.querySelector('[data-close]'); if (c) c.click(); }
+  };
+  document.addEventListener('keydown', h, true);
+}
 function parentGate(tab){
   if (!DB.pin) return parentPinSetup(tab);
   const pin = String(DB.pin);
   let typed = '';
   const p = popup(
     '<div class="em">🔒</div><h2>Grown-ups only</h2>'+
-    '<p class="muted" id="pgm">Enter your code</p>'+
+    '<p class="muted" id="pgm">Enter your code (tap or type it)</p>'+
     '<div class="pindots" id="pd"></div>'+
     '<div class="pinpad" id="pp"></div>'+
     '<button class="btn link" id="pgforgot" style="margin-top:4px">Forgotten your code?</button>'+
@@ -4931,6 +5119,7 @@ function parentGate(tab){
     b.onclick = () => { sfx('key'); press(v); };
     pad.appendChild(b);
   });
+  pinKeys(p, press);
   draw();
 }
 
@@ -4965,6 +5154,7 @@ function parentPinSetup(tab){
     b.onclick = () => { sfx('key'); press(v); };
     pad.appendChild(b);
   });
+  pinKeys(p, press);
   draw();
 }
 
@@ -5077,7 +5267,7 @@ function parentWords(a){
   }
 
   const boxes = {};
-  const card = el('<div class="card"><h3>📝 This week\'s words</h3>'+
+  const card = el('<div class="card" id="wk-words"><h3>📝 This week\'s words</h3>'+
     '<p class="muted">Paste them straight from the teacher — any layout works. '+
     'The patterns, chunks, and practice path are worked out for you.</p><div id="kb"></div>'+
     '<button class="btn green big" id="wsave" style="margin-top:6px">💾 Save &amp; start the week</button>'+
@@ -5089,7 +5279,7 @@ function parentWords(a){
 
   DB.kids.forEach(k => {
     const w = el('<div style="margin-top:14px">'+
-      '<label class="fl">'+k.avatar+' '+esc(k.name)+' · grade '+(k.grade||1)+'</label>'+
+      '<label class="fl">'+k.avatar+' '+esc(k.name)+' · '+(k.grade === 0 ? 'kindergarten' : 'grade '+(k.grade||1))+'</label>'+
       '<textarea class="ta" style="min-height:120px" spellcheck="false" placeholder="Paste '+esc(k.name)+'\'s words…"></textarea>'+
       '<details style="margin-top:6px"><summary>See the patterns they\'ll learn</summary><div class="pvbox"></div></details>'+
       '</div>');
@@ -5220,17 +5410,18 @@ function logWeek(){
 
 function parentKids(a){
   DB.kids.forEach((k, i) => {
-    const c = el('<div class="card">'+
+    const c = el('<div class="card kidcard">'+
       '<h3>'+k.avatar+' Child '+(i+1)+'</h3>'+
       '<label class="fl">Name</label><input class="ti" data-f="name" value="'+esc(k.name)+'">'+
       '<label class="fl">Grade (sets the difficulty)</label>'+
-      '<div class="row" data-f="grade">'+[1,2,3,4,5].map(g =>
-        '<button class="btn '+(k.grade===g?'':'grey')+'" data-g="'+g+'" style="flex:1;padding:12px">'+g+'</button>').join('')+'</div>'+
+      /* K to 5th grade (29 Sep 2026: kindergarten was missing; it plays like 1st grade) */
+      '<div class="row" data-f="grade">'+[0,1,2,3,4,5].map(g =>
+        '<button class="btn '+(k.grade===g?'':'grey')+'" data-g="'+g+'" style="flex:1;padding:12px 6px">'+(g ? g : 'K')+'</button>').join('')+'</div>'+
       '<label class="fl">Spelling test day</label>'+
       '<div class="row daypick" data-f="testday">'+WEEKDAYS_SHORT.map((n, d) =>
         '<button class="btn '+(testDayOf(k)===d?'':'grey')+'" data-d="'+d+'">'+n+'</button>').join('')+'</div>'+
       '<div class="muted" style="margin-top:6px;font-size:14px;line-height:20px">The route rearranges itself around this.</div>'+
-      '<label class="fl">Review nights before the test</label>'+
+      '<label class="fl">Review nights before the test <span style="font-weight:600;opacity:.75">(tap to change)</span></label>'+
       /* a dropdown (29 Sep 2026): families vary a lot, and fourteen buttons don't fit on a line */
       '<select class="ti" data-f="nights">'+Array.from({ length: MAX_NIGHTS - MIN_NIGHTS + 1 }, (_, i) => MIN_NIGHTS + i).map(n =>
         '<option value="'+n+'"'+(reviewNightsOf(k)===n?' selected':'')+'>'+n+' night'+(n===1?'':'s')+
@@ -5271,7 +5462,7 @@ function parentKids(a){
       const box = el('<div style="position:fixed;inset:0;background:rgba(30,15,60,.72);z-index:9999;'+
         'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
       const card = el('<div class="card" style="max-width:360px;width:100%;text-align:center;margin:0">'+
-        '<div style="font-size:38px">'+k.avatar+'</div>'+
+        '<div style="font-size:38px">'+avEm(k.avatar)+'</div>'+
         '<h2 style="font-size:22px;line-height:28px;margin:4px 0 6px">Remove '+esc(k.name)+'?</h2>'+
         '<p class="muted">Their '+(k.xp||0)+' stars and every finished day go for good — on this '+
         'device and on your other ones. This can\'t be undone.</p>'+
@@ -5299,13 +5490,13 @@ function parentKids(a){
 
     const av = c.querySelector('.av-grid');
     AVATARS.forEach(x => {
-      const b = el('<button class="av'+(k.avatar===x?' on':'')+'">'+x+'</button>');
+      const b = el('<button class="av'+(k.avatar===x?' on':'')+'">'+avEm(x)+'</button>');
       b.onclick = () => { k.avatar = x; k.prog = k.prog || {}; k.prog[AV_AT_KEY] = Date.now(); save(); sfx('tap'); stayOn('kids'); };
       av.appendChild(b);
     });
     a.appendChild(c);
   });
-  const add = el('<button class="btn big blue">➕ Add another child</button>');
+  const add = el('<button class="btn big blue" id="addkid">➕ Add another child</button>');
   add.onclick = () => { DB.kids.push(blankKid('New child', AVATARS[DB.kids.length%AVATARS.length], 2)); save(); go('parent','kids');
     const cards = document.querySelectorAll('#app .card'); const last = [...cards].filter(x => x.querySelector('.av-grid')).pop();
     if (last) last.scrollIntoView({ block:'start' }); };
@@ -5347,7 +5538,7 @@ function parentProgress(a){
       return '<details class="psec"'+(open ? ' open' : '')+'><summary>'+title+'</summary><div class="psec-body">'+body+'</div></details>';
     };
     const c = el('<details class="card kidprog"'+(DB.kids.length === 1 || k.id === DB.active ? ' open' : '')+'>'+
-      '<summary><span class="kp-av">'+k.avatar+'</span><span class="kp-who"><b>'+esc(k.name)+'</b>'+
+      '<summary><span class="kp-av">'+avEm(k.avatar)+'</span><span class="kp-who"><b>'+esc(k.name)+'</b>'+
         '<span>'+doneN+'/7 sprints · '+(shaky.length ? shaky.length+' word'+(shaky.length>1?'s':'')+' to revisit' : 'nothing to revisit')+'</span></span>'+
         '<span class="kp-pips">'+DAYS.map(d => '<i class="'+(p.days[d.key] && p.days[d.key].done ? 'on' : '')+'"></i>').join('')+'</span></summary>'+
       '<div class="muted" style="margin:8px 0">Level '+level(k)+' · '+(k.xp||0)+' stars · 🔥 '+(k.streak||0)+' day streak · '+(k.weeksDone||0)+' weeks finished</div>'+
@@ -5423,148 +5614,12 @@ function beeLogHtml(k){
 
 function parentMore(a){
   const ic = installCard(); if (ic) a.appendChild(ic);
-  // ---------- voice: two choices, three speeds ----------
-  const v = el('<div class="card"><h3>🗣️ Voice</h3>'+
-    '<div class="seg" id="vsex">'+
-      '<button data-v="male">👦 Male</button><button data-v="female">👩 Female</button></div>'+
-    '<label class="fl">Speed</label>'+
-    '<div class="seg" id="vspd">'+
-      '<button data-r="0.6">🐢 Slower</button><button data-r="0.85">Normal</button>'+
-      '<button data-r="1.15">🐇 Faster</button></div>'+
-    '<button class="btn blue big" id="vtest" style="margin-top:12px">🔊 Test it</button>'+
-    '<p class="muted" id="vnow" style="margin-top:8px"></p>'+
-    '<button class="btn grey" id="vrescan" style="width:100%;margin-top:6px;font-size:14px">'+
-      '🔄 I\'ve just downloaded a voice — look again</button>'+
-    '<details style="margin-top:10px"><summary>What this device reports</summary>'+
-      '<p class="muted" style="margin-top:8px">If a downloaded voice isn\'t being used, this is the '+
-      'page to screenshot — it shows exactly what the device is handing the app.</p>'+
-      '<pre id="vdiag" style="font-size:11px;line-height:1.45;white-space:pre-wrap;word-break:break-all;'+
-        'background:#f6f3ff;border-radius:10px;padding:10px;margin-top:8px;max-height:280px;overflow:auto"></pre>'+
-      '<button class="btn grey" id="vcopy" style="width:100%;font-size:14px">📋 Copy this</button>'+
-    '</details>'+
-    '<details style="margin-top:10px"><summary>Hear every voice on this device</summary>'+
-      '<p class="muted" style="margin-top:8px">Tap ▶️ to hear one. Then pin your favourites to the '+
-      'Male and Female buttons above — that\'s what the children will hear. '+
-      'Any marked <span class="tag">HD</span> are the good ones.</p>'+
-      '<p class="muted" style="margin-top:6px">⭐ Worth downloading if you don\'t have them: '+
-      '<b>Evan</b> or <b>Jamie</b> for the male voice, <b>Zoe</b> or <b>Matilda</b> for the female. '+
-      'They are the most natural of the lot, and the app prefers them automatically.</p>'+
-      '<div id="vlist"></div>'+
-      '<div class="tip" style="margin-top:12px"><h3>🤖 Everything sounds robotic?</h3>'+
-      '<p>iPads ship with small, low-quality versions of each voice. The good ones are a free download '+
-      'and they sound like a completely different app.</p>'+
-      '<p><b>On the iPad:</b> Settings → Accessibility → Spoken Content → Voices → English. '+
-      'Download any voice marked <b>Enhanced</b> or <b>Premium</b> (they\'re 100–500&nbsp;MB each — that size '+
-      'is the whole point). Come back here and they\'ll be in the list.</p>'+
-      '<p><b>On a Mac:</b> System Settings → Accessibility → Spoken Content → System Voice → Manage Voices.</p>'+
-      '<p class="trick">Downloading “Daniel (Enhanced)” replaces plain Daniel everywhere — same name, far better voice.</p>'+
-      '</div></details></div>');
-  a.appendChild(v);
-
-  const paint = () => {
-    v.querySelectorAll('#vsex button').forEach(b =>
-      b.className = (b.dataset.v === (DB.voiceSex||'male')) ? 'on' : '');
-    const r = String(DB.rate == null ? 0.85 : DB.rate);
-    v.querySelectorAll('#vspd button').forEach(b => b.className = (b.dataset.r === r) ? 'on' : '');
-    v.querySelector('#vnow').textContent = VOICE
-      ? ('Using ' + voiceLabel(VOICE))
-      : 'Using this device\'s default voice';
-  };
-  v.querySelectorAll('#vsex button').forEach(b => b.onclick = () => {
-    setVoiceSex(b.dataset.v); paint();
-    sayRule(TEST_LINE);
-  });
-  v.querySelectorAll('#vspd button').forEach(b => b.onclick = () => {
-    DB.rate = parseFloat(b.dataset.r); save(); paint();
-    sayRule(TEST_LINE);
-  });
-  v.querySelector('#vtest').onclick = () => sayRule(TEST_LINE);
-  /* What the device is actually handing us. When a downloaded voice doesn't
-     take, the answer is always in here — either it never arrived, or it arrived
-     under the same name as the basic one. */
-  const diagText = () => {
-    if (!('speechSynthesis' in window)) return 'This browser has no speech at all.';
-    const all = speechSynthesis.getVoices();
-    const en  = all.filter(x => /^en(-|_|$)/i.test(x.lang));
-    const seen = {};
-    en.forEach(x => seen[x.name] = (seen[x.name] || 0) + 1);
-    const dupes = Object.keys(seen).filter(n => seen[n] > 1);
-    return [
-      'Voices in total: ' + all.length + '   English: ' + en.length,
-      'Now using: ' + (VOICE ? voiceLabel(VOICE) : 'none'),
-      'Identifier: ' + (VOICE ? (VOICE.voiceURI || '(none)') : '-'),
-      'Same name twice: ' + (dupes.length ? dupes.join(', ') : 'no'),
-      'Downloaded ones found: ' +
-        (en.filter(x => /Premium|Enhanced|Siri|Neural/.test(voiceTag(x)))
-           .map(x => x.name + ' (' + voiceTag(x) + ')').join(', ') || 'NONE'),
-      '',
-      ...en.map(x => '· ' + x.name + (voiceTag(x) ? ' [' + voiceTag(x) + ']' : '') +
-                     ' ' + x.lang + '  ' + (x.voiceURI || ''))
-    ].join('\n');
-  };
-  const drawDiag = () => {
-    const box = v.querySelector('#vdiag');
-    if (box) box.textContent = diagText();
-  };
-  v.querySelectorAll('details')[0].addEventListener('toggle', drawDiag);
-  v.querySelector('#vcopy').onclick = () => {
-    const t = diagText();
-    try{
-      navigator.clipboard.writeText(t).then(
-        () => toast('📋 Copied — paste it into a message', 3500),
-        () => toast('Couldn\'t copy — screenshot this instead', 3500));
-    }catch(e){ toast('Couldn\'t copy — screenshot this instead', 3500); }
-  };
-
-  v.querySelector('#vrescan').onclick = () => {
-    const had = ALL_VOICES.length;
-    if (RESCAN_VOICES) RESCAN_VOICES();
-    paint(); drawList();
-    const gained = ALL_VOICES.length - had;
-    if (gained > 0){ sfx('good'); toast('🎉 Found ' + gained + ' new voice' + (gained===1?'':'s'), 3500); }
-    else toast('Nothing new yet. Close the app completely — swipe it away — then open it again.', 5000);
-  };
-  const drawList = () => {
-    const box = v.querySelector('#vlist');
-    if (!box) return;
-    box.innerHTML = '';
-    if (!ALL_VOICES.length){ box.appendChild(el('<p class="muted">No voices found yet — close and reopen this screen.</p>')); return; }
-    ALL_VOICES.forEach(vo => {
-      const is = (s) => DB.voicePick &&
-        (DB.voicePick[s] === vo.voiceURI || DB.voicePick[s] === vo.name);
-      const pickedM = is('male'), pickedF = is('female');
-      const tag = voiceTag(vo);
-      const good = /Premium|Enhanced|Siri|Neural/.test(tag);
-      const row = el('<div class="vrow">'+
-        '<button class="vplay">▶️</button>'+
-        '<div class="vname"><b>'+esc(vo.name)+'</b><span class="muted"> '+esc(vo.lang)+'</span>'+
-          (tag ? ' <span class="'+(good ? 'tag' : 'muted')+'">'+esc(good ? tag.toUpperCase() : tag)+'</span>' : '')+
-        '<button class="vpin'+(pickedM?' on':'')+'" data-s="male">♂</button>'+
-        '<button class="vpin'+(pickedF?' on':'')+'" data-s="female">♀</button></div>');
-      row.querySelector('.vplay').onclick = () => {
-        stopSpeech();
-        const u = new SpeechSynthesisUtterance(TEST_LINE);
-        u.voice = vo; u.lang = vo.lang; u.rate = .95 * speed(); u.pitch = 1;
-        try{ speechSynthesis.speak(u); }catch(e){}
-      };
-      row.querySelectorAll('.vpin').forEach(b => b.onclick = () => {
-        DB.voicePick = DB.voicePick || {};
-        // pin the exact voice, not the name — otherwise "Evan" is ambiguous
-        DB.voicePick[b.dataset.s] = vo.voiceURI || vo.name;
-        if ((DB.voiceSex||'male') === b.dataset.s) VOICE = vo;
-        save(); sfx('good');
-        toast((b.dataset.s === 'male' ? '♂ Male' : '♀ Female') + ' voice set to ' + voiceLabel(vo), 3500);
-        drawList(); paint();
-      });
-      box.appendChild(row);
-    });
-  };
-  v.querySelectorAll('details')[1].addEventListener('toggle', drawList);
-  paint(); setTimeout(()=>{ paint(); drawList(); }, 800);
+  /* The Voice card is gone (29 Sep 2026, Kathryn): Scout speaks in her own
+     recorded voice, and the device voice is only a quiet fallback now. */
 
   // ---------- access ----------
   const left = trialLeft();
-  const acc = el('<div class="card"><h3>🔑 Access</h3>'+
+  const acc = el('<div class="card" id="wk-access"><h3>🔑 Access</h3>'+
     (DB.licence && DB.licence.key
       ? '<p class="muted">Unlocked with your licence key. Ends in <b>'+
         esc(String(DB.licence.key).slice(-6))+'</b>'+(DB.licence.pending?' (will confirm when online)':'')+'.</p>'
@@ -5583,7 +5638,6 @@ function parentMore(a){
         'children to any device with your code on it \u2014 the iPad, your phone, anywhere. '+
         'You can check how they\'re getting on without being in the room.</p>'+
         '<p class="muted" id="syncline" style="margin-top:8px;font-size:14px;line-height:20px"></p>'+
-        '<button class="btn grey" id="syncgo" style="width:100%;margin-top:6px;font-size:14px">Sync now</button>'+
         '<p class="muted" style="font-size:14px;line-height:20px;margin-top:8px">We never store a real name, email, '+
         'birthday or school \u2014 only a nickname and their stars, under a scrambled version of your '+
         'code that can\'t be turned back into it.</p>'
@@ -5651,10 +5705,10 @@ function parentMore(a){
     p.querySelector('#yes').onclick = () => { localStorage.removeItem(STORE_KEY); location.hash=''; location.reload(); };
   };
 
-  const tr = el('<div class="card"><h3>🧭 Walk me through it</h3>'+
-    '<p class="muted">A quick tour of the home screen, one button at a time. Handy if someone else is setting it up.</p>'+
+  const tr = el('<div class="card" id="wk-tour"><h3>🧭 Walk me through it</h3>'+
+    '<p class="muted">A quick tour of the app and this Grown-up Zone, one button at a time. Handy if someone else is setting it up.</p>'+
     '<button class="btn blue" id="tourgo" style="width:100%;margin-top:8px">Walk me through it</button></div>');
-  tr.querySelector('#tourgo').onclick = () => { sfx('tap'); runTour(); };
+  tr.querySelector('#tourgo').onclick = () => { sfx('tap'); runTour(true); };
   a.appendChild(tr);
 
   a.appendChild(el('<div class="card"><h3>ℹ️ About</h3>'+
@@ -6510,6 +6564,9 @@ function actMonday(a, d){
     resumeQueueSave('mon', qi, queue.length, {readCount});
     const item = queue[qi++];
     host.innerHTML = '';
+    /* a new screen: drop anything still waiting to be said about the last word
+       (29 Sep 2026: the new screen said the old word first, then the right one) */
+    stopSpeech();
     if (item.tip) return showTip(item.tip);
     if (item.find) return findIt(item.find);
     return huntWord(item);
@@ -6599,12 +6656,14 @@ function actMonday(a, d){
   // after each group: Scout says a word, the child finds it in the honeycomb
   function findIt(sec){
     const all = sec.words.map(x => x.word);
-    const targets = shuffle(all).slice(0, Math.min(3, all.length));
+    const g = (kid() && kid().grade) || 1, size = g <= 1 ? 3 : g === 2 ? 4 : 6;
+    // always at least one word left over, so the last find is still a choice
+    const targets = shuffle(all).slice(0, Math.max(1, Math.min(3, all.length, size - 1)));
     let ti = 0, misses = 0;
     const c = el('<div class="card center">'+
       '<div class="muted">'+sec.emoji+' '+esc(sec.label)+'</div>'+
       '<h2 style="font-size:24px;line-height:30px;margin:6px 0 2px">Find it! 🔎</h2>'+
-      '<p class="muted" style="margin:0 0 10px"><b id="findn">Word 1 of '+Math.min(3, all.length)+'.</b> Listen to Scout, then tap the word she says!</p>'+
+      '<p class="muted" style="margin:0 0 10px"><b id="findn">Word 1 of '+targets.length+'.</b> Listen to Scout, then tap the word she says!</p>'+
       '<div class="findgrid"></div>'+
       '<div class="row" style="justify-content:center;margin-top:12px"><button class="btn grey" id="hear">🔊 Say it again</button></div>'+
     '</div>');
@@ -6612,8 +6671,10 @@ function actMonday(a, d){
     const grid = c.querySelector('.findgrid');
     /* 29 Sep 2026 (Kathryn): a small group left only two words to pick from.
        Other words from this week fill the board up to six, so it's a real hunt. */
+    /* how many words on the board depends on the grade (29 Sep 2026: six was a
+       lot for a 2nd grader): K–1 three, 2nd four, 3rd and up six */
     const others = shuffle(Array.from(new Set(words.map(x => x.word))).filter(w => all.indexOf(w) < 0));
-    const board = all.concat(others.slice(0, Math.max(0, 6 - all.length)));
+    const board = targets.concat(shuffle(all.filter(w => targets.indexOf(w) < 0)), others).slice(0, Math.max(size, targets.length));
     shuffle(board).forEach(word => {
       const b = el('<button class="fw">'+esc(word)+'</button>');
       b.onclick = () => {
@@ -6679,7 +6740,9 @@ function rulePopup(tip, safe){
     '<button class="btn blue big" id="rsay" style="margin-top:6px">🔊 Say it again</button>'+
     '<button class="btn big green" style="margin-top:8px" data-close>Got it!</button>');
   p.querySelector('#rsay').onclick = () => sayRule(text);
-  setTimeout(()=>sayRule(text), 250);
+  setTimeout(()=>{ if (p.isConnected) sayRule(text); }, 250);
+  /* closing the rule stops Scout reading it (29 Sep 2026: she kept going) */
+  p.addEventListener('click', e => { if (e.target.dataset && e.target.dataset.close !== undefined) stopSpeech(); });
   return p;
 }
 
@@ -6991,10 +7054,16 @@ function hiveSmash(card, first, done){
   card.appendChild(mon);
   const cr = card.getBoundingClientRect(), br = boxes.getBoundingClientRect();
   const tx = br.left - cr.left + br.width / 2 - 62, ty = br.top - cr.top - 40;
-  say(first ? pickOne(['Uh oh, here comes the Tile Monster!', 'Look out, it\'s the Tile Monster!'])
-            : pickOne(['Oh no, the monster again!', 'Here it comes again!', 'Look out!']));
-  setTimeout(() => sfx('growl'), 150);
-  const fly = mon.animate([
+  /* Scout warns us first, and the monster crashes in while she's still
+     talking (Kathryn, 29 Sep 2026) */
+  const line = first ? 'Look out, it\'s the Tile Monster! He wants to smash our hive!'
+                     : pickOne(['Look out, it\'s the Tile Monster again! Here he comes!', 'Oh no, the Tile Monster is back! Hold on!',
+                                'Look out! The Tile Monster wants our letters!']);
+  scoutPop('thinking', line, 2600, { silent:true });
+  say(line);
+  mon.style.opacity = '0';
+  setTimeout(() => { mon.style.opacity = ''; sfx('growl'); flyIn(); }, 1100);
+  const flyIn = () => { const fly = mon.animate([
     { transform:'translate('+(cr.width + 30)+'px,'+(ty - 70)+'px) rotate(25deg) scale(.7)' },
     { transform:'translate('+(tx + 40)+'px,'+(ty - 50)+'px) rotate(-10deg) scale(1)', offset:.7 },
     { transform:'translate('+tx+'px,'+ty+'px) rotate(0) scale(1.15)' }
@@ -7029,7 +7098,7 @@ function hiveSmash(card, first, done){
       document.removeEventListener('keydown', block, true);
       done();
     }, 700);
-  };
+  }; };
 }
 
 /* ============================================================
@@ -7589,7 +7658,11 @@ function actSaturday(a, d){
     const meX = () => W() * .3;
     const monX = () => 6 + danger * W() * .06;
     const items = [];
-    const speed = hard ? 175 : 115;
+    /* long words get more time (29 Sep 2026: "thousand" was too fast to find
+       each next letter): letters move slower and come further apart, a little
+       more for every letter past four */
+    const ease = word.length <= 4 ? 1 : Math.max(.55, 1 - (word.length - 4) * .08);
+    const speed = (hard ? 175 : 115) * ease;
     let spawnIn = 500, last = performance.now(), wave = 0;
     const abc = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -7638,7 +7711,8 @@ function actSaturday(a, d){
     }
     function gotRight(it){
       pos++; sfx('pop'); drawGot(); it.el.classList.add('grab');
-      if (pos < word.length){ retarget(); return; }
+      // a breather to find the next letter before the next wave arrives
+      if (pos < word.length){ retarget(); spawnIn = Math.max(spawnIn, ease < 1 ? 1400 : 700); return; }
       over = true;
       if (bumps === 0){ beaten++; beatenWords.add(word); wordStat(word).r++; save(); }
       sayWord(word);
@@ -7661,7 +7735,7 @@ function actSaturday(a, d){
       const dt = Math.min(50, now - last) / 1000; last = now;
       if (!over){
         spawnIn -= dt * 1000;
-        if (spawnIn <= 0){ spawn(); spawnIn = (hard ? 1350 : 1900) + Math.random() * 300; }
+        if (spawnIn <= 0){ spawn(); spawnIn = ((hard ? 1350 : 1900) + Math.random() * 300) / ease; }
       }
       const target = laneY(lane);
       meY += (target - meY) * Math.min(1, dt * 14);
