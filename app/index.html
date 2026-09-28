@@ -527,6 +527,7 @@ details[open] > summary::before{ content:'▾ '; }
 .spotlight .stage-top{display:flex;align-items:center;justify-content:center;gap:10px;margin:-6px 0 4px}
 .spotlight .stage-top img{width:78px;height:auto;animation:scoutBob 3s ease-in-out infinite}
 .spotlight .stage-lights{font-size:22px;letter-spacing:6px}
+.spotlight .stage-top .stage-lights img.ic{width:1.2em;height:1.2em;animation:none}
 @media (prefers-reduced-motion:reduce){ .hexy .lbox.blank.cur,.hexy .lbox.good,.spotlight .stage-top img{animation:none} }
 
 /* Arcade: balloons and Letter Catcher */
@@ -739,6 +740,108 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 
 
 
+
+.howto h2{ font-size:24px; }
+.steps-mini{ text-align:left; margin:0 auto 14px; padding-left:22px; max-width:340px; font-size:17px; line-height:1.45; }
+.steps-mini li{ margin:6px 0; }
+
+/* sprint screens: fit more above the fold (29 Sep 2026) */
+body[data-view=day] .wrap{ padding-top:8px; }
+body[data-view=day] .topbar{ margin-bottom:8px; }
+body[data-view=day] .scout-card{ margin-bottom:8px; }
+body[data-view=day] .scout-card img{ width:70px; }
+body[data-view=day] .scout-card.chatty img{ width:80px; }
+body[data-view=day] .scout-card .bubble{ font-size:16px; line-height:21px; padding:9px 13px; }
+body[data-view=day] .gamebar{ margin-bottom:8px; padding:5px 10px; }
+body[data-view=day] .gamebar .jar{ width:38px; height:44px; }
+body[data-view=day] .card{ padding:14px; margin-bottom:10px; }
+body[data-view=day] .speaker{ width:88px; height:100px; }
+body[data-view=day] .speaker img.ic{ width:52px; height:52px; }
+body[data-view=day] .bigword{ margin:6px 0; }
+body[data-view=day] .card > p{ margin:8px 0; }
+body[data-view=day] .keyboard{ gap:6px; }
+body[data-view=day] .key{ height:48px; }
+body[data-view=day] .dots{ margin:0 0 8px; }
+
+/* Arcade (29 Sep 2026): the hive menu, compact game screens, balloons, Bee Chase */
+.arcade-head{ margin:2px 0 10px; }
+.pips{ display:flex; gap:6px; justify-content:center; }
+.pips i{ width:22px; height:25px; clip-path:var(--hexclip); background:rgba(255,255,255,.2); }
+.pips i.on{ background:linear-gradient(160deg,#ffe08a,#ffb31a); }
+.arcade-hive{ --w:138px!important; margin-bottom:8px; }
+@media (min-width:520px){ .arcade-hive{ --w:170px!important; } }
+.arcade-hive .hrow:nth-child(1){ transform:translateX(calc(var(--w) / -4 - 2px)); }
+.arcade-hive .hrow:nth-child(2){ transform:translateX(calc(var(--w) / 4 + 2px)); }
+.arcade-hive .hcell .sprint-ico{ width:54px!important; height:54px!important; }
+.arcade-hive .hcell b{ font-size:17px; }
+.arcade-hive .hcell .n{ display:block!important; font-size:13px; letter-spacing:0; text-transform:none; opacity:.85; font-weight:800; }
+@media (max-width:519px){ .arcade-hive .hcell .n.sub{ display:none!important; } }
+.game-card{ padding-top:10px!important; }
+.game-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.speaker.mini{ width:64px!important; height:72px!important; margin:0; }
+.speaker.mini img.ic{ width:38px!important; height:38px!important; }
+.score-pill,.clock-pill{ background:var(--lilac); border-radius:999px; padding:6px 12px; font:900 16px/1 var(--font-head); color:var(--ink); min-width:74px; }
+.clock-pill{ background:#fff4d6; }
+.game-say{ font-weight:800; font-size:18px; margin:8px 0 4px!important; }
+.speed-ops{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+.speed-ops .fw{ padding:16px 10px; font-size:20px; width:100%; }
+.fw.nope{ background:#ffe1e6; }
+.fly-balloon{ pointer-events:none; }
+.meadow{ position:relative; height:280px; margin-top:8px; border-radius:18px; overflow:hidden;
+  background:radial-gradient(120% 80% at 50% 110%, #7ee8a4 0%, #3dbb72 35%, transparent 36%), linear-gradient(180deg,#bfe8ff,#e9f8ff 70%); }
+.bug{ position:absolute; left:0; top:0; width:56px; height:56px; padding:0; background:none; will-change:transform; }
+.bug .body{ position:absolute; inset:6px 4px 4px; display:grid; place-items:center; clip-path:var(--hexclip);
+  background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); font:900 24px/1 var(--font-head); color:var(--ink); }
+.bug .wing{ position:absolute; top:0; width:22px; height:16px; border-radius:50%; background:rgba(255,255,255,.85); border:2px solid rgba(37,26,74,.25);
+  animation:flap .18s ease-in-out infinite alternate; }
+.bug .wing.l{ left:4px; transform-origin:right bottom; } .bug .wing.r{ right:4px; transform-origin:left bottom; }
+@keyframes flap{ to{ transform:rotate(-25deg) scaleY(.7); } }
+.bug .wing.r{ animation-direction:alternate-reverse; }
+.bug.hint .body{ background:linear-gradient(160deg,#fff,#ffe39a); box-shadow:none; animation:hxGlow 1s ease-in-out infinite; }
+.bug.hint{ filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 16px #ffc93c); }
+@media (prefers-reduced-motion:reduce){ .bug .wing{ animation:none; } }
+
+/* Boss Battle: Tile Monster Chase (29 Sep 2026) */
+.boss.run{ padding-top:10px!important; }
+.shields img.ic{ width:28px; height:28px; }
+.bosshp{ display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-size:13px; }
+.bosshp .hp{ width:96px; height:10px; }
+.runway{ position:relative; height:330px; margin-top:6px; border-radius:18px; overflow:hidden; outline:none; touch-action:none;
+  background:repeating-linear-gradient(180deg, rgba(255,255,255,.08) 0 18px, transparent 18px 60px), linear-gradient(180deg,#3b1f7a,#1d1147);
+  background-size:100% 60px, 100% 100%; animation:road .5s linear infinite; }
+@keyframes road{ to{ background-position:0 60px, 0 0; } }
+.runway .lane{ position:absolute; top:0; bottom:0; width:33.33%; border-right:2px dashed rgba(255,255,255,.18); }
+.runway .l0{ left:0; } .runway .l1{ left:33.33%; } .runway .l2{ left:66.66%; border-right:0; }
+.runway .runner{ position:absolute; left:0; top:56%; width:68px; height:auto; z-index:3; filter:drop-shadow(0 8px 10px rgba(0,0,0,.4));
+  animation:runBob .35s ease-in-out infinite alternate; }
+@keyframes runBob{ to{ margin-top:-6px; } }
+.runway .chaser{ position:absolute; left:0; top:0; width:90px; height:auto; z-index:2; transition:transform .1s linear; }
+.runway .chaser.lunge{ animation:lunge .5s ease; }
+@keyframes lunge{ 40%{ margin-top:-40px; transform:scale(1.2); } }
+.runway .chaser.hit{ animation:monHit .5s ease; }
+.runway .tok{ position:absolute; left:0; top:0; width:48px; height:54px; display:grid; place-items:center; clip-path:var(--hexclip);
+  background:linear-gradient(160deg,#f7f1ff,#d8c1ff); font:900 26px/1 var(--font-head); color:var(--ink); z-index:1; }
+.runway .tok.need{ background:linear-gradient(160deg,#fff,#ffe39a); box-shadow:none; filter:drop-shadow(0 0 10px #ffc93c); }
+.runway .tok.grab{ background:linear-gradient(160deg,#ffe08a,#ffb31a); transform:scale(1.3)!important; opacity:0; transition:opacity .25s, transform .25s; }
+.runway .tok.bad{ background:#ff9d9d; }
+.runway .tok.fade{ opacity:0; transition:opacity .3s; }
+.runway .blast{ position:absolute; width:40px; height:40px; z-index:4; }
+.runway.shake{ animation:road .5s linear infinite, shake .4s ease; }
+.run-help{ margin:6px 0 0!important; font-size:14px; }
+@media (prefers-reduced-motion:reduce){ .runway,.runway .runner{ animation:none; } }
+
+/* Sunday: the Champion Hive and certificate (29 Sep 2026) */
+.champ-hive{ display:flex; flex-wrap:wrap; justify-content:center; gap:3px 4px; margin:8px 0 2px; }
+.champ-hive i{ position:relative; width:25px; height:29px; clip-path:var(--hexclip); background:#e6e0f7; display:block; }
+.champ-hive i:nth-child(even){ transform:translateY(8px); }
+.champ-hive i.on{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
+.champ-hive i.on.pop{ animation:hxPop .4s ease; }
+.champ-hive i.miss{ background:#d8c1ff; }
+.champ-hive i.now{ background:transparent; clip-path:none; width:30px; }
+.champ-hive i.now img{ position:absolute; left:-8px; top:-10px; width:44px; height:auto; animation:scoutBob 1.6s ease-in-out infinite; }
+.champ-hive{ margin-bottom:10px!important; }
+.certificate{ border:4px solid var(--gold); background:radial-gradient(120% 60% at 50% 0%,#fff8dc,#fff 60%); }
+.cert-words{ display:flex; flex-wrap:wrap; justify-content:center; }
 /* Monday's Find it! game */
 .findgrid{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
 .fw{ font:900 22px/1 var(--font-head); color:var(--ink); padding:18px 28px; min-height:60px;
@@ -3004,6 +3107,10 @@ const UI_ICONS = {
   '⭐':'star|star', '🔥':'flame|streak', '🍯':'honey-drop|honey', '🏠':'home|home',
   '🔄':'switch-kid|switch child', '✖':'close|close', '🔊':'speaker|hear it', '🎤':'mic|microphone',
   '🔁':'again|again', '💡':'tip|tip',
+  // batch 3 and the three re-uploads (29 Sep 2026)
+  '☆':'star-empty|star to win', '⬅':'back|back', '🐢':'slow|slowly', '🛡':'shield|shield', '🏆':'trophy|trophy',
+  '⚡':'speed|speed', '✏':'pencil|pencil', '✍':'pencil|write', '👀':'look|look', '✅':'check|done', '🎈':'balloon|balloon',
+  '🧺':'basket|basket', '✨':'sparkle|sparkle', '🎉':'party|hooray', '👍':'thumbs-up|thumbs up',
 };
 const UI_ICON_RE = new RegExp('(' + Object.keys(UI_ICONS).join('|') + ')️?', 'g');
 function uiIcon(ch){
@@ -3253,6 +3360,7 @@ function go(v, arg){ releaseKeys(); stopSpeech(); VIEW = v; render(arg); window.
 function render(arg){
   const a = app();
   a.innerHTML = '';
+  document.body.dataset.view = VIEW;       // lets the sprint screens use a tighter layout
   if (VIEW === 'gate')     return renderGate(a);
   if (VIEW === 'pick')     return renderPick(a);
   if (VIEW === 'modes')    return renderModes(a);
@@ -3747,7 +3855,7 @@ function topbar(a, opts){
    into each other (seven cells make 2 · 3 · 2). */
 function hiveRows(g){
   const cells = [...g.children];
-  g.className = 'hmap';
+  g.classList.remove('daygrid'); g.classList.add('hmap');
   g.innerHTML = '';
   let i = 0, size = cells.length <= 3 ? cells.length : 2;
   while (i < cells.length){
@@ -5134,8 +5242,14 @@ function ppuItems(pool, missedWords){
   const byWord = {};
   pool.forEach(w => { byWord[w.word] = w; });
   const picked = missedWords.slice(0, want).map(w => byWord[w] || { word:w, patternId:null });
-  if (!picked.length)
-    return shuffle(pool).slice(0, want).map(w => ({ word:w.word, patternId:w.patternId }));
+  if (!picked.length){
+    /* No misses: take the words written least this week, so a perfect week
+       works through the whole list instead of repeating the same few. */
+    const seen = {};
+    try{ const wr = prog().write || {}; Object.keys(wr).forEach(k => (wr[k].words || []).forEach(x => seen[x] = (seen[x] || 0) + 1)); }catch(e){}
+    return shuffle(pool).sort((x, y) => (seen[x.word] || 0) - (seen[y.word] || 0))
+      .slice(0, want).map(w => ({ word:w.word, patternId:w.patternId }));
+  }
   return picked.map(w => ({ word:w.word, patternId:w.patternId }));
 }
 
@@ -5282,7 +5396,15 @@ function typingRound(host, opts){
         if (state === 'good') cls += ' good';
         if (state === 'bad')  cls += ' bad';
       }
-      boxes.appendChild(el('<div class="'+cls+'">'+(ch?esc(ch):'')+'</div>'));
+      const bx = el('<div class="'+cls+'">'+(ch?esc(ch):'')+'</div>');
+      /* Tap a letter you typed to take it back (29 Sep 2026: Kathryn's younger
+         son reached for the wrong letter with his finger, not for Delete). */
+      if (isBlank && filled[i] && !state && !locked){
+        bx.style.cursor = 'pointer';
+        bx.title = 'Tap to take this letter back';
+        bx.onclick = () => { if (locked) return; sfx('pop'); delete filled[i]; draw(); };
+      }
+      boxes.appendChild(bx);
     }
   }
 
@@ -5954,6 +6076,24 @@ function actThursday(a, d){
   for (let j = 0; j < right; j++) jar.add();
   resumeToast(plan);
 
+  function howTo(){
+    host.innerHTML = '';
+    const c = el('<div class="card center spotlight howto">'+
+      '<div class="stage-top"><img src="'+SCOUT_IMG('pointing')+'" alt="" width="90" height="90"><div class="stage-lights" aria-hidden="true">✨ 🎤 ✨</div></div>'+
+      '<h2 style="margin:4px 0 8px">How to play</h2>'+
+      '<ol class="steps-mini">'+
+        '<li><b>Listen.</b> Scout says a word. Tap 🔊 to hear it again.</li>'+
+        '<li><b>Spell it</b> from memory. Tap the letters or type them.</li>'+
+        '<li><b>Oops?</b> Tap a letter to take it back.</li>'+
+        '<li><b>Get it right</b> and the crowd goes wild!</li>'+
+      '</ol>'+
+      '<button class="btn big green" id="go">🎤 I\'m ready!</button></div>');
+    host.appendChild(c);
+    say(scoutMood() === 'quiet' ? 'Listen, then spell each word from memory. Tap a letter to take it back.'
+      : 'Here\'s how we play! I say a word, and you spell it from memory. Tap the letters or type them. Oops? Just tap a letter to take it back. Ready?');
+    c.querySelector('#go').onclick = () => { sfx('tap'); stopSpeech(); next(); };
+  }
+
   function next(){
     if (i >= words.length){ resumeClear('thu'); return finishScreen(d, right, words.length); }
     const w = words[i];
@@ -5982,7 +6122,7 @@ function actThursday(a, d){
         resumeSave('thu', words.map(x => x.word), i, {right}); next(); }
     });
   }
-  next();
+  if (i === 0) howTo(); else next();
 }
 
 /* ============================================================
@@ -5995,26 +6135,31 @@ function actFriday(a, d){
   function menu(){
     host.innerHTML = '';
     const played = Object.keys(p.games).length;
-    const c = el('<div class="card center">'+
-      '<img src="../img/sprint-5.webp" alt="" width="96" height="96" style="width:96px;height:auto">'+
-      '<h2>Arcade</h2>'+
-      '<p class="muted">Play any three games to finish this sprint! ('+Math.min(played,3)+'/3)</p></div>');
-    host.appendChild(c);
+    /* the arcade as a little hive, like the map (29 Sep 2026) */
+    host.appendChild(el('<div class="arcade-head center">'+
+      '<p class="white" style="margin:0 0 6px;font-weight:800;font-size:17px">Play any <b>three</b> games to finish the Arcade!</p>'+
+      '<div class="pips">'+[0,1,2].map(k => '<i class="'+(k < played ? 'on' : '')+'"></i>').join('')+'</div></div>'));
     const games = [
-      { id:'pop',  em:'🎈', n:'Balloon Pop',    s:'Pop the balloon that\'s spelled right', cls:'pink',  fn:gamePop },
-      { id:'cat',  em:'🧺', n:'Letter Catcher', s:'Catch the letters in order',           cls:'green', fn:gameCatch },
-      { id:'scr',  em:'🐝', n:'Hive Scramble',  s:'Put the honeycomb letters in order',   cls:'blue',  fn:gameScramble },
-      { id:'spd',  em:'⚡', n:'Speed Match',    s:'Beat the clock',                       cls:'orange',fn:gameSpeed },
+      { id:'pop', ic:'../img/ui/icon-balloon.webp', n:'Balloon Pop',    s:'Pop the right spelling',  fn:gamePop },
+      { id:'cat', ic:'../img/ui/icon-basket.webp',  n:'Letter Catcher', s:'Catch letters in order',  fn:gameCatch },
+      { id:'scr', ic:SCOUT_IMG('cheering'),         n:'Bee Chase',      s:'Catch the buzzing letters', fn:gameScramble },
+      { id:'spd', ic:'../img/ui/icon-speed.webp',   n:'Speed Match',    s:'Beat the clock',          fn:gameSpeed },
     ];
-    games.forEach(g => {
-      const b = el('<button class="btn big '+g.cls+'" style="margin-bottom:10px;justify-content:flex-start;text-align:left">'+
-        '<span style="font-size:30px">'+g.em+'</span><span><b>'+g.n+'</b>'+
-        '<div style="font-size:14px;line-height:20px;font-weight:500;opacity:.9">'+g.s+(p.games[g.id]?' · ✅ best '+p.games[g.id]:'')+'</div></span></button>');
-      b.onclick = () => g.fn(g.id);
-      host.appendChild(b);
+    const g = el('<div class="daygrid arcade-hive"></div>');
+    games.forEach((gm, k) => {
+      const best = p.games[gm.id];
+      const b = el('<button class="hcell '+(best ? 'done' : (k % 2 ? 'lilac' : 'cream'))+'" aria-label="'+gm.n+'">'+
+        '<span class="rim" aria-hidden="true"></span><span class="in" aria-hidden="true">'+
+          (best ? '<span class="got">✓</span>' : '')+
+          '<img class="sprint-ico" src="'+gm.ic+'" alt="" width="46" height="46">'+
+          '<b>'+gm.n+'</b><span class="n'+(best ? '' : ' sub')+'">'+(best ? '⭐ Best '+best : gm.s)+'</span></span></button>');
+      b.onclick = () => { sfx('tap'); gm.fn(gm.id); };
+      g.appendChild(b);
     });
+    host.appendChild(g);
+    hiveRows(g);
     if (played >= 3){
-      const f = el('<button class="btn big green">🏁 Finish the Arcade</button>');
+      const f = el('<button class="btn big green" style="margin-top:6px">🏁 Finish the Arcade</button>');
       f.onclick = () => { award('arcade'); finishScreen(d, 3, 3); };
       host.appendChild(f);
     }
@@ -6035,7 +6180,64 @@ function actFriday(a, d){
     pp.addEventListener('click', e => { if (e.target.dataset.close !== undefined) menu(); });
   }
 
-  /* --- Balloon Pop --- */
+  /* --- Balloon Pop ---
+     29 Sep 2026: the right balloon leaves the screen a different way each time:
+     it explodes, zips around deflating, escapes up and away, spins off, bursts
+     into confetti, or bursts into honey. */
+  const BALLOON_EXITS = ['explode','deflate','escape','spin','confetti','honey'];
+  let lastExit = '';
+  function balloonExit(b){
+    const kind = pickOne(BALLOON_EXITS.filter(k => k !== lastExit)); lastExit = kind;
+    const r = b.getBoundingClientRect();
+    const clone = b.cloneNode(true);
+    clone.classList.add('fly-balloon');
+    Object.assign(clone.style, { position:'fixed', left:r.left+'px', top:r.top+'px', width:r.width+'px', height:r.height+'px', margin:0, zIndex:10003, animation:'none' });
+    document.body.appendChild(clone);
+    b.style.visibility = 'hidden';
+    const cx = r.left + r.width/2, cy = r.top + r.height/2, W = innerWidth, H = innerHeight;
+    const end = () => clone.remove();
+    const colors = ['#ff7eb3','#ffc93c','#5ec9ff','#a855f7','#7ee8a4'];
+    const bits = (pieces, n, spread) => {
+      for (let k = 0; k < n; k++){
+        const p = el('<span class="pp">'+pieces[k % pieces.length]+'</span>');
+        const sz = 12 + Math.random() * 16;
+        Object.assign(p.style, { position:'fixed', left:'0', top:'0', width:sz+'px', height:sz+'px', fontSize:sz+'px', zIndex:10003, pointerEvents:'none' });
+        document.body.appendChild(p);
+        const ang = Math.random() * Math.PI * 2, dist = spread * (.4 + Math.random());
+        p.animate([{ transform:'translate('+cx+'px,'+cy+'px) scale(.4)', opacity:1 },
+                   { transform:'translate('+(cx + Math.cos(ang)*dist)+'px,'+(cy + Math.sin(ang)*dist + 40)+'px) rotate('+(Math.random()*540)+'deg) scale(1)', opacity:0 }],
+                  { duration:700 + Math.random()*500, easing:'cubic-bezier(.1,.8,.3,1)' }).onfinish = () => p.remove();
+      }
+    };
+    if (kind === 'explode'){
+      sfx('pop');
+      clone.animate([{ transform:'scale(1)' }, { transform:'scale(1.35)', offset:.6 }, { transform:'scale(1.6)', opacity:0 }], { duration:260 }).onfinish = end;
+      bits(colors.map(c => '<i style="display:block;width:100%;height:100%;border-radius:40% 60% 50% 50%;background:'+c+'"></i>'), 18, 160);
+    } else if (kind === 'deflate'){
+      sfx('pop');
+      const pts = [[0,0,0,1]]; let x = 0, y = 0;
+      for (let k = 1; k <= 9; k++){ x += (Math.random()-.5) * W * .5; y += (Math.random()-.6) * H * .25; pts.push([x, y, k * 70 * (k % 2 ? 1 : -1), 1 - k * .08]); }
+      pts.push([x + (x > 0 ? W : -W), y - H * .3, 900, .25]);
+      clone.animate(pts.map(q => ({ transform:'translate('+q[0]+'px,'+q[1]+'px) rotate('+q[2]+'deg) scale('+q[3]+')' })), { duration:1600, easing:'linear' }).onfinish = end;
+    } else if (kind === 'escape'){
+      clone.animate([{ transform:'translate(0,0) rotate(0)' }, { transform:'translate(-18px,-'+(H*.3)+'px) rotate(-8deg)', offset:.35 },
+                     { transform:'translate(20px,-'+(H*.65)+'px) rotate(8deg)', offset:.7 }, { transform:'translate(-10px,-'+(H+200)+'px) rotate(-4deg)' }],
+                    { duration:1500, easing:'ease-in' }).onfinish = end;
+    } else if (kind === 'spin'){
+      const dir = cx < W/2 ? -1 : 1;
+      clone.animate([{ transform:'translate(0,0) rotate(0) scale(1)' }, { transform:'translate('+(dir*(W*.6))+'px,-'+(H*.2)+'px) rotate('+(dir*720)+'deg) scale(.4)', opacity:.2 }],
+                    { duration:1100, easing:'cubic-bezier(.4,0,.8,.6)' }).onfinish = end;
+    } else if (kind === 'confetti'){
+      sfx('pop');
+      clone.animate([{ transform:'scale(1)' }, { transform:'scale(1.25)', opacity:0 }], { duration:200 }).onfinish = end;
+      bits(colors.map(c => '<i style="display:block;width:60%;height:100%;border-radius:3px;background:'+c+'"></i>'), 28, 220);
+    } else {
+      sfx('pop');
+      clone.animate([{ transform:'scale(1)' }, { transform:'scale(1.3)', opacity:0 }], { duration:220 }).onfinish = end;
+      bits(['<img src="../img/ui/icon-honey-drop.webp" alt="" style="width:100%;height:100%">','🌼','<i class="hexp g" style="display:block;width:100%;height:100%;clip-path:var(--hexclip);background:linear-gradient(160deg,#ffe08a,#ffb31a)"></i>'], 16, 170);
+    }
+    setTimeout(end, 2200);
+  }
   function gamePop(id){
     const words = shuffle(WEEK.allWords);
     let i = 0, score = 0;
@@ -6046,22 +6248,23 @@ function actFriday(a, d){
       const wrongs = shuffle(misspell(w.word, w.patternId)).slice(0,2);
       const opts = shuffle([w.word].concat(wrongs.length ? wrongs : [w.word.split('').reverse().join('')]));
       host.innerHTML = '';
-      const c = el('<div class="card center">'+
-        '<div class="muted">🎈 '+(i+1)+' of '+words.length+' · '+score+' points</div>'+
-        '<div class="speaker" id="sp" style="margin-top:12px">🔊</div>'+
-        '<p style="font-weight:800;font-size:18px;margin-top:14px">Pop the balloon that\'s spelled right!</p>'+
-        '<div id="ops" style="margin-top:8px"></div></div>');
+      const c = el('<div class="card center game-card">'+
+        '<div class="game-top"><span class="muted">🎈 '+(i+1)+' of '+words.length+'</span>'+
+          '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
+          '<span class="score-pill">'+score+' pts</span></div>'+
+        '<p class="game-say">Pop the balloon that\'s spelled right!</p>'+
+        '<div id="ops"></div></div>');
       host.appendChild(c);
       c.querySelector('#sp').onclick = () => sayWord(w.word);
-      setTimeout(()=>sayWord(w.word), 300);
+      sayWord(w.word);
       const ops = c.querySelector('#ops');
       ops.className = 'balloons';
       opts.forEach((o, k) => {
         const b = el('<button class="balloon bl'+(k%3)+'" style="animation-delay:-'+(k*0.7)+'s"><span>'+esc(o)+'</span></button>');
         b.dataset.w = o;
         b.onclick = () => {
-          if (o === w.word){ score += 10; wordStat(w.word).r++; b.classList.add('popped');
-                 sfx('pop'); setTimeout(()=>sfx('great'), 90); setTimeout(()=>sayWord(w.word), 320);
+          if (o === w.word){ score += 10; wordStat(w.word).r++; balloonExit(b);
+                 setTimeout(()=>sfx('great'), 120); sayWord(w.word);
                  scoutPop('cheering', cheer(), 1600); }
           else { wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.classList.add('miss'); scoutPop('thinking', encourage(), 3000);
                  Array.from(ops.children).forEach(x => { if (x.dataset.w === w.word) x.classList.add('right'); }); }
@@ -6134,76 +6337,85 @@ function actFriday(a, d){
     }
   }
 
-  /* --- Scramble --- */
+  /* --- Bee Chase (29 Sep 2026; was Hive Scramble) ---
+     Kathryn: the Arcade needs Hive Scramble to feel like a real game. The
+     word's letters are little bees buzzing round a meadow. Scout says the
+     word; catch the bees in spelling order and each one flies into its
+     honeycomb cell. A wrong bee buzzes off faster. K–2: slower bees, and the
+     bee you need glows after two wrong tries. Typing works too. */
   function gameScramble(id){
-    const words = shuffle(WEEK.allWords);
+    const words = shuffle(WEEK.allWords).slice(0, Math.min(8, WEEK.allWords.length));
+    const hard = isHard();
     let i = 0, score = 0;
     step();
     function step(){
       if (i >= words.length) return record(id, score);
-      const w = words[i].word;
-      let letters = shuffle(w.split(''));
-      if (letters.join('') === w) letters = letters.reverse();
-      const picked = [];
+      const w = words[i].word.toLowerCase();
+      let pos = 0, misses = 0, done = false;
       host.innerHTML = '';
-      const c = el('<div class="card center hexy hive-build">'+
-        '<div class="muted">🐝 '+(i+1)+' of '+words.length+' · '+score+' points</div>'+
-        '<p style="font-weight:800;font-size:18px;margin-top:10px">Tap the letters in the right order — or type them</p>'+
-        '<div class="row" style="justify-content:center;margin:8px 0"><button class="btn grey" id="h">🔊 Hear it</button>'+
-        '<button class="btn grey" id="u">↩️ Undo</button></div>'+
-        '<div class="boxes" id="ans"></div><div class="tray" id="tr"></div></div>');
+      const c = el('<div class="card center game-card">'+
+        '<div class="game-top"><span class="muted">🐝 '+(i+1)+' of '+words.length+'</span>'+
+          '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
+          '<span class="score-pill">'+score+' pts</span></div>'+
+        '<p class="game-say">Catch the bees in spelling order!</p>'+
+        '<div class="hexy"><div class="boxes" id="got"></div></div>'+
+        '<div class="meadow" id="md"></div></div>');
       host.appendChild(c);
-      c.querySelector('#h').onclick = () => sayWord(w);
-      c.querySelector('#u').onclick = () => { picked.pop(); draw(); };
-      /* Same deal as Sound & Build: type or tap, and a typed letter that is not
-         in the tray is refused the same way a wrong tap would be. */
-      claimKeys(ch => {
-        if (picked.length >= w.length) return;
-        const li = letters.findIndex((c2, ix) => c2 === ch && !picked.some(p2 => p2.li === ix));
-        if (li < 0){ sfx('wrong'); return; }
-        sfx('key'); picked.push({ li, c:letters[li] }); draw();
-        if (picked.length === w.length) setTimeout(check, 220);
-      }, () => { if (picked.length){ sfx('key'); picked.pop(); draw(); } });
-      setTimeout(()=>sayWord(w), 300);
-      const ans = c.querySelector('#ans'), tr = c.querySelector('#tr');
-      function draw(state){
-        ans.innerHTML = '';
-        for (let j=0;j<w.length;j++){
-          const v = picked[j];
-          const bx = el('<div class="lbox blank'+(state||'')+'">'+(v?esc(v.c):'')+'</div>');
-          /* Same tap-to-return as Sound & Build — it applies everywhere letters
-             are placed, not only on the screen he happened to be using. */
-          if (v && !state){
-            bx.style.cursor = 'pointer';
-            bx.title = 'Tap to put this letter back';
-            bx.onclick = () => {
-              const at = picked.indexOf(v);
-              if (at < 0) return;
-              sfx('key');
-              picked.splice(at, 1);
-              draw();
-            };
+      c.querySelector('#sp').onclick = () => sayWord(w);
+      sayWord(w);
+      const got = c.querySelector('#got'), md = c.querySelector('#md');
+      const drawGot = () => { got.innerHTML = w.split('').map((ch, k) =>
+        '<div class="lbox'+(k < pos ? '' : ' blank')+(k === pos ? ' cur' : '')+'">'+(k < pos ? esc(ch) : '')+'</div>').join(''); };
+      drawGot();
+      // a couple of extra "decoy" bees on longer lists keep it lively
+      const decoys = 'aeiourstlnmdcbp'.split('').filter(x => w.indexOf(x) < 0);
+      const letters = w.split('').concat(shuffle(decoys).slice(0, hard ? 3 : 1));
+      const W = md.clientWidth || 320, H = md.clientHeight || 260, sp = hard ? 1.6 : 0.9;
+      const bees = letters.map(ch => {
+        const b = el('<button class="bug"><span class="wing l"></span><span class="wing r"></span><span class="body">'+esc(ch)+'</span></button>');
+        const bee = { ch, el:b, x: Math.random() * (W - 56), y: Math.random() * (H - 56), vx:(Math.random()-.5) * 2 * sp, vy:(Math.random()-.5) * 2 * sp, boost:0, gone:false };
+        b.onclick = () => tap(bee);
+        md.appendChild(b);
+        return bee;
+      });
+      function tap(bee){
+        if (done || bee.gone) return;
+        if (bee.ch === w[pos]){
+          bee.gone = true; sfx('pop');
+          const box = got.children[pos], br = box.getBoundingClientRect(), er = bee.el.getBoundingClientRect();
+          bee.el.animate([{ transform:bee.el.style.transform }, { transform:'translate('+(bee.x + br.left - er.left)+'px,'+(bee.y + br.top - er.top)+'px) scale(.6)' }],
+                         { duration:350, easing:'ease-in' }).onfinish = () => bee.el.remove();
+          pos++; setTimeout(drawGot, 300);
+          if (pos >= w.length){
+            done = true; score += misses === 0 ? 15 : 10;
+            if (misses < 3) wordStat(w).r++; save();
+            setTimeout(() => { sfx('great'); sayWord(w); scoutPop('cheering', cheer(), 1800); celebrate('small', got); }, 380);
+            i++; setTimeout(step, 1900);
           }
-          ans.appendChild(bx);
+        } else {
+          misses++; sfx('tap'); wiggle(bee.el);
+          bee.vx *= -1; bee.vy *= -1; bee.boost = 45;       // buzzes off!
+          if (misses === 3){ wordStat(w).x++; noteMiss(w); save(); }
+          if (misses >= 2) bees.forEach(o => o.el.classList.toggle('hint', !o.gone && o.ch === w[pos]));
         }
-        tr.innerHTML = '';
-        letters.forEach((c2, li) => {
-          const used = picked.some(p2 => p2.li === li);
-          const b = el('<button class="chunk'+(used?' used':'')+'">'+esc(c2)+'</button>');
-          b.onclick = () => { if (picked.length >= w.length) return; sfx('key'); picked.push({li,c:c2}); draw();
-            if (picked.length === w.length) setTimeout(check, 220); };
-          tr.appendChild(b);
+      }
+      claimKeys(ch => { const b = bees.find(o => !o.gone && o.ch === ch && ch === w[pos]) || bees.find(o => !o.gone && o.ch === ch); if (b) tap(b); else sfx('wrong'); }, () => {});
+      const tick = () => {
+        if (!document.body.contains(md)) return;
+        bees.forEach(o => {
+          if (o.gone) return;
+          const m = o.boost > 0 ? 3 : 1; if (o.boost > 0) o.boost--;
+          o.vx += (Math.random()-.5) * .25 * sp; o.vy += (Math.random()-.5) * .25 * sp;
+          const v = Math.hypot(o.vx, o.vy), mx = 2.2 * sp; if (v > mx){ o.vx *= mx / v; o.vy *= mx / v; }
+          o.x += o.vx * m; o.y += o.vy * m;
+          if (o.x < 0 || o.x > W - 56){ o.vx *= -1; o.x = Math.max(0, Math.min(W - 56, o.x)); }
+          if (o.y < 0 || o.y > H - 56){ o.vy *= -1; o.y = Math.max(0, Math.min(H - 56, o.y)); }
+          o.el.style.transform = 'translate('+o.x+'px,'+o.y+'px) rotate('+(o.vx * 6)+'deg)';
         });
-      }
-      function check(){
-        const made = picked.map(p2=>p2.c).join('');
-        if (made === w){ score += 10; wordStat(w).r++; save(); draw(' good'); sfx('great');
-          sayWord(w); scoutPop('cheering', cheer(), 2000);
-          i++; setTimeout(step, 1600); }
-        else { wordStat(w).x++; noteMiss(w); save(); draw(' bad'); sfx('wrong'); scoutPop('thinking', encourage(), 3000);
-          setTimeout(()=>{ picked.length = 0; draw(); }, 900); }
-      }
-      draw();
+        requestAnimationFrame(tick);
+      };
+      tick();
+      if (!hard) setTimeout(() => { if (!done && pos === 0) bees.forEach(o => o.el.classList.toggle('hint', !o.gone && o.ch === w[pos])); }, 6000);
     }
   }
 
@@ -6228,15 +6440,15 @@ function actFriday(a, d){
     const all = WEEK.allWords;
     let queue = shuffle(all.slice()), qi = 0, cleared = 0;
     host.innerHTML = '';
-    const c = el('<div class="card center">'+
-      '<div class="muted">⚡ Speed Match</div>'+
-      '<div style="font-size:34px;font-weight:800" id="clk">45</div>'+
-      '<div class="muted">Score: <b id="sc">0</b></div>'+
-      '<div class="speaker" id="sp" style="margin-top:10px">🔊</div>'+
-      '<p style="font-weight:800;margin-top:12px">Which word did you hear?</p>'+
-      '<div id="ops"></div></div>');
+    const c = el('<div class="card center game-card">'+
+      '<div class="game-top"><span class="clock-pill">⚡ <b id="clk">45</b>s</span>'+
+        '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
+        '<span class="score-pill"><b id="sc">0</b> pts</span></div>'+
+      '<p class="game-say">Which word did you hear?</p>'+
+      '<div id="ops" class="speed-ops"></div></div>');
     host.appendChild(c);
     timer = setInterval(() => {
+      if (!document.body.contains(c)){ clearInterval(timer); timer = null; return; }   // they left the game
       left--; c.querySelector('#clk').textContent = left;
       if (left > 0 && left <= 5) sfx('tick');
       if (left <= 0){ clearInterval(timer); sfx('win'); record(id, score); }
@@ -6259,10 +6471,10 @@ function actFriday(a, d){
       sayWord(w.word);
       const ops = c.querySelector('#ops'); ops.innerHTML = '';
       opts.forEach(o => {
-        const b = el('<button class="btn big blue" style="margin-bottom:8px">'+esc(o)+'</button>');
+        const b = el('<button class="fw">'+esc(o)+'</button>');
         b.onclick = () => {
-          if (o === w.word){ score += 5; wordStat(w.word).r++; sfx('good'); b.className = 'btn big green'; }
-          else { score = Math.max(0, score-2); wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.className = 'btn big revisit'; scoutPop('thinking', encourage(), 3000); }
+          if (o === w.word){ score += 5; wordStat(w.word).r++; sfx('good'); b.classList.add('got'); }
+          else { score = Math.max(0, score-2); wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.classList.add('nope'); scoutPop('thinking', encourage(), 3000); }
           save();
           c.querySelector('#sc').textContent = score;
           ops.querySelectorAll('button').forEach(x=>x.disabled=true);
@@ -6303,42 +6515,170 @@ function actSaturday(a, d){
       '<p class="muted">'+(fromTricky
         ? 'The Tile Monster grabbed the words that tricked us this week. Let\'s win them back together!'
         : 'No tricky words yet, so the Tile Monster brought a surprise round!')+'</p>'+
-      '<div style="margin:14px 0">'+pile.map(w=>'<span class="wordchip">'+esc(w.word)+'</span>').join('')+'</div>'+
-      '<p style="font-weight:800">🛡️🛡️🛡️ We get 3 shields</p>'+
+      '<div style="margin:10px 0">'+pile.map(w=>'<span class="wordchip">'+esc(w.word)+'</span>').join('')+'</div>'+
+      '<ol class="steps-mini"><li><b>Run!</b> The Tile Monster is chasing us.</li>'+
+        '<li>Scout says a word. Steer into the lane with the <b>next letter</b>.</li>'+
+        '<li>Spell the whole word to throw a <b>honey blast</b>!</li>'+
+        '<li>Wrong letter? The monster gets closer. We have 3 shields.</li></ol>'+
       '<button class="btn big red" id="go">⚔️ Let\'s go!</button></div>');
-    c.querySelector('#go').onclick = () => { sfx('tap'); round(); };
+    say(scoutMood() === 'quiet' ? 'Steer into the lane with the next letter. Spell the word to hit the monster.'
+      : 'The Tile Monster is chasing us! I say a word, and you steer me into the lane with the next letter. Spell the whole word to throw a honey blast! Ready?');
+    c.querySelector('#go').onclick = () => { sfx('tap'); stopSpeech(); round(); };
     host.appendChild(c);
   }
 
+  /* Tile Monster Chase (29 Sep 2026). Kathryn: "this should 1,000% seem like a
+     video game." Scout runs up a three-lane road with the Tile Monster
+     chasing behind. Letters rush down the lanes; steer into the lane with the
+     NEXT letter of the word (arrow keys, swipe, or tap a lane). Finish the
+     word and Scout turns round and hits the monster with a honey blast. Grab
+     a wrong letter and the monster lunges: one shield gone. K–2 run slower
+     and the letter they need glows. */
   function round(){
     if (hearts <= 0) return lose();
     if (i >= pile.length) return win();
-    const w = pile[i];
+    const w = pile[i], word = w.word.toLowerCase();
+    const hard = isHard();
+    let pos = 0, lane = 1, wrongs = 0, over = false;
     host.innerHTML = '';
     const hp = Math.round(100 * (pile.length - i) / pile.length);
-    const c = el('<div class="card center boss hexy">'+
-      '<div class="arena"><img class="monster" id="mon" src="../img/sprint-6.webp" alt="the Tile Monster" width="110" height="110">'+
-        '<div class="hp"><i style="width:'+hp+'%"></i></div></div>'+
-      '<div style="font-size:24px">'+'🛡️'.repeat(hearts)+'<span style="opacity:.2">'+'🛡️'.repeat(3-hearts)+'</span></div>'+
-      '<div class="muted">Boss word '+(i+1)+' of '+pile.length+'</div>'+
-      '<div class="speaker" id="sp" style="margin-top:12px">🔊</div>'+
-      '<p style="font-weight:800;font-size:18px;margin-top:12px">Spell it to land a hit!</p>'+
-      '<div class="row" style="justify-content:center;margin:8px 0"><button class="btn grey" id="sl">🐢 Slower</button></div>'+
-      '</div>');
+    const shield = k => '<img class="ic" src="../img/ui/icon-shield'+(k < hearts ? '' : '-empty')+'.webp" alt="'+(k < hearts ? 'shield' : 'lost shield')+'">';
+    const c = el('<div class="card center boss run">'+
+      '<div class="game-top"><span class="shields">'+[0,1,2].map(shield).join('')+'</span>'+
+        '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
+        '<span class="bosshp"><span class="muted">Monster</span><span class="hp"><i style="width:'+hp+'%"></i></span></span></div>'+
+      '<div class="hexy"><div class="boxes" id="got"></div></div>'+
+      '<div class="runway" id="rw" tabindex="0" aria-label="Run! Steer Scout left and right to grab the next letter">'+
+        '<div class="lane l0"></div><div class="lane l1"></div><div class="lane l2"></div>'+
+        '<img class="runner" id="me" src="'+SCOUT_IMG('pointing')+'" alt="Scout">'+
+        '<img class="chaser" id="mon" src="../img/sprint-6.webp" alt="the Tile Monster">'+
+      '</div>'+
+      '<p class="muted run-help">⬅️ ➡️ Swipe, tap a lane, or use the arrow keys. Grab the <b>next letter</b>!</p>'+
+    '</div>');
     host.appendChild(c);
-    c.querySelector('#sp').onclick = () => sayWord(w.word);
-    c.querySelector('#sl').onclick = () => sayWord(w.word,{rate:.45});
-    setTimeout(()=>sayWord(w.word), 300);
-    typingRound(c, {
-      word:w.word, patternId:w.patternId, blanks:null,
-      onDone: ok => {
-        const mon = c.querySelector('#mon');
-        if (ok){ beaten++; beatenWords.add(w.word); sfx('great'); if (mon){ mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit'); }
-                 const bar = c.querySelector('.hp i'); if (bar) bar.style.width = Math.round(100 * (pile.length - i - 1) / pile.length) + '%';
-                 scoutPop('cheering', pickOne(['Honey blast! 💥','Direct hit!','We got that one!']), 2000); }
-        else { hearts--; sfx('hurt'); scoutPop('thinking', 'The word dodged us this round. Now we know its move!', 2800); }
-        i++; setTimeout(round, 1300);
+    const rw = c.querySelector('#rw'), me = c.querySelector('#me'), mon = c.querySelector('#mon'), got = c.querySelector('#got');
+    c.querySelector('#sp').onclick = () => sayWord(word);
+    sayWord(word);
+    const drawGot = () => { got.innerHTML = word.split('').map((ch, k) =>
+      '<div class="lbox'+(k < pos ? '' : ' blank')+(k === pos ? ' cur' : '')+'">'+(k < pos ? esc(ch) : '')+'</div>').join(''); };
+    drawGot();
+
+    const W = () => rw.clientWidth, H = () => rw.clientHeight;
+    const laneX = l => (l + .5) * W() / 3;
+    let meX = laneX(1);
+    const monY = () => H() - 40 - (3 - hearts) * 26;        // the monster creeps closer as shields go
+    const items = [];
+    const speed = hard ? 190 : 120;                         // px per second
+    let spawnIn = 600, last = performance.now(), wave = 0;
+    const abc = 'abcdefghijklmnopqrstuvwxyz';
+
+    function spawn(){
+      const need = word[pos]; wave++;
+      const needLane = Math.floor(Math.random() * 3);
+      for (let l = 0; l < 3; l++){
+        let ch = null;
+        if (l === needLane) ch = need;
+        else if (hard || Math.random() < .55) ch = abc.replace(need, '')[Math.floor(Math.random() * 25)];
+        if (!ch) continue;
+        const e = el('<div class="tok'+(ch === need && !hard ? ' need' : '')+'">'+esc(ch)+'</div>');
+        rw.appendChild(e);
+        items.push({ ch, lane:l, y:-50, el:e, done:false, wave, isNeed: l === needLane });
       }
+    }
+    function steer(d){ if (over) return; lane = Math.max(0, Math.min(2, lane + d)); sfx('key'); }
+    function hitWrong(it){
+      wrongs++; hearts--; sfx('hurt');
+      rw.classList.remove('shake'); void rw.offsetWidth; rw.classList.add('shake');
+      mon.classList.remove('lunge'); void mon.offsetWidth; mon.classList.add('lunge');
+      c.querySelector('.shields').innerHTML = [0,1,2].map(shield).join('');
+      if (wrongs === 1){ wordStat(word).x++; noteMiss(word); save(); }
+      scoutPop('thinking', pickFresh(['Oof! Wrong letter, the monster got closer!', 'Yikes! Which letter comes next?', 'Close call! Listen again.'], 'bossW'), 1800);
+      if (hearts <= 0){ over = true; setTimeout(lose, 900); }
+    }
+    /* rows already on the road were made for the letter we needed then:
+       when that changes, their "right" letter becomes the new next letter */
+    function retarget(){
+      const need = word[pos];
+      items.forEach(o => {
+        if (o.done) return;
+        let ch = o.ch;
+        if (o.isNeed) ch = need;
+        else if (ch === need) ch = abc.replace(need, '')[Math.floor(Math.random() * 25)];
+        if (ch !== o.ch){ o.ch = ch; o.el.textContent = ch; }
+        o.el.classList.toggle('need', o.isNeed && !hard);
+      });
+    }
+    function gotRight(it){
+      pos++; sfx('pop'); drawGot();
+      if (pos < word.length) retarget();
+      it.el.classList.add('grab');
+      if (pos >= word.length){
+        over = true; beaten += wrongs === 0 ? 1 : 0;
+        if (wrongs === 0){ beatenWords.add(word); wordStat(word).r++; save(); }
+        // turn round and throw a honey blast at the monster
+        sayWord(word);
+        const blast = el('<img class="blast" src="../img/ui/icon-honey-drop.webp" alt="">');
+        rw.appendChild(blast);
+        blast.style.left = (meX - 20) + 'px';
+        blast.animate([{ top:(me.offsetTop + 10)+'px', transform:'scale(.6) rotate(0)' }, { top:(monY() - 10)+'px', transform:'scale(1.6) rotate(360deg)' }],
+                      { duration:450, easing:'ease-in', fill:'forwards' }).onfinish = () => {
+          blast.remove(); sfx('great');
+          mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit');
+          celebrate('small', mon);
+          const bar = c.querySelector('.hp i'); if (bar) bar.style.width = Math.round(100 * (pile.length - i - 1) / pile.length) + '%';
+          scoutPop('cheering', pickFresh(['Honey blast!', 'Direct hit!', 'Take that, Tile Monster!', 'Sweet shot!', 'Bullseye!'], 'bossR'), 1600);
+          i++; setTimeout(round, 1500);
+        };
+      }
+    }
+    function loop(now){
+      if (!document.body.contains(rw)) return;
+      const dt = Math.min(50, now - last) / 1000; last = now;
+      if (!over){
+        spawnIn -= dt * 1000;
+        if (spawnIn <= 0){ spawn(); spawnIn = (hard ? 1150 : 1650) + Math.random() * 300; }
+      }
+      const target = laneX(lane);
+      meX += (target - meX) * Math.min(1, dt * 14);
+      me.style.transform = 'translateX(' + (meX - 34) + 'px) rotate(' + ((target - meX) * .15) + 'deg)';
+      mon.style.transform = 'translate(' + (meX * .6 + W() * .2 - 45) + 'px,' + monY() + 'px)';
+      const meY = me.offsetTop + 20;
+      items.forEach(it => {
+        if (it.done) return;
+        it.y += speed * dt;
+        it.el.style.transform = 'translate(' + (laneX(it.lane) - 24) + 'px,' + it.y + 'px)';
+        // only the lane Scout is actually in counts (not one she is sliding through)
+        if (!over && Math.abs(it.y - meY) < 26 && Math.abs(laneX(it.lane) - meX) < W() / 10){
+          it.done = true;
+          if (it.ch === word[pos]) gotRight(it); else { it.el.classList.add('bad'); hitWrong(it); }
+          setTimeout(() => it.el.remove(), 250);
+          // that row is settled: its other letters fade away so they can't bump into Scout
+          items.forEach(o => { if (!o.done && o.wave === it.wave){ o.done = true; o.el.classList.add('fade'); setTimeout(() => o.el.remove(), 300); } });
+        } else if (it.y > H() + 40){ it.done = true; it.el.remove(); }
+      });
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(t => { last = t; loop(t); });
+
+    // controls: arrow keys, swipe, or tap a lane
+    const onKey = e => {
+      if (!document.body.contains(rw)){ document.removeEventListener('keydown', onKey); return; }
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); steer(-1); }
+      if (e.key === 'ArrowRight'){ e.preventDefault(); steer(1); }
+    };
+    document.addEventListener('keydown', onKey);
+    let sx = null;
+    rw.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive:true });
+    rw.addEventListener('touchend', e => {
+      if (sx == null) return;
+      const dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) > 30) steer(dx > 0 ? 1 : -1);
+      else { const r = rw.getBoundingClientRect(); lane = Math.max(0, Math.min(2, Math.floor((e.changedTouches[0].clientX - r.left) / (r.width / 3)))); }
+      e.preventDefault();
+    });
+    rw.addEventListener('click', e => {
+      const r = rw.getBoundingClientRect();
+      lane = Math.max(0, Math.min(2, Math.floor((e.clientX - r.left) / (r.width / 3))));
     });
   }
 
@@ -6368,99 +6708,109 @@ function actSaturday(a, d){
    SUNDAY — Champion Quiz
    ============================================================ */
 function actSunday(a, d){
+  /* The Champion Hive (29 Sep 2026). This is the last practice before the test,
+     so it is built for confidence: every word spelled right fills a honeycomb
+     cell with honey and Scout hops onto it; checkpoints get a party; combos
+     glow; and it ends with a Champion Certificate that says exactly which
+     words are test-ready and which ones get one more look. */
   const host = el('<div></div>'); a.appendChild(host);
   const plan = resumePlan('sun', WEEK.allWords);
   const words = plan.words;
   let i = plan.start, right = plan.extra.right || 0, combo = 0,
-      best = plan.extra.best || 0, fuel = plan.extra.fuel || 0;
+      best = plan.extra.best || 0;
+  const ready = plan.extra.ready || [], look = plan.extra.look || [];
 
   function intro(){
     host.innerHTML = '';
     const c = el('<div class="card center">'+
-      '<div class="rocketbox"><div class="rk" style="bottom:0%"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="64" height="64"></div>'+
-        '<div class="moon"><img src="../img/sprint-7.webp" alt="the trophy" width="56" height="56"></div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
-      '<h2 style="font-size:22px;line-height:28px">Championship Flight! 🏆</h2>'+
-      '<p style="font-size:17px;line-height:1.5">Every word you spell right gives Scout more <b>honey power</b>. '+
-      'Fill it up and we fly all the way to the trophy!</p>'+
-      '<p class="muted">Get words right <b>in a row</b> for a 🔥 <b>combo</b> — combos are worth extra stars.</p>'+
-      '<p class="muted">'+words.length+' words · no hints this time. You\'ve got this.</p>'+
-      '<button class="btn big yellow" id="go">🐝 Ready, set, fly!</button></div>');
-    c.querySelector('#go').onclick = () => { sfx('tap'); next(); };
+      '<img src="../img/ui/icon-trophy.webp" alt="" width="80" height="80" style="width:80px;height:80px">'+
+      '<h2 style="font-size:24px;line-height:30px;margin:4px 0 6px">The Champion Hive</h2>'+
+      '<ol class="steps-mini"><li>Scout says a word. <b>Spell it from memory.</b></li>'+
+        '<li>Every word you get right fills a cell with <b>honey</b>.</li>'+
+        '<li>Get words <b>in a row</b> for a combo!</li>'+
+        '<li>Fill the hive and you\'re a <b>Spelling Champion</b>.</li></ol>'+
+      '<p class="muted" style="margin:0 0 10px">'+words.length+' words. No hints this time. You\'ve practiced all week. You\'ve got this!</p>'+
+      '<button class="btn big green" id="go">🏆 Let\'s be champions!</button></div>');
+    c.querySelector('#go').onclick = () => { sfx('tap'); stopSpeech(); next(); };
     host.appendChild(c);
+    say(scoutMood() === 'quiet' ? 'Last practice before the test. Spell each word from memory.'
+      : 'This is our last practice before the big test. We\'ve practiced all week, so let\'s show what we know! Ready, champion?');
   }
-  /* Straight back into the countdown if she was already flying. */
   if (plan.resumed) resumeToast(plan);
 
+  function hiveMeter(){
+    return '<div class="champ-hive">'+words.map((x, k) => {
+      const st = k < i ? (ready.indexOf(x.word) >= 0 ? 'on' : 'miss') : (k === i ? 'now' : '');
+      return '<i class="'+st+'">'+(k === i ? '<img src="'+SCOUT_IMG('pointing')+'" alt="">' : '')+'</i>';
+    }).join('')+'</div>';
+  }
+
   function next(){
-    if (i >= words.length){ resumeClear('sun'); return launch(); }
+    if (i >= words.length){ resumeClear('sun'); return certificate(); }
     const w = words[i];
-    const pct = Math.round(100 * fuel / words.length);
     host.innerHTML = '';
-    const c = el('<div class="card center hexy">'+
-      '<div class="row" style="justify-content:space-between;align-items:center">'+
-        '<span class="muted">🏆 '+(i+1)+' / '+words.length+'</span>'+
-        '<span class="combo'+(combo>1?' hot':'')+'">'+(combo>1 ? '🔥 '+combo+' in a row!' : '&nbsp;')+'</span>'+
-      '</div>'+
-      '<div class="rocketbox mini"><div class="rk" style="bottom:'+Math.min(78,pct*.78)+'%"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="56" height="56"></div>'+
-        '<div class="moon"><img src="../img/sprint-7.webp" alt="the trophy" width="48" height="48"></div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
-      '<div class="fuel"><i style="width:'+pct+'%"></i></div>'+
-      '<div class="fuel-lbl muted">honey power '+pct+'%</div>'+
-      '<div class="speaker" id="sp" style="margin-top:10px">🔊</div>'+
-      '<p style="font-weight:800;font-size:18px;margin-top:12px">Spell the word you hear</p>'+
-      '<div class="row" style="justify-content:center;margin:8px 0">'+
-        '<button class="btn grey" id="sl">🐢 Slowly</button></div></div>');
+    const c = el('<div class="card center hexy game-card">'+
+      '<div class="game-top"><span class="muted">🏆 '+(i+1)+' of '+words.length+'</span>'+
+        '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
+        '<span class="combo'+(combo>1?' hot':'')+'">'+(combo>1 ? '🔥 '+combo+' in a row!' : '&nbsp;')+'</span></div>'+
+      hiveMeter()+
+      '<p class="game-say">Spell the word you hear</p>'+
+      '<div class="row" style="justify-content:center;margin:4px 0"><button class="btn grey" id="sl">🐢 Slowly</button></div></div>');
     host.appendChild(c);
     const sp = c.querySelector('#sp');
-    const play = () => { sp.classList.add('playing'); sayWord(w.word, {onend:()=>sp.classList.remove('playing')}); };
-    sp.onclick = play;
+    sp.onclick = () => sayWord(w.word);
     c.querySelector('#sl').onclick = () => saySlow(w.word);
-    setTimeout(play, 350);
+    sayWord(w.word);
 
     typingRound(c, {
       word:w.word, patternId:w.patternId, blanks:null,
       onDone: ok => {
         if (ok){
-          right++; fuel++; combo++; best = Math.max(best, combo);
+          right++; combo++; best = Math.max(best, combo); ready.push(w.word);
           sfx('combo', combo);
-          if (combo === 3) scoutPop('cheering', '🔥 Three in a row! Double stars!', 2600);
-          if (combo === 5) scoutPop('cheering', '🔥🔥 Five in a row! We\'re on fire!', 2600);
-        } else { combo = 0; }
+          const cell = c.querySelectorAll('.champ-hive i')[i];
+          if (cell){ cell.className = 'on pop'; celebrate('small', cell); }
+          if (combo === 3) scoutPop('cheering', 'Three in a row! You\'re on fire!', 2400);
+          else if (combo === 5) scoutPop('cheering', 'Five in a row! Champion speller!', 2400);
+          else if (Math.random() < .5) scoutPop('cheering', pickFresh(['That one\'s test-ready!', 'You know that one!', 'Ready for tomorrow!',
+            'Nailed it. It\'s yours!', 'The test won\'t trick you on that one!'], 'champ'), 1800);
+        } else { combo = 0; look.push(w.word);
+          scoutPop('thinking', pickFresh(['We\'ll give that one one more look. No worries!', 'That one\'s still learning. We\'ve got time!'], 'champM'), 2400); }
         i++;
-        resumeSave('sun', words.map(x => x.word), i, {right, best, fuel});
-        next();
+        // checkpoint parties at a quarter, halfway and three quarters
+        const q = [Math.ceil(words.length/4), Math.ceil(words.length/2), Math.ceil(words.length*3/4)].indexOf(i);
+        if (q >= 0 && i < words.length && words.length >= 4){
+          celebrate('small');
+          scoutPop('cheering', ['A quarter of the hive is full!', 'Halfway there, champion!', 'Almost full! Keep going!'][q], 1800);
+        }
+        resumeSave('sun', words.map(x => x.word), i, {right, best, ready, look});
+        setTimeout(next, q >= 0 ? 600 : 0);
       }
     });
   }
 
-  function launch(){
+  function certificate(){
     host.innerHTML = '';
     const perfect = right === words.length;
-    const pct = Math.round(100*right/words.length);
-    const c = el('<div class="card center">'+
-      '<div class="rocketbox big"><div class="rk" id="rk" style="bottom:2%"><img src="'+SCOUT_IMG('cheering')+'" alt="Scout" width="80" height="80"></div>'+
-        '<div class="moon"><img src="../img/sprint-7.webp" alt="the trophy" width="70" height="70"></div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div>'+
-        '<div class="rstar s3">💫</div></div>'+
-      '<h2 id="cd" style="font-size:34px;margin-top:10px">3…</h2></div>');
+    if (perfect) award('perfect');
+    const c = el('<div class="card center certificate">'+
+      '<img src="../img/ui/icon-trophy.webp" alt="" width="84" height="84" style="width:84px;height:84px">'+
+      '<div class="eyebrow-ink">Champion Certificate</div>'+
+      '<h2 style="font-size:26px;line-height:32px;margin:4px 0">'+esc(kid().name)+' is a Spelling Champion!</h2>'+
+      '<p style="font-size:18px;font-weight:800;margin:6px 0">You\'re ready on '+right+' of '+words.length+' words!</p>'+
+      '<div class="cert-words">'+ready.map(x => '<span class="wordchip done">'+esc(x)+'</span>').join('')+'</div>'+
+      (look.length ? '<p class="muted" style="margin:10px 0 4px">One more look before the test:</p><div class="cert-words">'+
+        look.map(x => '<span class="wordchip">'+esc(x)+'</span>').join('')+'</div>' : '')+
+      (best >= 3 ? '<p class="muted" style="margin-top:8px">Best combo: 🔥 '+best+' in a row</p>' : '')+
+      '<button class="btn big green" id="done" style="margin-top:12px">Collect my stars ⭐</button></div>');
     host.appendChild(c);
-    const rk = c.querySelector('#rk'), cd = c.querySelector('#cd');
-    const seq = ['3…','2…','1…','Fly, Scout, fly! 🐝'];
-    seq.forEach((t, n) => setTimeout(() => {
-      cd.textContent = t;
-      if (n < 3) sfx('tick');
-      if (n === 3){
-        sfx('launch'); rk.style.transition = 'bottom 2.2s cubic-bezier(.5,0,.7,1)';
-        rk.style.bottom = '82%'; confetti(120);
-      }
-    }, n*750));
-    setTimeout(() => {
-      if (perfect) award('perfect');
-      cd.innerHTML = perfect ? '🏆 We made it to the trophy!' : '⭐ We flew '+pct+'% of the way!';
-      setTimeout(() => finishScreen(d, right, words.length,
-        (perfect ? '· PERFECT! 💯 ' : '') + (best >= 3 ? '· best combo 🔥'+best : '')), 1600);
-    }, 3000 + 2200);
+    celebrate('big');
+    say(perfect ? 'Every single word! You are so ready for tomorrow. Champion!'
+      : 'You\'re ready on ' + right + ' words! Give the others one more look, and you\'ll be ready for tomorrow.');
+    c.querySelector('#done').onclick = () => { sfx('tap'); finishScreen(d, right, words.length, (perfect ? '· PERFECT! 💯 ' : '') + (best >= 3 ? '· best combo 🔥'+best : '')); };
   }
 
-  intro();
+  if (i === 0) intro(); else next();
 }
 
 /* ============================================================ */
