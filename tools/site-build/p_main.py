@@ -121,25 +121,25 @@ FAQ = [
          "<p>Yes. Once it has loaded, practice keeps working without the internet. Progress catches up with your "
          "other devices the next time you're online.</p>"),
         ("What grades is it for?",
-         "<p>Children in elementary school who bring home a weekly spelling list, from kindergarten up. It adapts "
-         "to the words you paste in, so it grows with them.</p>"),
+         "<p>Kindergarten through fifth grade: children who bring home a weekly spelling list. It adapts to the words "
+         "you paste in, so it grows with them.</p>"),
     ]),
     ("📝", "The words", [
         ("What if the teacher's list is in a strange layout?",
          "<p>Paste it as it is. Any layout works, and just the words is fine.</p>"),
         ("Does my child need to practice every day of the week?",
-         "<p>No. You tell it the test day, and it fits all seven stages into the nights before it. A short week "
-         "never drops a stage; some nights simply get two short goes. Every stage stays open, so a child who "
-         "misses a night can catch up whenever they like.</p>"),
+         "<p>No. You tell Scout the test day, and the list becomes daily sprints across the nights before it. A short "
+         "week never skips any of the practice; some nights simply get two short sprints. Every sprint stays open, "
+         "so a child who misses a night can catch up whenever they like.</p>"),
         ("Can it help with a spelling bee?",
-         "<p>Yes. Give it the long list and the date. It splits the list across the weeks, carries forward "
-         "anything missed, brings mastered words back for review near the end, and practices on a stage with "
-         "judges, including how to ask for a repeat, a definition or a sentence. It hints; it never spells the "
-         "word for them.</p>"),
+         "<p>Yes. Give it the long list and the date. It breaks the list into small weekly groups, and the words "
+         "your child finds tricky keep coming back, week after week, until they're confident. Words they already "
+         "know come back for a quick review near the end. Then it practices on a stage with judges, including how "
+         "to ask for a repeat, a definition or a sentence. It gives hints, but never spells the word for them.</p>"),
         ("What is the Paper Power-Up?",
-         "<p>Every day ends with a short handwriting routine instead of copying words out five times. Your child "
-         "looks at the word, spots the tricky part, says it, covers it, writes it from memory, checks it against "
-         "the model, and fixes only what needs fixing.</p>"),
+         "<p>Every day ends with a quick pencil-and-paper challenge instead of copying words out five times. Your "
+         "child looks at the word and its tricky part, writes it from memory, then checks it and fixes only the "
+         "part that needs another look.</p>"),
     ]),
     ("👧", "Children and progress", [
         ("I have more than one child. Do I need to buy it twice?",
@@ -149,11 +149,11 @@ FAQ = [
          "<p>Never. There are no leaderboards, no rankings and no side-by-side scores. Each child only ever sees "
          "their own progress.</p>"),
         ("What happens when my child gets a word wrong?",
-         "<p>A miss is treated as a clue, not a verdict. Any word your child misses is gathered into the Boss "
-         "Battle, so the extra practice goes exactly where it's needed, and they show up for you under "
+         "<p>A miss is a clue, not a verdict. Words your child finds tricky get extra practice in the Boss Battle, "
+         "so time goes where it's needed, and you'll see them in the Grown-up Zone under "
          "<b>Words to revisit</b>.</p>"),
         ("Can I check my child's progress from my phone?",
-         "<p>Yes. Open the Grown-up Zone (behind a grown-up PIN) on any of your devices to see which stages each child "
+         "<p>Yes. Open the Grown-up Zone (behind a grown-up PIN) on any of your devices to see which sprints each child "
          "has finished this week, their stars and streak, the words to revisit, earlier weeks and spelling bee progress. "
          "Progress follows your family across devices once you unlock with your key.</p>"),
         ("The voice sounds robotic. Can I fix it?",

@@ -31,7 +31,7 @@ def cta_band(line_html):
 
 def about():
     return head(path="about.html", title="About: Spelling Quest",
-                description="Spelling Quest turns the weekly spelling list into seven short stages, spread over however many nights your child actually has, so they can get on with it themselves and you get your evening back.") + header("about.html") + hero(
+                description="Spelling Quest turns the weekly spelling list into daily sprints, spread over however many nights your child actually has, so they can get on with it themselves and you get your evening back.") + header("about.html") + hero(
         "About Spelling Quest", 'Made by a parent, <span class="hl">for families.</span>',
         "Spelling Quest turns the weekly spelling list into seven short goes, about ten minutes a day, so a child can get on with it largely by themselves, and a parent gets their evening back.") + f"""
 <div class="wrap">
@@ -82,20 +82,20 @@ def about():
       <li>The app works out the pattern, writes a memory trick, splits the words into chunks and builds
         a practice route around <b>your child's test day</b> and the number of nights they actually have.
         A Friday test works exactly like a Monday one, and four nights works as well as seven.</li>
-      <li><b>Stage 1</b> meet the words · <b>Stage 2</b> hear and build · <b>Stage 3</b> fill the gaps ·
-        <b>Stage 4</b> spell from memory · <b>Stage 5</b> arcade games · <b>Stage 6</b> boss battle on the
-        tricky ones · <b>Stage 7</b> champion quiz and a badge. A short week never drops a stage; it puts
-        two short goes on some nights instead.</li>
+      <li>Scout turns the list into <b>daily sprints</b>: meet the words · sound out &amp; build · missing letters ·
+        spelling bee · fun spelling games · a boss battle on the tricky words · the champion quiz and a badge.
+        A short week never skips any of it; some nights simply get two short sprints.</li>
       <li>Every day ends with a <b>Paper Power-Up</b>, not copying a word out five times, which mostly
-        feels like a punishment. The child looks at the word, spots the tricky part, says it, covers it,
-        writes it from memory, checks it against the model, and fixes only what needs fixing. Writing by
-        hand is still how spelling sticks; this is the version that teaches while it does.</li>
+        feels like a punishment. Your child looks at the word and its tricky part, writes it from memory,
+        then checks it and fixes only the part that needs another look. Writing by hand is still how spelling
+        sticks; this is the version that teaches while it does.</li>
     </ul>
 
     <h2>Spelling bees too</h2>
-    <p>Give it a long list and a date. It splits the list across the weeks, carries forward anything
-      missed, brings mastered words back for review in the last two weeks, and practices on a stage with
-      judges. It hints; it never spells the word for them.</p>
+    <p>Give it a long list and a date. It breaks the list into small weekly groups, and the words your
+      child finds tricky keep coming back, week after week, until they're confident. Words they already know
+      come back for review in the last two weeks, and it practices on a stage with judges. It gives hints, but
+      never spells the word for them.</p>
 
     <h2>It follows them between devices</h2>
     <p>Stars and finished days move with your family code, so a child can start on the iPad and carry on
@@ -127,7 +127,7 @@ def schools():
     return head(path="schools.html", title="Schools, classrooms and tutors: Spelling Quest",
                 description="Spelling Quest for classrooms, intervention groups and tutors: every child gets their own words and test day, and nothing is ranked or compared.") + header("schools.html") + hero(
         "Schools, classrooms &amp; tutors", 'The same quest, <span class="hl">for a whole group.</span>',
-        "Spelling lists don't only come home in a backpack; somebody set them in the first place. The same seven-stage route works just as well for a class, a small group, or a tutor working one-to-one.") + f"""
+        "Spelling lists don't only come home in a backpack; somebody set them in the first place. The same daily-sprint route works just as well for a class, a small group, or a tutor working one-to-one.") + f"""
 <div class="wrap">
   <article class="card doc">
     <p class="updated">Last updated 21 August 2026</p>
@@ -146,15 +146,16 @@ def schools():
       install it at home and practice there. Either way the pace stays personal.</p>
 
     <h2>Spelling bees</h2>
-    <p>If your school runs a bee, give the app a long list and the date. It splits the list across the
-      weeks, carries forward anything missed, brings mastered words back for review near the end, and
-      practices on a stage with judges, including how to ask for a repeat, a definition, and the word
-      in a sentence. It hints; it never spells the word for them.</p>
+    <p>If your school runs a bee, give the app a long list and the date. It breaks the list into small
+      weekly groups, and the words each child finds tricky keep coming back until they're confident. Words
+      they already know come back for review near the end, and it practices on a stage with judges, including
+      how to ask for a repeat, a definition, and the word in a sentence. It gives hints, but never spells the
+      word for them.</p>
 
     <h2>What we do not have yet</h2>
     <p>We would rather be straight with you than let a page oversell it: there is no teacher
       dashboard, no way to push a list out to a whole class at once, and no way to see everyone's
-      progress at a glance. What exists today is the same seven-stage route a family uses, used by more
+      progress at a glance. What exists today is the same daily-sprint route a family uses, used by more
       people.</p>
     <p>If a class needs its own arrangement, such as more than one household on a single license or a whole
       year group, <a href="mailto:{EMAIL}">get in touch</a> and we will work it out with you, rather than make
@@ -165,9 +166,9 @@ def schools():
     <ul>
       <li><b>No rankings.</b> A teacher might see that a class is practicing. Never a leaderboard of who
         is ahead.</li>
-      <li><b>No child's misses on display.</b> The words a child misses stay between that
-        child and the app.</li>
-      <li><b>No red flags.</b> A missed word is a clue, not a verdict, and a quiet week is not
+      <li><b>No child's tricky words on display.</b> The words a child finds tricky stay between
+        that child and the app.</li>
+      <li><b>No red flags.</b> A tricky word is a clue, not a verdict, and a quiet week is not
         something that surfaces as a warning to an adult in charge.</li>
       <li><b>Nothing travels further than it has to.</b> The app asks for a nickname, never a real name,
         and never an email address. That same care would extend to anything built for a class.</li>
