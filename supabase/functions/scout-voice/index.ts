@@ -9,7 +9,7 @@
 //
 // Secrets (Supabase dashboard -> Edge Functions -> Secrets):
 //   ELEVENLABS_API_KEY  - required
-//   SCOUT_VOICE_ID      - required, the ElevenLabs voice ID for Scout
+//   SCOUT_VOICE_ID      - optional, overrides Scout's voice (default below, chosen by Kathryn 28 Sep 2026)
 //   SCOUT_MODEL_ID      - optional, default eleven_multilingual_v2
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided automatically.
 //
@@ -18,6 +18,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const VERSION = "v1";
+const DEFAULT_VOICE_ID = "zz18v7gwMdL7XrVnYmMe";   // Scout's ElevenLabs voice (not a secret)
 const BUCKET = "scout-voice";
 const MAX_CHARS = 400;
 const ALLOWED = [
@@ -69,7 +70,7 @@ Deno.serve(async (req) => {
   if (!text || text.length > MAX_CHARS) return json({ error: "text" }, 400);
 
   const apiKey = Deno.env.get("ELEVENLABS_API_KEY");
-  const voiceId = Deno.env.get("SCOUT_VOICE_ID");
+  const voiceId = Deno.env.get("SCOUT_VOICE_ID") || DEFAULT_VOICE_ID;
   if (!apiKey || !voiceId) return json({ error: "not configured" }, 503);
   const model = Deno.env.get("SCOUT_MODEL_ID") || "eleven_multilingual_v2";
 

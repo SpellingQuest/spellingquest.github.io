@@ -569,6 +569,11 @@ details[open] > summary::before{ content:'▾ '; }
 /* Championship Flight: Scout and the trophy */
 .rocketbox .rk img,.rocketbox .moon img{display:block;height:auto}
 @media (prefers-reduced-motion:reduce){ .boss .monster.hit{animation:none} }
+
+.weekjar{display:flex;align-items:center;gap:14px;padding:12px 16px}
+.weekjar b{font-size:17px}
+.jar.big{width:58px;height:70px;border-color:#ffc93c}
+.jar.big .jar-n{font-size:18px}
 </style>
 </head>
 <body>
@@ -1372,7 +1377,7 @@ const BADGES = [
   { id:'streak3',  em:'🔥', n:'3-Day Streak',   d:'Practice 3 days in a row' },
   { id:'streak7',  em:'⚡', n:'7-Day Streak',   d:'Practice 7 days in a row' },
   { id:'boss',     em:'⚔️', n:'Boss Slayer',    d:'Clear the whole tricky pile' },
-  { id:'arcade',   em:'🎮', n:'Arcade Master',  d:'Play all three games' },
+  { id:'arcade',   em:'🎮', n:'Arcade Master',  d:'Play three arcade games' },
   { id:'reader',   em:'📣', n:'Loud Reader',    d:'Read every word out loud' },
   { id:'builder',  em:'🧱', n:'Word Builder',   d:'Build every word piece by piece' },
   { id:'level5',   em:'🚀', n:'Level 5',        d:'Reach level 5' },
@@ -3152,6 +3157,15 @@ function renderHome(a){
       ? (quiet ? 'Today\'s sprint is done. Nice work.' : 'We did today\'s sprint! Want to play a game while we\'re here?')
       : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Tonight we\'re doing ' + td.t + ' together. Ready?');
     a.appendChild(scoutCard(doneToday ? 'cheering' : 'pointing', line, { speak: introFresh('home-' + tk0 + (doneToday?'-done':'')) }));
+    // the week's honey jar: one drop for every word won this week, in any sprint
+    const drops = Object.keys(pp.stats || {}).reduce((n, w) => n + ((pp.stats[w] && pp.stats[w].r) || 0), 0);
+    const goal = Math.max(1, (WEEK.allWords.length || 1) * 5);
+    const pct = Math.min(100, Math.round(100 * drops / goal));
+    a.appendChild(el('<div class="weekjar card">'+
+      '<div class="jar big"><div class="jar-fill" style="height:'+pct+'%"></div><div class="jar-lid"></div><span class="jar-n">'+drops+'</span></div>'+
+      '<div><b>This week\'s honey jar</b><div class="muted">'+(pct >= 100 ? 'Full to the top! What a week. 🍯'
+        : drops ? drops+' drop'+(drops===1?'':'s')+' of honey so far. Every word you win adds one!'
+        : 'Every word you win adds a drop of honey. Let\'s fill it up!')+'</div></div></div>'));
   }
   if (!DB.voiceOk && SCOUT_OK !== true) a.appendChild(voiceStrip());   // Scout's own voice needs no checking
   const p = prog();
@@ -3293,8 +3307,11 @@ function renderHome(a){
 function renderBadges(a){
   topbar(a);
   const k = kid();
-  const card = el('<div class="card"><h2 style="font-size:22px">🏅 '+esc(k.name)+'\'s Badges</h2>'+
-    '<div class="muted" style="margin-bottom:12px">'+k.badges.length+' of '+BADGES.length+' collected · '+(k.weeksDone||0)+' weeks finished</div>'+
+  a.appendChild(scoutCard('cheering', k.badges.length
+    ? 'Look at our backpack! ' + k.badges.length + ' badge' + (k.badges.length===1?'':'s') + ' so far. Let\'s win the next one!'
+    : 'Our backpack is empty. Let\'s win our first badge together!', { speak: introFresh('backpack') }));
+  const card = el('<div class="card"><h2 style="font-size:22px">🎒 Scout\'s Backpack</h2>'+
+    '<div class="muted" style="margin-bottom:12px">'+k.badges.length+' of '+BADGES.length+' badges collected · '+(k.weeksDone||0)+' weeks finished</div>'+
     '<div class="badgegrid"></div></div>');
   const g = card.querySelector('.badgegrid');
   BADGES.forEach(b => {
