@@ -498,6 +498,22 @@ details[open] > summary::before{ content:'▾ '; }
 @keyframes hxWiggle{20%,60%{transform:translateX(-5px) rotate(-4deg)}40%,80%{transform:translateX(5px) rotate(4deg)}}
 @media (prefers-reduced-motion:reduce){ .hx.got,.hx.hint,.hx.wiggle,.jar.bump{animation:none} .drop{display:none} }
 .findme{background:linear-gradient(160deg,#ffe08a,#ffc93c);border-radius:10px;padding:0 8px;box-shadow:0 3px 0 #e0a100}
+
+/* Honeycomb Builder */
+.hive-build{overflow:hidden}
+.hive-build .slots{gap:4px}
+.hive-build .slot{min-width:70px;height:78px;border:0;border-radius:0;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:rgba(124,58,237,.12);display:grid;place-items:center;font:800 24px/1 var(--font);padding:0 10px}
+.hive-build .slot.filled{background:linear-gradient(160deg,#f5f0ff,#e2d6ff)}
+.hive-build .slot.lit{background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a);animation:hxPop .4s ease}
+.hive-build .slot.bad{background:#ffe1e6}
+.hive-build .chunk{clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);border-radius:0;
+  min-width:72px;height:80px;padding:0 12px;background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a);
+  color:var(--ink);box-shadow:none;border:0;font:800 22px/1 var(--font)}
+.hive-build .chunk.used{opacity:.25}
+.scout-zoom{position:absolute;left:-100px;top:20px;width:90px;pointer-events:none;z-index:3;animation:scoutZoom 1.2s ease-in forwards}
+@keyframes scoutZoom{0%{left:-100px;transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-18px) rotate(4deg)}100%{left:110%;transform:translateY(0) rotate(-6deg)}}
+@media (prefers-reduced-motion:reduce){ .scout-zoom{display:none} .hive-build .slot.lit{animation:none} }
 </style>
 </head>
 <body>
@@ -4688,6 +4704,16 @@ function honeyDrop(from, to){
     setTimeout(() => d.remove(), 700);
   }catch(e){}
 }
+/* Scout zooms across a card after a win */
+function scoutZoom(card){
+  try{
+    if (!card) return;
+    card.style.position = card.style.position || 'relative';
+    const z = el('<img class="scout-zoom" src="'+SCOUT_IMG('pointing')+'" alt="" width="90" height="90">');
+    card.appendChild(z);
+    setTimeout(() => z.remove(), 1300);
+  }catch(e){}
+}
 function wiggle(n){ if (!n) return; n.classList.remove('wiggle'); void n.offsetWidth; n.classList.add('wiggle'); }
 /* a sprint's game header: title strip with the honey jar on the right */
 function gameBar(host, label, total){
@@ -4891,6 +4917,8 @@ function stopMic(){
    TUESDAY — Sound & Build (chunk flashcards)
    ============================================================ */
 function actTuesday(a, d){
+  // Honeycomb Builder (28 Sep 2026): same pieces, now honeycomb cells that say their sound
+  const jar = gameBar(a, '🐝 Honeycomb Builder', WEEK.allWords.length);
   const host = el('<div></div>'); a.appendChild(host);
   let queue = [];
   WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s})); });
@@ -4900,6 +4928,7 @@ function actTuesday(a, d){
   const dd = dots(total, a);
   let di = plan.extra.di || 0;
   for (let j = 0; j < di; j++) setDot(dd, j, true);
+  for (let j = 0; j < correct; j++) jar.add();
   resumeToast(plan);
 
   function next(){
@@ -4936,10 +4965,10 @@ function actTuesday(a, d){
     const placed = [];
     let tries = 0;
 
-    const c = el('<div class="card center">'+
+    const c = el('<div class="card center hive-build">'+
       '<div class="muted">'+item.sec.emoji+' '+esc(item.sec.label)+'</div>'+
       '<div class="speaker" id="sp" style="margin-top:12px">🔊</div>'+
-      '<p class="muted" style="margin-top:10px">Listen, then tap the pieces in order — or just type it.</p>'+
+      '<p class="muted" style="margin-top:10px">Listen, tap a piece to hear its sound, then build the word. Or just type it.</p>'+
       '<div class="slots" id="slots"></div>'+
       '<div class="muted" id="typed" style="min-height:18px;letter-spacing:3px;font-weight:800"></div>'+
       '<div class="tray" id="tray"></div>'+
@@ -4984,6 +5013,7 @@ function actTuesday(a, d){
         b.onclick = () => {
           if (placed.length >= chunks.length) return;
           sfx('pop');
+          say(txt, { rate:.8 });                      // each piece says its sound
           placed.push({i, txt});
           drawSlots(); drawTray();
           if (placed.length === chunks.length) setTimeout(check, 250);
@@ -5044,7 +5074,8 @@ function actTuesday(a, d){
       tries++;
       if (made === w.word.toLowerCase()){
         wordStat(w.word).r++; save();
-        slots.querySelectorAll('.slot').forEach(s => { s.style.borderColor = 'var(--green)'; s.style.background = '#dcfce7'; });
+        slots.querySelectorAll('.slot').forEach(s => s.classList.add('lit'));
+        jar.add(slots); scoutZoom(c);
         correct++; if (tries === 1) firstTry++;
         setDot(dd, di++, true);
         sfx(tries === 1 ? 'great' : 'good');
