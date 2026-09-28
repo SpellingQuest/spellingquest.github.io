@@ -1255,6 +1255,13 @@ const DAYS = [
   { key:'sun', n:'Sunday',    t:'Champion Quiz',   em:'🏆', cls:'d7', sub:'The final challenge. Earn a badge!' },
 ];
 const DAY_INDEX = {}; DAYS.forEach((d,i)=>DAY_INDEX[d.key]=i);
+/* The sprint's own artwork (28 Sep 2026), falling back to its emoji. */
+function sprintIco(d, px){
+  const i = DAY_INDEX[d.key];
+  if (i == null) return d.em;
+  return '<img class="sprint-ico" src="../img/sprint-'+(i+1)+'.webp" alt="" width="'+px+'" height="'+px+'" '+
+         'style="width:'+px+'px;height:'+px+'px;vertical-align:middle">';
+}
 
 const AVATARS = ['🦊','🐼','🐸','🦄','🐙','🦁','🐨','🐬','🦖','🐝','🦉','🐳','🐯','🦋','🐢','🚀','⭐','🌈'];
 
@@ -3069,7 +3076,7 @@ function renderHome(a){
   const tday = DAYS[DAY_INDEX[tk]];
   const tdone = p.days[tk] && p.days[tk].done;
   const startBtn = el('<button class="btn big '+(tdone?'grey':'green')+'" style="margin-bottom:14px">'+
-    (tdone ? '✅ Today\'s practice is done — play it again?' : '▶️ Start today: '+tday.em+' '+tday.t)+'</button>');
+    (tdone ? '✅ Today\'s practice is done — play it again?' : '<span style="display:inline-flex;align-items:center;gap:12px;text-align:left">'+sprintIco(tday, 44)+'<span>Start today:<br>'+tday.t+'</span></span>')+'</button>');
   startBtn.onclick = () => { unlockAudio(); sfx('tap'); go('day', tk); };
   a.appendChild(startBtn);
 
@@ -3120,7 +3127,7 @@ function renderHome(a){
       const c = el(
         '<button class="day '+d.cls+(isToday?' today':'')+'">'+
           (st.done ? '<span class="tick">✅</span>' : '')+
-          '<div><span class="em">'+d.em+'</span>'+
+          '<div><span class="em">'+sprintIco(d, 52)+'</span>'+
           '<b>'+esc(d.t)+'</b><small>Sprint '+(DAY_INDEX[key]+1)+' of 7'+
             (night.length > 1 ? ' · '+(pos===0?'first go':'second go') : '')+'</small></div>'+
           '<small style="opacity:.85">'+(st.done ? '⭐'.repeat(Math.max(1,st.stars||1)) : d.sub)+'</small>'+
@@ -4166,7 +4173,7 @@ function dayHeader(a, d, sub){
        where it is worked out from the child's real test day. A label that does
        not exist cannot go stale — and the app has to stop assuming seven days
        anyway, so there is no correct day name to write here. */
-    '<div class="who"><b>'+d.em+' '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
+    '<div class="who"><b>'+sprintIco(d, 30)+' '+d.t+'</b><span>'+esc(sub||d.sub)+'</span></div>'+
     '</div>');
   h.querySelector('#bk').onclick = () => { stopSpeech(); stopMic(); go(BACK_TO || 'home'); };
   a.appendChild(h);

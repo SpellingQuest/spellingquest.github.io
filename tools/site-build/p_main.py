@@ -245,8 +245,8 @@ def signin():
 <div class="wrap">
   <div class="signin-grid">
     <div class="signin-art">
-      <!-- S1 stand-in: Scout pose 01, pointing toward the form. Swap for the honeycomb-door art if it's made. -->
-      <img src="img/scout-pointing.webp" alt="Scout the Bee pointing to the sign-in box" width="560" height="560">
+      <!-- S1: Scout at the honeycomb door (approved 28 Sep 2026). -->
+      <img src="img/scout-door.webp" alt="Scout the Bee opening a glowing honeycomb door" width="720" height="720">
       <h1 style="font-size:clamp(30px,4vw,44px)">Your quest is <span class="hl">right where you left it.</span></h1>
       <p class="lede" style="max-width:440px;margin-left:auto;margin-right:auto">Stars, finished days and this week's
         words follow your family onto every device.</p>

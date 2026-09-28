@@ -164,13 +164,13 @@ def page():
         short week never skips a sprint.</p>
     </div>
     <ol class="hive" aria-label="The seven sprints">
-      <li class="cell c1"><div class="in"><!-- STAGE ART 1 --><div class="em" aria-hidden="true">👂</div><div class="n">Sprint 1</div><h3>Meet the Words</h3><p>Hear them aloud and learn the pattern</p></div></li>
-      <li class="cell c2"><div class="in"><!-- STAGE ART 2 --><div class="em" aria-hidden="true">🧩</div><div class="n">Sprint 2</div><h3>Sound Out &amp; Build</h3><p>Hear each sound, then build the word</p></div></li>
-      <li class="cell c3"><div class="in"><!-- STAGE ART 3 --><div class="em" aria-hidden="true">✏️</div><div class="n">Sprint 3</div><h3>Missing Letters</h3><p>Fill in the gaps</p></div></li>
-      <li class="cell c4"><div class="in"><!-- STAGE ART 4 --><div class="em" aria-hidden="true">🐝</div><div class="n">Sprint 4</div><h3>Spelling Bee</h3><p>Spell it from memory by tapping or typing</p></div></li>
-      <li class="cell c5"><div class="in"><!-- STAGE ART 5 --><div class="em" aria-hidden="true">🎮</div><div class="n">Sprint 5</div><h3>Arcade</h3><p>Fun spelling games</p></div></li>
-      <li class="cell c6"><div class="in"><!-- STAGE ART 6 --><div class="em" aria-hidden="true">⚔️</div><div class="n">Sprint 6</div><h3>Boss Battle</h3><p>Take on the tricky words</p></div></li>
-      <li class="cell c7"><div class="in"><!-- STAGE ART 7 --><div class="em" aria-hidden="true">🏆</div><div class="n">Sprint 7</div><h3>Champion Quiz</h3><p>The final challenge. Earn a badge!</p></div></li>
+      <li class="cell c1 gold"><div class="in"><img class="sprint-ico" src="img/sprint-1.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 1</div><h3>Meet the Words</h3><p>Hear them aloud and learn the pattern</p></div></li>
+      <li class="cell c2 lilac"><div class="in"><img class="sprint-ico" src="img/sprint-2.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 2</div><h3>Sound Out &amp; Build</h3><p>Hear each sound, then build the word</p></div></li>
+      <li class="cell c3 cream"><div class="in"><img class="sprint-ico" src="img/sprint-3.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 3</div><h3>Missing Letters</h3><p>Fill in the gaps</p></div></li>
+      <li class="cell c4 gold"><div class="in"><img class="sprint-ico" src="img/sprint-4.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 4</div><h3>Spelling Bee</h3><p>Spell it from memory by tapping or typing</p></div></li>
+      <li class="cell c5 gold"><div class="in"><img class="sprint-ico" src="img/sprint-5.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 5</div><h3>Arcade</h3><p>Fun spelling games</p></div></li>
+      <li class="cell c6 cream"><div class="in"><img class="sprint-ico" src="img/sprint-6.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 6</div><h3>Boss Battle</h3><p>Take on the tricky words</p></div></li>
+      <li class="cell c7 lilac"><div class="in"><img class="sprint-ico" src="img/sprint-7.webp" alt="" width="320" height="320" loading="lazy"><div class="n">Sprint 7</div><h3>Champion Quiz</h3><p>The final challenge. Earn a badge!</p></div></li>
     </ol>
   </div>
 </section>
