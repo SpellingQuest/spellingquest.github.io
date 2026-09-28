@@ -554,6 +554,21 @@ details[open] > summary::before{ content:'▾ '; }
 .fall.wiggle{animation-name:fallDown}
 @keyframes fallDown{to{top:320px}}
 @media (prefers-reduced-motion:reduce){ .balloon{animation:none} }
+
+/* Boss Battle: the Tile Monster */
+.boss .versus{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.boss .versus img{width:96px;height:auto}
+.boss .versus .monster{width:120px}
+.boss .vs{font:900 26px/1 var(--font);color:#e11d48}
+.boss .arena{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:6px}
+.boss .monster{width:110px;height:auto}
+.boss .monster.hit{animation:monHit .5s ease}
+.boss .hp{width:180px;height:12px;border-radius:99px;background:#f2e8ff;overflow:hidden}
+.boss .hp i{display:block;height:100%;background:linear-gradient(90deg,#a855f7,#7c3aed);transition:width .5s ease}
+@keyframes monHit{15%{transform:translateX(-10px) rotate(-8deg)}30%{transform:translateX(10px) rotate(8deg)}45%{transform:translateX(-6px)}60%{transform:scale(.9)}}
+/* Championship Flight: Scout and the trophy */
+.rocketbox .rk img,.rocketbox .moon img{display:block;height:auto}
+@media (prefers-reduced-motion:reduce){ .boss .monster.hit{animation:none} }
 </style>
 </head>
 <body>
@@ -5556,15 +5571,16 @@ function actSaturday(a, d){
 
   function intro(){
     host.innerHTML = '';
-    const c = el('<div class="card center">'+
-      '<div style="font-size:52px">⚔️👾</div>'+
-      '<h2>Boss Battle!</h2>'+
+    const c = el('<div class="card center boss">'+
+      '<div class="versus"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="96" height="96">'+
+        '<span class="vs">VS</span><img class="monster" src="../img/sprint-6.webp" alt="the Tile Monster" width="120" height="120"></div>'+
+      '<h2>Boss Battle: the Tile Monster!</h2>'+
       '<p class="muted">'+(fromTricky
-        ? 'These are the words that tricked you this week. Beat them all!'
-        : 'You haven\'t missed any words yet — here\'s a surprise challenge round!')+'</p>'+
+        ? 'The Tile Monster grabbed the words that tricked us this week. Let\'s win them back together!'
+        : 'No tricky words yet, so the Tile Monster brought a surprise round!')+'</p>'+
       '<div style="margin:14px 0">'+pile.map(w=>'<span class="wordchip">'+esc(w.word)+'</span>').join('')+'</div>'+
-      '<p style="font-weight:800">❤️❤️❤️ You get 3 lives</p>'+
-      '<button class="btn big red" id="go">⚔️ Fight!</button></div>');
+      '<p style="font-weight:800">🛡️🛡️🛡️ We get 3 shields</p>'+
+      '<button class="btn big red" id="go">⚔️ Let\'s go!</button></div>');
     c.querySelector('#go').onclick = () => { sfx('tap'); round(); };
     host.appendChild(c);
   }
@@ -5574,8 +5590,11 @@ function actSaturday(a, d){
     if (i >= pile.length) return win();
     const w = pile[i];
     host.innerHTML = '';
-    const c = el('<div class="card center">'+
-      '<div style="font-size:26px">'+'❤️'.repeat(hearts)+'<span style="opacity:.2">'+'🖤'.repeat(3-hearts)+'</span></div>'+
+    const hp = Math.round(100 * (pile.length - i) / pile.length);
+    const c = el('<div class="card center boss hexy">'+
+      '<div class="arena"><img class="monster" id="mon" src="../img/sprint-6.webp" alt="the Tile Monster" width="110" height="110">'+
+        '<div class="hp"><i style="width:'+hp+'%"></i></div></div>'+
+      '<div style="font-size:24px">'+'🛡️'.repeat(hearts)+'<span style="opacity:.2">'+'🛡️'.repeat(3-hearts)+'</span></div>'+
       '<div class="muted">Boss word '+(i+1)+' of '+pile.length+'</div>'+
       '<div class="speaker" id="sp" style="margin-top:12px">🔊</div>'+
       '<p style="font-weight:800;font-size:18px;margin-top:12px">Spell it to land a hit!</p>'+
@@ -5588,8 +5607,11 @@ function actSaturday(a, d){
     typingRound(c, {
       word:w.word, patternId:w.patternId, blanks:null,
       onDone: ok => {
-        if (ok){ beaten++; beatenWords.add(w.word); sfx('great'); toast('💥 Direct hit!', 2200); }
-        else { hearts--; sfx('hurt'); toast('That word needs another look. Ready for a rematch?', 2800); }
+        const mon = c.querySelector('#mon');
+        if (ok){ beaten++; beatenWords.add(w.word); sfx('great'); if (mon){ mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit'); }
+                 const bar = c.querySelector('.hp i'); if (bar) bar.style.width = Math.round(100 * (pile.length - i - 1) / pile.length) + '%';
+                 scoutPop('cheering', pickOne(['Honey blast! 💥','Direct hit!','We got that one!']), 2000); }
+        else { hearts--; sfx('hurt'); scoutPop('thinking', 'The word dodged us this round. Now we know its move!', 2800); }
         i++; setTimeout(round, 1300);
       }
     });
@@ -5605,8 +5627,9 @@ function actSaturday(a, d){
   }
   function lose(){
     sfx('lose');
-    const p = popup('<div class="em">🛡️</div><h2>The boss is still standing!</h2>'+
-      '<p class="muted">You practiced these words. Ready for another round?</p>'+
+    const p = popup('<img class="scout-reward" src="'+SCOUT_IMG('thinking')+'" alt="" width="150" height="150">'+
+      '<h2>The Tile Monster is still standing!</h2>'+
+      '<p class="muted">We practiced every one of these words. Wait, I want another try too! Rematch?</p>'+
       '<button class="btn big green" id="again">🔁 Another round</button>'+
       '<button class="btn big grey" style="margin-top:8px" data-close>Back to the map</button>');
     p.querySelector('#again').onclick = () => { p.remove(); hearts=3; i=0; beaten=0; beatenWords = new Set(); pile=shuffle(pile); round(); };
@@ -5629,14 +5652,14 @@ function actSunday(a, d){
   function intro(){
     host.innerHTML = '';
     const c = el('<div class="card center">'+
-      '<div class="rocketbox"><div class="rk" style="bottom:0%">🚀</div>'+
-        '<div class="moon">🌕</div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
-      '<h2 style="font-size:22px;line-height:28px">Launch Day! 🚀</h2>'+
-      '<p style="font-size:17px;line-height:1.5">Every word you spell right adds <b>fuel</b> to the rocket. '+
-      'Fill it up and you fly to the moon!</p>'+
+      '<div class="rocketbox"><div class="rk" style="bottom:0%"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="64" height="64"></div>'+
+        '<div class="moon"><img src="../img/sprint-7.webp" alt="the trophy" width="56" height="56"></div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
+      '<h2 style="font-size:22px;line-height:28px">Championship Flight! 🏆</h2>'+
+      '<p style="font-size:17px;line-height:1.5">Every word you spell right gives Scout more <b>honey power</b>. '+
+      'Fill it up and we fly all the way to the trophy!</p>'+
       '<p class="muted">Get words right <b>in a row</b> for a 🔥 <b>combo</b> — combos are worth extra stars.</p>'+
       '<p class="muted">'+words.length+' words · no hints this time. You\'ve got this.</p>'+
-      '<button class="btn big yellow" id="go">🔥 Start the countdown</button></div>');
+      '<button class="btn big yellow" id="go">🐝 Ready, set, fly!</button></div>');
     c.querySelector('#go').onclick = () => { sfx('tap'); next(); };
     host.appendChild(c);
   }
@@ -5648,15 +5671,15 @@ function actSunday(a, d){
     const w = words[i];
     const pct = Math.round(100 * fuel / words.length);
     host.innerHTML = '';
-    const c = el('<div class="card center">'+
+    const c = el('<div class="card center hexy">'+
       '<div class="row" style="justify-content:space-between;align-items:center">'+
-        '<span class="muted">🚀 '+(i+1)+' / '+words.length+'</span>'+
+        '<span class="muted">🏆 '+(i+1)+' / '+words.length+'</span>'+
         '<span class="combo'+(combo>1?' hot':'')+'">'+(combo>1 ? '🔥 '+combo+' in a row!' : '&nbsp;')+'</span>'+
       '</div>'+
-      '<div class="rocketbox mini"><div class="rk" style="bottom:'+Math.min(78,pct*.78)+'%">🚀</div>'+
-        '<div class="moon">🌕</div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
+      '<div class="rocketbox mini"><div class="rk" style="bottom:'+Math.min(78,pct*.78)+'%"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="56" height="56"></div>'+
+        '<div class="moon"><img src="../img/sprint-7.webp" alt="the trophy" width="48" height="48"></div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div></div>'+
       '<div class="fuel"><i style="width:'+pct+'%"></i></div>'+
-      '<div class="fuel-lbl muted">fuel '+pct+'%</div>'+
+      '<div class="fuel-lbl muted">honey power '+pct+'%</div>'+
       '<div class="speaker" id="sp" style="margin-top:10px">🔊</div>'+
       '<p style="font-weight:800;font-size:18px;margin-top:12px">Spell the word you hear</p>'+
       '<div class="row" style="justify-content:center;margin:8px 0">'+
@@ -5674,8 +5697,8 @@ function actSunday(a, d){
         if (ok){
           right++; fuel++; combo++; best = Math.max(best, combo);
           sfx('combo', combo);
-          if (combo === 3) toast('🔥 Three in a row! Double stars!', 2600);
-          if (combo === 5) toast('🔥🔥 FIVE in a row — you\'re on fire!', 2600);
+          if (combo === 3) scoutPop('cheering', '🔥 Three in a row! Double stars!', 2600);
+          if (combo === 5) scoutPop('cheering', '🔥🔥 Five in a row! We\'re on fire!', 2600);
         } else { combo = 0; }
         i++;
         resumeSave('sun', words.map(x => x.word), i, {right, best, fuel});
@@ -5689,13 +5712,13 @@ function actSunday(a, d){
     const perfect = right === words.length;
     const pct = Math.round(100*right/words.length);
     const c = el('<div class="card center">'+
-      '<div class="rocketbox big"><div class="rk" id="rk" style="bottom:2%">🚀</div>'+
-        '<div class="moon">🌕</div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div>'+
+      '<div class="rocketbox big"><div class="rk" id="rk" style="bottom:2%"><img src="'+SCOUT_IMG('cheering')+'" alt="Scout" width="80" height="80"></div>'+
+        '<div class="moon"><img src="../img/sprint-7.webp" alt="the trophy" width="70" height="70"></div><div class="rstar s1">✨</div><div class="rstar s2">⭐</div>'+
         '<div class="rstar s3">💫</div></div>'+
       '<h2 id="cd" style="font-size:34px;margin-top:10px">3…</h2></div>');
     host.appendChild(c);
     const rk = c.querySelector('#rk'), cd = c.querySelector('#cd');
-    const seq = ['3…','2…','1…','LIFT OFF! 🚀'];
+    const seq = ['3…','2…','1…','Fly, Scout, fly! 🐝'];
     seq.forEach((t, n) => setTimeout(() => {
       cd.textContent = t;
       if (n < 3) sfx('tick');
@@ -5706,7 +5729,7 @@ function actSunday(a, d){
     }, n*750));
     setTimeout(() => {
       if (perfect) award('perfect');
-      cd.innerHTML = perfect ? '🌕 You made it to the moon!' : '⭐ '+pct+'% of the way there!';
+      cd.innerHTML = perfect ? '🏆 We made it to the trophy!' : '⭐ We flew '+pct+'% of the way!';
       setTimeout(() => finishScreen(d, right, words.length,
         (perfect ? '· PERFECT! 💯 ' : '') + (best >= 3 ? '· best combo 🔥'+best : '')), 1600);
     }, 3000 + 2200);
