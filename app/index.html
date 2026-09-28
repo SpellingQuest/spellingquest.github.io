@@ -574,6 +574,166 @@ details[open] > summary::before{ content:'▾ '; }
 .weekjar b{font-size:17px}
 .jar.big{width:58px;height:70px;border-color:#ffc93c}
 .jar.big .jar-n{font-size:18px}
+
+/* ================= the website's look, inside the app (28 Sep 2026) =================
+   Kathryn: every screen should feel like the outside of the app. Same night sky
+   and starfield, Nunito headings, gold 3D buttons, and honeycomb tiles instead of
+   square boxes. Mirrors site.css; sizes stay app-sized for small hands. */
+:root{ --font-head:"Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, sans-serif;
+  --gold:#ffc93c; --gold-deep:#ffb31a; --gold-soft:#ffe39a; --lilac:#f2eefd; --brand-deep:#4c1d95;
+  --hexclip:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+html{ background:#160c33; }
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 14%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 38%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 37% 9%, #ffe39a 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 27%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 68% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 81% 33%, #ffe39a 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 93% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 14% 71%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 29% 88%, #ffe39a 50%, transparent 51%),
+    radial-gradient(1px 1px at 46% 63%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 61% 83%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 77% 59%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 90% 78%, #ffe39a 50%, transparent 51%);
+  background-size:620px 620px; }
+h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-weight:900; letter-spacing:-.01em; }
+.card{ box-shadow:0 14px 34px rgba(8,3,30,.35); }
+.card h2,.card h3{ color:var(--ink); }
+.eyebrow-ink{ font:900 14px/20px var(--font-head); letter-spacing:.14em; text-transform:uppercase; color:var(--brand); }
+.eyebrow-ink::before,.eyebrow-ink::after{ content:"✦"; margin:0 .5em; color:var(--gold-deep); }
+
+/* buttons: chunky and 3D like the website's */
+.btn{ font-family:var(--font-head); font-weight:900; border-radius:18px;
+  background:linear-gradient(180deg,#9d5cff 0%,var(--brand) 60%,#6d28d9 100%); box-shadow:0 5px 0 var(--brand-deep);
+  transition:transform .1s ease, box-shadow .1s ease, filter .1s ease; }
+.btn:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--brand-deep); }
+.btn.green{ background:linear-gradient(180deg,#ffd666 0%,var(--gold) 55%,var(--gold-deep) 100%); color:var(--ink);
+  box-shadow:0 5px 0 #c98600, 0 12px 26px rgba(255,185,40,.28); }
+.btn.green:active{ box-shadow:0 1px 0 #c98600; }
+.btn.yellow{ background:linear-gradient(180deg,#ffe28a,#ffc93c); color:#5c3d00; box-shadow:0 5px 0 #c98600; }
+.btn.blue{ background:linear-gradient(180deg,#8fdcff,#3ba9ff); box-shadow:0 5px 0 #1f6fc4; }
+.btn.pink{ background:linear-gradient(180deg,#ffa6cb,#ff5fa2); box-shadow:0 5px 0 #c2346f; }
+.btn.orange{ background:linear-gradient(180deg,#ffc08a,#ff9445); box-shadow:0 5px 0 #c4621c; }
+.btn.red{ background:linear-gradient(180deg,#ff9d9d,#ff6b6b); box-shadow:0 5px 0 #c43d3d; }
+.btn.grey,.btn.revisit{ background:linear-gradient(180deg,#fff,#efe9ff); color:var(--ink); box-shadow:0 5px 0 #d4c8f5; }
+.btn.grey:active,.btn.revisit:active{ box-shadow:0 1px 0 #d4c8f5; }
+.btn.ghost{ background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.34); box-shadow:none; }
+.btn.link{ background:transparent; box-shadow:none; font-family:inherit; font-weight:700; }
+.btn.big{ font-size:22px; border-radius:20px; }
+
+/* top bar: honeycomb avatar and buttons */
+.topbar .avatar{ border-radius:0; clip-path:var(--hexclip); width:56px; height:64px;
+  background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); }
+.iconbtn{ border-radius:0; clip-path:var(--hexclip); width:48px; height:54px; font-size:21px;
+  background:linear-gradient(160deg,rgba(255,255,255,.26),rgba(255,255,255,.12)); transition:transform .1s; }
+.iconbtn:active{ transform:scale(.9); }
+.xpbar{ height:14px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.14); }
+.xpbar > i{ background:linear-gradient(90deg,#ffd666,var(--gold-deep)); }
+
+/* the map: a hive of seven sprints */
+.hmap{ --w:114px; --h:calc(var(--w) * 1.1547); --g:6px; margin:6px 0 16px; }
+@media (min-width:520px){ .hmap{ --w:148px; } }
+@media (min-width:720px){ .hmap{ --w:176px; } }
+.hmap .hrow{ display:flex; justify-content:center; gap:var(--g); }
+.hmap .hrow + .hrow{ margin-top:calc(var(--h) / -4 + var(--g) * .87); }
+.hcell{ position:relative; width:var(--w); height:var(--h); padding:0; background:transparent;
+  filter:drop-shadow(0 10px 16px rgba(8,3,30,.45)); transition:transform .12s ease; color:var(--ink); }
+.hcell:active{ transform:scale(.95); }
+.hcell .rim{ position:absolute; inset:0; clip-path:var(--hexclip); background:rgba(255,255,255,.16); }
+.hcell .in{ position:absolute; inset:3px; clip-path:var(--hexclip); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; padding:12% 7% 10%; }
+.hcell.cream .in{ background:linear-gradient(160deg,#ffffff,#fff3d6); }
+.hcell.lilac .in{ background:linear-gradient(160deg,#f7f1ff,#d8c1ff); }
+.hcell.done .in{ background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); }
+.hcell .sprint-ico{ width:42px!important; height:42px!important; filter:drop-shadow(0 4px 6px rgba(40,20,90,.25)); }
+@media (max-width:519px){ .hcell .n{ display:none; } }
+.hcell .n{ font:900 11px/1 var(--font-head); letter-spacing:.1em; text-transform:uppercase; opacity:.75; margin-top:3px; }
+.hcell b{ font:900 14px/1.12 var(--font-head); margin-top:3px; }
+.hcell .hstars{ color:#8a5a00; font-size:13px; letter-spacing:1px; margin-top:2px; }
+.hcell .got{ position:absolute; top:9%; left:50%; transform:translateX(-50%); width:22px; height:22px; border-radius:50%;
+  background:var(--ink); color:var(--gold); font:900 14px/22px var(--font-head); }
+.hcell.done .got + .sprint-ico{ margin-top:10px; }
+.hcell.today .rim{ background:linear-gradient(160deg,#fff,var(--gold)); animation:rimGlow 1.6s ease-in-out infinite; }
+.hcell.today{ filter:drop-shadow(0 0 14px rgba(255,201,60,.65)) drop-shadow(0 10px 16px rgba(8,3,30,.45)); }
+.hcell.today .in{ inset:5px; }
+@keyframes rimGlow{ 50%{ background:linear-gradient(160deg,var(--gold),#fff); } }
+@media (min-width:520px){ .hcell .sprint-ico{ width:62px!important; height:62px!important; } .hcell b{ font-size:16px; } .hcell .n{ font-size:12px; } }
+@media (prefers-reduced-motion:reduce){ .hcell.today .rim{ animation:none; } }
+
+/* word chips become honeycomb tiles */
+.wordchip{ border:0; border-radius:0; padding:12px 24px; margin:0 6px 8px 0;
+  clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,14px 100%,0 50%);
+  background:linear-gradient(160deg,#f7f1ff,#e2d6ff); font-family:var(--font-head); font-weight:900; cursor:pointer; }
+.wordchip.done{ background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); }
+.wordchip.bad{ background:linear-gradient(160deg,#fff,#efe9ff); border:0; }
+
+/* tip: the website's pattern card */
+.tip{ background:#fff8e8; border:2px solid #ffe1a1; border-radius:20px; color:var(--ink); }
+.tip h3{ color:#8a4b00; }
+.tip p{ color:var(--ink); }
+.tip .trick{ background:#fff; border-radius:14px; font-style:italic; }
+
+/* progress dots become little honeycomb cells */
+.dots{ gap:4px; }
+.dots i{ width:13px; height:15px; border-radius:0; clip-path:var(--hexclip); background:#ddd6f3; }
+.dots i.on{ background:linear-gradient(160deg,#ffe08a,var(--gold-deep)); }
+.dots i.miss{ background:#c4b5fd; border:0; }
+.pindots i{ width:18px; height:20px; border-radius:0; clip-path:var(--hexclip); }
+
+/* the big play button is a honeycomb cell too */
+.speaker{ border-radius:0; clip-path:var(--hexclip); width:112px; height:128px; box-shadow:none;
+  background:linear-gradient(160deg,#b57bff,var(--brand) 60%,#6d28d9); filter:drop-shadow(0 8px 0 var(--brand-deep)); }
+.speaker:active{ transform:translateY(4px); box-shadow:none; filter:drop-shadow(0 3px 0 var(--brand-deep)); }
+
+/* every letter box and chunk is a honeycomb cell (not only in the new games) */
+.boxes{ gap:3px; }
+.lbox{ border:0; border-radius:0; width:50px; height:58px; clip-path:var(--hexclip); display:grid; place-items:center;
+  background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); font-family:var(--font-head); font-weight:900; }
+.lbox.blank{ background:rgba(124,58,237,.14); }
+.lbox.blank.cur{ background:#fff4c9; box-shadow:none; }
+.lbox.good{ background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); color:var(--ink); }
+.lbox.bad{ background:#ffe1e6; }
+.slot{ border:0; border-radius:0; clip-path:var(--hexclip); min-width:70px; height:78px; background:rgba(124,58,237,.12); }
+.slot.filled{ background:linear-gradient(160deg,#f5f0ff,#e2d6ff); }
+.chunk{ border:0; border-radius:0; clip-path:var(--hexclip); min-width:72px; height:80px; box-shadow:none;
+  background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); font-family:var(--font-head); font-weight:900; }
+.chunk:active{ transform:scale(.92); box-shadow:none; }
+.key{ border-radius:12px; font-family:var(--font-head); font-weight:900; box-shadow:0 4px 0 #d4c8f5; background:#fff; }
+.key:active{ box-shadow:0 1px 0 #d4c8f5; }
+.key.wide{ background:var(--lilac); }
+
+/* Scout's Backpack: every badge is a honeycomb patch */
+.badgegrid{ grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:14px 8px; }
+.badge{ background:transparent; padding:0 2px; color:var(--ink); font-family:var(--font-head); }
+.badge .em{ width:72px; height:82px; margin:0 auto 6px; clip-path:var(--hexclip); display:grid; place-items:center;
+  font-size:34px; background:linear-gradient(160deg,#f2eefd,#ddd3f7); }
+.badge.got{ background:transparent; color:var(--ink); }
+.badge.got .em{ background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); }
+.badge:not(.got){ color:var(--ink-soft); }
+.badge .em{ position:relative; }
+.badge:not(.got) .em{ filter:grayscale(1); opacity:.6; }
+.badge .lk{ position:absolute; right:14px; bottom:10px; font-size:16px; }
+
+/* the child picker */
+.who-card{ transition:transform .1s; }
+.who-card:active{ transform:translateY(3px); }
+.who-card .em{ width:84px; height:96px; margin:0 auto 8px; clip-path:var(--hexclip); display:grid; place-items:center;
+  background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); font-size:46px; }
+.who-card b{ font-family:var(--font-head); font-weight:900; font-size:20px; }
+.av{ border-radius:0; clip-path:var(--hexclip); aspect-ratio:1 / 1.1547; padding:0; display:grid; place-items:center; }
+.av.on{ background:linear-gradient(160deg,#ffe08a,var(--gold) 55%,var(--gold-deep)); }
+
+/* pop-ups and grown-up bits */
+.pop .inner{ border-top:6px solid var(--gold); }
+.tabs button{ font-family:var(--font-head); font-weight:900; }
+.tabs button.on{ box-shadow:0 4px 0 #d4c8f5; }
+.seg button{ font-family:var(--font-head); font-weight:900; }
+.seg button.on{ background:linear-gradient(180deg,#9d5cff,var(--brand)); box-shadow:0 3px 0 var(--brand-deep); }
+.gamebar{ background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.05)); }
 </style>
 </head>
 <body>
@@ -3120,6 +3280,21 @@ function topbar(a, opts){
 }
 
 /* ---------------- home / day map ---------------- */
+/* Lay a grid's honeycomb cells out as a hive: rows of two and three that nest
+   into each other (seven cells make 2 · 3 · 2). */
+function hiveRows(g){
+  const cells = [...g.children];
+  g.className = 'hmap';
+  g.innerHTML = '';
+  let i = 0, size = cells.length <= 3 ? cells.length : 2;
+  while (i < cells.length){
+    const row = el('<div class="hrow"></div>');
+    cells.slice(i, i + size).forEach(c => row.appendChild(c));
+    g.appendChild(row);
+    i += size;
+    size = size === 2 ? 3 : 2;
+  }
+}
 /* A quiet one-liner at the top of the child's own screen. Plenty of parents will
    hand the iPad straight over without opening the grown-up area, and the voice is
    the first thing they'll judge. */
@@ -3174,7 +3349,7 @@ function renderHome(a){
 
   a.appendChild(el(
     '<div class="card center" style="padding:14px">'+
-      '<div style="font-size:14px;line-height:20px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">THIS WEEK</div>'+
+      '<div class="eyebrow-ink">This week</div>'+
       '<h2 style="font-size:22px;line-height:28px;margin:2px 0 6px">'+esc(WEEK.title)+'</h2>'+
       '<div class="muted">'+WEEK.allWords.length+' words · '+done+'/7 sprints done</div>'+
       '<div class="muted" style="margin-top:4px">📅 Test day: <b>'+WEEKDAYS[testDayOf(kid())]+'</b>'+
@@ -3238,13 +3413,20 @@ function renderHome(a){
       const d = DAYS[DAY_INDEX[key]];
       const st = p.days[key] || {};
       const isToday = key === tk;
+      const n = DAY_INDEX[key] + 1;
+      /* A honeycomb cell, like the seven sprints on the website. Cream and lilac
+         until the sprint is done; then the cell fills with honey. */
       const c = el(
-        '<button class="day '+d.cls+(isToday?' today':'')+'">'+
-          (st.done ? '<span class="tick">✅</span>' : '')+
-          '<div><span class="em">'+sprintIco(d, 52)+'</span>'+
-          '<b>'+esc(d.t)+'</b><small>Sprint '+(DAY_INDEX[key]+1)+' of 7'+
-            (night.length > 1 ? ' · '+(pos===0?'first go':'second go') : '')+'</small></div>'+
-          '<small style="opacity:.85">'+(st.done ? '⭐'.repeat(Math.max(1,st.stars||1)) : d.sub)+'</small>'+
+        '<button class="hcell '+(st.done ? 'done' : (n % 2 ? 'cream' : 'lilac'))+(isToday?' today':'')+'" '+
+          'aria-label="Sprint '+n+': '+esc(d.t)+(st.done ? ', done' : '')+(isToday ? ', today' : '')+'">'+
+          '<span class="rim" aria-hidden="true"></span>'+
+          '<span class="in" aria-hidden="true">'+
+            (st.done ? '<span class="got">✓</span>' : '')+
+            sprintIco(d, 46)+
+            '<span class="n">Sprint '+n+(night.length > 1 ? ' · '+(pos===0?'1st':'2nd') : '')+'</span>'+
+            '<b>'+esc(d.t)+'</b>'+
+            (st.done ? '<span class="hstars">'+'★'.repeat(Math.max(1,st.stars||1))+'</span>' : '')+
+          '</span>'+
         '</button>');
       c.onclick = () => { unlockAudio(); sfx('tap'); go('day', key); };
       dg.appendChild(c);
@@ -3255,6 +3437,7 @@ function renderHome(a){
         'One now is plenty. Come back for the other one later.</p>'));
     }
   });
+  grid.querySelectorAll('.daygrid').forEach(hiveRows);
   a.appendChild(grid);
 
   // word list preview
@@ -3316,7 +3499,7 @@ function renderBadges(a){
   const g = card.querySelector('.badgegrid');
   BADGES.forEach(b => {
     const got = k.badges.indexOf(b.id) >= 0;
-    g.appendChild(el('<div class="badge'+(got?' got':'')+'"><span class="em">'+(got?b.em:'🔒')+'</span>'+esc(b.n)+
+    g.appendChild(el('<div class="badge'+(got?' got':'')+'"><span class="em">'+b.em+(got?'':'<span class="lk">🔒</span>')+'</span>'+esc(b.n)+
       '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>'));
   });
   a.appendChild(card);
