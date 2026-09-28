@@ -528,6 +528,32 @@ details[open] > summary::before{ content:'▾ '; }
 .spotlight .stage-top img{width:78px;height:auto;animation:scoutBob 3s ease-in-out infinite}
 .spotlight .stage-lights{font-size:22px;letter-spacing:6px}
 @media (prefers-reduced-motion:reduce){ .hexy .lbox.blank.cur,.hexy .lbox.good,.spotlight .stage-top img{animation:none} }
+
+/* Arcade: balloons and Letter Catcher */
+.balloons{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:14px}
+.balloon{position:relative;width:118px;height:140px;border:0;border-radius:50% 50% 48% 48%;cursor:pointer;
+  color:#251a4a;font:800 19px/1.1 var(--font);padding:8px;animation:floaty 3.2s ease-in-out infinite;
+  box-shadow:inset -10px -12px 0 rgba(0,0,0,.08)}
+.balloon::after{content:"";position:absolute;left:50%;bottom:-26px;width:2px;height:26px;background:rgba(37,26,74,.35)}
+.balloon span{display:block;word-break:break-word}
+.balloon.bl0{background:radial-gradient(circle at 35% 30%,#ffd1e5,#ff7eb3 60%)}
+.balloon.bl1{background:radial-gradient(circle at 35% 30%,#fff1b8,#ffc93c 60%)}
+.balloon.bl2{background:radial-gradient(circle at 35% 30%,#d9f3ff,#5ec9ff 60%)}
+.balloon.popped{animation:popIt .35s ease forwards}
+.balloon.miss{opacity:.45;animation:none}
+.balloon.right{outline:4px solid var(--green);outline-offset:3px;animation:none}
+@media (max-width:420px){ .balloons{gap:10px} .balloon{width:96px;height:116px;font-size:16px} }
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+@keyframes popIt{60%{transform:scale(1.25)}100%{transform:scale(1.6);opacity:0}}
+.catcher .sky{position:relative;height:300px;margin-top:12px;border-radius:18px;overflow:hidden;
+  background:linear-gradient(180deg,#2d1b69,#4c1d95)}
+.fall{position:absolute;top:-60px;width:54px;height:62px;border:0;cursor:pointer;font:800 26px/1 var(--font);color:#251a4a;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a);
+  animation-name:fallDown;animation-timing-function:linear;animation-fill-mode:forwards}
+.fall.caught{transform:scale(1.3);opacity:0;transition:all .2s}
+.fall.wiggle{animation-name:fallDown}
+@keyframes fallDown{to{top:320px}}
+@media (prefers-reduced-motion:reduce){ .balloon{animation:none} }
 </style>
 </head>
 <body>
@@ -5230,13 +5256,15 @@ function actFriday(a, d){
     host.innerHTML = '';
     const played = Object.keys(p.games).length;
     const c = el('<div class="card center">'+
-      '<div style="font-size:44px">🎮</div><h2>Arcade</h2>'+
-      '<p class="muted">Play all three to finish Friday! ('+played+'/3)</p></div>');
+      '<img src="../img/sprint-5.webp" alt="" width="96" height="96" style="width:96px;height:auto">'+
+      '<h2>Arcade</h2>'+
+      '<p class="muted">Play any three games to finish this sprint! ('+Math.min(played,3)+'/3)</p></div>');
     host.appendChild(c);
     const games = [
-      { id:'pop',  em:'🎈', n:'Balloon Pop',  s:'Pop the correct spelling', cls:'pink',  fn:gamePop },
-      { id:'scr',  em:'🔀', n:'Scramble',     s:'Put the letters in order', cls:'blue',  fn:gameScramble },
-      { id:'spd',  em:'⚡', n:'Speed Match',  s:'Beat the clock',           cls:'orange',fn:gameSpeed },
+      { id:'pop',  em:'🎈', n:'Balloon Pop',    s:'Pop the balloon that\'s spelled right', cls:'pink',  fn:gamePop },
+      { id:'cat',  em:'🧺', n:'Letter Catcher', s:'Catch the letters in order',           cls:'green', fn:gameCatch },
+      { id:'scr',  em:'🐝', n:'Hive Scramble',  s:'Put the honeycomb letters in order',   cls:'blue',  fn:gameScramble },
+      { id:'spd',  em:'⚡', n:'Speed Match',    s:'Beat the clock',                       cls:'orange',fn:gameSpeed },
     ];
     games.forEach(g => {
       const b = el('<button class="btn big '+g.cls+'" style="margin-bottom:10px;justify-content:flex-start;text-align:left">'+
@@ -5246,7 +5274,7 @@ function actFriday(a, d){
       host.appendChild(b);
     });
     if (played >= 3){
-      const f = el('<button class="btn big green">🏁 Finish Friday</button>');
+      const f = el('<button class="btn big green">🏁 Finish the Arcade</button>');
       f.onclick = () => { award('arcade'); finishScreen(d, 3, 3); };
       host.appendChild(f);
     }
@@ -5287,19 +5315,82 @@ function actFriday(a, d){
       c.querySelector('#sp').onclick = () => sayWord(w.word);
       setTimeout(()=>sayWord(w.word), 300);
       const ops = c.querySelector('#ops');
-      opts.forEach(o => {
-        const b = el('<button class="btn big '+(o===w.word?'pink':'pink')+'" style="margin-bottom:9px">🎈 '+esc(o)+'</button>');
+      ops.className = 'balloons';
+      opts.forEach((o, k) => {
+        const b = el('<button class="balloon bl'+(k%3)+'" style="animation-delay:-'+(k*0.7)+'s"><span>'+esc(o)+'</span></button>');
+        b.dataset.w = o;
         b.onclick = () => {
-          if (o === w.word){ score += 10; wordStat(w.word).r++; b.className='btn big green'; b.textContent='✅ '+o;
-                 sfx('pop'); setTimeout(()=>sfx('great'), 90); setTimeout(()=>sayWord(w.word), 320); }
-          else { wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.className='btn big revisit'; b.textContent=o; scoutPop('thinking', encourage(), 3000);
-                 Array.from(ops.children).forEach(x => { if (x.textContent.indexOf(w.word)>=0) x.className='btn big green'; }); }
+          if (o === w.word){ score += 10; wordStat(w.word).r++; b.classList.add('popped');
+                 sfx('pop'); setTimeout(()=>sfx('great'), 90); setTimeout(()=>sayWord(w.word), 320);
+                 scoutPop('cheering', cheer(), 1600); }
+          else { wordStat(w.word).x++; noteMiss(w.word); sfx('wrong'); b.classList.add('miss'); scoutPop('thinking', encourage(), 3000);
+                 Array.from(ops.children).forEach(x => { if (x.dataset.w === w.word) x.classList.add('right'); }); }
           save();
           ops.querySelectorAll('button').forEach(x=>x.disabled=true);
           i++; setTimeout(step, 1900);
         };
         ops.appendChild(b);
       });
+    }
+  }
+
+  /* --- Letter Catcher (28 Sep 2026) ---
+     Scout says a word; letters drift down the sky; catch them in order. The
+     next letter you need turns up often, so it is never a hunt against luck.
+     K–2: slower letters and the right one more often. No timer. */
+  function gameCatch(id){
+    const words = shuffle(WEEK.allWords).slice(0, Math.min(6, WEEK.allWords.length));
+    const hard = isHard();
+    let i = 0, score = 0;
+    step();
+    function step(){
+      if (i >= words.length) return record(id, score);
+      const w = words[i].word.toLowerCase();
+      let pos = 0, misses = 0, done = false;
+      host.innerHTML = '';
+      const c = el('<div class="card center catcher">'+
+        '<div class="muted">🧺 '+(i+1)+' of '+words.length+' · '+score+' points</div>'+
+        '<div class="row" style="justify-content:center;margin:8px 0 0"><button class="btn grey" id="h">🔊 Hear it</button></div>'+
+        '<p style="font-weight:800;font-size:18px;margin:8px 0 0">Catch the letters in order!</p>'+
+        '<div class="hexy"><div class="boxes" id="got"></div></div>'+
+        '<div class="sky" id="sky"></div></div>');
+      host.appendChild(c);
+      c.querySelector('#h').onclick = () => sayWord(w);
+      setTimeout(() => sayWord(w), 300);
+      const got = c.querySelector('#got'), sky = c.querySelector('#sky');
+      const drawGot = () => { got.innerHTML = w.split('').map((ch, k) =>
+        '<div class="lbox'+(k < pos ? '' : ' blank')+(k === pos ? ' cur' : '')+'">'+(k < pos ? esc(ch) : '')+'</div>').join(''); };
+      drawGot();
+      const abc = 'abcdefghijklmnopqrstuvwxyz';
+      const spawn = () => {
+        if (done || !document.body.contains(sky)) { clearInterval(tm); return; }
+        const need = w[pos];
+        const ch = Math.random() < (hard ? .45 : .6) ? need
+          : abc.replace(need, '')[Math.floor(Math.random()*25)];
+        const f = el('<button class="fall">'+esc(ch)+'</button>');
+        f.style.left = (6 + Math.random()*78) + '%';
+        f.style.animationDuration = (hard ? 4.2 : 6.2) + 's';
+        f.onclick = () => {
+          if (done) return;
+          if (ch === w[pos]){
+            pos++; sfx('pop'); f.classList.add('caught'); setTimeout(() => f.remove(), 250); drawGot();
+            if (pos < w.length) setTimeout(spawn, 150);      // keep it moving
+            if (pos >= w.length){
+              done = true; clearInterval(tm);
+              score += 10; if (misses < 3) wordStat(w).r++; save();
+              sfx('great'); setTimeout(() => sayWord(w), 250); scoutPop('cheering', cheer(), 1800);
+              i++; setTimeout(step, 1600);
+            }
+          } else {
+            misses++; wiggle(f); sfx('tap');
+            if (misses === 3){ wordStat(w).x++; noteMiss(w); save(); scoutPop('thinking', 'Listen again, which letter comes next?', 2600); }
+          }
+        };
+        f.addEventListener('animationend', () => f.remove());
+        sky.appendChild(f);
+      };
+      const tm = setInterval(spawn, hard ? 750 : 1000);
+      spawn();
     }
   }
 
@@ -5315,8 +5406,8 @@ function actFriday(a, d){
       if (letters.join('') === w) letters = letters.reverse();
       const picked = [];
       host.innerHTML = '';
-      const c = el('<div class="card center">'+
-        '<div class="muted">🔀 '+(i+1)+' of '+words.length+' · '+score+' points</div>'+
+      const c = el('<div class="card center hexy hive-build">'+
+        '<div class="muted">🐝 '+(i+1)+' of '+words.length+' · '+score+' points</div>'+
         '<p style="font-weight:800;font-size:18px;margin-top:10px">Tap the letters in the right order — or type them</p>'+
         '<div class="row" style="justify-content:center;margin:8px 0"><button class="btn grey" id="h">🔊 Hear it</button>'+
         '<button class="btn grey" id="u">↩️ Undo</button></div>'+
