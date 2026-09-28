@@ -1,0 +1,39 @@
+/* The website's header and footer, inside the app (added 28 Sep 2026).
+   Every class is prefixed sqc- so nothing here can collide with the app's own
+   styles. The markup is written into app/index.html by tools/site-build/build.py
+   between the SITE-HEADER and SITE-FOOTER markers, so it always matches the site. */
+.sqc-head{position:sticky;top:0;z-index:50;background:rgba(22,12,51,.82);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);
+  font-family:"Nunito",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,sans-serif;
+  padding-top:env(safe-area-inset-top)}
+.sqc-head .sqc-wrap{max-width:1160px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:14px;min-height:64px}
+.sqc-brand img{display:block;width:170px;height:auto}
+.sqc-nav{display:flex;gap:2px;margin-left:auto}
+.sqc-nav a{color:#ddd6fb;text-decoration:none;font-weight:700;font-size:15px;padding:8px 10px;border-radius:10px}
+.sqc-nav a:hover{background:rgba(255,255,255,.08);color:#fff}
+.sqc-menu{display:none;position:relative;margin-left:auto}
+.sqc-menu summary{list-style:none;cursor:pointer;color:#fff;font-weight:800;font-size:15px;padding:8px 12px;
+  border-radius:10px;border:1.5px solid rgba(255,255,255,.3);user-select:none}
+.sqc-menu summary::-webkit-details-marker{display:none}
+.sqc-menu summary::marker{content:""}
+.sqc-menu summary{display:block}
+.sqc-menu .sqc-panel{position:absolute;right:0;top:calc(100% + 10px);width:min(260px,calc(100vw - 32px));
+  background:#fff;border-radius:18px;padding:8px;box-shadow:0 14px 34px rgba(8,3,30,.35)}
+.sqc-menu .sqc-panel a{display:block;color:#251a4a;text-decoration:none;font-weight:800;padding:11px 14px;border-radius:12px}
+.sqc-menu .sqc-panel a:hover{background:#f2eefd}
+@media (max-width:900px){ .sqc-nav{display:none} .sqc-menu{display:block} }
+@media (max-width:420px){ .sqc-brand img{width:140px} }
+
+.sqc-foot{position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.08);padding:40px 16px 34px;text-align:center;
+  background:rgba(10,5,28,.35);font-family:"Nunito",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,sans-serif;margin-top:30px}
+.sqc-foot .sqc-mark{width:62px;height:auto;margin:0 auto 10px;display:block}
+.sqc-foot .sqc-name{font-weight:900;font-size:20px;color:#fff}
+.sqc-foot .sqc-tag{color:#ffc93c;font-weight:800;font-size:15px;margin:2px 0 16px}
+.sqc-foot .sqc-links{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 4px;max-width:860px;margin:0 auto 12px}
+.sqc-foot .sqc-links a{color:#ddd6fb;text-decoration:none;font-weight:700;font-size:15px;padding:6px 9px;border-radius:9px}
+.sqc-foot .sqc-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.sqc-foot p{margin:6px 0;color:#b9aee3;font-size:14px}
+.sqc-foot p a{color:#ffe39a;font-weight:800}
+.sqc-head a:focus-visible,.sqc-foot a:focus-visible,.sqc-menu summary:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.sqc-menu > summary::before,.sqc-menu[open] > summary::before{content:none}
+.sqc-menu > summary{color:#fff;font-size:15px}
