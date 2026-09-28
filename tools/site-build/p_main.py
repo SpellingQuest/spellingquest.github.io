@@ -17,7 +17,7 @@ def pricing():
     <div>
       <p class="eyebrow">7 free days</p>
       <h1>One purchase.<br><span class="hl">Every speller.</span></h1>
-      <p class="lede">Try every stage, every game and spelling bee prep for a full week before you spend
+      <p class="lede">Try every sprint, every game and spelling bee prep for a full week before you spend
         anything. If it earns its place at your kitchen table, one price covers the whole family for
         twelve months.</p>
       <p class="note">The twelve months are twelve months, not a school year, so spelling bee season and
@@ -31,7 +31,7 @@ def pricing():
       <ul class="ticks">
         <li><b>Every child</b> in your household, each with their own words and test day</li>
         <li><b>Every device</b> you use: the iPad, the phone, the old tablet. We don't count them</li>
-        <li>All seven stages, the arcade games and <b>spelling bee prep</b></li>
+        <li>Every daily sprint, fun spelling games and <b>spelling bee prep</b></li>
         <li>Progress that follows your family across devices</li>
       </ul>
       <div class="includes">
