@@ -972,6 +972,49 @@ body[data-view=day] .gamebadge .hivebuild i{ width:17px; height:19px; }
   font:900 12px/18px var(--font-head); text-align:center; padding:0 4px; }
 .hb-bp{ font-size:16px; margin-top:6px; }
 @media (prefers-reduced-motion:reduce){ .badge.mystery .em,.badge.revealed .em{ animation:none; } }
+
+/* Grown-up Zone progress: collapsible (29 Sep 2026) */
+details.kidprog > summary{ display:flex; align-items:center; gap:10px; color:var(--ink); list-style:none; }
+details.kidprog > summary::before{ content:'▸'; color:var(--brand); font-size:18px; }
+details.kidprog[open] > summary::before{ content:'▾'; }
+.kp-av{ font-size:30px; }
+.kp-who{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.kp-who b{ font:900 18px/1.2 var(--font-head); }
+.kp-who span{ font-size:14px; color:var(--ink-soft); font-weight:700; }
+.kp-pips{ display:flex; gap:2px; }
+.kp-pips i{ width:12px; height:14px; clip-path:var(--hexclip); background:#e6e0f7; display:block; }
+.kp-pips i.on{ background:linear-gradient(160deg,#ffe08a,#ffb31a); }
+details.psec{ border-top:1px solid var(--line); padding:8px 0 2px; }
+details.psec > summary{ font:900 16px/1.3 var(--font-head); color:var(--ink); padding:4px 0; }
+.psec-body{ padding:4px 0 6px; }
+
+.row.daypick{ flex-wrap:nowrap; gap:4px; }
+.row.daypick .btn{ flex:1 1 0; min-width:0; padding:11px 0; font-size:14px; min-height:46px; border-radius:12px; }
+select.ti[data-f="nights"]{ font-weight:800; }
+
+/* walk-me (after RBTL) */
+body.walking .wrap{ z-index:auto; }
+#sqWalkBg{ position:fixed; inset:0; z-index:99990; background:rgba(9,5,28,.72); }
+.walk-hi{ position:relative; z-index:99998!important; box-shadow:0 0 0 4px rgba(255,201,60,.95), 0 0 28px 8px rgba(255,201,60,.55)!important; border-radius:16px; }
+.hcell.walk-hi,.iconbtn.walk-hi{ box-shadow:none!important; filter:drop-shadow(0 0 10px #ffc93c) drop-shadow(0 0 22px #ffc93c)!important; }
+#sqWalk{ position:fixed; z-index:99999; max-width:350px; width:calc(100% - 32px); background:#fff; color:var(--ink); border-radius:20px;
+  padding:18px 18px 12px; box-shadow:0 20px 60px rgba(0,0,0,.55); border-top:6px solid var(--gold); }
+#sqWalk .wk-n{ font:900 12px/1 var(--font-head); letter-spacing:.18em; color:#b45309; }
+#sqWalk h2{ font-size:22px; margin:6px 0 6px; }
+#sqWalk p{ margin:0 0 10px; font-size:16px; line-height:1.45; color:var(--ink-soft); }
+#sqWalk .wk-btns{ display:flex; justify-content:flex-end; align-items:center; gap:8px; }
+#sqWalk .wk-btns .btn.green{ min-height:46px; padding:10px 20px; font-size:17px; }
+.kbd{ display:inline-block; background:var(--lilac); border:1px solid #d4c8f5; border-radius:8px; padding:0 6px; color:var(--ink); white-space:nowrap; }
+/* Keep Scout close */
+.keepclose{ border:2px solid var(--gold); background:linear-gradient(160deg,#fffdf5,#fff6d8); }
+.keepclose .kc-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.keepclose .kc-head img{ width:56px; height:56px; border-radius:14px; }
+/* the free-week strip */
+.trialbar{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 10px; background:rgba(255,201,60,.12);
+  border:1px solid rgba(255,201,60,.5); border-radius:16px; padding:10px 12px; margin-bottom:12px; color:#fff; font-size:15px; text-align:center; }
+.trialbar b{ color:var(--gold-soft, #ffe39a); }
+.trialbar .btn.yellow{ min-height:40px; padding:8px 16px; font-size:15px; }
+.trialbar .btn.link{ color:#ddd6fb; font-size:14px; padding:4px 6px; }
 /* the new-pattern card (Sprints 1 and 2) */
 .pintro .pi-tiles{ display:flex; justify-content:center; gap:4px; margin:8px 0 6px; }
 .pintro .pi-tiles .hx{ width:62px; height:70px; font-size:34px; cursor:default; }
@@ -2458,6 +2501,7 @@ function rawForKid(k){
 
 let WEEK = null;
 function buildCurrentWeek(){
+  try{ foldOldWeeks(kid()); }catch(e){}
   WEEK = buildWeek(rawForKid(kid()), { id:DB.weekId });
   WEEK.allWords = [];
   WEEK.sections.forEach(s => s.words.forEach(w => WEEK.allWords.push(
@@ -2480,12 +2524,50 @@ function buildCurrentWeek(){
   return WEEK;
 }
 
+/* ---- which week is this? (29 Sep 2026) ----
+   The week's id used to be made up at random on each device when words were
+   saved, and was never synced. So a laptop and a phone filed the same week's
+   sprints under two different ids: stars and streaks travelled (they live on
+   the child) but finished sprints, paper practice and tricky words did not,
+   and on the laptop itself a re-save pushed the week into "Earlier weeks".
+   Now the id comes from the child's word list itself: the same words give the
+   same id on every device. Anything already filed under an old random id for
+   these words is folded in (and remembered as folded, so it isn't shown twice). */
+function wordsFingerprint(raw){
+  const ws = Array.from(new Set(String(raw || '').toLowerCase().match(/[a-z']+/g) || [])).sort();
+  let h = 5381; const t = ws.join(' ');
+  for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) >>> 0;
+  return { key: 'wk-' + h.toString(36), words: ws };
+}
+/* "Start a fresh week" with the very same words bumps a small counter that
+   travels with the child, so every device moves to the fresh week together */
+function weekKeyFor(k){ const salt = (k && k.prog && k.prog.__wkSalt) || 0; return wordsFingerprint(rawForKid(k)).key + (salt ? '-' + salt : ''); }
+function foldOldWeeks(k){
+  if (!k) return;
+  k.prog = k.prog || {};
+  const fp = wordsFingerprint(rawForKid(k)), id = weekKeyFor(k), set = new Set(fp.words);
+  Object.keys(k.prog).forEach(key => {
+    if (!isWeekKey(key) || key === id || key.indexOf('wk-') === 0) return;
+    const e = k.prog[key];
+    if (!e || typeof e !== 'object' || e.__to) return;
+    const seen = Object.keys(e.stats || {}).concat(...Object.values(e.write || {}).map(x => (x && x.words) || []));
+    const hits = seen.filter(w => set.has(String(w).toLowerCase())).length;
+    const same = hits > 0 && hits >= Math.ceil(seen.length * .6);
+    if (!same) return;
+    const copy = Object.assign({}, e); delete copy.__to;
+    k.prog[id] = forwardMerge(k.prog[id] || {}, copy);
+    e.__to = id;
+  });
+}
 function prog(){
   const k = kid();
-  const id = DB.weekId;
+  const id = weekKeyFor(k);
+  if (!k.prog[id]){ foldOldWeeks(k); }
   if (!k.prog[id]) k.prog[id] = { days:{}, stats:{}, games:{},
     title: (WEEK && WEEK.title) || '', date: new Date().toISOString().slice(0,10) };
-  return k.prog[id];
+  const p = k.prog[id];
+  p.days = p.days || {}; p.stats = p.stats || {}; p.games = p.games || {};
+  return p;
 }
 function wordStat(w){
   const p = prog();
@@ -3865,53 +3947,98 @@ function installCard(){
    For the grown-up, not the child, and it runs once. Five steps, because the app
    has exactly five things a parent has to know before handing over the iPad. It
    can be replayed from Grown-ups → More, so dismissing it is never a loss. */
-const TOUR = [
-  { em:'📋', h:'Paste their real list',
-    p:'Grown-ups → This week\'s words. Type or paste the list from the backpack — one word per line. '+
-      'Spelling Quest finds the patterns itself.' },
-  { em:'📅', h:'Say when the test is, and how many nights',
-    p:'Grown-ups → Children. Set the test day and the number of review nights. Four nights and seven '+
-      'nights both work — the same seven sprints just spread to fit.' },
-  { em:'🔊', h:'Check the voice once',
-    p:'Every word is read aloud by your device. Some built-in voices are much better than others — '+
-      'there is a play button on the home screen to try it.' },
-  { em:'▶️', h:'Then hand it over',
-    p:'One green button starts today\'s practice. They can do it on their own; you do not need to '+
-      'sit with them.' },
-  { em:'📈', h:'Look in whenever you like',
-    p:'Grown-ups → Progress shows which words are sticking and which are still tricky. No alerts, '+
-      'no nagging, nothing to keep on top of.' },
+/* ---- the walk-me (29 Sep 2026) ----
+   Modelled on Read Between The Lines: the real buttons light up one at a time,
+   with a short note beside each, "2 OF 7", Skip tour and Next. It runs over the
+   home screen the first time a family lands there, and any time from
+   Grown-ups → More. */
+const WALKME = [
+  { t:'Meet Scout', target:'.home-bubble', d:'Scout is your child\'s spelling buddy. She greets them, says every word out loud, and cheers them on.' },
+  { t:'Today\'s sprint', target:'.hcell.today', d:'Scout points at today\'s sprint. One tap and they\'re off, on their own. You don\'t need to sit with them.' },
+  { t:'The week at a glance', target:'.hmap', d:'Seven short sprints between the words coming home and test day. Each one turns to honey when it\'s done.' },
+  { t:'The honey pot', target:'.honeypot', d:'Every word they win adds a drop of honey. Little wins along the way keep them going.' },
+  { t:'Scout\'s Backpack', target:'#tb-badge', d:'Badges they earn hide in here as gold surprises they get to open.' },
+  { t:'The Grown-up Zone', target:'#gu', d:'Paste this week\'s words, set the test day, and see which words are sticking. It sits behind your grown-up code.' },
+  { t:'Keep Scout close', target:null, install:true, d:'' },
 ];
 function tourSeen(){ try { return localStorage.getItem('sq_tour_v1') === '1'; } catch(e){ return true; } }
 function tourMarkSeen(){ try { localStorage.setItem('sq_tour_v1','1'); } catch(e){} }
+let WALK_PREV = null;
+function walkClear(){
+  document.querySelectorAll('#sqWalk,#sqWalkBg').forEach(n => n.remove());
+  document.body.classList.remove('walking');
+  if (WALK_PREV){ try{ WALK_PREV.el.classList.remove('walk-hi'); }catch(e){} WALK_PREV = null; }
+}
+function walkEnd(){ walkClear(); tourMarkSeen(); }
 function runTour(){
-  let i = 0;
-  const ov = el('<div style="position:fixed;inset:0;background:rgba(30,15,60,.78);z-index:10000;'+
-    'display:flex;align-items:center;justify-content:center;padding:18px"></div>');
-  const box = el('<div class="card" style="max-width:380px;width:100%;text-align:center;margin:0"></div>');
-  ov.appendChild(box); document.body.appendChild(ov);
-  function close(){ tourMarkSeen(); ov.remove(); }
-  function draw(){
-    const t = TOUR[i];
-    box.innerHTML =
-      '<div style="font-size:44px">'+t.em+'</div>'+
-      '<h2 style="font-size:22px;line-height:28px;margin:6px 0 4px">'+t.h+'</h2>'+
-      '<p class="muted" style="font-size:16px;line-height:24px">'+t.p+'</p>'+
-      '<div class="muted" style="margin-top:12px;letter-spacing:3px;font-size:12px">'+
-        TOUR.map((_,j)=> j===i ? '●' : '○').join('')+'</div>'+
-      '<button class="btn green big" id="tnext" style="width:100%;margin-top:10px">'+
-        (i === TOUR.length-1 ? 'Start' : 'Next')+'</button>'+
-      '<button class="btn link" id="tskip" style="width:100%;margin-top:6px">'+
-        (i === TOUR.length-1 ? '' : 'Skip the tour')+'</button>';
-    box.querySelector('#tnext').onclick = () => {
-      sfx('tap');
-      if (i === TOUR.length-1) return close();
-      i++; draw();
-    };
-    const sk = box.querySelector('#tskip');
-    if (i === TOUR.length-1) sk.style.display = 'none'; else sk.onclick = close;
+  if (VIEW !== 'home'){
+    // the tour lives on the home screen: take them there first
+    if (!kid() && DB.kids.length){ DB.active = DB.kids[0].id; save(); buildCurrentWeek(); }
+    go('home');
+    setTimeout(() => walkStep(0), 1800);
+    return;
   }
-  draw();
+  setTimeout(() => walkStep(0), 300);
+}
+function walkStep(i){
+  walkClear();
+  const steps = WALKME.filter(w => w.install ? installNeeded() : (!w.target || document.querySelector(w.target)));
+  if (i >= steps.length) return walkEnd();
+  const w = steps[i];
+  const bg = el('<div id="sqWalkBg"></div>'); bg.onclick = walkEnd; document.body.appendChild(bg);
+  document.body.classList.add('walking');
+  const tgt = w.target ? document.querySelector(w.target) : null;
+  if (tgt){ try{ tgt.scrollIntoView({ block:'center' }); }catch(e){} tgt.classList.add('walk-hi'); WALK_PREV = { el:tgt }; }
+  const body = w.install ? installStepsHtml(true) : '<p>'+esc(w.d)+'</p>';
+  const ov = el('<div id="sqWalk" role="dialog" aria-label="'+esc(w.t)+'">'+
+    '<div class="wk-n">'+(i+1)+' OF '+steps.length+'</div>'+
+    '<h2>'+esc(w.t)+'</h2>'+body+
+    '<div class="wk-btns"><button class="btn link" id="wkskip">Skip tour</button>'+
+      '<button class="btn green" id="wknext">'+(i === steps.length - 1 ? 'Got it, Scout!' : 'Next')+'</button></div></div>');
+  document.body.appendChild(ov);
+  ov.querySelector('#wkskip').onclick = walkEnd;
+  ov.querySelector('#wknext').onclick = () => { sfx('tap'); walkStep(i + 1); };
+  const ib = ov.querySelector('#sqInstallBtn'); if (ib) ib.onclick = installNow;
+  requestAnimationFrame(() => {
+    const vw = innerWidth, vh = innerHeight, ow = ov.offsetWidth || 320, oh = ov.offsetHeight || 180;
+    if (tgt){
+      const r = tgt.getBoundingClientRect();
+      const left = Math.min(Math.max(12, r.left + r.width/2 - ow/2), vw - ow - 12);
+      let top = r.top > vh/2 ? r.top - oh - 14 : r.bottom + 14;
+      top = Math.min(Math.max(12, top), vh - oh - 12);
+      ov.style.left = left + 'px'; ov.style.top = top + 'px';
+    } else { ov.style.left = Math.max(12, (vw - ow)/2) + 'px'; ov.style.top = Math.max(12, (vh - oh)/2) + 'px'; }
+  });
+}
+
+/* ---- Keep Scout close: Add to Home Screen (29 Sep 2026, after RBTL) ----
+   iPhone and iPad need the Share-sheet steps; Android gets a real Install
+   button when the browser offers one. Hidden once installed or on a computer. */
+let INSTALL_EVT = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALL_EVT = e;
+  document.querySelectorAll('#sqInstallBtn').forEach(b => b.style.display = 'inline-flex'); });
+function isInstalled(){ try{ return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; }catch(e){ return false; } }
+function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function installNeeded(){ return !isInstalled() && (isIOS() || /android/i.test(navigator.userAgent)); }
+function installNow(){ if (!INSTALL_EVT) return; INSTALL_EVT.prompt(); INSTALL_EVT.userChoice.finally(() => { INSTALL_EVT = null;
+  document.querySelectorAll('#sqInstallBtn').forEach(b => b.style.display = 'none'); }); }
+function installStepsHtml(short){
+  const dots = '<b class="kbd">•••</b>', share = '<b class="kbd">Share ⬆</b>', plus = '<b class="kbd">＋ Add to Home Screen</b>';
+  return '<p>'+(short ? 'Put Spelling Quest on your Home Screen so it opens like an app, one tap away.' : 'So Spelling Quest opens like an app, one tap away.')+'</p>'+
+    (isIOS()
+      ? '<ol class="steps-mini"><li>In Safari, tap '+dots+' at the bottom (or '+share+' on older phones).</li>'+
+        '<li>Tap '+share+', then <b>View More</b> if you see it.</li><li>Tap '+plus+', then <b>Add</b>.</li></ol>'+
+        '<p class="muted" style="font-size:14px">Opening it from the Home Screen for the first time? Pop your family code in once more. That\'s normal.</p>'
+      : '<p>Tap the <b class="kbd">⋮</b> menu, then <b>Install app</b> or <b>Add to Home screen</b>.</p>'+
+        '<button class="btn yellow" id="sqInstallBtn" style="display:'+(INSTALL_EVT ? 'inline-flex' : 'none')+'">📲 Add to Home Screen</button>');
+}
+function installCard(){
+  if (!installNeeded()) return null;
+  const c = el('<div class="card keepclose"><div class="kc-head"><div><h3>Keep Scout close ✨</h3>'+
+    '<div class="muted">One quick step</div></div><img src="../img/sq-icon.webp" alt="" width="56" height="56"></div>'+
+    installStepsHtml(false)+'</div>');
+  const b = c.querySelector('#sqInstallBtn'); if (b) b.onclick = installNow;
+  return c;
 }
 
 function siteFooter(){
@@ -3999,15 +4126,11 @@ function trialStrip(){
   const left = trialLeft();
   if (left === null || left <= 0) return null;
   if (DB.accessCode || (DB.licence && DB.licence.key)) return null;
-  const w = el('<div class="card" style="background:#fff4d6;padding:9px 12px;margin-bottom:10px">'+
-    '<div class="row" style="align-items:center;gap:8px;flex-wrap:wrap;justify-content:center">'+
-      '<b style="color:#5c3d00;font-size:14px;line-height:20px">🕐 '+left+' day'+(left===1?'':'s')+
-        ' left in your free trial</b>'+
-      '<button class="btn link" id="tskey" style="color:#5c3d00;font-size:14px;line-height:20px;padding:2px 4px;'+
-        'text-decoration:underline">I have a key</button>'+
-      '<button class="btn link" id="tsbuy" style="color:#5c3d00;font-size:14px;line-height:20px;padding:2px 4px;'+
-        'text-decoration:underline">Unlock for a year</button>'+
-    '</div></div>');
+  /* one clear message and one button; the key box only when asked (after RBTL) */
+  const w = el('<div class="trialbar">'+
+    '<div>✨ <b>'+left+' day'+(left===1?'':'s')+' left</b> in your free week. Loving it?</div>'+
+    '<button class="btn yellow" id="tsbuy">Unlock for a year</button>'+
+    '<button class="btn link" id="tskey">Already have a key?</button></div>');
   w.querySelector('#tskey').onclick = openUnlock;
   w.querySelector('#tsbuy').onclick = buyNow;
   return w;
@@ -4120,7 +4243,7 @@ function renderGate(a){
     DB.trialStart = Date.now(); save(); sfx('good'); go('pick');
     /* The tour belongs here rather than on first paint: before this tap there is
        nothing to tour, and a modal over the code box is a modal in the way. */
-    if (!tourSeen()) setTimeout(runTour, 500);
+    if (!tourSeen()) WALK_PENDING = true;          // shown on the home screen, where there is something to point at
   };
   const bb = c.querySelector('#acbuy');
   if (bb) bb.onclick = buyNow;
@@ -4234,7 +4357,9 @@ function voiceStrip(){
 
 let AFTER_MAP = [], HOME_SCOUT = null;
 /* Scout lands next to today's sprint cell and points at it */
+let WALK_PENDING = false;
 function placeHomeScout(grid){
+  if (WALK_PENDING || !tourSeen()){ WALK_PENDING = false; setTimeout(() => { if (VIEW === 'home' && !tourSeen()) walkStep(0); }, 2600); }
   const hs = HOME_SCOUT; HOME_SCOUT = null;
   if (!hs) return;
   grid.style.position = 'relative';
@@ -4307,7 +4432,7 @@ function renderHome(a){
       '<div class="pot-text"><b>'+(pct >= 100 ? 'The honey pot is full!' : drops ? drops + ' drop'+(drops===1?'':'s')+' of honey this week' : 'This week\'s honey pot')+'</b>'+
       '<span>'+(pct >= 100 ? 'What a week. Every word you won is in there.' : 'Every word you win adds a drop. Let\'s fill it up!')+'</span></div></div>'));
   }
-  if (!DB.voiceOk && SCOUT_OK !== true) AFTER_MAP.push(voiceStrip());   // Scout's own voice needs no checking
+  // (29 Sep 2026: the 'Check the voice first' strip is gone: Scout's recorded voice needs no checking)
   const p = prog();
   const done = DAYS.filter(d => p.days[d.key] && p.days[d.key].done).length;
   const nights = routeFor(kid());
@@ -4435,7 +4560,7 @@ function renderHome(a){
     bk.onclick = () => go('modes');
     foot.appendChild(bk);
   }
-  const gu = el('<button class="btn ghost">⚙️ Grown-ups</button>');
+  const gu = el('<button class="btn ghost" id="gu">⚙️ Grown-ups</button>');
   gu.onclick = parentGate;
   foot.appendChild(gu);
   a.appendChild(foot);
@@ -4722,7 +4847,6 @@ function voiceCheckCard(){
 }
 
 function parentWords(a){
-  if (!DB.voiceOk) a.appendChild(voiceCheckCard());
   const lists = DB.kids.map(k => (DB.weekRawByKid[k.id]||'').trim());
   if (DB.kids.length > 1 && lists[0] && lists.every(x => x === lists[0])){
     a.appendChild(el('<div class="card" style="background:#fff4d6;border:3px dashed var(--orange)">'+
@@ -4770,8 +4894,11 @@ function parentWords(a){
 
   card.querySelector('#wsave').onclick = () => {
     let any = false;
+    const fresh = card.querySelector('#fw').checked;
     DB.kids.forEach(k => { const v = boxes[k.id].value.trim(); if (v){
+      const same = wordsFingerprint(rawForKid(k)).key === wordsFingerprint(v).key;
       DB.weekRawByKid[k.id] = v;
+      if (fresh && same){ k.prog = k.prog || {}; k.prog.__wkSalt = (k.prog.__wkSalt || 0) + 1; }
       /* a save here is human intent, so this is where the word-list stamp is set */
       k.prog = k.prog || {}; k.prog[WW_AT_KEY] = Date.now();
       any = true;
@@ -4878,14 +5005,14 @@ function parentKids(a){
       '<div class="row" data-f="grade">'+[1,2,3,4,5].map(g =>
         '<button class="btn '+(k.grade===g?'':'grey')+'" data-g="'+g+'" style="flex:1;padding:12px">'+g+'</button>').join('')+'</div>'+
       '<label class="fl">Spelling test day</label>'+
-      '<div class="row wrap" data-f="testday">'+WEEKDAYS_SHORT.map((n, d) =>
-        '<button class="btn '+(testDayOf(k)===d?'':'grey')+'" data-d="'+d+'" '+
-        'style="flex:1;min-width:40px;padding:11px 2px;font-size:14px">'+n+'</button>').join('')+'</div>'+
+      '<div class="row daypick" data-f="testday">'+WEEKDAYS_SHORT.map((n, d) =>
+        '<button class="btn '+(testDayOf(k)===d?'':'grey')+'" data-d="'+d+'">'+n+'</button>').join('')+'</div>'+
       '<div class="muted" style="margin-top:6px;font-size:14px;line-height:20px">The route rearranges itself around this.</div>'+
       '<label class="fl">Review nights before the test</label>'+
-      '<div class="row wrap" data-f="nights">'+[4,5,6,7,10,14].map(n =>
-        '<button class="btn '+(reviewNightsOf(k)===n?'':'grey')+'" data-n="'+n+'" '+
-        'style="flex:1;min-width:44px;padding:11px 2px;font-size:14px">'+n+'</button>').join('')+'</div>'+
+      /* a dropdown (29 Sep 2026): families vary a lot, and fourteen buttons don't fit on a line */
+      '<select class="ti" data-f="nights">'+Array.from({ length: MAX_NIGHTS - MIN_NIGHTS + 1 }, (_, i) => MIN_NIGHTS + i).map(n =>
+        '<option value="'+n+'"'+(reviewNightsOf(k)===n?' selected':'')+'>'+n+' night'+(n===1?'':'s')+
+        (n === 4 ? ' (words Monday, test Friday)' : n === 7 ? ' (a full week)' : '')+'</option>').join('')+'</select>'+
       '<div class="muted" style="margin-top:6px;font-size:14px;line-height:20px">How many <b>nights</b> they have to '+
         'practice. Words home Monday, test Friday is <b>4</b>. All seven sprints are always taught — '+
         'a short window just puts two short sprints on some nights, and they never have to be done '+
@@ -4909,12 +5036,12 @@ function parentKids(a){
       toast('Plans changed. Here\'s the best route from today to quiz day.', 3200);
       stayOn('kids');
     });
-    c.querySelectorAll('[data-n]').forEach(b => b.onclick = () => {
-      /* a tap is human intent, so this is where the stamp is set */
-      stampReviewNights(k, +b.dataset.n); save(); sfx('tap');
+    c.querySelector('[data-f="nights"]').onchange = e => {
+      /* a pick is human intent, so this is where the stamp is set */
+      stampReviewNights(k, +e.target.value); save(); sfx('tap');
       toast('Plans changed. Here\'s the best route from today to quiz day.', 3200);
       stayOn('kids');
-    });
+    };
     const rm = c.querySelector('[data-f="remove"]');
     if (rm) rm.onclick = () => {
       /* Deliberately two taps and a typed-out warning: this throws away a
@@ -4965,7 +5092,8 @@ function parentKids(a){
 
 function parentProgress(a){
   DB.kids.forEach(k => {
-    const p = (k.prog && k.prog[DB.weekId]) || { days:{}, stats:{} };
+    foldOldWeeks(k);
+    const p = (k.prog && k.prog[weekKeyFor(k)]) || { days:{}, stats:{} };
     const rows = DAYS.map(d => {
       const s = p.days[d.key] || {};
       return '<tr><td>'+d.em+' '+dayLabel(d,k)+'</td><td>'+d.t+'</td><td class="nowrap">'+(s.done ? '✅ '+'⭐'.repeat(Math.max(1,s.stars||1)) : '—')+'</td></tr>';
@@ -4976,7 +5104,8 @@ function parentProgress(a){
     const solid = Object.keys(p.stats).filter(w => p.stats[w].r >= 2 && p.stats[w].x === 0);
 
     const log = DB.weekLog || {};
-    const past = Object.keys(k.prog || {}).filter(id => isWeekKey(id) && id !== DB.weekId).slice(-6).reverse();
+    const cur = weekKeyFor(k);
+    const past = Object.keys(k.prog || {}).filter(id => isWeekKey(id) && id !== cur && !(k.prog[id] && k.prog[id].__to)).slice(-6).reverse();
     const pastHtml = past.length
       ? '<h3 style="margin-top:16px;font-size:17px">📅 Earlier weeks</h3><table class="pt">'+
         past.map(id => {
@@ -4989,31 +5118,35 @@ function parentProgress(a){
         }).join('')+'</table>'
       : '';
 
-    const c = el('<div class="card">'+
-      '<h3>'+k.avatar+' '+esc(k.name)+'</h3>'+
-      '<div class="muted" style="margin-bottom:8px">Level '+level(k)+' · '+(k.xp||0)+' stars · 🔥 '+(k.streak||0)+' day streak · '+(k.weeksDone||0)+' weeks finished</div>'+
-      '<div style="font-weight:800;font-size:14px;color:var(--brand);margin-bottom:4px">This week: '+
-        esc(buildWeek(rawForKid(k), {}).title)+'</div>'+
-      '<table class="pt">'+rows+'</table>'+
-      pastHtml+
-      writeLogHtml(k)+
-      beeLogHtml(k)+
-      '<h3 style="margin-top:16px;font-size:17px">Words to revisit</h3>'+
-      (shaky.length
+    /* collapsible (29 Sep 2026): one line per child, open the parts you need */
+    const doneN = DAYS.filter(d => p.days[d.key] && p.days[d.key].done).length;
+    const sect = (title, html, open) => {
+      const body = String(html).replace(/^\s*<h3[^>]*>[\s\S]*?<\/h3>/, '');
+      return '<details class="psec"'+(open ? ' open' : '')+'><summary>'+title+'</summary><div class="psec-body">'+body+'</div></details>';
+    };
+    const c = el('<details class="card kidprog"'+(DB.kids.length === 1 || k.id === DB.active ? ' open' : '')+'>'+
+      '<summary><span class="kp-av">'+k.avatar+'</span><span class="kp-who"><b>'+esc(k.name)+'</b>'+
+        '<span>'+doneN+'/7 sprints · '+(shaky.length ? shaky.length+' word'+(shaky.length>1?'s':'')+' to revisit' : 'nothing to revisit')+'</span></span>'+
+        '<span class="kp-pips">'+DAYS.map(d => '<i class="'+(p.days[d.key] && p.days[d.key].done ? 'on' : '')+'"></i>').join('')+'</span></summary>'+
+      '<div class="muted" style="margin:8px 0">Level '+level(k)+' · '+(k.xp||0)+' stars · 🔥 '+(k.streak||0)+' day streak · '+(k.weeksDone||0)+' weeks finished</div>'+
+      sect('📅 This week: '+esc(buildWeek(rawForKid(k), {}).title), '<table class="pt">'+rows+'</table>', true)+
+      sect('🔁 Words to revisit ('+shaky.length+')', shaky.length
         ? '<table class="pt">'+shaky.map(o =>
             '<tr><td><b>'+esc(o.w)+'</b></td><td class="nowrap">'+o.s.x+' miss'+(o.s.x>1?'es':'')+'</td>'+
             '<td style="width:40%"><div class="bar"><i style="width:'+Math.round(100*o.s.r/Math.max(1,o.s.r+o.s.x))+'%"></i></div></td></tr>').join('')+'</table>'
-        : '<p class="muted">No words to revisit from the practice recorded so far.</p>')+
-      '<h3 style="margin-top:16px;font-size:17px">Practiced successfully</h3>'+
-      '<p class="muted">'+(solid.length ? solid.map(esc).join(', ') : 'No words recorded here yet.')+'</p>'+
-    '</div>');
+        : '<p class="muted">No words to revisit from the practice recorded so far.</p>', shaky.length > 0)+
+      sect('✅ Practiced successfully ('+solid.length+')', '<p class="muted">'+(solid.length ? solid.map(esc).join(', ') : 'No words recorded here yet.')+'</p>')+
+      sect('✍️ Paper Power-Up', writeLogHtml(k))+
+      (beeLogHtml(k) ? sect('🐝 Spelling bee', beeLogHtml(k)) : '')+
+      (pastHtml ? sect('🗓️ Earlier weeks', pastHtml) : '')+
+    '</details>');
     a.appendChild(c);
   });
 }
 
 /* what they were asked to write out 5x, and how far they got */
 function writeLogHtml(k){
-  const p = (k.prog && k.prog[DB.weekId]) || {};
+  const p = (k.prog && k.prog[weekKeyFor(k)]) || {};
   const wl = p.write || {};
   const days = DAYS.filter(d => wl[d.key] && wl[d.key].words && wl[d.key].words.length);
   if (!days.length) return '<h3 style="margin-top:16px;font-size:17px">✍️ Paper Power-Up</h3>'+
@@ -5067,6 +5200,7 @@ function beeLogHtml(k){
 }
 
 function parentMore(a){
+  const ic = installCard(); if (ic) a.appendChild(ic);
   // ---------- voice: two choices, three speeds ----------
   const v = el('<div class="card"><h3>🗣️ Voice</h3>'+
     '<div class="seg" id="vsex">'+
@@ -5285,7 +5419,7 @@ function parentMore(a){
     '<button class="btn grey" id="rw" style="flex:1">Reset this week</button>'+
     '<button class="btn red" id="ra" style="flex:1">Erase everything</button></div></details></div>');
   a.appendChild(r);
-  r.querySelector('#rw').onclick = () => { DB.kids.forEach(k => { delete k.prog[DB.weekId]; }); save(); toast('Week reset'); };
+  r.querySelector('#rw').onclick = () => { DB.kids.forEach(k => { delete k.prog[weekKeyFor(k)]; }); save(); toast('Week reset'); };
   /* (the review window lives under a reserved key, so a week reset leaves it alone) */
   r.querySelector('#ra').onclick = () => {
     const p = popup('<div class="em">⚠️</div><h2>Erase everything?</h2>'+
@@ -5295,9 +5429,9 @@ function parentMore(a){
     p.querySelector('#yes').onclick = () => { localStorage.removeItem(STORE_KEY); location.hash=''; location.reload(); };
   };
 
-  const tr = el('<div class="card"><h3>🧭 The quick tour</h3>'+
-    '<p class="muted">Five cards on how this works. Handy if someone else is setting it up.</p>'+
-    '<button class="btn blue" id="tourgo" style="width:100%;margin-top:8px">Show me the tour</button></div>');
+  const tr = el('<div class="card"><h3>🧭 Walk me through it</h3>'+
+    '<p class="muted">A quick tour of the home screen, one button at a time. Handy if someone else is setting it up.</p>'+
+    '<button class="btn blue" id="tourgo" style="width:100%;margin-top:8px">Walk me through it</button></div>');
   tr.querySelector('#tourgo').onclick = () => { sfx('tap'); runTour(); };
   a.appendChild(tr);
 
@@ -5403,7 +5537,7 @@ function resumeWrite(all){
 }
 function resumeId(dayKey){
   const k = kid();
-  return ((k && k.id) || '?') + ':' + (DB.weekId || '?') + ':' + dayKey;
+  return ((k && k.id) || '?') + ':' + (k ? weekKeyFor(k) : '?') + ':' + dayKey;
 }
 /* i is where to pick up. Nothing is stored at position 0 — there is no such
    thing as resuming an exercise nobody has started. */
