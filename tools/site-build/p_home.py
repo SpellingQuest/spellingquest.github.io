@@ -49,16 +49,16 @@ def page():
       <h2>Spelling homework shouldn't take over <span class="hl">the whole evening.</span></h2>
     </div>
     <div class="familiar">
-      <div class="glass"><div class="ico" aria-hidden="true">🕖</div><div>
+      <div class="glass"><div class="ico" aria-hidden="true"><img class="ui-ic" src="img/ui/icon-clock.webp" alt="" width="160" height="160" loading="lazy"></div><div>
         <h3>It's 7 p.m. and you're calling out words.</h3>
         <p>Again. From a crumpled list, between dinner and bath time.</p></div></div>
       <div class="glass"><div class="ico" aria-hidden="true"><img class="ui-ic" src="img/ui/icon-pencil.webp" alt="" width="160" height="160" loading="lazy"></div><div>
         <h3>“Write each word five times.”</h3>
         <p>It fills the page. It doesn't always fill the memory.</p></div></div>
-      <div class="glass"><div class="ico" aria-hidden="true">📅</div><div>
+      <div class="glass"><div class="ico" aria-hidden="true"><img class="ui-ic" src="img/ui/icon-calendar.webp" alt="" width="160" height="160" loading="lazy"></div><div>
         <h3>Right on Monday. Gone by Friday.</h3>
         <p>The words were practiced. They just didn't stick until test day.</p></div></div>
-      <div class="glass"><div class="ico" aria-hidden="true">🎲</div><div>
+      <div class="glass"><div class="ico" aria-hidden="true"><img class="ui-ic" src="img/ui/icon-dice.webp" alt="" width="160" height="160" loading="lazy"></div><div>
         <h3>Fun spelling apps, wrong words.</h3>
         <p>Lovely games. Just not the list your child actually has this week.</p></div></div>
     </div>
@@ -247,13 +247,13 @@ def page():
       <h2>Everything the week needs, <span class="hl">nothing it doesn't.</span></h2>
     </div>
     <div class="grid-3">
-      <div class="card"><div class="hex" aria-hidden="true"><!-- FEATURE ART F1 -->👧</div><h3>Every child, their own words</h3>
+      <div class="card"><div class="hex" aria-hidden="true"><!-- FEATURE ART F1 --><img class="ui-ic" src="img/ui/icon-child.webp" alt="" width="160" height="160" loading="lazy"></div><h3>Every child, their own words</h3>
         <p>One purchase covers the whole family. Each child gets their own list, their own stars and their own test day.</p></div>
       <div class="card"><div class="hex white" aria-hidden="true"><!-- FEATURE ART F2 --><img class="ui-ic" src="img/ui/icon-pencil.webp" alt="" width="160" height="160" loading="lazy"></div><h3>Paper Power-Up</h3>
         <p>Every day ends with a quick pencil-and-paper challenge that zooms in on the tricky part of each word. Writing by hand that teaches, not just repeats.</p></div>
       <div class="card"><div class="hex violet" aria-hidden="true"><!-- FEATURE ART F3 --><img class="ui-ic" src="img/ui/icon-mic.webp" alt="" width="160" height="160" loading="lazy"></div><h3>Spelling bee prep</h3>
         <p>Give it a long list and a date. It breaks the list into small weekly groups, and the words your child finds tricky keep coming back, week after week, until they're confident. Then it practices on a stage with judges.</p></div>
-      <div class="card"><div class="hex" aria-hidden="true"><!-- FEATURE ART F4 -->📱</div><h3>Every device you own</h3>
+      <div class="card"><div class="hex" aria-hidden="true"><!-- FEATURE ART F4 --><img class="ui-ic" src="img/ui/icon-devices.webp" alt="" width="160" height="160" loading="lazy"></div><h3>Every device you own</h3>
         <p>Start on the iPad, carry on with a phone. Stars and finished days follow your family code across every device.</p></div>
       <div class="card"><div class="hex white" aria-hidden="true"><!-- FEATURE ART F5 --><img class="ui-ic" src="img/ui/icon-again.webp" alt="" width="160" height="160" loading="lazy"></div><h3>Tricky words, handled</h3>
         <p>Any word your child misses gets extra practice in the Boss Battle, so time goes where it's needed instead of the same drill for every word.</p></div>

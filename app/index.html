@@ -719,6 +719,11 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 .badge:not(.got) .em{ filter:grayscale(1); opacity:.6; }
 .badge .lk{ position:absolute; right:14px; bottom:10px; font-size:16px; }
 .badge > div{ color:#5a4e84 !important; opacity:1 !important; }
+/* round patches (batch 4): the patch is the badge, no honeycomb behind it */
+.badge .em img.patch{ width:80px; height:80px; display:block; }
+.badge.art .em, .badge.locked .em{ background:none!important; clip-path:none; width:84px; height:84px; }
+.badge.locked .em{ filter:grayscale(.35); opacity:.75; }
+.badge.locked{ color:#8a80ad; }
 
 /* the child picker */
 .who-card{ transition:transform .1s; }
@@ -932,6 +937,24 @@ body[data-view=day] .dots{ margin:0 0 8px; }
 
 /* the Champion Hive badge is bigger than the other sprints' */
 body[data-view=day] .gamebadge .hivebuild i{ width:17px; height:19px; }
+/* Fix the Hive: the monster smash */
+.boxes.smash-pre .lbox{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a)!important; color:transparent!important; animation:none!important; }
+.smash-busy .boxes, .smash-busy .kb, .smash-busy .helpers{ pointer-events:none; }
+.smash-mon{ position:absolute; left:0; top:0; width:124px; height:auto; z-index:6; pointer-events:none; filter:drop-shadow(0 8px 10px rgba(20,8,60,.35)); }
+.lbox.smashed{ animation:holeFlash .4s ease-in-out 4!important; }
+@keyframes holeFlash{ 50%{ background:#ffd6e7; box-shadow:inset 0 0 0 3px #ff5fa2; } }
+.dust.gold{ background:#ffc93c; border-radius:3px; width:9px; height:9px; }
+/* the jar or hive, big, at the bottom of the game card (29 Sep 2026) */
+.gamebadge.gamedock{ display:flex; flex-direction:row; align-items:center; justify-content:center; gap:14px; max-width:none; margin:14px -6px 0;
+  padding-top:12px; border-top:2px dashed #eee6ff; }
+.gamebadge.gamedock .gb-label{ color:var(--ink); font-size:17px; line-height:22px; max-width:120px; text-align:left; }
+.gamebadge.gamedock .jar{ width:72px; height:84px; }
+.gamebadge.gamedock .jar{ background:#f3eefe; border:4px solid #ffc93c; border-radius:18px 18px 24px 24px; }
+.gamebadge.gamedock .jar-lid{ height:15px; border-radius:8px; }
+.gamebadge.gamedock .jar-n{ font-size:26px; inset:14px 0 0; }
+body[data-view=day] .gamebadge.gamedock .hivebuild i{ width:27px; height:31px; background:#ece6fb; }
+body[data-view=day] .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
+.gamebadge.gamedock .hivebuild .hb-row{ gap:2px; margin-top:-5px; }
 
 .trick-btn{ margin:6px auto 2px; display:flex; font-size:16px; padding:10px 16px; min-height:44px; }
 .wordchip{ cursor:pointer; }
@@ -945,6 +968,23 @@ body[data-view=day] .gamebadge .hivebuild i{ width:17px; height:19px; }
 .crowd-col.r.wild img{ animation:crowdJumpR .35s ease-in-out 4 alternate; }
 @keyframes crowdJumpR{ from{ transform:scaleX(-1) translateY(0) rotate(-8deg); } to{ transform:scaleX(-1) translateY(-18px) rotate(8deg) scale(1.1); } }
 @media (max-width:420px){ .crowd-col img{ width:30px; } .stage-center .lbox{ width:42px; height:48px; } .stage-tiles .stile{ width:44px; height:50px; font-size:22px; } }
+/* 29 Sep 2026 (Kathryn: "can the bees celebrate a bit more… make them bigger"):
+   bigger bees that lean out over the edge of the stage, and a proper party
+   dance, jumping one after another like a wave */
+.crowd-col{ margin:0 -12px; position:relative; z-index:2; }
+.crowd-col img{ width:64px; }
+@media (max-width:420px){ .crowd-col img{ width:54px; } .crowd-col{ margin:0 -16px; gap:2px; } }
+.crowd-col.wild img, .crowd-col.r.wild img{ animation:crowdParty .55s ease-in-out 4!important; }
+.crowd-col.r.wild img{ animation-name:crowdPartyR!important; }
+.crowd-col.wild img:nth-child(2){ animation-delay:.09s!important; }
+.crowd-col.wild img:nth-child(3){ animation-delay:.18s!important; }
+.crowd-col.r.wild img:nth-child(1){ animation-delay:.05s!important; }
+.crowd-col.r.wild img:nth-child(2){ animation-delay:.14s!important; }
+.crowd-col.r.wild img:nth-child(3){ animation-delay:.23s!important; }
+@keyframes crowdParty{ 0%,100%{ transform:translateY(0) rotate(0) scale(1); } 20%{ transform:translateY(-24px) rotate(-18deg) scale(1.3); }
+  40%{ transform:translate(-4px,-6px) rotate(15deg) scale(1.12); } 60%{ transform:translate(4px,-28px) rotate(-12deg) scale(1.32); } 80%{ transform:translateY(-4px) rotate(14deg) scale(1.08); } }
+@keyframes crowdPartyR{ 0%,100%{ transform:scaleX(-1) translateY(0) rotate(0) scale(1); } 20%{ transform:scaleX(-1) translateY(-24px) rotate(-18deg) scale(1.3); }
+  40%{ transform:scaleX(-1) translate(-4px,-6px) rotate(15deg) scale(1.12); } 60%{ transform:scaleX(-1) translate(4px,-28px) rotate(-12deg) scale(1.32); } 80%{ transform:scaleX(-1) translateY(-4px) rotate(14deg) scale(1.08); } }
 @media (prefers-reduced-motion:reduce){ .crowd-col img{ animation:none!important; } }
 
 /* home: the honey pot under the map */
@@ -1866,19 +1906,19 @@ function sprintIco(d, px){
 const AVATARS = ['🦊','🐼','🐸','🦄','🐙','🦁','🐨','🐬','🦖','🐝','🦉','🐳','🐯','🦋','🐢','🚀','⭐','🌈'];
 
 const BADGES = [
-  { id:'first',    em:'🌟', n:'First Star',     d:'Finish your first day' },
-  { id:'week',     em:'🏅', n:'Week Champion',  d:'Finish all 7 sprints' },
-  { id:'perfect',  em:'💯', n:'Perfect Quiz',   d:'100% on the Champion Quiz' },
-  { id:'streak3',  em:'🔥', n:'3-Day Streak',   d:'Practice 3 days in a row' },
-  { id:'streak7',  em:'⚡', n:'7-Day Streak',   d:'Practice 7 days in a row' },
-  { id:'boss',     em:'⚔️', n:'Boss Slayer',    d:'Clear the whole tricky pile' },
-  { id:'arcade',   em:'🎮', n:'Arcade Master',  d:'Play three arcade games' },
-  { id:'reader',   em:'📣', n:'Loud Reader',    d:'Read every word out loud' },
-  { id:'builder',  em:'🧱', n:'Word Builder',   d:'Build every word piece by piece' },
-  { id:'level5',   em:'🚀', n:'Level 5',        d:'Reach level 5' },
-  { id:'level10',  em:'👑', n:'Level 10',       d:'Reach level 10' },
-  { id:'writer',   em:'✍️', n:'Pencil Power',   d:'Finish a Paper Power-Up' },
-  { id:'weeks4',   em:'📚', n:'Month of Words', d:'Finish 4 weeks' },
+  { id:'first',    em:'🌟', n:'First Star',     d:'Finish your first day', art:'first-star' },
+  { id:'week',     em:'🏅', n:'Week Champion',  d:'Finish all 7 sprints', art:'week-champion' },
+  { id:'perfect',  em:'💯', n:'Perfect Quiz',   d:'100% on the Champion Quiz', art:'perfect-quiz' },
+  { id:'streak3',  em:'🔥', n:'3-Day Streak',   d:'Practice 3 days in a row', art:'streak-3' },
+  { id:'streak7',  em:'⚡', n:'7-Day Streak',   d:'Practice 7 days in a row', art:'streak-7' },
+  { id:'boss',     em:'⚔️', n:'Boss Slayer',    d:'Clear the whole tricky pile', art:'boss' },
+  { id:'arcade',   em:'🎮', n:'Arcade Master',  d:'Play three arcade games', art:'arcade' },
+  { id:'reader',   em:'📣', n:'Loud Reader',    d:'Read every word out loud', art:'loud-reader' },
+  { id:'builder',  em:'🧱', n:'Word Builder',   d:'Build every word piece by piece', art:'builder' },
+  { id:'level5',   em:'🚀', n:'Level 5',        d:'Reach level 5', art:'level-5' },
+  { id:'level10',  em:'👑', n:'Level 10',       d:'Reach level 10', art:'level-10' },
+  { id:'writer',   em:'✍️', n:'Pencil Power',   d:'Finish a Paper Power-Up', art:'pencil-power' },
+  { id:'weeks4',   em:'📚', n:'Month of Words', d:'Finish 4 weeks', art:'month' },
   // 29 Sep 2026: more to collect
   { id:'stars3',   em:'🌟', n:'Triple Star',    d:'Get 3 stars on a sprint' },
   { id:'detective',em:'🔎', n:'Word Detective', d:'Finish Meet the Words' },
@@ -1896,6 +1936,12 @@ const BADGES = [
   { id:'weeks2',   em:'🗓️', n:'Two Great Weeks',d:'Finish 2 weeks' },
   { id:'level15',  em:'💎', n:'Level 15',       d:'Reach level 15' },
 ];
+
+/* a badge's picture: Kathryn's round patch when there is one (batch 4, 29 Sep
+   2026), otherwise its emoji on the gold honeycomb */
+function badgeFace(b){
+  return b.art ? '<img class="patch" src="../img/ui/badge-'+b.art+'.webp" alt="" draggable="false">' : b.em;
+}
 
 /* ---- access ----
    One code per year, printed on the welcome sheet the store delivers.
@@ -3099,7 +3145,7 @@ async function scoutPlay(text, opts){
     clip = (await scoutClip(made)) || made;
     if (token !== SCOUT_TOKEN) return true;
   }
-  SCOUT_RATE = speed === 'slow' ? .72 : 1;
+  SCOUT_RATE = speed === 'slow' ? .85 : 1;          // the recording is already slow; stretching it further blurs the vowels
   if (await scoutPlayUrl(clip, token, opts && opts.onend)){ SCOUT_OK = true; return true; }
   return token !== SCOUT_TOKEN;
 }
@@ -3233,8 +3279,17 @@ function saySlow(word){
   if (inUserTap()) stopAudio();
   const parts = speechSyllables(word);          // real syllables, never letters
   if (SCOUT_OK !== false){
+    /* 29 Sep 2026 (Kathryn: "vowels not so much, iii for snip"): a one-beat
+       word is played from Scout's own slow recording (the one Sound it out
+       uses), at its natural speed. Slowing a clip down in the browser is what
+       smeared the vowels. */
+    if (parts.length === 1){
+      const w = String(word).toLowerCase();
+      say(word, { rate:.62, custom: async () => { const got = await wordAlign(w); return got ? playSlices(got, [], true) : 0; } });
+      return;
+    }
     // Scout: "sun … shine … sunshine", one clip, slowed down
-    say((parts.length > 1 ? parts.join(' … ') + ' … ' : '') + word, { rate:.62 });
+    say(parts.join(' … ') + ' … ' + word, { rate:.62 });
     return;
   }
   let t = 0;
@@ -3370,25 +3425,178 @@ function alignSpan(al, i0, i1){
   const a = al.start[i0], z = al.end[Math.max(i0, i1 - 1)];
   return (a == null || z == null) ? null : [a, z];
 }
+/* ---- finding each sound in the recording itself (29 Sep 2026) ----
+   Kathryn: "instead of sn it's saying s-snn, and it didn't say the p at all in
+   snap." ElevenLabs' letter times are only rough (evenly spaced guesses): in
+   "snap" they put the p at 0.56–0.74s, but that stretch is the silent moment
+   before the pop, which really comes at 0.79s. So the timings are now only a
+   starting point. The recording is measured in 10ms steps (how loud, and how
+   hissy), and every edge is moved to where the sound really changes: s → n
+   where the hiss stops, n → a where it gets louder, a → p where it goes quiet,
+   and a p, t or k is the little pop after the quiet. */
+function audioFx(got){
+  if (got.fx !== undefined) return got.fx;
+  try{
+    const d = got.buf.getChannelData(0), sr = got.buf.sampleRate, hop = .01, L = Math.round(sr * hop);
+    const n = Math.floor(d.length / L), rms = new Float32Array(n), zcr = new Float32Array(n);
+    let maxr = 0;
+    for (let f = 0; f < n; f++){
+      let e = 0, z = 0;
+      for (let j = f * L; j < (f + 1) * L; j++){ e += d[j] * d[j]; if (j > f * L && (d[j] > 0) !== (d[j-1] > 0)) z++; }
+      rms[f] = Math.sqrt(e / L); zcr[f] = z / hop; if (rms[f] > maxr) maxr = rms[f];
+    }
+    const cls = new Array(n);
+    for (let f = 0; f < n; f++){
+      const r = rms[f] / (maxr || 1);
+      cls[f] = zcr[f] > 3000 && r > .02 ? 'fric' : r < .04 ? 'sil' : 'voi';
+    }
+    let s0 = 0; while (s0 < n - 1 && cls[s0] === 'sil') s0++;
+    let s1 = n - 1; while (s1 > s0 && cls[s1] === 'sil') s1--;
+    got.fx = { hop, n, rms, zcr, cls, maxr, s0: s0 * hop, s1: (s1 + 1) * hop };
+  }catch(e){ got.fx = null; }
+  return got.fx;
+}
+/* what kind of sound a spelling starts or ends with */
+function soundKind(g, end, ipa){
+  g = String(g).toLowerCase();
+  if (ipa && !end){
+    if (/^(tʃ|dʒ)/.test(ipa)) return 'aff';
+    if (/^[ptkbdg]/.test(ipa)) return 'stop';
+    if (/^[sfhzθʃv]/.test(ipa)) return 'fric';
+    if (/^[aeiouɪɛæʌʊɔəɑ]/.test(ipa)) return 'vowel';
+    return 'son';
+  }
+  if (end){
+    if (g.length > 1 && /e$/.test(g) && !/(ee|ie|ue|oe|ye)$/.test(g)) return soundKind(g.slice(0, -1), true);
+    if (/(ch|tch|dge|sh|th|ph|ff|ss|x|s|f|z|zz)$/.test(g)) return 'fric';
+    if (/(ck|ed|[pkbdt]|ct|pt|c|g)$/.test(g) && !/(igh|ng)$/.test(g)) return 'stop';
+    if (/(igh|[aeiouy]|gh|w)$/.test(g)) return 'vowel';
+    return 'son';
+  }
+  if (/^(ch|tch|j|dge)/.test(g) || /^g[eiy]/.test(g) && g.length > 1) return 'aff';
+  if (/^(sh|th|ph|s|f|h|z)/.test(g) || /^c[eiy]/.test(g)) return 'fric';
+  if (/^(wh|[mnlrwv]|y[aeiou])/.test(g)) return 'son';
+  if (/^[aeiouy]/.test(g)) return 'vowel';
+  return 'stop';
+}
+/* the pop of a p/t/k/b/d/g: the first sound after a short silence */
+function findBurst(fx, t0, t1, soft){
+  const H = fx.hop, i0 = Math.max(3, Math.round(t0 / H)), i1 = Math.min(fx.n - 1, Math.round(t1 / H));
+  for (let i = i0; i <= i1; i++)
+    if (fx.cls[i] !== 'sil' && fx.cls[i-1] === 'sil' && fx.cls[i-2] === 'sil' && fx.cls[i-3] === 'sil') return i * H;
+  // a very soft pop (a p at the end of a word often is): the loudest blip in the quiet
+  if (!soft) return null;
+  let best = -1, br = 0;
+  for (let i = i0; i <= i1; i++) if (fx.cls[i] === 'sil' && fx.cls[i-1] === 'sil' && fx.rms[i] > br){ br = fx.rms[i]; best = i; }
+  return best >= 0 && br > fx.maxr * .006 ? best * H : null;
+}
+/* where the silence before a pop begins */
+function findClosure(fx, t0, t1){
+  const H = fx.hop, i0 = Math.max(0, Math.round(t0 / H)), i1 = Math.min(fx.n - 2, Math.round(t1 / H));
+  for (let i = i0; i <= i1; i++) if (fx.cls[i] === 'sil' && fx.cls[i+1] === 'sil') return i * H;
+  return null;
+}
+/* a t or d in the middle of a word is often just a quick dip ("little" is
+   said "lid-dle"): the quietest moment near the guess, if it's a real dip */
+function findDip(fx, t0, t1){
+  const H = fx.hop, i0 = Math.max(2, Math.round(t0 / H)), i1 = Math.min(fx.n - 3, Math.round(t1 / H));
+  let best = -1, bv = Infinity;
+  for (let i = i0; i <= i1; i++) if (fx.rms[i] < bv){ bv = fx.rms[i]; best = i; }
+  if (best < 0) return null;
+  const around = Math.min(Math.max(fx.rms[best-2], fx.rms[best-1]), Math.max(fx.rms[best+1], fx.rms[best+2]));
+  return bv < around * .5 ? best * H : null;
+}
+/* move an edge to where the sound really changes, within 90ms of the guess */
+function edgeNear(fx, t, L, R){
+  const H = fx.hop, w = 9, c = Math.round(t / H);
+  const isF = i => fx.cls[i] === 'fric';
+  const LF = L === 'fric' || L === 'aff', RF = R === 'fric' || R === 'aff';
+  if (LF !== RF){
+    for (let d = 0; d <= w; d++) for (const i of [c + d, c - d])
+      if (i > 0 && i < fx.n && isF(i - 1) === LF && isF(i) === RF) return i * H;
+    return t;
+  }
+  if ((L === 'vowel') !== (R === 'vowel') && L !== 'stop' && R !== 'stop'){
+    let best = t, bv = 0;
+    for (let i = Math.max(1, c - w); i < Math.min(fx.n - 1, c + w); i++){
+      const v = (R === 'vowel' ? 1 : -1) * (fx.rms[i + 1] - fx.rms[i - 1]);
+      if (v > bv){ bv = v; best = i * H; }
+    }
+    return best;
+  }
+  return t;
+}
 /* where each part (grapheme or chunk) sits in the word, skipping silent letters */
-function partSpans(word, parts, al){
-  let ci = 0; const out = [];
+function partSpans(word, parts, got){
+  const al = got.al, fx = audioFx(got);
+  let ci = 0; const raw = [];
   for (const p of parts){
-    const at = word.indexOf(p.g || p, ci);
-    if (at < 0) return null;
     const g = p.g || p;
+    const at = word.indexOf(g, ci);
+    if (at < 0) return null;
     const span = alignSpan(al, at, at + g.length);
     if (!span) return null;
-    const stop = /^(b|c|d|g|k|p|t|ck|ch|tch|dge|x|qu|ed|ct|pt)$/.test(g);
-    let [a0, z0] = span;
-    /* the recording runs sounds together, so trim each slice to its own sound:
-       a pop sound (p, t, k…) is only the very end of its span, or it drags the
-       vowel in with it ("ap"); others lose a hair at each edge */
-    if (stop) a0 = Math.max(a0, z0 - .09);
-    else { a0 = a0 + .015; z0 = Math.max(a0 + .06, z0 - .02); }
-    out.push({ g, span:[a0, z0], stretch: !stop && /[aeiouyfslmnrvzwh]/.test(g) });
+    // only a single sound is held longer; holding a chunk like "sn" loops across two sounds ("s-snn")
+    raw.push({ g, at, a:span[0], z:span[1], ks:soundKind(g, false, p.ipa), ke:soundKind(g, true), one:!!p.ipa });
     ci = at + g.length;
   }
+  const out = [];
+  raw.forEach((p, k) => {
+    const g = p.g, single = /^(b|c|d|g|k|p|t|bb|dd|gg|pp|tt|ck|ct|pt|ed|q|qu)$/.test(g);
+    let a0 = p.a, z0 = p.z;
+    if (fx){
+      const before = word.slice(0, p.at), after = word.slice(p.at + g.length).replace(/e$/, '');
+      const prevK = k > 0 ? raw[k-1].ke : before ? soundKind(before, true) : 'edge';
+      const nextK = k < raw.length - 1 ? raw[k+1].ks : after ? soundKind(after, false) : 'edge';
+      const prevStart = k > 0 ? raw[k-1].a : p.a - .2;
+      // start
+      if (p.ks === 'stop' || p.ks === 'aff'){
+        const b = prevK === 'edge' ? fx.s0 : findBurst(fx, Math.max(prevStart, p.a - .12), p.z + .3, k === raw.length - 1 && !after);
+        if (b != null) a0 = Math.max(0, b - .005);
+      } else if (prevK === 'edge') a0 = Math.abs(fx.s0 - p.a) < .25 ? fx.s0 : p.a;
+      else if (prevK === 'stop' && out[k-1]) a0 = out[k-1].span[1];
+      else if (prevK === 'stop'){
+        const b = findBurst(fx, Math.max(prevStart, p.a - .2), p.a + .25);
+        if (b != null) a0 = Math.min(b + .07, p.z - .05);
+      } else a0 = edgeNear(fx, p.a, prevK, p.ks);
+      // end
+      if (single || p.ke === 'stop' && p.g.length === 1){
+        const last = k === raw.length - 1 && !after;
+        const b = findBurst(fx, Math.max(a0 - .02, p.a - .12), p.z + .3, last);
+        const dip = b == null ? findDip(fx, p.a - .06, p.z + .08) : null;
+        if (b != null){ a0 = Math.max(0, b - .005); z0 = b + (p.ks === 'aff' ? .13 : .08); }
+        else if (dip != null){ a0 = dip - .01; z0 = dip + .06; }
+      } else if (p.ke === 'stop'){
+        const b = findBurst(fx, p.a, p.z + .35, k === raw.length - 1 && !after);
+        if (b != null) z0 = b + .08;
+      } else if (nextK === 'edge') z0 = Math.abs(fx.s1 - p.z) < .3 ? Math.min(fx.s1, p.z + .3) : p.z;
+      else if (nextK === 'stop' || nextK === 'aff'){
+        const cl = findClosure(fx, Math.max(a0 + .05, p.z - .12), p.z + .25);
+        const dip = cl == null ? findDip(fx, p.z - .06, p.z + .12) : null;
+        if (cl != null) z0 = cl; else if (dip != null) z0 = dip;
+      } else z0 = edgeNear(fx, p.z, p.ke, nextK);
+      if (p.ks === 'aff' && !single){ /* ch, j: pop plus hiss */ }
+      if (z0 < a0 + .05) z0 = a0 + .05;
+      if (single && z0 < a0 + .06) z0 = a0 + .06;
+      /* a pop that runs into the next vowel: stop it before the vowel gets loud */
+      if (single && k < raw.length - 1 && raw[k+1].ks === 'vowel'){
+        const H = fx.hop;
+        for (let i = Math.round((a0 + .03) / H); i < Math.round(z0 / H); i++) if (fx.rms[i] > fx.maxr * .45){ z0 = i * H; break; }
+      }
+    } else {
+      /* no audio measurements: the old rule (the last 90ms of a pop, a hair off each edge) */
+      if (single) a0 = Math.max(a0, z0 - .09);
+      else { a0 = a0 + .015; z0 = Math.max(a0 + .06, z0 - .02); }
+    }
+    /* a soft pop gets turned up so it can actually be heard (the p in "snip" is
+       barely there in the recording) */
+    let gain = 1;
+    if (fx && single){
+      let pk = 0; for (let i = Math.round(a0 / fx.hop); i < Math.min(fx.n, Math.round(z0 / fx.hop)); i++) pk = Math.max(pk, fx.rms[i]);
+      if (pk > 0) gain = Math.max(1, Math.min(6, fx.maxr * .45 / pk));
+    }
+    out.push({ g, span:[a0, z0], gain, stretch: !single && p.ks !== 'stop' && p.ke !== 'stop' && /[aeiouyfslmnrvzwh]/.test(g) && (p.one || g.length === 1) });
+  });
   return out;
 }
 const PLAYING_SLICES = [];
@@ -3399,7 +3607,7 @@ function playSlices(got, spans, withWord){
   stopSlices();
   let t = c.currentTime + .08;
   const out = master() || c.destination;
-  const one = (a, z, stretch) => {
+  const one = (a, z, stretch, boost) => {
     const src = c.createBufferSource(); src.buffer = buf;
     const g = c.createGain(); src.connect(g); g.connect(out);
     const len = Math.max(.08, z - a);
@@ -3408,16 +3616,19 @@ function playSlices(got, spans, withWord){
       src.loop = true; src.loopStart = a + len * .3; src.loopEnd = a + len * .7;
       dur = len + .09;                                  // held just a little, not "sssssss"
     }
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1.6, t + .015);
-    g.gain.setValueAtTime(1.6, t + dur - .03); g.gain.linearRampToValueAtTime(0, t + dur);
+    const lv = 1.6 * (boost || 1);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(lv, t + .01);
+    g.gain.setValueAtTime(lv, t + dur - .03); g.gain.linearRampToValueAtTime(0, t + dur);
     src.start(t, a); src.stop(t + dur + .01);
     PLAYING_SLICES.push(src);
     t += dur;
   };
-  spans.forEach(p => { one(p.span[0], p.span[1], p.stretch); t += .42; });
+  spans.forEach(p => { one(p.span[0], p.span[1], p.stretch, p.gain); t += .42; });
   if (withWord){
     t += .25;
-    const last = al.chars.length - 1, end = /[.!?]/.test(al.chars[last]) ? al.end[last - 1] + .12 : al.end[last];
+    const last = al.chars.length - 1, fx = audioFx(got);
+    let end = /[.!?]/.test(al.chars[last]) ? al.end[last - 1] + .12 : al.end[last];
+    if (fx) end = Math.min(buf.duration, Math.max(end, fx.s1 + .06));      // never clip the final pop
     const src = c.createBufferSource(); src.buffer = buf; const g = c.createGain(); g.gain.value = 1.6;
     src.connect(g); g.connect(out); src.start(t, Math.max(0, al.start[0] - .03), end - al.start[0] + .06);
     PLAYING_SLICES.push(src);
@@ -3433,7 +3644,7 @@ function sayChunk(chunk, word){
     const got = word && await wordAlign(w);
     if (!got) return 0;
     // which occurrence? the first one not before the pieces already used is good enough
-    const spans = partSpans(w, [c], got.al);
+    const spans = partSpans(w, [c], got);
     if (!spans) return 0;
     return playSlices(got, spans, false);
   };
@@ -3446,7 +3657,7 @@ function saySounds(w){
     const got = await wordAlign(word);
     if (!got) return 0;
     const parts = beats(word) >= 3 ? speechSyllables(word).map(g => ({ g })) : (wordSounds(word) || speechSyllables(word).map(g => ({ g })));
-    const spans = partSpans(word, parts, got.al);
+    const spans = partSpans(word, parts, got);
     if (!spans) return 0;
     return playSlices(got, spans, true);
   };
@@ -3515,6 +3726,9 @@ const UI_ICONS = {
   '☆':'star-empty|star to win', '⬅':'back|back', '🐢':'slow|slowly', '🛡':'shield|shield', '🏆':'trophy|trophy',
   '⚡':'speed|speed', '✏':'pencil|pencil', '✍':'pencil|write', '👀':'look|look', '✅':'check|done', '🎈':'balloon|balloon',
   '🧺':'basket|basket', '✨':'sparkle|sparkle', '🎉':'party|hooray', '👍':'thumbs-up|thumbs up',
+  // batches 5 and 6 (29 Sep 2026)
+  '🔑':'key|key', '⚙':'settings|settings', '📋':'list|word list', '⚠':'warning|heads up', '🔒':'lock|locked',
+  '📅':'calendar|calendar', '🗓':'calendar|calendar', '✉':'envelope|email', '💳':'card|payment',
 };
 const UI_ICON_RE = new RegExp('(' + Object.keys(UI_ICONS).join('|') + ')️?', 'g');
 function uiIcon(ch){
@@ -4609,7 +4823,7 @@ function renderBadges(a){
         setTimeout(() => {
           k.badgesSeen.push(b.id); save();
           sfx('badge'); celebrate('small', m);
-          const open = el('<div class="badge got revealed"><span class="em">'+b.em+'</span>'+esc(b.n)+
+          const open = el('<div class="badge got revealed'+(b.art?' art':'')+'"><span class="em">'+badgeFace(b)+'</span>'+esc(b.n)+
             '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>');
           m.replaceWith(open);
           say(pickFresh(['Ooh! You earned ', 'Look! It\'s ', 'Yes! You got ', 'Surprise! It\'s '], 'badge') + b.n + '!');
@@ -4619,7 +4833,15 @@ function renderBadges(a){
       g.appendChild(m);
       return;
     }
-    g.appendChild(el('<div class="badge'+(got?' got':'')+'"><span class="em">'+b.em+(got?'':'<span class="lk">🔒</span>')+'</span>'+esc(b.n)+
+    /* not earned yet: a locked patch, no picture and no name, so every badge is
+       a surprise (Kathryn, 29 Sep 2026). The hint still says how to win it. */
+    if (!got){
+      g.appendChild(el('<div class="badge locked" aria-label="A locked badge. '+esc(b.d)+'"><span class="em">'+
+        '<img class="patch" src="../img/ui/badge-locked.webp" alt="" draggable="false"></span>???'+
+        '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>'));
+      return;
+    }
+    g.appendChild(el('<div class="badge got'+(b.art?' art':'')+'"><span class="em">'+badgeFace(b)+'</span>'+esc(b.n)+
       '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>'));
   });
   a.appendChild(card);
@@ -6235,7 +6457,23 @@ function gameBar(host, label, total, kind){
   const top = host.querySelector('.topbar');
   const bar = el('<div class="gamebadge"><div class="gb-label">'+label+'</div></div>');
   if (top) top.appendChild(bar); else host.appendChild(bar);
-  return kind === 'hive' ? hiveBuilder(bar, total) : honeyJar(bar, total);
+  const game = kind === 'hive' ? hiveBuilder(bar, total) : honeyJar(bar, total);
+  /* 29 Sep 2026 (Kathryn: "it's still tiny, can we add it on the card?"): the
+     jar or hive now sits big at the bottom of the game card. Each word redraws
+     the card, so it hops back onto whichever card is showing, and stays put
+     once the sprint is left behind. */
+  if (top && 'MutationObserver' in window){
+    bar.classList.add('gamedock');
+    const dock = () => {
+      if (!top.isConnected){ mo.disconnect(); return; }
+      const card = Array.from(host.querySelectorAll('.card')).find(c => !c.closest('.topbar,.pop,.gamedock'));
+      if (card && card.lastElementChild !== bar) card.appendChild(bar);
+    };
+    const mo = new MutationObserver(dock);
+    mo.observe(host, { childList:true, subtree:true });
+    dock();
+  }
+  return game;
 }
 
 /* ============================================================
@@ -6372,7 +6610,11 @@ function actMonday(a, d){
     '</div>');
     host.appendChild(c);
     const grid = c.querySelector('.findgrid');
-    shuffle(all).forEach(word => {
+    /* 29 Sep 2026 (Kathryn): a small group left only two words to pick from.
+       Other words from this week fill the board up to six, so it's a real hunt. */
+    const others = shuffle(Array.from(new Set(words.map(x => x.word))).filter(w => all.indexOf(w) < 0));
+    const board = all.concat(others.slice(0, Math.max(0, 6 - all.length)));
+    shuffle(board).forEach(word => {
       const b = el('<button class="fw">'+esc(word)+'</button>');
       b.onclick = () => {
         if (ti >= targets.length || b.classList.contains('got')) return;
@@ -6711,7 +6953,9 @@ function actWednesday(a, d){
       '<div class="muted" style="margin-top:4px">Word '+(i+1)+' of '+words.length+' · Some letters fell out of the hive! Fill the holes.</div>'+
       '</div>');
     host.appendChild(c);
-    setTimeout(()=>sayWord(w.word), 300);
+    /* every third word the Tile Monster smashes into the hive first (29 Sep 2026) */
+    const smash = i % 3 === 0 && !reducedMotion();
+    if (!smash) setTimeout(()=>sayWord(w.word), 300);
 
     typingRound(c, {
       word: w.word, patternId: w.patternId,
@@ -6728,8 +6972,64 @@ function actWednesday(a, d){
     c.querySelector('#hear').onclick = () => sayWord(w.word);
     c.querySelector('#slow').onclick = () => saySlow(w.word);
     c.querySelector('#tip').onclick = () => rulePopup(w.tip);
+    if (smash) hiveSmash(c, i === 0, () => sayWord(w.word));
   }
   next();
+}
+/* Fix the Hive's monster moment (29 Sep 2026, Kathryn's idea): the word starts
+   as a row of whole golden honeycombs, the Tile Monster crashes into it, and
+   the letters come back with the missing ones knocked out and flashing. */
+function hiveSmash(card, first, done){
+  const boxes = card.querySelector('.boxes');
+  if (!boxes){ done(); return; }
+  boxes.classList.add('smash-pre');
+  card.classList.add('smash-busy');
+  const block = e => { if (/^[a-zA-Z']$|^Backspace$/.test(e.key)){ e.stopImmediatePropagation(); e.preventDefault(); } };
+  document.addEventListener('keydown', block, true);
+  card.style.position = 'relative';
+  const mon = el('<img class="smash-mon" src="../img/sprint-6.webp" alt="" width="124" height="124">');
+  card.appendChild(mon);
+  const cr = card.getBoundingClientRect(), br = boxes.getBoundingClientRect();
+  const tx = br.left - cr.left + br.width / 2 - 62, ty = br.top - cr.top - 40;
+  say(first ? pickOne(['Uh oh, here comes the Tile Monster!', 'Look out, it\'s the Tile Monster!'])
+            : pickOne(['Oh no, the monster again!', 'Here it comes again!', 'Look out!']));
+  setTimeout(() => sfx('growl'), 150);
+  const fly = mon.animate([
+    { transform:'translate('+(cr.width + 30)+'px,'+(ty - 70)+'px) rotate(25deg) scale(.7)' },
+    { transform:'translate('+(tx + 40)+'px,'+(ty - 50)+'px) rotate(-10deg) scale(1)', offset:.7 },
+    { transform:'translate('+tx+'px,'+ty+'px) rotate(0) scale(1.15)' }
+  ], { duration:900, easing:'ease-in', fill:'forwards' });
+  fly.onfinish = () => {
+    // CRASH
+    sfx('hurt'); sfx('build');
+    boxes.animate([{ transform:'translate(0,0)' }, { transform:'translate(-8px,3px)' }, { transform:'translate(8px,-3px)' },
+      { transform:'translate(-5px,2px)' }, { transform:'translate(0,0)' }], { duration:420 });
+    boxes.classList.remove('smash-pre');
+    const holes = boxes.querySelectorAll('.lbox.blank');
+    holes.forEach((b, k) => {
+      b.classList.add('smashed');
+      const r = b.getBoundingClientRect();
+      for (let n = 0; n < 6; n++){
+        const d = el('<span class="dust gold"></span>'); document.body.appendChild(d);
+        const ang = Math.random() * Math.PI * 2, dist = 22 + Math.random() * 34;
+        d.animate([{ transform:'translate('+(r.left + r.width/2)+'px,'+(r.top + r.height/2)+'px) scale(1)', opacity:1 },
+                   { transform:'translate('+(r.left + r.width/2 + Math.cos(ang)*dist)+'px,'+(r.top + r.height/2 + Math.sin(ang)*dist + 30)+'px) scale(.4) rotate(200deg)', opacity:0 }],
+                  { duration:700 + Math.random() * 300, easing:'ease-out' }).onfinish = () => d.remove();
+      }
+      setTimeout(() => b.classList.remove('smashed'), 1600);
+    });
+    // the monster bounces off and runs away
+    mon.animate([
+      { transform:'translate('+tx+'px,'+ty+'px) scale(1.15)' },
+      { transform:'translate('+(tx - 30)+'px,'+(ty - 60)+'px) rotate(-20deg) scale(1)', offset:.35 },
+      { transform:'translate(-140px,'+(ty - 20)+'px) rotate(-40deg) scale(.7)' }
+    ], { duration:900, easing:'ease-out', fill:'forwards' }).onfinish = () => mon.remove();
+    setTimeout(() => {
+      card.classList.remove('smash-busy');
+      document.removeEventListener('keydown', block, true);
+      done();
+    }, 700);
+  };
 }
 
 /* ============================================================
@@ -6738,7 +7038,7 @@ function actWednesday(a, d){
 /* the audience jumps up and cheers (29 Sep 2026: "the crowd goes wild" used to be a quiet drum) */
 function crowdGoesWild(card){
   sfx('crowd');
-  card.querySelectorAll('.crowd-col').forEach(row => { row.classList.remove('wild'); void row.offsetWidth; row.classList.add('wild'); setTimeout(() => row.classList.remove('wild'), 1600); });
+  card.querySelectorAll('.crowd-col').forEach(row => { row.classList.remove('wild'); void row.offsetWidth; row.classList.add('wild'); setTimeout(() => row.classList.remove('wild'), 2600); });
   const host = card.querySelector('.host');
   if (host) host.src = SCOUT_IMG('cheering');
 }
@@ -6793,7 +7093,7 @@ function actThursday(a, d){
       word: w.word, patternId: w.patternId, blanks: null,
       tiles: shuffle(w.word.toLowerCase().split('').concat(decoys)),
       onDone: ok => { if (ok){ right++; crowdGoesWild(c); jar.add(c.querySelector('.boxes')); } setDot(dd, i, ok); i++;
-        resumeSave('thu', words.map(x => x.word), i, {right}); setTimeout(next, ok ? 500 : 0); }
+        resumeSave('thu', words.map(x => x.word), i, {right}); setTimeout(next, ok ? 1500 : 0); }   // time to watch the crowd party
     });
     // the audience sits either side of the letters, where you can see them cheer
     const bees = n => Array.from({ length: n }, (_, k) => '<img src="'+SCOUT_IMG(k % 2 ? 'cheering' : 'waving')+'" alt="" style="animation-delay:-'+(k * .37)+'s">').join('');

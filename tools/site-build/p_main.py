@@ -108,7 +108,7 @@ def pricing():
 
 
 FAQ = [
-    ("🚀", "Getting started", [
+    ('<img class="ui-ic" src="img/ui/icon-rocket.webp" alt="" width="160" height="160" loading="lazy">', "Getting started", [
         ("What do I need to start?",
          "<p>This week's spelling list and a few minutes. Open Spelling Quest on any device with a web browser, "
          "tap <b>Begin my 7 free days</b>, add your child's nickname, and paste in the list. There's nothing to install "
@@ -141,7 +141,7 @@ FAQ = [
          "child looks at the word and its tricky part, writes it from memory, then checks it and fixes only the "
          "part that needs another look.</p>"),
     ]),
-    ("👧", "Children and progress", [
+    ('<img class="ui-ic" src="img/ui/icon-child.webp" alt="" width="160" height="160" loading="lazy">', "Children and progress", [
         ("I have more than one child. Do I need to buy it twice?",
          "<p>No. One purchase covers every child in your household. Each child gets their own words, their own "
          "stars and their own test day.</p>"),
@@ -160,7 +160,7 @@ FAQ = [
          "<p>That's your device's basic built-in voice, and a better one is a free download. In the app, go to "
          "<b>Grown-ups &rarr; More &rarr; Voice</b> and it shows you exactly where to get one on iPhone, iPad and Android.</p>"),
     ]),
-    ("💳", "Paying and your key", [
+    ('<img class="ui-ic" src="img/ui/icon-card.webp" alt="" width="160" height="160" loading="lazy">', "Paying and your key", [
         ("How much is it?",
          "<p>Seven free days first, then <b>$40 a year</b> for the whole family, on every device. If you already "
          "have One Ayah At A Time or Muslim Kids Checklist, it's $25. <a href=\"pricing.html\">See all prices</a></p>"),
@@ -176,7 +176,7 @@ FAQ = [
          "<p>From the link in your purchase email, any time. You keep full access until the end of the twelve "
          "months you paid for. <a href=\"refunds.html\">Refund policy</a></p>"),
     ]),
-    ("🔒", "Privacy", [
+    ('<img class="ui-ic" src="img/ui/icon-lock.webp" alt="" width="160" height="160" loading="lazy">', "Privacy", [
         ("What do you know about my child?",
          "<p>A nickname and a school grade. The nickname doesn't have to be a real name, and the app suggests it "
          "isn't one. No real names, birthdays, schools, photos or email addresses, ever.</p>"),

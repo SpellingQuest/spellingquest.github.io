@@ -192,7 +192,7 @@ def contact():
 <div class="wrap">
   <div class="grid-2" style="max-width:980px;margin:0 auto 30px">
     <div class="card">
-      <div class="hex" aria-hidden="true">✉️</div>
+      <div class="hex" aria-hidden="true"><img class="ui-ic" src="img/ui/icon-envelope.webp" alt="" width="160" height="160" loading="lazy"></div>
       <h2 style="font-size:26px">Email us</h2>
       <p><a href="mailto:{EMAIL}" style="font-size:20px">{EMAIL}</a></p>
       <h3 style="font-size:18px;margin-top:18px">Worth including</h3>
