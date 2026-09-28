@@ -1,6 +1,10 @@
 // Spelling Quest: Scout the Bee's voice (28 Sep 2026).
 //
-// POST { text, speed: "normal" | "slow" }  ->  { url }
+// POST { text, speed: "normal" | "slow" | "sounds" }  ->  { url }
+//
+// "sounds" (29 Sep 2026): letter SOUNDS rather than letter names. The app sends
+// SSML <phoneme alphabet="ipa"> and <break> tags (nothing else is allowed through)
+// and they are read by eleven_flash_v2, the model that understands phoneme tags.
 //
 // Every phrase is recorded by ElevenLabs ONCE and stored in the public
 // "scout-voice" bucket under sha256(VERSION|speed|text).mp3. The app tries that
@@ -17,7 +21,7 @@
 // re-record everything (for example after choosing a different voice).
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const VERSION = "v1";
+const VERSION = "v2";   // v2 (29 Sep 2026): single words recorded as "word." with sentence context, which stops the stray "ick" before clam and glad
 const DEFAULT_VOICE_ID = "zz18v7gwMdL7XrVnYmMe";   // Scout's ElevenLabs voice (not a secret)
 const BUCKET = "scout-voice";
 const MAX_CHARS = 400;
@@ -66,13 +70,27 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return json({ error: "bad json" }, 400); }
   // The app sends text already tidied the same way; tidy again so the key is stable.
   const text = String(body.text || "").replace(/\s+/g, " ").trim();
-  const speed = body.speed === "slow" ? "slow" : "normal";
-  if (!text || text.length > MAX_CHARS) return json({ error: "text" }, 400);
+  const speed = body.speed === "slow" ? "slow" : body.speed === "sounds" ? "sounds" : "normal";
+  if (!text || text.length > (speed === "sounds" ? 900 : MAX_CHARS)) return json({ error: "text" }, 400);
+  // sounds mode: only phoneme and break tags, nothing else that looks like markup
+  if (speed === "sounds") {
+    const stripped = text
+      .replace(/<phoneme alphabet="ipa" ph="[^"<>]{1,12}">[a-z']{1,6}<\/phoneme>/g, "")
+      .replace(/<break time="\d(\.\d)?s" \/>/g, "");
+    if (/[<>]/.test(stripped)) return json({ error: "text" }, 400);
+  } else if (/[<>]/.test(text)) return json({ error: "text" }, 400);
 
   const apiKey = Deno.env.get("ELEVENLABS_API_KEY");
   const voiceId = Deno.env.get("SCOUT_VOICE_ID") || DEFAULT_VOICE_ID;
   if (!apiKey || !voiceId) return json({ error: "not configured" }, 503);
-  const model = Deno.env.get("SCOUT_MODEL_ID") || "eleven_multilingual_v2";
+  const model = speed === "sounds" ? "eleven_flash_v2" : (Deno.env.get("SCOUT_MODEL_ID") || "eleven_multilingual_v2");
+  /* ElevenLabs sometimes adds a stray sound ("ick-clam", "ig-glad") in front of a
+     word said on its own. A full stop plus the sentence it lives in (not spoken)
+     gives it a clean start. */
+  const words = text.split(" ").length;
+  const say = speed !== "sounds" && words === 1 && /^[A-Za-z'-]+$/.test(text) ? text + "." : text;
+  const context = speed !== "sounds" && words <= 3
+    ? { previous_text: "Okay, here is our next word.", next_text: "Can you say it with me?" } : {};
 
   const supa = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const path = (await sha256hex(`${VERSION}|${speed}|${text}`)) + ".mp3";
@@ -88,14 +106,15 @@ Deno.serve(async (req) => {
       method: "POST",
       headers: { "xi-api-key": apiKey, "Content-Type": "application/json", "Accept": "audio/mpeg" },
       body: JSON.stringify({
-        text,
+        text: say,
         model_id: model,
+        ...context,
         voice_settings: {
           stability: 0.55,
           similarity_boost: 0.8,
           style: 0.25,
           use_speaker_boost: true,
-          speed: speed === "slow" ? 0.8 : 1.0,
+          speed: speed === "slow" ? 0.75 : speed === "sounds" ? 0.9 : 1.0,
         },
       }),
     },

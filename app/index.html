@@ -736,6 +736,45 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 .seg button.on{ background:linear-gradient(180deg,#9d5cff,var(--brand)); box-shadow:0 3px 0 var(--brand-deep); }
 .gamebar{ background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.05)); }
 
+
+
+
+/* Monday's Find it! game */
+.findgrid{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.fw{ font:900 22px/1 var(--font-head); color:var(--ink); padding:18px 28px; min-height:60px;
+  clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%);
+  background:linear-gradient(160deg,#f7f1ff,#d8c1ff); transition:transform .12s ease; }
+.fw:active{ transform:scale(.94); }
+.fw.got{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); animation:hxPop .35s ease; }
+.fw.wiggle{ animation:hxWiggle .4s ease; }
+/* today's sprint: impossible to miss (29 Sep 2026) */
+.hmap .hrow{ position:relative; }
+.hcell.today{ z-index:2; animation:todayBob 1.8s ease-in-out infinite; }
+.hcell.today .rim{ inset:-6px; background:conic-gradient(from 0deg,#fff,#ffc93c,#ff7eb3,#ffc93c,#fff); animation:rimSpin 3s linear infinite; }
+.hcell.today .in{ inset:0; }
+.hcell.today:not(.done) .in{ background:linear-gradient(160deg,#fff7d6,#ffe08a); }
+.hcell.today{ filter:drop-shadow(0 0 18px rgba(255,201,60,.9)) drop-shadow(0 0 36px rgba(255,126,179,.45)) drop-shadow(0 10px 16px rgba(8,3,30,.45)); }
+.today-tag{ position:absolute; left:50%; top:-14px; transform:translateX(-50%); z-index:3; white-space:nowrap;
+  background:linear-gradient(180deg,#ff8fc0,#ff5fa2); color:#2a0b1f; font:900 13px/1 var(--font-head); letter-spacing:.06em;
+  text-transform:uppercase; padding:6px 10px; border-radius:999px; box-shadow:0 3px 0 #c2346f; }
+@keyframes todayBob{ 0%,100%{ transform:translateY(0) scale(1.06); } 50%{ transform:translateY(-5px) scale(1.1); } }
+@keyframes rimSpin{ to{ filter:hue-rotate(360deg); } }
+@media (prefers-reduced-motion:reduce){ .hcell.today,.hcell.today .rim{ animation:none; } .hcell.today{ transform:scale(1.06); } }
+/* Scout's flights and the rotating celebrations (29 Sep 2026) */
+.scout-fly{ position:fixed; left:0; top:0; width:100px; height:auto; z-index:10002; pointer-events:none;
+  filter:drop-shadow(0 10px 18px rgba(20,8,60,.45)); will-change:transform; }
+.party{ position:fixed; inset:0; pointer-events:none; z-index:10001; overflow:hidden; }
+.party .pp{ position:absolute; left:0; top:0; display:grid; place-items:center; line-height:1; will-change:transform; }
+.party .pp img{ width:100%; height:100%; object-fit:contain; }
+.party .hexp{ display:block; width:100%; height:100%; clip-path:var(--hexclip); }
+.party .hexp.g{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
+.party .hexp.l{ background:linear-gradient(160deg,#f1e6ff,#c4a5ff); }
+.party .hexp.w{ background:linear-gradient(160deg,#fff,#ffe9b0); }
+.party .bub{ display:block; width:100%; height:100%; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(255,201,60,.35) 45%,rgba(168,85,247,.25) 70%,transparent 72%);
+  border:2px solid rgba(255,255,255,.6); }
+.party .bub.b2{ background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(94,201,255,.35) 45%,transparent 72%); }
+.party .bub.b3{ background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(255,126,179,.35) 45%,transparent 72%); }
 /* the app's own icons, standing in for emoji (28 Sep 2026) */
 img.ic{ display:inline-block; width:1.2em; height:1.2em; vertical-align:-.22em; object-fit:contain; }
 .iconbtn img.ic{ width:30px; height:30px; vertical-align:middle; }
@@ -817,260 +856,260 @@ img.ic{ display:inline-block; width:1.2em; height:1.2em; vertical-align:-.22em; 
 const PATTERNS = [
   // ---------- silent letters / digraphs (most specific first) ----------
   { id:'igh', label:'igh words', g:'igh',
-    title:'igh sounds like the letter <b>i</b>', rule:'The <b>gh</b> is totally silent — it just sits there!',
-    trick:'The l<b>igh</b>t in the n<b>igh</b>t is br<b>igh</b>t.', emoji:'🌙' },
+    title:'<b>igh</b> says the letter i\'s name', rule:'The <b>g</b> and <b>h</b> are sleepy. They sit there quietly and let the <b>i</b> do the talking.',
+    trick:'Shh! Don\'t wake the <b>gh</b>. The l<b>igh</b>t in the n<b>igh</b>t is br<b>igh</b>t.', emoji:'🌙' },
 
   { id:'ough', label:'ough words', g:'ough',
-    title:'ough is a sneaky one', rule:'<b>ough</b> can say lots of sounds — you have to learn each word by sight.',
-    trick:'Th<b>ough</b> the r<b>ough</b> dough was t<b>ough</b>!', emoji:'🤔' },
+    title:'<b>ough</b> is a shape-shifter', rule:'Psst, <b>ough</b> can make lots of different sounds, so let\'s learn each <b>ough</b> word one at a time.',
+    trick:'Say it with me: th<b>ough</b> the d<b>ough</b> was r<b>ough</b> and t<b>ough</b>, I ate en<b>ough</b>!', emoji:'🤔' },
 
   { id:'augh', label:'augh words', g:'augh',
-    title:'augh sounds like <b>aw</b>', rule:'The <b>gh</b> is silent again.',
-    trick:'I c<b>augh</b>t what he t<b>augh</b>t me.', emoji:'⚾' },
+    title:'<b>augh</b> says aw', rule:'The <b>gh</b> is usually hiding, so <b>augh</b> just says aw, but l<b>augh</b> is a funny pattern-breaker!',
+    trick:'I c<b>augh</b>t the ball, just like my dad t<b>augh</b>t me. Aw, nice catch!', emoji:'⚾' },
 
   { id:'tion', label:'-tion words', g:'tion',
-    title:'-tion says "shun"', rule:'It turns an action into a thing.',
-    trick:'Action, motion, station. They all say shun.', emoji:'🚉' },
+    title:'<b>-tion</b> says shun', rule:'When you hear shun at the end of a word, it\'s usually spelled <b>tion</b>.',
+    trick:'Get in posi<b>tion</b>, it\'s ac<b>tion</b> time! Say it with me: shun, shun, shun.', emoji:'🚉' },
 
   { id:'sion', label:'-sion words', g:'sion',
-    title:'-sion says "shun" or "zhun"', rule:'Like -tion, but with an <b>s</b>.',
-    trick:'Divi<b>sion</b> and televi<b>sion</b>.', emoji:'📺' },
+    title:'<b>-sion</b> says shun or zhun', rule:'<b>sion</b> is <b>tion</b>\'s cousin, and it can say shun, like man<b>sion</b>, or zhun, like vi<b>sion</b>.',
+    trick:'I watch televi<b>sion</b> in my man<b>sion</b>. Can you hear it? Zhun, then shun!', emoji:'📺' },
 
   { id:'ture', label:'-ture words', g:'ture',
-    title:'-ture says "cher"', rule:'It sounds like the word <i>chair</i> without the air.',
-    trick:'Pic<b>ture</b>, na<b>ture</b>, crea<b>ture</b>.', emoji:'🖼️' },
+    title:'<b>-ture</b> says cher', rule:'Psst! When you hear cher at the end of a longer word, it\'s often spelled <b>ture</b>, like pic<b>ture</b>.',
+    trick:'A crea<b>ture</b> out in na<b>ture</b> posed for a pic<b>ture</b>. Say cheese!', emoji:'🖼️' },
 
   { id:'dge', label:'dge words', g:'dge',
-    title:'Use dge after a short vowel', rule:'If the vowel is short and it\'s the end of the word, use <b>dge</b>.',
-    trick:'Bridge, badge, fudge. Short vowel, then the big ending.', emoji:'🌉' },
+    title:'<b>dge</b> comes after a short vowel', rule:'Right after a short vowel, the juh sound at the end is usually <b>dge</b>, with the <b>d</b> as a little bodyguard.',
+    trick:'Short vowel, then <b>dge</b>! Fu<b>dge</b> on the bri<b>dge</b> with a ba<b>dge</b>.', emoji:'🌉' },
 
   { id:'tch', label:'tch words', g:'tch',
-    title:'Use tch right after a short vowel', rule:'Ca<b>tch</b> has a short <b>a</b> sound, so it needs the <b>t</b>.',
-    trick:'Catch the match! But watch out, because much, such, rich and which all break the rule.', emoji:'🥎' },
+    title:'<b>tch</b> comes after a short vowel', rule:'Right after a short vowel, the chuh sound at the end is usually <b>tch</b>, with a helper <b>t</b> sneaking in.',
+    trick:'Ca<b>tch</b> the ma<b>tch</b>! Much, such, rich and which are pattern-breakers that skip the <b>t</b>.', emoji:'🥎' },
 
   { id:'kn', label:'kn words', g:'kn', start:true,
-    title:'The k is silent', rule:'<b>kn</b> at the start just sounds like <b>n</b>.',
-    trick:'A knight knocks knees. The k is sneaking about, very quietly.', emoji:'🤫' },
+    title:'In <b>kn</b>, the <b>k</b> is silent', rule:'When <b>kn</b> starts a word, the <b>k</b> tiptoes in without a sound, so we only hear the n.',
+    trick:'Shh! A <b>kn</b>ight <b>kn</b>ows how to <b>kn</b>it, and the <b>k</b> is tiptoeing the whole time.', emoji:'🤫' },
 
   { id:'wr', label:'wr words', g:'wr', start:true,
-    title:'The w is silent', rule:'<b>wr</b> at the start just sounds like <b>r</b>.',
-    trick:'Write with your wrist. The w is all wrapped up, and quiet.', emoji:'✍️' },
+    title:'In <b>wr</b>, the <b>w</b> is silent', rule:'When <b>wr</b> starts a word, the <b>w</b> is all wrapped up and quiet, so we only hear the r.',
+    trick:'<b>Wr</b>ite on the <b>wr</b>apping paper with your <b>wr</b>ist. Shh, silent <b>w</b>!', emoji:'✍️' },
 
   { id:'ph', label:'ph words', g:'ph',
-    title:'ph sounds like <b>f</b>', rule:'Two letters teaming up to make an f sound.',
-    trick:'<b>Ph</b>one, gra<b>ph</b>, ele<b>ph</b>ant.', emoji:'📞' },
+    title:'<b>ph</b> says fff', rule:'The <b>p</b> and <b>h</b> hold hands and make the fff sound together, like in <b>ph</b>one.',
+    trick:'Ring ring! An ele<b>ph</b>ant is on the <b>ph</b>one. Fff, fff!', emoji:'📞' },
 
   { id:'ck', label:'ck words', g:'ck',
-    title:'ck comes right after a short vowel', rule:'Only at the end of a short word.',
-    trick:'Duck, rock, stick. Short vowel, then c k.', emoji:'🦆' },
+    title:'<b>ck</b> comes after a short vowel', rule:'In short words, the kuh sound right after a short vowel is usually spelled <b>ck</b>, with <b>c</b> and <b>k</b> as best buddies.',
+    trick:'A du<b>ck</b> on a ro<b>ck</b> with a sti<b>ck</b>. Qua<b>ck</b>, qua<b>ck</b>!', emoji:'🦆' },
 
   { id:'shr', label:'shr words', g:'shr', start:true,
-    title:'Three letters, one blend', rule:'<b>shr</b> is sh and r, squished together.',
-    trick:'<b>Shr</b>imp <b>shr</b>ink in the <b>shr</b>ubs.', emoji:'🦐' },
+    title:'<b>shr</b> is shh and r squished together', rule:'Let\'s squish shh and rrr together like a sandwich, and we get <b>shr</b>, like in <b>shr</b>ink.',
+    trick:'<b>Shr</b>imp <b>shr</b>ink in the <b>shr</b>ubs. Can you say it three times fast?', emoji:'🦐' },
 
   // ---------- long vowel teams ----------
   { id:'ie', label:'ie words', g:'ie',
-    title:'i before e', rule:'<b>ie</b> usually sounds like <b>ee</b> (f<b>ie</b>ld), but at the end of a word it sounds like <b>i</b> (p<b>ie</b>).',
-    trick:'<b>i</b> before <b>e</b>, except after <b>c</b>.', emoji:'🥧' },
+    title:'<b>ie</b> has two jobs', rule:'<b>ie</b> usually says ee in the middle, like f<b>ie</b>ld, but says i at the end of short words, like p<b>ie</b>.',
+    trick:'The ch<b>ie</b>f in the f<b>ie</b>ld ate a p<b>ie</b>. Ee, ee, then i!', emoji:'🥧' },
 
   { id:'ei', label:'ei words', g:'ei',
-    title:'e before i after c', rule:'After a <b>c</b>, flip it around.',
-    trick:'i before e, except after c. Receive, and ceiling.', emoji:'🧾' },
+    title:'<b>ei</b> loves to follow <b>c</b>', rule:'Right after a <b>c</b>, the ee sound is usually spelled <b>ei</b>, like c<b>ei</b>ling, and <b>ei</b> can also say ay, like <b>ei</b>ght.',
+    trick:'Here\'s my chant: i before e, except after c, or when it says ay, like n<b>ei</b>ghbor and w<b>ei</b>gh!', emoji:'🧾' },
 
   { id:'ai', label:'ai words', g:'ai',
-    title:'"ai" sounds like the letter <b>a</b> — in the middle', rule:'When two vowels go walking, the first one does the talking.',
-    trick:'ai hides in the middle. Rain, train, paint.', emoji:'🌧️' },
+    title:'<b>ai</b> says the letter a\'s name', rule:'Usually in the middle of a word, the <b>a</b> says its name and the <b>i</b> stays quiet.',
+    trick:'<b>ai</b> hides in the middle. R<b>ai</b>n on the tr<b>ai</b>n got in my p<b>ai</b>nt!', emoji:'🌧️' },
 
   { id:'ay', label:'ay words', g:'ay',
-    title:'ay sounds like the letter <b>a</b> — at the end', rule:'<b>ay</b> likes to play at the <i>end</i> of a word.',
-    trick:'Day, play, stay. Ay goes away, at the end.', emoji:'☀️' },
+    title:'<b>ay</b> plays at the end', rule:'<b>ay</b> usually likes to play at the end of a word, and it says the letter a\'s name.',
+    trick:'D<b>ay</b>, pl<b>ay</b>, st<b>ay</b>! <b>ay</b> runs to the end to play all day.', emoji:'☀️' },
 
   { id:'ee', label:'ee words', g:'ee',
-    title:'ee says a long <b>eeee</b>', rule:'Two e\'s make the long <i>eeee</i> sound.',
-    trick:'I s<b>ee</b> a b<b>ee</b> in a tr<b>ee</b>!', emoji:'🐝' },
+    title:'<b>ee</b> says a long ee', rule:'Two <b>e</b>\'s holding hands make one long ee sound, like a happy squeal.',
+    trick:'I s<b>ee</b> a b<b>ee</b> in a tr<b>ee</b>! Wheee!', emoji:'🐝' },
 
   { id:'ea', label:'ea words', g:'ea',
-    title:'ea has two jobs', rule:'Usually it sounds like <b>ee</b> (<b>ea</b>t) — but sometimes like the <b>e</b> in bed (br<b>ea</b>d).',
-    trick:'Eat your bread. Same letters, but different sounds.', emoji:'🍞' },
+    title:'<b>ea</b> has two jobs', rule:'<b>ea</b> usually says ee, like <b>ea</b>t, but sometimes it says eh, like br<b>ea</b>d.',
+    trick:'<b>Ea</b>t your br<b>ea</b>d! Same letters, two sounds. Ee, then eh.', emoji:'🍞' },
 
   { id:'oa', label:'oa words', g:'oa',
-    title:'oa sounds like the letter <b>o</b> — in the middle', rule:'Another two-vowels-walking team.',
-    trick:'The g<b>oa</b>t rode a b<b>oa</b>t on the r<b>oa</b>d.', emoji:'🐐' },
+    title:'<b>oa</b> says the letter o\'s name', rule:'In the middle of a word, the <b>o</b> usually says its name and the <b>a</b> keeps quiet.',
+    trick:'The g<b>oa</b>t rode a b<b>oa</b>t down the r<b>oa</b>d. Oh, what a trip!', emoji:'🐐' },
 
   { id:'oe', label:'oe words', g:'oe',
-    title:'oe sounds like the letter <b>o</b> — at the end', rule:'It shows up at the end of short words.',
-    trick:'My t<b>oe</b> is on the h<b>oe</b>.', emoji:'🦶' },
+    title:'<b>oe</b> says the letter o\'s name at the end', rule:'<b>oe</b> often sits at the end of short words and says the letter o\'s name.',
+    trick:'My t<b>oe</b> bumped the h<b>oe</b>. Oh, oh! But sh<b>oe</b> says oo, so it\'s a pattern-breaker.', emoji:'🦶' },
 
   { id:'ue', label:'ue words', g:'ue',
-    title:'ue sounds like <b>oo</b>', rule:'It lives at the end of the word.',
-    trick:'Bl<b>ue</b> gl<b>ue</b> is tr<b>ue</b>.', emoji:'🔵' },
+    title:'<b>ue</b> says oo', rule:'<b>ue</b> usually sits at the end of a word and says oo, like bl<b>ue</b>, or you, like c<b>ue</b>.',
+    trick:'Bl<b>ue</b> gl<b>ue</b> is tr<b>ue</b>! Say it with me: oo, oo, oo.', emoji:'🔵' },
 
   { id:'ui', label:'ui words', g:'ui',
-    title:'ui sounds like <b>oo</b>', rule:'A rarer team — worth memorising.',
-    trick:'Fr<b>ui</b>t j<b>ui</b>ce in a s<b>ui</b>t.', emoji:'🍎' },
+    title:'<b>ui</b> often says oo', rule:'<b>ui</b> is a rare team that often says oo, like fr<b>ui</b>t, but b<b>ui</b>ld is a pattern-breaker.',
+    trick:'Fr<b>ui</b>t j<b>ui</b>ce spilled on my s<b>ui</b>t. Oops! Oo, oo, oo.', emoji:'🍎' },
 
   { id:'ew', label:'ew words', g:'ew',
-    title:'ew sounds like <b>oo</b>', rule:'Almost always at the end of the word.',
-    trick:'The cr<b>ew</b> fl<b>ew</b> and blew.', emoji:'✈️' },
+    title:'<b>ew</b> says oo', rule:'<b>ew</b> usually comes at the end and says oo, like fl<b>ew</b>, or you, like f<b>ew</b>.',
+    trick:'The cr<b>ew</b> fl<b>ew</b> away and bl<b>ew</b> bubbles. Oo!', emoji:'✈️' },
 
   // ---------- diphthongs / other vowel teams ----------
   { id:'oi', label:'oi words', g:'oi',
-    title:'oi sounds like <b>oy</b> — in the middle', rule:'Never at the end of a word.',
-    trick:'The c<b>oi</b>n is in the s<b>oi</b>l.', emoji:'🪙' },
+    title:'<b>oi</b> says oy in the middle', rule:'<b>oi</b> usually stays in the middle of a word and says oy, like a surprised little shout.',
+    trick:'Oi! A c<b>oi</b>n is in the s<b>oi</b>l. <b>oi</b> in the middle, <b>oy</b> at the end.', emoji:'🪙' },
 
   { id:'oy', label:'oy words', g:'oy',
-    title:'oy sounds like <b>oy</b> — at the end', rule:'<b>oy</b> is the boy who goes last.',
-    trick:'The boy has a toy. Oy goes at the end.', emoji:'🧸' },
+    title:'<b>oy</b> says oy at the end', rule:'<b>oy</b> is the boy who usually goes last, right at the end of a word.',
+    trick:'The b<b>oy</b> has a t<b>oy</b>. Ah<b>oy</b>! <b>oy</b> goes at the end.', emoji:'🧸' },
 
   { id:'ou', label:'ou words', g:'ou',
-    title:'ou sounds like <b>ow</b> — in the middle', rule:'Like when you get hurt — <i>ouch!</i>',
-    trick:'A mouse in the house. Ouch!', emoji:'🐭' },
+    title:'<b>ou</b> says ow, like ouch', rule:'<b>ou</b> often says ow in the middle of a word, just like you say when you bump your toe.',
+    trick:'A m<b>ou</b>se in the h<b>ou</b>se bumped its nose. <b>Ou</b>ch!', emoji:'🐭' },
 
   { id:'ow', label:'ow words', g:'ow',
-    title:'ow has two sounds', rule:'Like <b>ow</b> in c<b>ow</b>, or like the letter <b>o</b> in sn<b>ow</b>.',
-    trick:'The cow in the snow. Same letters, but two different sounds.', emoji:'🐄' },
+    title:'<b>ow</b> has two sounds', rule:'<b>ow</b> can say ow, like c<b>ow</b>, or the letter o\'s name, like sn<b>ow</b>.',
+    trick:'The c<b>ow</b> is in the sn<b>ow</b>. Ow, it\'s cold! Oh no!', emoji:'🐄' },
 
   { id:'oo', label:'oo words', g:'oo',
-    title:'oo has two sounds', rule:'A long one, as in moon, and a short one, as in book.',
-    trick:'A b<b>oo</b>k on the m<b>oo</b>n!', emoji:'🌕' },
+    title:'<b>oo</b> has two sounds', rule:'<b>oo</b> has a long sound, like m<b>oo</b>n, and a short sound, like b<b>oo</b>k.',
+    trick:'Let\'s read a b<b>oo</b>k on the m<b>oo</b>n! Say them with me: b<b>oo</b>k, m<b>oo</b>n.', emoji:'🌕' },
 
   { id:'aw', label:'aw words', g:'aw',
-    title:'aw sounds like <b>aw</b> — at the end', rule:'<b>aw</b> goes at the end or before a final consonant.',
-    trick:'I s<b>aw</b> a p<b>aw</b> and a cl<b>aw</b>.', emoji:'🐾' },
+    title:'<b>aw</b> says aw', rule:'<b>aw</b> usually shows up at the end, like s<b>aw</b>, or close to the end, like l<b>aw</b>n.',
+    trick:'I s<b>aw</b> a p<b>aw</b> with a big cl<b>aw</b>. Aww!', emoji:'🐾' },
 
   { id:'au', label:'au words', g:'au',
-    title:'au sounds like <b>aw</b> — in the middle', rule:'<b>au</b> hides inside the word.',
-    trick:'The autumn sauce. Au sits in the middle.', emoji:'🍂' },
+    title:'<b>au</b> says aw inside the word', rule:'<b>au</b> says aw too, but it hides at the start or in the middle, like <b>au</b>tumn and s<b>au</b>ce.',
+    trick:'In <b>Au</b>gust, P<b>au</b>l spilled the s<b>au</b>ce. <b>au</b> inside, <b>aw</b> at the end!', emoji:'🍂' },
 
   // ---------- r-controlled ----------
   { id:'ar', label:'ar words', g:'ar',
-    title:'"ar" sounds like <b>arrr</b>', rule:'The <b>r</b> bosses the vowel around.',
-    trick:'The car is parked far. Arrr, just like a pirate.', emoji:'🏴‍☠️' },
+    title:'<b>ar</b> says arrr, like a pirate', rule:'Bossy <b>r</b> usually changes the <b>a</b>, so the two of them say ar together.',
+    trick:'Arrr! The pirate\'s c<b>ar</b> is p<b>ar</b>ked f<b>ar</b> away.', emoji:'🏴‍☠️' },
 
   { id:'or', label:'or words', g:'or',
-    title:'or sounds like <b>or</b>', rule:'Bossy r again.',
-    trick:'A h<b>or</b>se in the st<b>or</b>m.', emoji:'🐴' },
+    title:'<b>or</b> says or', rule:'Bossy <b>r</b> is back, and it usually makes the <b>o</b> say or, like in c<b>or</b>n.',
+    trick:'A h<b>or</b>se in the st<b>or</b>m ate c<b>or</b>n for dinner. Neigh!', emoji:'🐴' },
 
   { id:'ir', label:'ir words', g:'ir',
-    title:'er, ir and ur all sound the same', rule:'They all make that <b>er</b> sound you hear in <b>her</b> — three spellings, one sound. You just have to learn which word uses which.',
-    trick:'H<b>er</b> b<b>ir</b>d has f<b>ur</b>.', emoji:'🐦' },
+    title:'<b>ir</b> says er, like in bird', rule:'<b>er</b>, <b>ir</b> and <b>ur</b> all say the same er sound, so let\'s give the <b>ir</b> words their own picture.',
+    trick:'Picture this: a b<b>ir</b>d in a sk<b>ir</b>t did a tw<b>ir</b>l in the d<b>ir</b>t!', emoji:'🐦' },
 
   { id:'ur', label:'ur words', g:'ur',
-    title:'er, ir and ur all sound the same', rule:'They all make that <b>er</b> sound you hear in <b>her</b>.',
-    trick:'H<b>er</b> b<b>ir</b>d has f<b>ur</b>.', emoji:'🐦' },
+    title:'<b>ur</b> says er, like in fur', rule:'<b>ur</b> is one of three ways to spell the er sound, so let\'s give the <b>ur</b> words their own picture.',
+    trick:'Picture this: a t<b>ur</b>tle with p<b>ur</b>ple f<b>ur</b> said b<b>ur</b>p!', emoji:'🐦' },
 
   { id:'er', label:'er words', g:'er',
-    title:'er, ir and ur all sound the same', rule:'They all make that <b>er</b> sound in <b>her</b>. <b>er</b> is the most common one — it usually goes at the end.',
-    trick:'H<b>er</b> b<b>ir</b>d has f<b>ur</b>.', emoji:'🐦' },
+    title:'<b>er</b> says er, like in her', rule:'<b>er</b> is the most common way to spell the er sound, and it often shows up at the end.',
+    trick:'H<b>er</b> sist<b>er</b> ate butt<b>er</b> for dinn<b>er</b>. Er, er, er!', emoji:'🐦' },
 
   // ---------- endings ----------
   { id:'ing', label:'-ing words', g:'ing', end:true,
-    title:'Adding -ing', rule:'The <b>1-1-1 rule</b>. If the word has one syllable, one vowel, and one final consonant, then you double the last letter.',
-    trick:'hug becomes hu<b>gg</b>ing. run becomes ru<b>nn</b>ing. But jump just becomes jumping, because it already has two consonants.', emoji:'🏃' },
+    title:'Adding <b>ing</b>: the one, one, one check', rule:'If a word has one syllable, one vowel and one last consonant, we double that last letter before <b>ing</b>.',
+    trick:'Hug, hu<b>gg</b>ing! Run, ru<b>nn</b>ing! Jump already ends in two consonants, so it\'s just jump<b>ing</b>.', emoji:'🏃' },
 
   { id:'ed', label:'-ed words', g:'ed', end:true,
-    title:'Adding -ed', rule:'<b>-ed</b> makes it past. Same 1-1-1 doubling rule applies!',
-    trick:'hop becomes ho<b>pp</b>ed. bake becomes bak<b>ed</b>, and you drop the e first.', emoji:'⏪' },
+    title:'<b>ed</b> sends a word into the past', rule:'<b>ed</b> is like a time machine to yesterday, and our one, one, one doubling check works here too.',
+    trick:'Hop becomes ho<b>pp</b>ed. Bake drops its <b>e</b> first, then becomes bak<b>ed</b>.', emoji:'⏪' },
 
   { id:'es', label:'-es plurals', g:'es', end:true,
-    title:'Add -es after s, x, z, ch, sh', rule:'Those letters need an extra <i>uh</i> to breathe.',
-    trick:'box→box<b>es</b> · dish→dish<b>es</b> · bus→bus<b>es</b>', emoji:'📦' },
+    title:'Add <b>es</b> after s, x, z, ch and sh', rule:'After s, x, z, ch or sh, we need an extra iz sound to say more than one, so we add <b>es</b>.',
+    trick:'One box, two box<b>es</b>. One dish, two dish<b>es</b>. Can you hear the extra iz?', emoji:'📦' },
 
   { id:'ful', label:'-ful words', g:'ful', end:true,
-    title:'-ful only gets ONE l', rule:'Even though the word <i>full</i> has two.',
-    trick:'Helpful, careful, joyful. One l only.', emoji:'🎁' },
+    title:'<b>ful</b> has just one <b>l</b>', rule:'The word full has two <b>l</b>\'s, but when <b>ful</b> sticks to the end of a word, one <b>l</b> drops off.',
+    trick:'Help<b>ful</b>, care<b>ful</b>, joy<b>ful</b>. When full hops on the end, one <b>l</b> runs away!', emoji:'🎁' },
 
   { id:'less', label:'-less words', g:'less', end:true,
-    title:'-less means "without"', rule:'It always has double s.',
-    trick:'Fear<b>less</b> means without fear.', emoji:'🦁' },
+    title:'<b>less</b> means without', rule:'<b>less</b> means without, and it always keeps its double <b>s</b>, like fear<b>less</b>.',
+    trick:'A lion with no fear is fear<b>less</b>. A sock with no spots is spot<b>less</b>!', emoji:'🦁' },
 
   { id:'ness', label:'-ness words', g:'ness', end:true,
-    title:'-ness turns it into a feeling', rule:'Always double s.',
-    trick:'Kind<b>ness</b>, dark<b>ness</b>, sad<b>ness</b>.', emoji:'💛' },
+    title:'<b>ness</b> turns a word into a thing', rule:'Add <b>ness</b> to a describing word to make it a thing, and it keeps its double <b>s</b>.',
+    trick:'Kind<b>ness</b> lights up the dark<b>ness</b>. Two <b>s</b>\'s, like two little stars!', emoji:'💛' },
 
   { id:'ment', label:'-ment words', g:'ment', end:true,
-    title:'-ment makes a thing', rule:'Just add it on — the base word almost never changes.',
-    trick:'Pay<b>ment</b>, move<b>ment</b>, excite<b>ment</b>.', emoji:'🎉' },
+    title:'<b>ment</b> makes a thing', rule:'Just snap <b>ment</b> onto the end, and the base word usually stays the same, like move<b>ment</b>.',
+    trick:'Pay<b>ment</b>, move<b>ment</b>, excite<b>ment</b>! Snap it on like a building block.', emoji:'🎉' },
 
   { id:'ly', label:'-ly words', g:'ly', end:true,
-    title:'-ly tells you HOW', rule:'Just add <b>-ly</b> to the end.',
-    trick:'Quick<b>ly</b>, sad<b>ly</b>, slow<b>ly</b>.', emoji:'💨' },
+    title:'<b>ly</b> tells us how', rule:'We can usually just snap <b>ly</b> onto a describing word to show how something happens, like quick<b>ly</b>.',
+    trick:'The turtle walked slow<b>ly</b>. The rabbit ran quick<b>ly</b>. How did they go? <b>ly</b> tells us!', emoji:'💨' },
 
   { id:'le', label:'-le words', g:'le', end:true,
-    title:'The quiet -le ending', rule:'It sounds like <i>ul</i> right at the end of the word.',
-    trick:'App<b>le</b>, litt<b>le</b>, tab<b>le</b>.', emoji:'🍏' },
+    title:'The quiet <b>le</b> ending', rule:'At the end of a word, <b>le</b> says ul, and the <b>e</b> hides silently behind the <b>l</b>.',
+    trick:'An app<b>le</b> on a tab<b>le</b> for a litt<b>le</b> turt<b>le</b>. Ul, ul, ul!', emoji:'🍏' },
 
   { id:'y', label:'-y ending words', g:'y', end:true,
-    title:'y can be a vowel', rule:'At the end of a word <b>y</b> sounds like <b>ee</b> (happ<b>y</b>) or like <b>i</b> (fl<b>y</b>).',
-    trick:'Happy, and fly. Y is a sneaky vowel.', emoji:'😊' },
+    title:'<b>y</b> can be a vowel', rule:'At the end, <b>y</b> usually says i in short words like fl<b>y</b>, and ee in longer words like happ<b>y</b>.',
+    trick:'My happ<b>y</b> pupp<b>y</b> can\'t fl<b>y</b>! Psst, <b>y</b> is a sneaky vowel.', emoji:'😊' },
 
   // ---------- beginnings ----------
   { id:'un', label:'un- words', g:'un', start:true,
-    title:'un- means "not"', rule:'Stick it on the front — the base word never changes.',
-    trick:'<b>un</b>happy means not happy.', emoji:'🚫' },
+    title:'<b>un</b> means not', rule:'<b>un</b> can mean not or undo, and the base word stays just the same, like <b>un</b>happy.',
+    trick:'<b>Un</b>happy means not happy, and <b>un</b>zip means the opposite of zip!', emoji:'🚫' },
 
   { id:'re', label:'re- words', g:'re', start:true,
-    title:'re- means "again"', rule:'Stick it on the front, spelling stays the same.',
-    trick:'<b>re</b>do means to do it again.', emoji:'🔁' },
+    title:'<b>re</b> means again', rule:'Stick <b>re</b> on the front to do it again, and the base word keeps its spelling.',
+    trick:'<b>Re</b>do, <b>re</b>read, <b>re</b>play! Let\'s do it again and again!', emoji:'🔁' },
 
   { id:'dis', label:'dis- words', g:'dis', start:true,
-    title:'dis- means "opposite"', rule:'One s in dis-, then the whole base word.',
-    trick:'<b>dis</b>agree means to not agree.', emoji:'🙅' },
+    title:'<b>dis</b> means not, or the opposite', rule:'<b>dis</b> has just one <b>s</b>, and then the whole base word comes right after it, like <b>dis</b>agree.',
+    trick:'<b>Dis</b>agree means not agree. <b>Dis</b>appear? Poof! That\'s the opposite of appear.', emoji:'🙅' },
 
   { id:'pre', label:'pre- words', g:'pre', start:true,
-    title:'pre- means "before"', rule:'Front of the word, spelling unchanged.',
-    trick:'<b>pre</b>view means to view it before.', emoji:'⏮️' },
+    title:'<b>pre</b> means before', rule:'Put <b>pre</b> on the front to mean before, and keep the base word just as it is.',
+    trick:'<b>Pre</b>view means to view it before. We <b>pre</b>heat the oven before the cookies go in!', emoji:'⏮️' },
 
   { id:'mis', label:'mis- words', g:'mis', start:true,
-    title:'mis- means "wrongly"', rule:'One s, then the base word.',
-    trick:'<b>mis</b>spell has TWO s\'s — mis + spell!', emoji:'❌' },
+    title:'<b>mis</b> means wrongly', rule:'<b>mis</b> has one <b>s</b>, and then the whole base word comes along, like <b>mis</b>behave.',
+    trick:'Here\'s my favorite trick: <b>mis</b>spell has two <b>s</b>\'s, because it\'s mis plus spell!', emoji:'❌' },
 
   // ---------- catch-alls ----------
   { id:'sh', label:'sh words', g:'sh',
-    title:'sh says <b>shhh</b>', rule:'Two letters, one quiet sound.',
-    trick:'<b>Sh</b>! The <b>sh</b>eep is asleep.', emoji:'🐑' },
+    title:'<b>sh</b> says shhh', rule:'The <b>s</b> and <b>h</b> team up to make one quiet sound, like a finger on your lips.',
+    trick:'<b>Sh</b>h! The <b>sh</b>eep is asleep on the <b>sh</b>ip.', emoji:'🐑' },
 
   { id:'ch', label:'ch words', g:'ch',
-    title:'ch says <b>ch</b>', rule:'It sounds like a train. Ch, ch, ch.',
-    trick:'<b>Ch</b>ips on the <b>ch</b>air.', emoji:'🚂' },
+    title:'<b>ch</b> says ch, like a train', rule:'The <b>c</b> and <b>h</b> team up and usually say ch, like a little train going ch, ch, ch.',
+    trick:'<b>Ch</b>ips on the <b>ch</b>air, <b>ch</b>eese on my <b>ch</b>in. Ch, ch, ch!', emoji:'🚂' },
 
   { id:'th', label:'th words', g:'th',
-    title:'th. Stick your tongue out', rule:'It has two sounds. A soft one, as in think, and a buzzy one, as in this.',
-    trick:'<b>Th</b>ink about <b>th</b>is.', emoji:'👅' },
+    title:'<b>th</b>: stick your tongue out', rule:'Pop your tongue out a tiny bit, and <b>th</b> is soft like in <b>th</b>ink or buzzy like in <b>th</b>is.',
+    trick:'<b>Th</b>ink about <b>th</b>is. Feel the soft one, then the buzzy one!', emoji:'👅' },
 
   { id:'wh', label:'wh words', g:'wh', start:true,
-    title:'wh starts the question words', rule:'The <b>h</b> is nearly silent.',
-    trick:'<b>Wh</b>o, <b>wh</b>at, <b>wh</b>en, <b>wh</b>ere, <b>wh</b>y.', emoji:'❓' },
+    title:'<b>wh</b> starts question words', rule:'Lots of question words start with <b>wh</b>, and the <b>h</b> whispers so softly you might not hear it.',
+    trick:'<b>Wh</b>o, <b>wh</b>at, <b>wh</b>en, <b>wh</b>ere, <b>wh</b>y? Let\'s ask them in a <b>wh</b>isper!', emoji:'❓' },
 
   { id:'magic_e', label:'Magic e words', g:'', custom:'magic_e',
-    title:'Magic e', rule:'The <b>e</b> at the end is silent — it jumps back over one letter and makes the vowel say its own name.',
-    trick:'cap → c<b>a</b>p<b>e</b> · kit → k<b>i</b>t<b>e</b> · hop → h<b>o</b>p<b>e</b>', emoji:'✨' },
+    title:'Magic <b>e</b> makes vowels say their names', rule:'The <b>e</b> at the end stays silent, but it jumps back over one letter and usually makes the vowel say its name.',
+    trick:'Zap! Cap becomes c<b>a</b>p<b>e</b>, kit becomes k<b>i</b>t<b>e</b>, and hop becomes h<b>o</b>p<b>e</b>.', emoji:'✨' },
 
   // ---------- short vowels: last, so every digraph above wins first ----------
   { id:'short_a', label:'short a words', g:'', custom:'short_a',
-    title:'Short <b>"a"</b> says <b>"a"</b>, as in cat',
-    rule:'One vowel, shut in by consonants on the outside — so it says its short sound, not its name.',
-    trick:'The c<b>a</b>t s<b>a</b>t on the m<b>a</b>t.', emoji:'🐱' },
+    title:'Short <b>a</b>, like in cat',
+    rule:'When one <b>a</b> is tucked between consonants, it usually says its short sound, like c<b>a</b>t, not its name.',
+    trick:'The c<b>a</b>t s<b>a</b>t on a m<b>a</b>t and h<b>a</b>d a n<b>a</b>p.', emoji:'🐱' },
 
   { id:'short_e', label:'short e words', g:'', custom:'short_e',
-    title:'Short <b>"e"</b> says <b>"e"</b>, as in hen',
-    rule:'One vowel, shut in by consonants — a short, quick sound.',
-    trick:'The h<b>e</b>n f<b>e</b>ll in the n<b>e</b>st.', emoji:'🐔' },
+    title:'Short <b>e</b>, like in hen',
+    rule:'When one <b>e</b> is snuggled between consonants, it usually says its quick short sound, like h<b>e</b>n.',
+    trick:'The r<b>e</b>d h<b>e</b>n f<b>e</b>ll in the n<b>e</b>st. She\'s okay!', emoji:'🐔' },
 
   { id:'short_i', label:'short i words', g:'', custom:'short_i',
-    title:'Short <b>"i"</b> says <b>"i"</b>, as in pig',
-    rule:'One vowel, shut in by consonants — a short, quick sound.',
-    trick:'The b<b>i</b>g p<b>i</b>g d<b>i</b>d a j<b>i</b>g.', emoji:'🐷' },
+    title:'Short <b>i</b>, like in pig',
+    rule:'When one <b>i</b> is tucked between consonants, it usually says its quick short sound, like p<b>i</b>g.',
+    trick:'The b<b>i</b>g p<b>i</b>g d<b>i</b>d a j<b>i</b>g. W<b>i</b>ggle, w<b>i</b>ggle!', emoji:'🐷' },
 
   { id:'short_o', label:'short o words', g:'', custom:'short_o',
-    title:'Short <b>"o"</b> says <b>"o"</b>, as in dog',
-    rule:'One vowel, shut in by consonants — a short, quick sound.',
-    trick:'The d<b>o</b>g got a h<b>o</b>t p<b>o</b>t.', emoji:'🐶' },
+    title:'Short <b>o</b>, like in dog',
+    rule:'When one <b>o</b> is tucked between consonants, it usually says its short sound, like the ah in h<b>o</b>t.',
+    trick:'The d<b>o</b>g got a h<b>o</b>t p<b>o</b>t. H<b>o</b>p, h<b>o</b>p, h<b>o</b>p!', emoji:'🐶' },
 
   { id:'short_u', label:'short u words', g:'', custom:'short_u',
-    title:'Short <b>"u"</b> says <b>"u"</b>, as in bug',
-    rule:'One vowel, shut in by consonants — a short, quick sound.',
-    trick:'The b<b>u</b>g is in the m<b>u</b>g.', emoji:'🐛' },
+    title:'Short <b>u</b>, like in bug',
+    rule:'When one <b>u</b> is tucked between consonants, it usually says its short sound, uh, like b<b>u</b>g.',
+    trick:'The b<b>u</b>g is in the m<b>u</b>g. Uh oh, y<b>u</b>ck!', emoji:'🐛' },
 ];
 
 const PATTERN_BY_ID = {};
@@ -2164,6 +2203,17 @@ function buildCurrentWeek(){
     const texts = WEEK.allWords.map(w => w.word);
     WEEK.sections.forEach(sec => { if (sec.tip) texts.push(speakable(sec.tip.title + '. ' + sec.tip.rule + ' ' + sec.tip.trick)); });
     setTimeout(() => scoutWarm(texts), 1500);
+    // then the slow words, and the sound-it-out and piece sounds (29 Sep 2026)
+    setTimeout(() => {
+      scoutWarm(WEEK.allWords.map(w => { const p = speechSyllables(w.word); return (p.length > 1 ? p.join(' … ') + ' … ' : '') + w.word; }), 'slow');
+      const snd = [];
+      WEEK.allWords.forEach(w => {
+        const parts = beats(w.word) >= 3 ? null : wordSounds(w.word);
+        if (parts) snd.push(soundsText(parts, w.word.toLowerCase()));
+        (w.chunks || []).forEach(c => { const t = chunkText(c, w.word); if (t) snd.push(t); });
+      });
+      scoutWarm(snd, 'sounds');
+    }, 6000);
   }catch(e){}
   return WEEK;
 }
@@ -2562,7 +2612,7 @@ function initVoices(){
    stored copy directly; only a phrase nobody has heard yet goes to the
    scout-voice edge function to be recorded. No internet, or not set up yet:
    the device voice takes over, exactly as before. */
-const SCOUT_VOICE_VERSION = 'v1';           // must match VERSION in supabase/functions/scout-voice
+const SCOUT_VOICE_VERSION = 'v2';           // must match VERSION in supabase/functions/scout-voice
 const SCOUT_FN   = 'https://nkkckcnclqwpvvwujedg.supabase.co/functions/v1/scout-voice';
 const SCOUT_BASE = 'https://nkkckcnclqwpvvwujedg.supabase.co/storage/v1/object/public/scout-voice/';
 let SCOUT_OK = null;        // null: not known yet · true: Scout is speaking · false: use the device voice
@@ -2576,6 +2626,43 @@ async function scoutKey(text, speed){
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 function scoutSpeaking(){ return !!(SCOUT_EL && !SCOUT_EL.paused && !SCOUT_EL.ended); }
+
+/* Scout's clips are downloaded whole and kept on the device (29 Sep 2026).
+   Playing the storage URL straight from an <audio> element made iPhones and
+   iPads fetch it again in small pieces every single time (range requests skip
+   the browser cache), which is where the three-second pause before "Hi Amira!"
+   came from. A whole-file fetch is cached properly, and Cache Storage keeps it
+   between visits, so a line Scout has said once starts instantly after that. */
+const SCOUT_BLOBS = {};                 // url -> object URL, for this visit
+const SCOUT_CACHE = 'scout-voice-v1';
+async function scoutClip(url){
+  if (SCOUT_BLOBS[url]) return SCOUT_BLOBS[url];
+  let res = null, store = null;
+  try{ if ('caches' in window){ store = await caches.open(SCOUT_CACHE); res = await store.match(url); } }catch(e){}
+  if (!res){
+    try{ res = await fetch(url, { mode:'cors' }); }catch(e){ return null; }
+    if (!res || !res.ok) return null;
+    try{ if (store) await store.put(url, res.clone()); }catch(e){}
+  }
+  try{
+    const b = await res.blob();
+    if (!b || !b.size) return null;
+    return (SCOUT_BLOBS[url] = URL.createObjectURL(b));
+  }catch(e){ return null; }
+}
+async function scoutUrlFor(text, speed){ return SCOUT_BASE + (await scoutKey(scoutTidy(text), speed)) + '.mp3'; }
+/* fetch a line ahead of time (recording it first if nobody has yet) */
+async function scoutPrefetch(text, speed){
+  if (SCOUT_OK === false || !navigator.onLine || !(window.crypto && crypto.subtle)) return;
+  speed = speed || 'normal';
+  try{
+    const url = await scoutUrlFor(text, speed);
+    if (await scoutClip(url)) return;
+    const made = await scoutRecord(scoutTidy(text), speed);
+    if (made) await scoutClip(made);
+  }catch(e){}
+}
+
 function scoutPlayUrl(url, token, onend){
   return new Promise(resolve => {
     if (!SCOUT_EL || token !== SCOUT_TOKEN) return resolve(token !== SCOUT_TOKEN);
@@ -2607,37 +2694,42 @@ async function scoutPlay(text, opts){
   const token = ++SCOUT_TOKEN;
   text = scoutTidy(text);
   if (!text || SCOUT_OK === false || !SCOUT_EL || !(window.crypto && crypto.subtle) || !navigator.onLine && SCOUT_OK !== true) return false;
-  const speed = (opts && opts.rate != null && opts.rate < .75) ? 'slow' : 'normal';
+  const speed = (opts && opts.speed) || ((opts && opts.rate != null && opts.rate < .75) ? 'slow' : 'normal');
   let url;
-  try{ url = SCOUT_BASE + (await scoutKey(text, speed)) + '.mp3'; }catch(e){ return false; }
+  try{ url = await scoutUrlFor(text, speed); }catch(e){ return false; }
   if (token !== SCOUT_TOKEN) return true;
-  if (await scoutPlayUrl(url, token, opts && opts.onend)){ SCOUT_OK = true; return true; }
+  let clip = await scoutClip(url);
   if (token !== SCOUT_TOKEN) return true;
-  const made = await scoutRecord(text, speed);
-  if (!made || token !== SCOUT_TOKEN) return token !== SCOUT_TOKEN;
-  return scoutPlayUrl(made, token, opts && opts.onend);
+  if (!clip){
+    const made = await scoutRecord(text, speed);
+    if (token !== SCOUT_TOKEN) return true;
+    if (!made) return false;
+    clip = (await scoutClip(made)) || made;
+    if (token !== SCOUT_TOKEN) return true;
+  }
+  try{ SCOUT_EL.playbackRate = speed === 'slow' ? .85 : 1; SCOUT_EL.preservesPitch = true; SCOUT_EL.webkitPreservesPitch = true; }catch(e){}
+  if (await scoutPlayUrl(clip, token, opts && opts.onend)){ SCOUT_OK = true; return true; }
+  return token !== SCOUT_TOKEN;
 }
 /* Record the week's words, rules and tricks ahead of time, a couple at a time,
-   so today's sprint never waits on a first recording. */
+   and keep them on the device, so today's sprint never waits on Scout. */
 let SCOUT_WARMED = {};
-function scoutWarm(texts){
+function scoutWarm(texts, speed){
   if (SCOUT_OK === false || !navigator.onLine || !(window.crypto && crypto.subtle)) return;
-  const queue = Array.from(new Set(texts.map(scoutTidy).filter(t => t && t.length <= 400 && !SCOUT_WARMED[t])));
-  queue.forEach(t => SCOUT_WARMED[t] = 1);
+  speed = speed || 'normal';
+  const queue = Array.from(new Set(texts.map(scoutTidy).filter(t => t && t.length <= 400 && !SCOUT_WARMED[speed+t])));
+  queue.forEach(t => SCOUT_WARMED[speed+t] = 1);
   let i = 0;
   const next = () => {
     if (i >= queue.length || SCOUT_OK === false) return;
-    const t = queue[i++];
-    scoutKey(t, 'normal').then(k => fetch(SCOUT_BASE + k + '.mp3', { method:'HEAD' }))
-      .then(r => r.ok ? null : scoutRecord(t, 'normal'))
-      .catch(() => null).then(() => setTimeout(next, 150));
+    scoutPrefetch(queue[i++], speed).then(() => setTimeout(next, 120));
   };
   next(); next();
 }
-function scoutSpeak(text){ say(text); }
 
 function deviceSay(text, opts){
   opts = opts || {};
+  text = String(text).replace(/<phoneme[^>]*>([^<]*)<\/phoneme>/g, '$1').replace(/<[^>]+>/g, ' ');
   if (!('speechSynthesis' in window)) { if (opts.onend) opts.onend(); return; }
   try{ speechSynthesis.cancel(); }catch(e){}
   const u = new SpeechSynthesisUtterance(String(text));
@@ -2649,30 +2741,83 @@ function deviceSay(text, opts){
   try{ speechSynthesis.speak(u); }catch(e){ if(opts.onend) opts.onend(); }
   return u;
 }
-function say(text, opts){
+
+/* ---- one line at a time (29 Sep 2026) ----
+   Kathryn: "Scout is trying to read the word the kid just filled in AND her
+   celebration at the same time." Every new line used to stop the one before,
+   so the read-back cut off the cheer and the next word cut off both.
+   Now lines wait their turn. Only a child's own tap (Hear it, Slowly…) jumps
+   the queue, because they asked for it right now. A cheer that has been
+   waiting too long is dropped rather than arriving late. Changing screens
+   clears the queue. */
+let SPEAK_Q = [], SPEAK_CUR = null, SPEAK_GEN = 0;
+function inUserTap(){
+  const e = window.event;
+  return !!(e && /^(click|pointerup|pointerdown|touchend|mouseup|keydown)$/.test(e.type));
+}
+function speechBusy(){ return !!(SPEAK_CUR && !SPEAK_CUR.done); }
+function sayNow(text, opts){
   opts = opts || {};
   try{ speechSynthesis.cancel(); }catch(e){}
+  if (SPEAK_CUR) SPEAK_CUR.done = true;               // superseded
+  const cur = { done:false, t0:Date.now(), heard:false };
+  SPEAK_CUR = cur;
+  const fin = () => { if (cur.done) return; cur.done = true; if (SPEAK_CUR === cur) setTimeout(pumpSpeech, 260); };
+  const userEnd = opts.onend;
+  const o = Object.assign({}, opts, { onend: () => { fin(); if (userEnd) userEnd(); } });
+  const iv = setInterval(() => {
+    if (cur.done || SPEAK_CUR !== cur){ clearInterval(iv); return; }
+    const on = scoutSpeaking() || ('speechSynthesis' in window && (speechSynthesis.speaking || speechSynthesis.pending));
+    if (on) cur.heard = true;
+    else if (cur.heard || Date.now() - cur.t0 > 7000 || (cur.dev && Date.now() - cur.dev > 1500)){ clearInterval(iv); fin(); }
+  }, 250);
   const my = SCOUT_TOKEN + 1;
-  scoutPlay(text, opts).then(ok => { if (!ok && SCOUT_TOKEN === my) deviceSay(text, opts); });
+  scoutPlay(text, o).then(ok => {
+    if (!ok && SCOUT_TOKEN === my){ cur.dev = Date.now(); deviceSay(text, o); }
+  });
 }
+function pumpSpeech(){
+  if (speechBusy()) return;
+  while (SPEAK_Q.length){
+    const it = SPEAK_Q.shift();
+    if (it.gen !== SPEAK_GEN) continue;
+    if (it.maxWait && Date.now() - it.at > it.maxWait) continue;
+    sayNow(it.text, it.opts);
+    return;
+  }
+}
+function sayQueued(text, opts, maxWait){
+  SPEAK_Q.push({ text, opts: opts || {}, gen: SPEAK_GEN, at: Date.now(), maxWait: maxWait || 0 });
+  pumpSpeech();
+}
+function say(text, opts){
+  opts = opts || {};
+  if (opts.now || inUserTap()) return sayNow(text, opts);
+  return sayQueued(text, opts);
+}
+/* Scout's own chatter (cheers, intros): always waits its turn, never cuts in */
+function scoutSpeak(text, maxWait){ sayQueued(text, {}, maxWait || 5000); }
+
 let SAY_TIMERS = [];
-function stopSpeech(){
+function stopAudio(){
   SAY_TIMERS.forEach(clearTimeout); SAY_TIMERS = [];
   SCOUT_TOKEN++;
+  if (SPEAK_CUR) SPEAK_CUR.done = true;
   try{ if (SCOUT_EL){ SCOUT_EL.pause(); } }catch(e){}
   try{ speechSynthesis.cancel(); }catch(e){}
 }
-function sayWord(w, opts){ stopSpeech(); return say(w, opts); }
+function stopSpeech(){ SPEAK_Q = []; SPEAK_GEN++; stopAudio(); }
+function sayWord(w, opts){ if (inUserTap()) stopAudio(); return say(w, opts); }
 /* sentences sound robotic when they're dragged out — read prose at normal speed */
 function sayRule(html, opts){
-  stopSpeech();
+  if (inUserTap()) stopAudio();
   return say(speakable(html), Object.assign({ rate:1.02, pitch:1.0 }, opts || {}));
 }
 
 /* iOS quietly ignores small rate changes, so "slowly" also breaks the word into
    its chunks with real pauses — which is more useful anyway. */
 function saySlow(word){
-  stopSpeech();
+  if (inUserTap()) stopAudio();
   const parts = speechSyllables(word);          // real syllables, never letters
   if (SCOUT_OK !== false){
     // Scout: "sun … shine … sunshine", one clip, slowed down
@@ -2682,26 +2827,125 @@ function saySlow(word){
   let t = 0;
   if (parts.length > 1){
     parts.forEach(p => {
-      SAY_TIMERS.push(setTimeout(() => say(p, { rate:.62 }), t));
+      SAY_TIMERS.push(setTimeout(() => sayNow(p, { rate:.62 }), t));
       t += 780 + p.length * 130;
     });
-    SAY_TIMERS.push(setTimeout(() => say(word, { rate:.62 }), t + 300));
+    SAY_TIMERS.push(setTimeout(() => sayNow(word, { rate:.62 }), t + 300));
   } else {
     // one-beat word: stretch it out rather than chopping it up
-    SAY_TIMERS.push(setTimeout(() => say(word, { rate:.4 }), 0));
-    SAY_TIMERS.push(setTimeout(() => say(word, { rate:.55 }), 1500));
+    SAY_TIMERS.push(setTimeout(() => sayNow(word, { rate:.4 }), 0));
+    SAY_TIMERS.push(setTimeout(() => sayNow(word, { rate:.55 }), 1500));
   }
 }
-function sayLetters(w){
-  stopSpeech();
-  if (SCOUT_OK !== false){ say(w.split('').map(c => c === 'a' ? 'ay' : c).join(', ') + '. ' + w + '.', { rate:.62 }); return; }
-  let t = 0;
-  w.split('').forEach(c => {
-    SAY_TIMERS.push(setTimeout(() => say(c === 'a' ? 'ay' : c, { rate:.6 }), t));
-    t += 620;
-  });
-  SAY_TIMERS.push(setTimeout(() => say(w, { rate:.6 }), t + 300));
+/* ---- saying the SOUNDS, not the letter names (29 Sep 2026) ----
+   Kathryn: "Letter by letter said 'flit' instead of 'flat', and we shouldn't
+   say the letters, we should say the sounds they make." A word is split into
+   its spelling sounds (fl-a-t → f · l · a · t, night → n · igh · t) and each
+   one is sent to Scout as an IPA phoneme, which the "sounds" voice model reads
+   as the sound itself. Silent letters (the gh in night, a magic e) are skipped.
+   Long words (three beats or more) are clapped out in syllables instead, where
+   single sounds stop being helpful. */
+const SOUND_WORDS = {
+  ow_au:'cow how now wow town down gown crown brown clown frown drown owl howl growl fowl crowd powder flower power shower tower allow vowel towel',
+  oo_short:'book look cook took good wood foot hood hook shook stood wool brook crook',
+  ea_short:'bread head dead breath ready heavy weather feather sweater instead spread thread deaf meant dread health wealth breakfast',
+  g_hard:'get give gift girl begin together target tiger forget gear',
+};
+const SW = {}; Object.keys(SOUND_WORDS).forEach(k => SOUND_WORDS[k].split(' ').forEach(w => (SW[k] = SW[k] || {})[w] = 1));
+const LONG_V = { a:'eɪ', e:'iː', i:'aɪ', o:'oʊ', u:'uː' };
+const SHORT_V = { a:'æː', e:'ɛː', i:'ɪː', o:'ɑː', u:'ʌː' };
+const CONS = { b:'b', c:'k', d:'d', f:'fːː', g:'g', h:'h', j:'dʒ', k:'k', l:'lːː', m:'mːː', n:'nːː', p:'p',
+  q:'k', r:'ɹː', s:'sːː', t:'tʰ', v:'vːː', w:'w', x:'ks', z:'zːː' };
+const TEAMS = [
+  ['tch','tʃ'],['dge','dʒ'],['igh','aɪ'],['eigh','eɪ'],['augh','ɔː'],['tion','ʃən'],['sion','ʒən'],['ture','tʃɚ'],
+  ['air','ɛɹ'],['are','ɛɹ'],['ear','ɪɹ'],['eer','ɪɹ'],['ore','ɔɹ'],['all','ɔːl'],
+  ['sh','ʃːː'],['ch','tʃ'],['th','θːː'],['wh','w'],['ph','fːː'],['ck','k'],['ng','ŋː'],['qu','kw'],
+  ['ar','ɑɹ'],['er','ɝː'],['ir','ɝː'],['ur','ɝː'],['or','ɔɹ'],
+  ['ai','eɪ'],['ay','eɪ'],['ee','iː'],['oa','oʊ'],['oe','oʊ'],['oi','ɔɪ'],['oy','ɔɪ'],['ou','aʊ'],
+  ['au','ɔː'],['aw','ɔː'],['ew','uː'],['ue','uː'],
+  ['ll','lːː'],['ss','sːː'],['ff','fːː'],['zz','zːː'],['tt','tʰ'],['pp','p'],['bb','b'],['dd','d'],['gg','g'],
+  ['mm','mːː'],['nn','nːː'],['rr','ɹː'],['cc','k'],
+];
+/* → [{g:'igh', ipa:'aɪ'}, …] or null when the word is too irregular to sound out */
+function wordSounds(word){
+  const w = String(word).toLowerCase().replace(/[^a-z]/g, '');
+  if (!w || /ough/.test(w)) return null;
+  const out = [];
+  const isV = ch => /[aeiou]/.test(ch);
+  // magic e: one vowel, one consonant, e at the end (make, bike, hope, cute)
+  const me = /([aeiou])([bcdfgklmnprstvz])e$/.exec(w);
+  const magicAt = me && (me.index === 0 || !isV(w[me.index - 1])) ? me.index : -1;
+  let i = 0;
+  while (i < w.length){
+    const rest = w.slice(i);
+    if (i === 0 && /^kn/.test(w)){ out.push({ g:'kn', ipa:'nːː' }); i += 2; continue; }
+    if (i === 0 && /^wr/.test(w)){ out.push({ g:'wr', ipa:'ɹː' }); i += 2; continue; }
+    if (rest === 'ing'){ out.push({ g:'ing', ipa:'ɪŋ' }); break; }
+    if (rest === 'ed' && i > 1){
+      const prev = w[i-1];
+      out.push({ g:'ed', ipa: /[td]/.test(prev) ? 'ɪd' : /[pkfsx]|sh|ch/.test(prev) ? 't' : 'd' }); break;
+    }
+    if (rest === 'le' && i > 0 && !isV(w[i-1])){ out.push({ g:'le', ipa:'əl' }); break; }
+    if (rest === 'e' && i > 0){ break; }                                   // silent final e
+    if (w.substr(i, 2) === 'gh'){ i += 2; continue; }                       // silent gh
+    if (w.substr(i, 2) === 'ie'){ out.push({ g:'ie', ipa: i + 2 === w.length ? 'aɪ' : 'iː' }); i += 2; continue; }
+    if (w.substr(i, 2) === 'ei'){ out.push({ g:'ei', ipa: w[i-1] === 'c' ? 'iː' : 'eɪ' }); i += 2; continue; }
+    if (w.substr(i, 2) === 'ow'){ out.push({ g:'ow', ipa: SW.ow_au[w] ? 'aʊ' : 'oʊ' }); i += 2; continue; }
+    if (w.substr(i, 2) === 'oo'){ out.push({ g:'oo', ipa: SW.oo_short[w] ? 'ʊ' : 'uː' }); i += 2; continue; }
+    if (w.substr(i, 2) === 'ea'){ out.push({ g:'ea', ipa: SW.ea_short[w] ? 'ɛː' : 'iː' }); i += 2; continue; }
+    const team = TEAMS.find(t => rest.indexOf(t[0]) === 0);
+    if (team){ out.push({ g:team[0], ipa:team[1] }); i += team[0].length; continue; }
+    const ch = w[i];
+    if (isV(ch)){
+      const open = (i === 1 && ch === 'e' && /^(be|re|de)[^aeiou][aeiouy]/.test(w) && beats(w) >= 2) ||             // be·lieve, re·do
+                   /^(tion|sion)/.test(w.slice(i + 1)) && ch !== 'i';                     // na·tion, mo·tion
+      out.push({ g:ch, ipa: i === magicAt || open ? LONG_V[ch] : (w.length <= 2 && i === w.length - 1 ? LONG_V[ch] : SHORT_V[ch]) });
+    } else if (ch === 'y'){
+      if (i === 0) out.push({ g:'y', ipa:'j' });
+      else if (i === w.length - 1) out.push({ g:'y', ipa: /[aeiou]/.test(w.slice(0, i)) ? 'iː' : 'aɪ' });
+      else out.push({ g:'y', ipa:'ɪ' });
+    } else if (ch === 'c'){
+      out.push({ g:'c', ipa: /[eiy]/.test(w[i+1] || '') ? 'sːː' : 'k' });
+    } else if (ch === 'g'){
+      out.push({ g:'g', ipa: /[eiy]/.test(w[i+1] || '') && !SW.g_hard[w] ? 'dʒ' : 'g' });
+    } else if (ch === 's' && i === w.length - 1 && i > 0 && !/[ptkf]/.test(w[i-1]) && w.length > 2){
+      out.push({ g:'s', ipa:'zːː' });
+    } else if (CONS[ch]){
+      out.push({ g:ch, ipa:CONS[ch] });
+    }
+    i++;
+  }
+  return out.length ? out : null;
 }
+function soundsText(parts, word){
+  return parts.map(p => '<phoneme alphabet="ipa" ph="'+p.ipa+'">'+p.g+'</phoneme>').join(' <break time="0.4s" /> ') +
+    (word ? ' <break time="0.7s" /> ' + word + '.' : '');
+}
+/* one piece's sound (Honeycomb Builder): "igh" → the long i sound */
+function chunkText(chunk, word){
+  const c = String(chunk).toLowerCase();
+  let parts = wordSounds(c);
+  // a lone vowel inside a word keeps the word's own sound (the i in "fight" is part of igh)
+  if (word){
+    const all = wordSounds(word);
+    if (all){ const hit = all.find(p => p.g === c); if (hit) parts = [hit]; }
+  }
+  if (!parts || !parts.length) return null;
+  return parts.map(p => '<phoneme alphabet="ipa" ph="'+p.ipa+'">'+p.g+'</phoneme>').join('');
+}
+function sayChunk(chunk, word){
+  const t = SCOUT_OK === false ? null : chunkText(chunk, word);
+  if (!t){ say(String(chunk).toLowerCase(), { rate:.8 }); return; }
+  say(t, { speed:'sounds' });
+}
+function saySounds(w){
+  if (inUserTap()) stopAudio();
+  const word = String(w).toLowerCase();
+  const parts = beats(word) >= 3 ? null : wordSounds(word);
+  if (!parts || SCOUT_OK === false){ saySlow(word); return; }
+  say(soundsText(parts, word), { speed:'sounds' });
+}
+const sayLetters = saySounds;      // every "letter by letter" in the app now sounds it out
 
 /* ---------------- ui helpers ---------------- */
 const $ = s => document.querySelector(s);
@@ -2804,16 +3048,173 @@ function scoutMood(){
 }
 function pickOne(list){ return list[Math.floor(Math.random()*list.length)]; }
 
-function cheer(){
-  if (scoutMood() === 'quiet') return pickOne(['Nice!','Got it!','Yes!','Spot on.','Nailed it.']);
-  return pickOne(['We got it!','Yes! You nailed it!','Ooh, look at you go!','That\'s the one!',
-                  'High five! ✋','You figured it out!','Woohoo, we did it!']);
+/* Scout never says the same thing twice in a row (29 Sep 2026: Kathryn heard
+   "Ooh, look at you go!" over and over). Each list remembers what was said
+   lately and picks from the rest. */
+const CHEERS = ['We got it!','Yes! You nailed it!','Ooh, look at you go!','That\'s the one!','High five!',
+  'You figured it out!','Woohoo, we did it!','Buzz buzz, brilliant!','Honey, that was sweet!','Look at us go!',
+  'Yes, yes, yes!','You\'re on fire!','That was bee-autiful!','We make a great team!','Boom! Spelled it!',
+  'I knew you could do it!','Sweet as honey!','Wow, that was quick!','Another one for the jar!','You\'re a spelling star!'];
+const CHEERS_QUIET = ['Nice!','Got it!','Yes!','Spot on.','Nailed it.','Sharp.','Exactly right.','Clean spelling.','Easy does it. Correct.','Solid.'];
+const ENCOURAGE = ['Almost! Let\'s find the tricky part.','Wait, I want another try too!','Ooh, that part was tricky. Let\'s look again.',
+  'That miss gave us a clue!','So close! Let\'s try it together.','Hmm, sneaky word! Let\'s look closer.','Oops! Tricky one. We\'ve got this.',
+  'Almost there. One more look!','That\'s okay, mistakes help us learn!'];
+const ENCOURAGE_QUIET = ['Almost. Find the tricky part.','Close! Look again.','That miss is a clue.','Nearly. Check the middle.','One more look.'];
+const SAID_RECENTLY = {};
+function pickFresh(list, key){
+  const recent = SAID_RECENTLY[key] || (SAID_RECENTLY[key] = []);
+  const pool = list.filter(x => recent.indexOf(x) < 0);
+  const pick = pickOne(pool.length ? pool : list);
+  recent.push(pick); while (recent.length > Math.min(6, list.length - 1)) recent.shift();
+  return pick;
 }
-function encourage(){
-  if (scoutMood() === 'quiet') return pickOne(['Almost. Find the tricky part.','Close! Look again.','That miss is a clue.']);
-  return pickOne(['Almost! Let\'s find the tricky part.','Wait, I want another try too!',
-                  'Ooh, that part was tricky. Let\'s look again.','That miss gave us a clue!',
-                  'So close! Let\'s try it together.']);
+function cheer(){ return scoutMood() === 'quiet' ? pickFresh(CHEERS_QUIET, 'cq') : pickFresh(CHEERS, 'c'); }
+function encourage(){ return scoutMood() === 'quiet' ? pickFresh(ENCOURAGE_QUIET, 'eq') : pickFresh(ENCOURAGE, 'e'); }
+
+/* ---- the kid picker: a different hello every day (29 Sep 2026) ---- */
+const PICK_HELLOS = [
+  ['Who\'s spelling with me today?', 'Ready to spell with me?'],
+  ['Hi friend! Who\'s ready to buzz?', 'Hi friend! Ready to buzz?'],
+  ['Bzzz! Who\'s playing with me today?', 'Bzzz! Want to play with me today?'],
+  ['I saved you a spot. Who\'s here?', 'I saved you a spot. Ready?'],
+  ['Yay, you\'re here! Who\'s spelling?', 'Yay, you\'re here! Let\'s spell!'],
+  ['The honey jar is waiting. Who\'s first?', 'The honey jar is waiting. Let\'s fill it!'],
+  ['Good to see you! Who\'s my spelling buddy?', 'Good to see you, spelling buddy!'],
+  ['Ready for a word adventure? Who\'s coming?', 'Ready for a word adventure?'],
+  ['I\'ve been practicing my buzz! Who\'s ready?', 'I\'ve been practicing my buzz! Ready?'],
+  ['Let\'s make today a sweet one. Who\'s spelling?', 'Let\'s make today a sweet one!'],
+  ['Tricky words, watch out! Who\'s with me?', 'Tricky words, watch out! You with me?'],
+  ['Hello, hello! Who\'s flying with me today?', 'Hello, hello! Fly with me today?'],
+];
+function pickHello(many){
+  const d = new Date(); const day = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5);
+  return PICK_HELLOS[day % PICK_HELLOS.length][many ? 0 : 1];
+}
+
+/* ---- Scout flies (29 Sep 2026) ----
+   Kathryn: "different directions and in like a circle pattern… every screen
+   you're trying to find her and see how she goes this time." A new flight path
+   each time, never the same one twice in a row. */
+const FLIGHTS = ['across','back','loop','swoop','zigzag','diagonal','rise','spiral'];
+let LAST_FLIGHT = '';
+function reducedMotion(){ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } }
+function flightPath(kind, W, H){
+  const y = H * (0.25 + Math.random() * 0.4), off = 140;
+  const P = (x, y, r, s) => ({ x, y, r: r || 0, s: s || 1 });
+  switch (kind){
+    case 'back':     return [P(W+off, y), P(W*.66, y-40, 6), P(W*.33, y+30, -6), P(-off, y-20)];
+    case 'loop':     { const cx = W*.5, cy = y, r = Math.min(W, H) * .18;
+                       return [P(-off, cy+r), P(cx-r, cy+r, -4), P(cx, cy+r*1.05, 0), P(cx+r, cy, -40), P(cx, cy-r, -150),
+                               P(cx-r, cy, -250), P(cx, cy+r, -360), P(cx+r*1.4, cy+r*.6, -360), P(W+off, cy+r*.2, -360)]; }
+    case 'swoop':    return [P(-off, H*.1), P(W*.35, y+120, 10), P(W*.6, y+140, -4), P(W+off, H*.12, -14)];
+    case 'zigzag':   return [P(-off, y), P(W*.2, y-70, -10), P(W*.4, y+70, 10), P(W*.6, y-70, -10), P(W*.8, y+70, 10), P(W+off, y)];
+    case 'diagonal': return [P(-off, H+off), P(W*.5, H*.5, -12), P(W+off, -off, -18)];
+    case 'rise':     return [P(W*.5, H+off, 0, .8), P(W*.45, H*.6, -8, 1), P(W*.55, H*.35, 8, 1.1), P(W*.5, -off, 0, 1)];
+    case 'spiral':   { const cx = W*.5, cy = H*.45; const pts = [P(W+off, cy)];
+                       for (let k = 0; k <= 10; k++){ const a = k/10 * Math.PI * 3, rr = (1 - k/12) * Math.min(W, H) * .32;
+                         pts.push(P(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, -k * 30, 1 - k * .02)); }
+                       pts.push(P(-off, cy - 60, -330)); return pts; }
+    default:         return [P(-off, y), P(W*.33, y-30, 5), P(W*.66, y+30, -5), P(W+off, y-10)];
+  }
+}
+function scoutFly(opts){
+  opts = opts || {};
+  if (reducedMotion()) return;
+  try{
+    const kinds = FLIGHTS.filter(k => k !== LAST_FLIGHT);
+    const kind = opts.kind || pickOne(kinds); LAST_FLIGHT = kind;
+    const W = innerWidth, H = innerHeight;
+    const pts = flightPath(kind, W, H);
+    const leftward = pts[pts.length-1].x < pts[0].x;
+    const im = el('<img class="scout-fly" src="'+SCOUT_IMG(opts.pose || 'pointing')+'" alt="" width="100" height="100">');
+    document.body.appendChild(im);
+    const flip = leftward ? -1 : 1;
+    const frames = pts.map(p => ({ transform: 'translate('+(p.x-50)+'px,'+(p.y-50)+'px) rotate('+p.r+'deg) scale('+(flip*p.s)+','+p.s+')' }));
+    const an = im.animate(frames, { duration: opts.ms || (2200 + pts.length * 120), easing:'ease-in-out' });
+    an.onfinish = () => im.remove();
+    setTimeout(() => im.remove(), 8000);
+  }catch(e){}
+}
+/* Scout flies in from somewhere and settles into a spot on the page (the home greeting) */
+function scoutFlyTo(target, done){
+  if (!target || reducedMotion()){ if (done) done(); return; }
+  try{
+    const r = target.getBoundingClientRect();
+    if (!r.width){ if (done) done(); return; }
+    const W = innerWidth, H = innerHeight;
+    const fromLeft = Math.random() < .5;
+    const sx = fromLeft ? -120 : W + 120, sy = H * (.2 + Math.random() * .5);
+    const tx = r.left, ty = r.top, sz = r.width;
+    const mx = W * .5, my = Math.max(60, ty - 90);
+    const im = el('<img class="scout-fly" src="'+target.getAttribute('src')+'" alt="" width="'+sz+'" height="'+sz+'">');
+    im.style.width = sz + 'px'; im.style.height = 'auto';
+    document.body.appendChild(im);
+    target.style.visibility = 'hidden';
+    const f = fromLeft ? 1 : -1;
+    const an = im.animate([
+      { transform:'translate('+sx+'px,'+sy+'px) rotate('+(-10*f)+'deg) scale('+f+',1)' },
+      { transform:'translate('+mx+'px,'+(my-60)+'px) rotate('+(8*f)+'deg) scale('+f+',1)', offset:.45 },
+      { transform:'translate('+(mx+40*f)+'px,'+(my+30)+'px) rotate('+(-200*f)+'deg) scale('+f+',1)', offset:.65 },
+      { transform:'translate('+(tx+10)+'px,'+(ty-20)+'px) rotate('+(-340*f)+'deg) scale(1,1)', offset:.88 },
+      { transform:'translate('+tx+'px,'+ty+'px) rotate(-360deg) scale(1,1)' },
+    ], { duration:1500, easing:'ease-in-out' });
+    const land = () => { im.remove(); target.style.visibility = ''; if (done) done(); };
+    an.onfinish = land;
+    setTimeout(() => { if (document.body.contains(im)) land(); }, 2600);
+  }catch(e){ target.style.visibility = ''; if (done) done(); }
+}
+
+/* ---- celebrations on a rotation (29 Sep 2026) ----
+   Kathryn loved the honeycomb turning gold and the confetti, and asked for
+   honeycombs, beehives and flowers "on a large rotation". Each call picks a
+   different style from the last. size: 'big' (sprint done) or 'small' (a streak). */
+const PARTY = ['confetti','flowers','honeycomb','bees','stars','honey','petals','bubbles','garden','hive'];
+let LAST_PARTY = '';
+function celebrate(size, from){
+  if (reducedMotion()) return;
+  const big = size !== 'small';
+  const kind = pickOne(PARTY.filter(k => k !== LAST_PARTY)); LAST_PARTY = kind;
+  if (kind === 'confetti'){ confetti(big ? 90 : 34); return kind; }
+  const box = el('<div class="party"></div>');
+  document.body.appendChild(box);
+  const n = big ? 42 : 16;
+  const W = innerWidth, H = innerHeight;
+  let ox = W / 2, oy = H / 2;
+  if (from && from.getBoundingClientRect){ const r = from.getBoundingClientRect(); ox = r.left + r.width/2; oy = r.top + r.height/2; }
+  const icon = f => '<img src="../img/ui/icon-'+f+'.webp" alt="">';
+  const pieces = {
+    flowers:  ['🌼','🌸','🌻','🌷','🌺','💐'],
+    honeycomb:['<i class="hexp g"></i>','<i class="hexp l"></i>','<i class="hexp w"></i>'],
+    bees:     ['<img src="'+SCOUT_IMG('cheering')+'" alt="">','🐝','🐝'],
+    stars:    [icon('star'),'✨','🌟'],
+    honey:    [icon('honey-drop'),'🍯','<i class="hexp g"></i>'],
+    petals:   ['🌸','🌼','<i class="hexp l"></i>','💮'],
+    bubbles:  ['<i class="bub"></i>','<i class="bub b2"></i>','<i class="bub b3"></i>'],
+    garden:   ['🌻','🌷','🐝','🌼','🍀'],
+    hive:     ['<i class="hexp g"></i>','🐝','<i class="hexp g"></i>','🍯'],
+  }[kind];
+  // how they move: rain from the top, burst from a point, or float up from the bottom
+  const mode = { flowers:'rain', petals:'rain', honey:'rain', honeycomb:'burst', stars:'burst', hive:'burst',
+                 bees:'rise', bubbles:'rise', garden:'rise' }[kind];
+  for (let i = 0; i < n; i++){
+    const p = el('<span class="pp">'+pieces[i % pieces.length]+'</span>');
+    const sz = (big ? 22 : 18) + Math.random() * (big ? 22 : 12);
+    p.style.fontSize = sz + 'px'; p.style.width = p.style.height = sz + 'px';
+    box.appendChild(p);
+    let a, b;
+    if (mode === 'rain'){ const x = Math.random() * W; a = [x, -40]; b = [x + (Math.random()-.5) * 160, H + 40]; }
+    else if (mode === 'rise'){ const x = Math.random() * W; a = [x, H + 40]; b = [x + (Math.random()-.5) * 200, -60]; }
+    else { const ang = Math.random() * Math.PI * 2, dist = (big ? .35 : .18) * Math.max(W, H) * (.5 + Math.random());
+           a = [ox, oy]; b = [ox + Math.cos(ang) * dist, oy + Math.sin(ang) * dist]; }
+    const spin = (Math.random() - .5) * 720;
+    const dur = (mode === 'burst' ? 900 : 2200) + Math.random() * 1200;
+    p.animate([
+      { transform:'translate('+a[0]+'px,'+a[1]+'px) rotate(0deg) scale('+(mode==='burst'?.3:1)+')', opacity:1 },
+      { transform:'translate('+b[0]+'px,'+b[1]+'px) rotate('+spin+'deg) scale(1)', opacity: mode === 'burst' ? 0 : .9 },
+    ], { duration: dur, delay: Math.random() * (mode === 'burst' ? 120 : 600), easing: mode === 'burst' ? 'cubic-bezier(.1,.8,.3,1)' : 'linear', fill:'both' });
+  }
+  setTimeout(() => box.remove(), 4200);
+  return kind;
 }
 
 /* A little Scout that pops up in the corner with a speech bubble, in place of a
@@ -2844,7 +3245,10 @@ function shuffle(a){ a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math
 
 /* ---------------- routing ---------------- */
 let VIEW = 'pick';
-function go(v, arg){ releaseKeys(); VIEW = v; render(arg); window.scrollTo(0,0); }
+function go(v, arg){ releaseKeys(); stopSpeech(); VIEW = v; render(arg); window.scrollTo(0,0);
+  // Scout flies across every child screen, a different way each time
+  if (['day','badges','modes','bee','pick'].indexOf(v) >= 0) setTimeout(() => { if (VIEW === v) scoutFly(); }, 900 + Math.random() * 1600);
+}
 
 function render(arg){
   const a = app();
@@ -3295,9 +3699,11 @@ function renderPick(a){
   a.appendChild(el(
     '<div class="center white" style="padding:26px 0 10px">'+
       '<img class="scout-hero" src="'+SCOUT_IMG('waving')+'" alt="Scout the Bee waving" width="180" height="180">'+
-      '<h1 style="font-size:30px;line-height:36px;margin:6px 0 2px">'+(DB.kids.length > 1 ? 'Who\'s spelling with me today?' : 'Ready to spell with me?')+'</h1>'+
+      '<h1 style="font-size:30px;line-height:36px;margin:6px 0 2px">'+esc(pickHello(DB.kids.length > 1))+'</h1>'+
       '<p class="muted">It\'s me, Scout! Tap your name and let\'s go.</p>'+
     '</div>'));
+  // a different hello every day, said out loud (a browser may keep quiet until the first tap)
+  setTimeout(() => { if (VIEW === 'pick') scoutSpeak(pickHello(DB.kids.length > 1), 6000); }, 400);
   const grid = el('<div class="who-grid"></div>');
   DB.kids.forEach(k => {
     const c = el(
@@ -3388,7 +3794,14 @@ function renderHome(a){
     const line = doneToday
       ? (quiet ? 'Today\'s sprint is done. Nice work.' : 'We did today\'s sprint! Want to play a game while we\'re here?')
       : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Today we\'re doing ' + td.t + ' together. Ready?');
-    a.appendChild(scoutCard(doneToday ? 'cheering' : 'pointing', line, { speak: introFresh('home-' + tk0 + (doneToday?'-done':'')) }));
+    /* Scout flies in and hovers by her greeting, every time the child lands here
+       (29 Sep 2026: switching to a brother and back used to leave her silent). */
+    const hello = scoutCard(doneToday ? 'cheering' : 'pointing', line, { speak:false, cls:'home-hello' });
+    a.appendChild(hello);
+    const img = hello.querySelector('img');
+    img.style.visibility = 'hidden';
+    setTimeout(() => scoutFlyTo(img), 60);
+    setTimeout(() => scoutSpeak(speakableText(line), 8000), 250);
     // the week's honey jar: one drop for every word won this week, in any sprint
     const drops = Object.keys(pp.stats || {}).reduce((n, w) => n + ((pp.stats[w] && pp.stats[w].r) || 0), 0);
     const goal = Math.max(1, (WEEK.allWords.length || 1) * 5);
@@ -3417,14 +3830,7 @@ function renderHome(a){
         : '')+
     '</div>'));
 
-  // one-tap "do today's practice"
-  const tk = todayKey();
-  const tday = DAYS[DAY_INDEX[tk]];
-  const tdone = p.days[tk] && p.days[tk].done;
-  const startBtn = el('<button class="btn big '+(tdone?'grey':'green')+'" style="margin-bottom:14px">'+
-    (tdone ? '✅ Today\'s practice is done — play it again?' : '<span style="display:inline-flex;align-items:center;gap:12px;text-align:left">'+sprintIco(tday, 44)+'<span>Start today:<br>'+tday.t+'</span></span>')+'</button>');
-  startBtn.onclick = () => { unlockAudio(); sfx('tap'); go('day', tk); };
-  a.appendChild(startBtn);
+  const tk = todayKey();      // today's sprint is the glowing cell on the map (the Start button is gone, 29 Sep 2026)
 
   /* The route, night by night. A short window puts two stages on one night —
      they are drawn as two separate cards under one night heading, on purpose:
@@ -3477,6 +3883,7 @@ function renderHome(a){
         '<button class="hcell '+(st.done ? 'done' : (n % 2 ? 'cream' : 'lilac'))+(isToday?' today':'')+'" '+
           'aria-label="Sprint '+n+': '+esc(d.t)+(st.done ? ', done' : '')+(isToday ? ', today' : '')+'">'+
           '<span class="rim" aria-hidden="true"></span>'+
+          (isToday ? '<span class="today-tag" aria-hidden="true">'+(st.done ? 'Done today!' : 'Today!')+'</span>' : '')+
           '<span class="in" aria-hidden="true">'+
             (st.done ? '<span class="got">✓</span>' : '')+
             sprintIco(d, 46)+
@@ -4404,11 +4811,13 @@ function boot(){
   setTimeout(() => {
     const lines = [];
     Object.keys(SCOUT_INTROS).forEach(k => { lines.push(SCOUT_INTROS[k][1], SCOUT_INTROS[k][2]); });
-    ['We got it!','Yes! You nailed it!','Ooh, look at you go!','That\'s the one!','You figured it out!','Woohoo, we did it!',
-     'Nice!','Got it!','Yes!','Spot on.','Nailed it.',
-     'Almost! Let\'s find the tricky part.','Wait, I want another try too!','Ooh, that part was tricky. Let\'s look again.',
-     'That miss gave us a clue!','So close! Let\'s try it together.','Almost. Find the tricky part.','Close! Look again.','That miss is a clue.',
-     'We did it! Sprint complete!','Sprint complete. Great teamwork!'].forEach(t => lines.push(t));
+    CHEERS.concat(CHEERS_QUIET, ENCOURAGE, ENCOURAGE_QUIET,
+      PICK_HELLOS.map(h => h[0]), PICK_HELLOS.map(h => h[1]),
+      ['We did it! Sprint complete!','Sprint complete. Great teamwork!','Halfway there!','Half a jar of honey!','We\'re halfway, keep going!',
+       'Write it from memory. No peeking!','Eyes on your paper. No peeking!','Pencil power! Write it from memory.','I\'m covering my eyes too. Write it!',
+       'One more go! No peeking!','You\'ve got this. Write it again!',
+       'Let\'s check! Does yours match mine?','Moment of truth! Let\'s peek.','Detective time! Check every letter.','Ooh, let\'s see! Letter by letter.',
+       'Almost! Look at the tricky part, then we\'ll try again.']).forEach(t => lines.push(t));
     scoutWarm(lines.map(speakableText));
   }, 4000);
   try{ recheckLicence(); }catch(e){}
@@ -4684,7 +5093,19 @@ function paperPowerUp(host, items, store, onSave, onFinish){
       host.appendChild(c);
       const hear = c.querySelector('#phear');
       if (hear) hear.onclick = () => sayWord(word);
-      if (st.k === 'look') setTimeout(() => sayWord(word), 300);
+      /* Scout talks the child through each step (29 Sep 2026) */
+      if (st.k === 'look'){
+        sayWord(word);
+        const pt = it.patternId && PATTERN_BY_ID[it.patternId];
+        if (pt && scoutMood() !== 'quiet') say(pickFresh(['Remember: ', 'Our trick: ', 'Psst, remember: '], 'ppuT') + speakable(pt.title) + '.');
+      } else if (st.k === 'write'){
+        scoutPop('pencil', fixing ? pickFresh(['One more go! No peeking!', 'You\'ve got this. Write it again!'], 'ppuF')
+          : pickFresh(['Write it from memory. No peeking!', 'Eyes on your paper. No peeking!', 'Pencil power! Write it from memory.',
+                       'I\'m covering my eyes too. Write it!'], 'ppuW'), 2600);
+      } else {
+        scoutPop('magnifying', pickFresh(['Let\'s check! Does yours match mine?', 'Moment of truth! Let\'s peek.',
+          'Detective time! Check every letter.', 'Ooh, let\'s see! Letter by letter.'], 'ppuC'), 2600);
+      }
 
       c.querySelector('#pnext').onclick = () => {
         sfx('tap');
@@ -4773,13 +5194,13 @@ function writeItScreen(d, done){
       store.done = true;
       if (!wasAlreadyDone){ const k = kid(); k.xp = (k.xp||0) + 25; }
       save();
-      award('writer'); sfx('great'); confetti(50); done();
+      award('writer'); sfx('great'); celebrate('big'); done();
     });
   };
 }
 
 function rewardScreen(d, correct, total, s, xp, extra){
-  confetti(90);
+  celebrate('big');
   sfx(s === 3 ? 'win' : 'good');
   const p = popup(
     '<img class="scout-reward" src="'+SCOUT_IMG('cheering')+'" alt="Scout the Bee cheering" width="160" height="160">'+
@@ -4887,7 +5308,7 @@ function typingRound(host, opts){
       locked = true; draw('good');
       if (!opts.noStats){ wordStat(word).r++; save(); }
       sfx(tries === 1 ? 'great' : 'good');
-      setTimeout(()=>sayWord(word), 260);
+      sayWord(word);                               // the word first, then Scout's cheer
       scoutPop('cheering', cheer(), 2200);
       setTimeout(()=>opts.onDone(tries === 1, tries), 1500);
     } else {
@@ -4904,7 +5325,7 @@ function typingRound(host, opts){
             scoutPop('pointing', 'The judges say it\'s <b>'+esc(word)+'</b>. Take a good look!', 5200);
             setTimeout(()=>sayWord(word), 300);
           } else {
-            scoutPop('pointing', 'Here it is: <b>'+esc(word)+'</b>. Spell it out with me!', 5200);
+            scoutPop('pointing', 'Here it is: <b>'+esc(word)+'</b>. Let\'s sound it out together!', 5200);
             setTimeout(()=>sayLetters(word), 300);
           }
           setTimeout(()=>opts.onDone(false, tries), 5200);
@@ -4993,6 +5414,15 @@ function honeyJar(host, total){
     el: j,
     add(fromEl){
       n++;
+      /* little wins along the way (29 Sep 2026): a burst every third word, a
+         cheer at halfway, a party when the jar is full. Only live wins count,
+         not the drops put back when a sprint is resumed. */
+      if (fromEl){
+        const half = Math.ceil(total / 2);
+        if (n === total && total > 1) setTimeout(() => celebrate('big'), 350);
+        else if (n === half && total >= 4){ setTimeout(() => { celebrate('small', j); scoutPop('cheering', pickOne(['Halfway there!','Half a jar of honey!','We\'re halfway, keep going!']), 1800); }, 900); }
+        else if (n % 3 === 0) setTimeout(() => celebrate('small', j), 450);
+      }
       const fill = j.querySelector('.jar-fill');
       fill.style.height = Math.min(100, Math.round(100 * n / Math.max(1,total))) + '%';
       j.querySelector('.jar-n').textContent = n;
@@ -5038,8 +5468,10 @@ function gameBar(host, label, total){
    MONDAY — Meet the Words  →  Word Treasure Hunt (28 Sep 2026)
    Each pattern group opens with Scout's rule and memory trick. Then, for each
    word: find the pattern tiles (a honey drop each), then say it out loud with
-   Scout (the microphone listens, as before). Grade-aware: K–2 see the pattern
-   tiles glow as a hint straight away; 3+ get the hint after two tries.
+   Scout. Each group ends with "Find it!": Scout says a word, the child taps it.
+   29 Sep 2026: the microphone step is gone (Kathryn: move Day 1 away from
+   recording the child). Grade-aware: K–2 see the pattern tiles glow as a hint
+   straight away; 3+ get the hint after two tries.
    ============================================================ */
 function actMonday(a, d){
   const words = WEEK.allWords;
@@ -5049,7 +5481,8 @@ function actMonday(a, d){
 
   // walk sections, showing the tip card before each group
   let queue = [];
-  WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s})); });
+  WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s}));
+    if (s.words.length >= 2) queue.push({find:s}); });
   const plan = resumeQueuePlan('mon', queue.length);
   let qi = plan.start;
   readCount = plan.extra.readCount || 0;
@@ -5066,6 +5499,7 @@ function actMonday(a, d){
     const item = queue[qi++];
     host.innerHTML = '';
     if (item.tip) return showTip(item.tip);
+    if (item.find) return findIt(item.find);
     return huntWord(item);
   }
 
@@ -5122,7 +5556,8 @@ function actMonday(a, d){
       : say('Our word is ' + w.word + '. Tap the letters that make its sound pattern!'), 300);
   }
 
-  // step 2: say it with Scout
+  // step 2: say it with Scout (29 Sep 2026: no microphone any more; Kathryn
+  // asked to move Day 1 away from recording the child)
   function sayWithMe(item){
     host.innerHTML = '';
     const w = item.word;
@@ -5130,28 +5565,61 @@ function actMonday(a, d){
       '<div class="muted">'+item.sec.emoji+' '+esc(item.sec.label)+' · word '+wi+' of '+words.length+'</div>'+
       '<div class="bigword">'+highlight(w.word, item.sec.patternId)+'</div>'+
       '<div class="speaker" id="sp">🔊</div>'+
-      '<p class="muted" style="margin-top:14px">Say it with Scout: <b>read it out loud</b>!</p>'+
-      '<div class="mic"><i id="lvl"></i></div>'+
-      '<div id="micnote" class="muted" style="font-size:14px;line-height:20px">🎤 Listening for your voice…</div>'+
-      '<button class="btn big green" id="done" style="margin-top:12px">✅ I said it out loud!</button>'+
-      '<div class="row" style="margin-top:8px;justify-content:center">'+
+      '<p style="margin:14px 0 4px;font-weight:800;font-size:18px">Say it with Scout!</p>'+
+      '<p class="muted" style="margin:0 0 8px">Listen, then say it out loud together.</p>'+
+      '<div class="row" style="margin-top:4px;justify-content:center">'+
         '<button class="btn grey" id="sl">🐢 Slowly</button>'+
-        '<button class="btn grey" id="le">🔡 Letter by letter</button>'+
-      '</div></div>');
+        '<button class="btn grey" id="le">🔡 Sound it out</button>'+
+      '</div>'+
+      '<button class="btn big green" id="done" style="margin-top:14px">We said it! →</button>'+
+    '</div>');
     host.appendChild(c);
     const sp = c.querySelector('#sp');
     const play = () => { sp.classList.add('playing'); sayWord(w.word, { onend: ()=>sp.classList.remove('playing') }); };
     sp.onclick = play;
     c.querySelector('#sl').onclick = () => saySlow(w.word);
     c.querySelector('#le').onclick = () => sayLetters(w.word);
-    setTimeout(() => scoutMood() === 'quiet' ? play() : say('Say it with me: ' + w.word + '.'), 300);
-
+    say(scoutMood() === 'quiet' ? w.word : pickFresh(['Say it with me: ' + w.word + '.', 'Your turn with me: ' + w.word + '.',
+      'Ready? Together: ' + w.word + '.', 'Let\'s say it: ' + w.word + '.'], 'swm'));
     let finished = false;
-    const finish = () => { if (finished) return; finished = true; readCount++; stopMic(); sfx('good');
+    c.querySelector('#done').onclick = () => {
+      if (finished) return; finished = true; readCount++; sfx('good');
       if (!patternSpan(w.word, item.sec.patternId)) jar.add(c.querySelector('.bigword'));
-      scoutPop('cheering', cheer(), 1600); setTimeout(next, 1100); };
-    c.querySelector('#done').onclick = finish;
-    startMic(c.querySelector('#lvl'), c.querySelector('#micnote'), finish);
+      scoutPop('cheering', cheer(), 1600); setTimeout(next, 1100);
+    };
+  }
+
+  // after each group: Scout says a word, the child finds it in the honeycomb
+  function findIt(sec){
+    const all = sec.words.map(x => x.word);
+    const targets = shuffle(all).slice(0, Math.min(3, all.length));
+    let ti = 0, misses = 0;
+    const c = el('<div class="card center">'+
+      '<div class="muted">'+sec.emoji+' '+esc(sec.label)+'</div>'+
+      '<h2 style="font-size:24px;line-height:30px;margin:6px 0 2px">Find it! 🔎</h2>'+
+      '<p class="muted" style="margin:0 0 10px">Scout says a word. Tap it as fast as you can!</p>'+
+      '<div class="findgrid"></div>'+
+      '<div class="row" style="justify-content:center;margin-top:12px"><button class="btn grey" id="hear">🔊 Say it again</button></div>'+
+    '</div>');
+    host.appendChild(c);
+    const grid = c.querySelector('.findgrid');
+    shuffle(all).forEach(word => {
+      const b = el('<button class="fw">'+esc(word)+'</button>');
+      b.onclick = () => {
+        if (ti >= targets.length || b.classList.contains('got')) return;
+        if (word === targets[ti]){
+          b.classList.add('got'); sfx('great'); honeyDrop(b, jar.el);
+          scoutPop('cheering', cheer(), 1400);
+          ti++;
+          if (ti >= targets.length){ celebrate('small', b); setTimeout(next, 1500); }
+          else setTimeout(ask, 900);
+        } else { misses++; wiggle(b); sfx('tap'); if (misses % 2 === 0) say(targets[ti]); }
+      };
+      grid.appendChild(b);
+    });
+    const ask = () => say(pickFresh(['Find: ', 'Where\'s ', 'Can you find ', 'Tap '], 'find') + targets[ti] + '!');
+    c.querySelector('#hear').onclick = () => sayWord(targets[ti] || targets[0]);
+    setTimeout(ask, 300);
   }
 
   next();
@@ -5325,7 +5793,7 @@ function actTuesday(a, d){
         b.onclick = () => {
           if (placed.length >= chunks.length) return;
           sfx('pop');
-          say(txt, { rate:.8 });                      // each piece says its sound
+          sayChunk(txt, w.word);                      // each piece says its sound
           placed.push({i, txt});
           drawSlots(); drawTray();
           if (placed.length === chunks.length) setTimeout(check, 250);
@@ -5387,11 +5855,11 @@ function actTuesday(a, d){
       if (made === w.word.toLowerCase()){
         wordStat(w.word).r++; save();
         slots.querySelectorAll('.slot').forEach(s => s.classList.add('lit'));
-        jar.add(slots); scoutZoom(c);
+        jar.add(slots); if (Math.random() < .5) scoutFly({ pose:'cheering' });
         correct++; if (tries === 1) firstTry++;
         setDot(dd, di++, true);
         sfx(tries === 1 ? 'great' : 'good');
-        setTimeout(()=>sayWord(w.word), 260);
+        sayWord(w.word);                           // the word first, then Scout's cheer
         scoutPop('cheering', cheer(), 2200);
         setTimeout(next, 1600);
       } else {
@@ -5557,7 +6025,7 @@ function actFriday(a, d){
      work is done. It should read as a win, not as a clock cut short. */
   function record(id, score, early){
     p.games[id] = Math.max(p.games[id]||0, score); save();
-    confetti(early ? 90 : 50); sfx('win');
+    celebrate(early ? 'big' : 'small'); sfx('win');
     const pp = popup('<div class="em">'+(early ? '\ud83c\udfc1' : '\ud83c\udf89')+'</div>'+
       '<h2>Score: '+score+'</h2>'+
       '<p class="muted">'+(early
@@ -5650,7 +6118,7 @@ function actFriday(a, d){
             if (pos >= w.length){
               done = true; clearInterval(tm);
               score += 10; if (misses < 3) wordStat(w).r++; save();
-              sfx('great'); setTimeout(() => sayWord(w), 250); scoutPop('cheering', cheer(), 1800);
+              sfx('great'); sayWord(w); scoutPop('cheering', cheer(), 1800);
               i++; setTimeout(step, 1600);
             }
           } else {
@@ -5730,7 +6198,7 @@ function actFriday(a, d){
       function check(){
         const made = picked.map(p2=>p2.c).join('');
         if (made === w){ score += 10; wordStat(w).r++; save(); draw(' good'); sfx('great');
-          setTimeout(()=>sayWord(w), 250); scoutPop('cheering', cheer(), 2000);
+          sayWord(w); scoutPop('cheering', cheer(), 2000);
           i++; setTimeout(step, 1600); }
         else { wordStat(w).x++; noteMiss(w); save(); draw(' bad'); sfx('wrong'); scoutPop('thinking', encourage(), 3000);
           setTimeout(()=>{ picked.length = 0; draw(); }, 900); }
@@ -6406,7 +6874,7 @@ function actBeePlay(a){
     save();
     host.innerHTML = '';
     const full = asked >= words.length;
-    if (full) confetti(140);
+    if (full) celebrate('big');
     sfx(full ? 'win' : 'good');
     const c = el('<div class="card center">'+
       '<div style="font-size:56px">'+(full ? '🏆' : '🐝')+'</div>'+
@@ -6442,7 +6910,7 @@ function beeFinishScreen(correct, total){
   save();
 
   writeItScreenBee(d, () => {
-    confetti(90); sfx(st === 3 ? 'win' : 'good');
+    celebrate('big'); sfx(st === 3 ? 'win' : 'good');
     const p = popup(
       '<div class="em">'+(st===3?'🏆':st===2?'🎉':'👍')+'</div>'+
       '<h2 style="font-size:22px;line-height:28px">'+(st===3?'Brilliant!':st===2?'Great job!':'Good effort!')+'</h2>'+
@@ -6508,7 +6976,7 @@ function writeItScreenBee(d, done){
       store.done = true;
       if (!wasAlreadyDone){ const k = kid(); k.xp = (k.xp||0) + 25; }
       save();
-      award('writer'); sfx('great'); confetti(50); done();
+      award('writer'); sfx('great'); celebrate('big'); done();
     });
   };
 }
@@ -6559,7 +7027,7 @@ function actBeeSpeed(a){
 
   function done(){
     const secs = Math.round((Date.now()-t0)/1000);
-    confetti(80); sfx('win');
+    celebrate('big'); sfx('win');
     const p = popup('<div class="em">⚡</div><h2>Speed round done!</h2>'+
       '<p style="font-size:18px;line-height:22px;font-weight:800">'+hits+' / '+queue.length+' right</p>'+
       '<p class="muted">in '+Math.floor(secs/60)+'m '+(secs%60)+'s</p>'+
