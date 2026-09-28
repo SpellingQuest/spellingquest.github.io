@@ -932,6 +932,46 @@ body[data-view=day] .dots{ margin:0 0 8px; }
 
 /* the Champion Hive badge is bigger than the other sprints' */
 body[data-view=day] .gamebadge .hivebuild i{ width:17px; height:19px; }
+
+.trick-btn{ margin:6px auto 2px; display:flex; font-size:16px; padding:10px 16px; min-height:44px; }
+.wordchip{ cursor:pointer; }
+
+.stage-mid{ display:flex; align-items:center; justify-content:center; gap:4px; }
+.stage-center{ flex:1 1 auto; min-width:0; }
+.crowd-col{ display:flex; flex-direction:column; gap:6px; flex:0 0 auto; }
+.crowd-col img{ width:40px; height:auto; animation:scoutBob 2.2s ease-in-out infinite; }
+.crowd-col.r img{ transform:scaleX(-1); animation-name:scoutBobFlip; }
+.crowd-col.wild img{ animation:crowdJump .35s ease-in-out 4 alternate; }
+.crowd-col.r.wild img{ animation:crowdJumpR .35s ease-in-out 4 alternate; }
+@keyframes crowdJumpR{ from{ transform:scaleX(-1) translateY(0) rotate(-8deg); } to{ transform:scaleX(-1) translateY(-18px) rotate(8deg) scale(1.1); } }
+@media (max-width:420px){ .crowd-col img{ width:30px; } .stage-center .lbox{ width:42px; height:48px; } .stage-tiles .stile{ width:44px; height:50px; font-size:22px; } }
+@media (prefers-reduced-motion:reduce){ .crowd-col img{ animation:none!important; } }
+
+/* home: the honey pot under the map */
+.honeypot{ display:flex; align-items:center; justify-content:center; gap:16px; margin:-4px 0 18px; color:#fff; }
+.pot{ position:relative; width:74px; height:86px; border-radius:18px 18px 26px 26px; background:rgba(255,255,255,.12);
+  border:4px solid #ffc93c; overflow:hidden; flex:0 0 auto; box-shadow:0 0 24px rgba(255,201,60,.35); }
+.pot-fill{ position:absolute; left:0; right:0; bottom:0; background:linear-gradient(180deg,#ffd666,#ffb31a); }
+.pot-fill::before{ content:""; position:absolute; left:-10%; right:-10%; top:-6px; height:12px; border-radius:50%; background:#ffd666; }
+.pot-lid{ position:absolute; left:-4px; right:-4px; top:-4px; height:14px; background:linear-gradient(180deg,#b57bff,#7c3aed); border-radius:8px; }
+.pot-n{ position:absolute; inset:14px 0 0; display:grid; place-items:center; font:900 22px/1 var(--font-head); color:#fff; text-shadow:0 1px 3px rgba(37,26,74,.9); }
+.pot-text b{ display:block; font:900 19px/1.25 var(--font-head); color:#fff; }
+.pot-text span{ color:var(--gold-soft, #ffe39a); font-size:15px; font-weight:700; }
+
+/* Scout's Backpack: mystery badges (29 Sep 2026) */
+.badge.mystery{ cursor:pointer; color:var(--ink); font-family:var(--font-head); font-weight:900; }
+.badge.mystery .em{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a)!important; font:900 38px/1 var(--font-head); color:#8a5a00;
+  filter:drop-shadow(0 0 10px rgba(255,201,60,.9)); animation:mysteryGlow 1.4s ease-in-out infinite; }
+@keyframes mysteryGlow{ 50%{ transform:scale(1.08) rotate(4deg); filter:drop-shadow(0 0 18px rgba(255,201,60,1)); } }
+.badge.mystery.opening .em{ animation:mysteryOpen .75s ease-in forwards; }
+@keyframes mysteryOpen{ 0%{ transform:rotate(0); } 20%{ transform:rotate(-14deg); } 40%{ transform:rotate(14deg); } 60%{ transform:rotate(-10deg) scale(1.1); } 100%{ transform:scale(1.5); opacity:0; } }
+.badge.revealed .em{ animation:badgeFlip .7s cubic-bezier(.2,1.3,.5,1); }
+@keyframes badgeFlip{ from{ transform:rotateY(90deg) scale(.6); } to{ transform:rotateY(0) scale(1); } }
+.iconbtn{ position:relative; }
+.iconbtn .dot{ position:absolute; top:50%; right:0; transform:translateY(-50%); min-width:18px; height:18px; border-radius:9px; background:#ff5fa2; color:#fff;
+  font:900 12px/18px var(--font-head); text-align:center; padding:0 4px; }
+.hb-bp{ font-size:16px; margin-top:6px; }
+@media (prefers-reduced-motion:reduce){ .badge.mystery .em,.badge.revealed .em{ animation:none; } }
 /* the new-pattern card (Sprints 1 and 2) */
 .pintro .pi-tiles{ display:flex; justify-content:center; gap:4px; margin:8px 0 6px; }
 .pintro .pi-tiles .hx{ width:62px; height:70px; font-size:34px; cursor:default; }
@@ -1796,6 +1836,22 @@ const BADGES = [
   { id:'level10',  em:'👑', n:'Level 10',       d:'Reach level 10' },
   { id:'writer',   em:'✍️', n:'Pencil Power',   d:'Finish a Paper Power-Up' },
   { id:'weeks4',   em:'📚', n:'Month of Words', d:'Finish 4 weeks' },
+  // 29 Sep 2026: more to collect
+  { id:'stars3',   em:'🌟', n:'Triple Star',    d:'Get 3 stars on a sprint' },
+  { id:'detective',em:'🔎', n:'Word Detective', d:'Finish Meet the Words' },
+  { id:'fixer',    em:'🛠️', n:'Hive Fixer',     d:'Fix the Hive with every word right' },
+  { id:'spotlight',em:'🎤', n:'Spotlight Star', d:'Spell every word right in the Spelling Bee' },
+  { id:'untouch',  em:'🛡️', n:'Untouchable',    d:'Beat the Tile Monster without losing a shield' },
+  { id:'onfire',   em:'🔥', n:'On Fire',        d:'5 words in a row in the Champion Quiz' },
+  { id:'catcher',  em:'🧺', n:'Super Catcher',  d:'A perfect game of Letter Catcher' },
+  { id:'wrangler', em:'🐝', n:'Bee Wrangler',   d:'A perfect game of Bee Chase' },
+  { id:'honey50',  em:'🍯', n:'Honey Collector',d:'50 drops of honey in one week' },
+  { id:'honey100', em:'🐻', n:'Honey Hoarder',  d:'100 drops of honey in one week' },
+  { id:'early',    em:'🌅', n:'Early Bird',     d:'Finish a sprint before 8 in the morning' },
+  { id:'owl',      em:'🦉', n:'Night Owl',      d:'Finish a sprint after 7 at night' },
+  { id:'streak14', em:'☄️', n:'Two-Week Streak',d:'Practice 14 days in a row' },
+  { id:'weeks2',   em:'🗓️', n:'Two Great Weeks',d:'Finish 2 weeks' },
+  { id:'level15',  em:'💎', n:'Level 15',       d:'Reach level 15' },
 ];
 
 /* ---- access ----
@@ -2618,11 +2674,22 @@ function completeDay(key, stars, xp){
   award('first');
   if (k.streak >= 3) award('streak3');
   if (k.streak >= 7) award('streak7');
+  if (k.streak >= 14) award('streak14');
   if (level(k) >= 5) award('level5');
   if (level(k) >= 10) award('level10');
+  if (level(k) >= 15) award('level15');
+  if (stars >= 3) award('stars3');
+  if (key === 'mon') award('detective');
+  const hr = new Date().getHours();
+  if (hr < 8) award('early');
+  if (hr >= 19) award('owl');
+  const drops = Object.keys(p.stats || {}).reduce((n, w) => n + ((p.stats[w] && p.stats[w].r) || 0), 0);
+  if (drops >= 50) award('honey50');
+  if (drops >= 100) award('honey100');
   if (DAYS.every(d => p.days[d.key] && p.days[d.key].done)){
     award('week');
     if (!p.weekCounted){ p.weekCounted = true; k.weeksDone = (k.weeksDone||0)+1;
+      if (k.weeksDone >= 2) award('weeks2');
       if (k.weeksDone >= 4) award('weeks4'); }
   }
   save();
@@ -2631,9 +2698,10 @@ function completeDay(key, stars, xp){
 function award(id){
   const k = kid();
   if (k.badges.indexOf(id) >= 0) return false;
+  if (!k.badgesSeen) k.badgesSeen = k.badges.slice();       // badges from before the surprises count as opened
   k.badges.push(id); save();
-  const b = BADGES.find(x=>x.id===id);
-  if (b) setTimeout(()=>{ sfx('badge'); toast(b.em + '  Badge unlocked: ' + b.n, 4200); }, 700);
+  /* the badge itself stays a surprise until it is opened in the backpack */
+  if (BADGES.find(x=>x.id===id)) setTimeout(()=>{ sfx('badge'); toast('🎒 A new badge is hiding in Scout\'s Backpack!', 4200); }, 700);
   return true;
 }
 
@@ -3052,6 +3120,14 @@ function say(text, opts){
 /* Scout's own chatter (cheers, intros): always waits its turn, never cuts in */
 function scoutSpeak(text, maxWait){ sayQueued(text, {}, maxWait || 5000); }
 
+/* run fn once Scout has finished everything she has queued (min ms first, max ms at most) */
+function whenQuiet(fn, min, max){
+  const t0 = Date.now(); min = min || 600; max = max || 9000;
+  const iv = setInterval(() => {
+    const el2 = Date.now() - t0;
+    if (el2 >= max || (el2 >= min && !speechBusy() && !SPEAK_Q.length)){ clearInterval(iv); fn(); }
+  }, 150);
+}
 let SAY_TIMERS = [];
 function stopAudio(){
   SAY_TIMERS.forEach(clearTimeout); SAY_TIMERS = [];
@@ -3395,6 +3471,12 @@ new MutationObserver(ms => ms.forEach(m => {
   else m.addedNodes.forEach(iconize);
 })).observe(document.documentElement, { childList:true, subtree:true, characterData:true });
 document.addEventListener('DOMContentLoaded', () => iconize(document.body));
+/* tap any word chip and Scout reads it (chips with their own handler keep it) */
+document.addEventListener('click', e => {
+  const chip = e.target.closest && e.target.closest('.wordchip');
+  if (!chip || chip.onclick) return;
+  const w = chip.textContent.trim(); if (w){ unlockAudio(); sayWord(w); }
+});
 function scoutMood(){
   const g = (kid() && kid().grade) || 1;
   return g <= 1 ? 'chatty' : g <= 3 ? 'normal' : 'quiet';
@@ -3405,7 +3487,7 @@ function pickOne(list){ return list[Math.floor(Math.random()*list.length)]; }
    "Ooh, look at you go!" over and over). Each list remembers what was said
    lately and picks from the rest. */
 const CHEERS = ['We got it!','Yes! You nailed it!','Ooh, look at you go!','That\'s the one!','High five!',
-  'You figured it out!','Woohoo, we did it!','Buzz buzz, brilliant!','Honey, that was sweet!','Look at us go!',
+  'You figured it out!','Yes! We did it!','Buzz buzz, brilliant!','Honey, that was sweet!','Look at us go!',
   'Yes, yes, yes!','You\'re on fire!','That was beautiful!','We make a great team!','Boom! Spelled it!',
   'I knew you could do it!','Sweet as honey!','Wow, that was quick!','Another one for the jar!','You\'re a spelling star!'];
 const CHEERS_QUIET = ['Nice!','Got it!','Yes!','Spot on.','Nailed it.','Sharp.','Exactly right.','Clean spelling.','Easy does it. Correct.','Solid.'];
@@ -4105,6 +4187,7 @@ function topbar(a, opts){
   bar.querySelector('#tb-home').onclick = () => { location.href = './'; };
   bar.querySelector('#tb-swap').onclick = () => go('pick');
   bar.querySelector('#tb-badge').onclick = () => go('badges');
+  setTimeout(updateBackpackDot, 0);
   a.appendChild(bar);
   const xp = el('<div class="xpbar"><i style="width:'+levelPct(k)+'%"></i></div>');
   a.appendChild(xp);
@@ -4204,21 +4287,25 @@ function renderHome(a){
        so switching to a brother and back gets a hello too. */
     const allDone = DAYS.every(d => pp.days[d.key] && pp.days[d.key].done);
     const hi = allDone
-      ? (quiet ? 'Every sprint is done. You\'re ready for the test.' : 'We did it! Every single sprint is done. You\'re ready for test day, ' + esc(k.name) + '!')
+      ? (quiet ? 'Every sprint is done. You\'re ready for the test.' : 'We did it! Every single sprint is done. You\'re ready for test day, ' + esc(k.name) + '! Let\'s go look in our backpack.')
       : line;
-    a.appendChild(el('<div class="home-bubble'+(allDone ? ' champ' : '')+'">'+
-      (allDone ? '<img src="../img/ui/icon-trophy.webp" alt="" class="hb-trophy">' : '')+hi+'</div>'));
+    const hb = el('<div class="home-bubble'+(allDone ? ' champ' : '')+'">'+
+      (allDone ? '<img src="../img/ui/icon-trophy.webp" alt="" class="hb-trophy">' : '')+hi+
+      (allDone ? '<div class="hb-bp">Go look in Scout\'s Backpack. Something new is waiting!</div><button class="btn yellow" id="hbbp" style="margin-top:8px">🎒 Open the backpack</button>' : '')+'</div>');
+    a.appendChild(hb);
+    const hbbp = hb.querySelector('#hbbp'); if (hbbp) hbbp.onclick = () => { sfx('tap'); go('badges'); };
     HOME_SCOUT = { pose: allDone || doneToday ? 'cheering' : 'pointing', line: speakableText(hi), party: allDone && !pp.weekParty };
     if (allDone && !pp.weekParty){ pp.weekParty = true; save(); }
     // the week's honey jar: one drop for every word won this week, in any sprint
     const drops = Object.keys(pp.stats || {}).reduce((n, w) => n + ((pp.stats[w] && pp.stats[w].r) || 0), 0);
     const goal = Math.max(1, (WEEK.allWords.length || 1) * 5);
     const pct = Math.min(100, Math.round(100 * drops / goal));
-    AFTER_MAP.push(el('<div class="weekjar card">'+
-      '<div class="jar big"><div class="jar-fill" style="height:'+pct+'%"></div><div class="jar-lid"></div><span class="jar-n">'+drops+'</span></div>'+
-      '<div><b>This week\'s honey jar</b><div class="muted">'+(pct >= 100 ? 'Full to the top! What a week. 🍯'
-        : drops ? drops+' drop'+(drops===1?'':'s')+' of honey so far. Every word you win adds one!'
-        : 'Every word you win adds a drop of honey. Let\'s fill it up!')+'</div></div></div>'));
+    /* the week's honey pot sits right under the map, part of the scene rather
+       than a box at the bottom (29 Sep 2026) */
+    AFTER_MAP.push(el('<div class="honeypot">'+
+      '<div class="pot"><div class="pot-fill" style="height:'+pct+'%"></div><div class="pot-lid"></div><span class="pot-n">'+drops+'</span></div>'+
+      '<div class="pot-text"><b>'+(pct >= 100 ? 'The honey pot is full!' : drops ? drops + ' drop'+(drops===1?'':'s')+' of honey this week' : 'This week\'s honey pot')+'</b>'+
+      '<span>'+(pct >= 100 ? 'What a week. Every word you won is in there.' : 'Every word you win adds a drop. Let\'s fill it up!')+'</span></div></div>'));
   }
   if (!DB.voiceOk && SCOUT_OK !== true) AFTER_MAP.push(voiceStrip());   // Scout's own voice needs no checking
   const p = prog();
@@ -4312,6 +4399,7 @@ function renderHome(a){
   grid.querySelectorAll('.daygrid').forEach(hiveRows);
   a.appendChild(grid);
   placeHomeScout(grid);
+  AFTER_MAP.sort((x, y) => (y.classList.contains('honeypot') ? 1 : 0) - (x.classList.contains('honeypot') ? 1 : 0));   // the pot first, right under the map
   AFTER_MAP.forEach(x => a.appendChild(x)); AFTER_MAP = [];
 
   // word list preview
@@ -4361,18 +4449,51 @@ function renderHome(a){
 }
 
 /* ---------------- badges ---------------- */
+function unseenBadges(){ const k = kid(); if (!k) return 0; return k.badges.filter(id => (k.badgesSeen || k.badges).indexOf(id) < 0).length; }
+function updateBackpackDot(){
+  const b = document.getElementById('tb-badge'); if (!b) return;
+  let dot = b.querySelector('.dot'); const n = unseenBadges();
+  if (!n){ if (dot) dot.remove(); return; }
+  if (!dot){ dot = el('<span class="dot"></span>'); b.appendChild(dot); }
+  dot.textContent = n;
+}
 function renderBadges(a){
   topbar(a);
   const k = kid();
-  a.appendChild(scoutCard('cheering', k.badges.length
+  const newOnes = k.badges.filter(id => (k.badgesSeen || k.badges).indexOf(id) < 0).length;
+  a.appendChild(scoutCard('cheering', newOnes
+    ? 'Ooh, something new is hiding in our backpack! Tap the gold badge' + (newOnes > 1 ? 's' : '') + ' to open ' + (newOnes > 1 ? 'them' : 'it') + '!'
+    : k.badges.length
     ? 'Look at our backpack! ' + k.badges.length + ' badge' + (k.badges.length===1?'':'s') + ' so far. Let\'s win the next one!'
-    : 'Our backpack is empty. Let\'s win our first badge together!', { speak: introFresh('backpack') }));
+    : 'Our backpack is empty. Let\'s win our first badge together!', { speak: introFresh('backpack' + newOnes) }));
   const card = el('<div class="card"><h2 style="font-size:22px">🎒 Scout\'s Backpack</h2>'+
     '<div class="muted" style="margin-bottom:12px">'+k.badges.length+' of '+BADGES.length+' badges collected · '+(k.weeksDone||0)+' weeks finished</div>'+
     '<div class="badgegrid"></div></div>');
   const g = card.querySelector('.badgegrid');
-  BADGES.forEach(b => {
+  if (!k.badgesSeen) k.badgesSeen = k.badges.slice();
+  const fresh = b => k.badges.indexOf(b.id) >= 0 && k.badgesSeen.indexOf(b.id) < 0;
+  // new badges first, as golden surprises
+  BADGES.slice().sort((x, y) => (fresh(y) ? 1 : 0) - (fresh(x) ? 1 : 0)).forEach(b => {
     const got = k.badges.indexOf(b.id) >= 0;
+    if (fresh(b)){
+      /* a mystery badge: tap it and it bursts open (29 Sep 2026) */
+      const m = el('<button class="badge mystery" aria-label="A new badge! Tap to open it"><span class="em">?</span>Tap to open!</button>');
+      m.onclick = () => {
+        sfx('tap');
+        m.classList.add('opening');
+        setTimeout(() => {
+          k.badgesSeen.push(b.id); save();
+          sfx('badge'); celebrate('small', m);
+          const open = el('<div class="badge got revealed"><span class="em">'+b.em+'</span>'+esc(b.n)+
+            '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>');
+          m.replaceWith(open);
+          say(pickFresh(['Ooh! You earned ', 'Look! It\'s ', 'Yes! You got ', 'Surprise! It\'s '], 'badge') + b.n + '!');
+          updateBackpackDot();
+        }, 750);
+      };
+      g.appendChild(m);
+      return;
+    }
     g.appendChild(el('<div class="badge'+(got?' got':'')+'"><span class="em">'+b.em+(got?'':'<span class="lk">🔒</span>')+'</span>'+esc(b.n)+
       '<div style="font-weight:500;font-size:14px;line-height:20px;margin-top:3px;opacity:.8">'+esc(b.d)+'</div></div>'));
   });
@@ -5637,7 +5758,9 @@ function rewardScreen(d, correct, total, s, xp, extra){
     '<div style="font-size:42px;letter-spacing:4px">'+'⭐'.repeat(s)+'<span style="opacity:.2">'+'⭐'.repeat(3-s)+'</span></div>'+
     '<p style="font-size:18px;line-height:22px;font-weight:800;margin:10px 0 2px">'+correct+' / '+total+' right</p>'+
     '<p class="muted">+'+xp+' stars '+(extra||'')+'</p>'+
-    '<button class="btn big green" style="margin-top:14px" data-close>Back to the map</button>');
+    (unseenBadges() ? '<button class="btn big yellow" id="bp" style="margin-top:14px">🎒 A new badge! Open the backpack</button>' : '')+
+    '<button class="btn big green" style="margin-top:'+(unseenBadges() ? 8 : 14)+'px" data-close>Back to the map</button>');
+  const bp = p.querySelector('#bp'); if (bp) bp.onclick = () => { p.remove(); go('badges'); };
   try{ if (typeof scoutSpeak === 'function') scoutSpeak(s===3 ? 'We did it! Sprint complete!' : 'Sprint complete. Great teamwork!'); }catch(e){}
   p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('home'); });
 }
@@ -5683,6 +5806,13 @@ function claimKeys(onLetter, onDelete){
 }
 function releaseKeys(){ if (KEYS_OFF){ KEYS_OFF(); KEYS_OFF = null; } }
 
+function tipFor(word, patternId){
+  word = String(word).toLowerCase();
+  if (TRICKY[word]) return TRICKY[word];
+  const w = (WEEK && WEEK.allWords || []).find(x => x.word.toLowerCase() === word);
+  if (w && w.tip) return w.tip;
+  return (patternId && PATTERN_BY_ID[patternId]) || null;
+}
 function typingRound(host, opts){
   const word = opts.word.toLowerCase();
   const all = opts.blanks == null;
@@ -5771,6 +5901,13 @@ function typingRound(host, opts){
       sfx('wrong');
       if (tries === 1){ if (!opts.noStats) wordStat(word).x++; noteMiss(word); save(); }
       scoutPop('thinking', encourage(), 3200);
+      // after a miss, the trick is one tap away
+      const tip = tipFor(word, opts.patternId);
+      if (tip && !opts.noTrick && !host.querySelector('.trick-btn')){
+        const tb = el('<button class="btn yellow trick-btn">💡 Show me the trick</button>');
+        tb.onclick = () => { sfx('tap'); rulePopup(tip); };
+        boxes.after(tb);
+      }
       setTimeout(()=>{
         if (tries >= 2){
           locked = true;
@@ -5783,7 +5920,9 @@ function typingRound(host, opts){
             scoutPop('pointing', 'Here it is: <b>'+esc(word)+'</b>. Let\'s sound it out together!', 5200);
             setTimeout(()=>sayLetters(word), 300);
           }
-          setTimeout(()=>opts.onDone(false, tries), 5200);
+          // the next word waits until Scout has finished this one (29 Sep 2026: the
+          // quiz was saying the old word over the new one)
+          whenQuiet(() => opts.onDone(false, tries), 2600, 11000);
         } else {
           blanks.forEach(i => { if (filled[i] !== word[i]){ delete filled[i]; freeTile(i); } });
           scoutPop('thinking', encourage(), 3200);
@@ -6430,7 +6569,7 @@ function actWednesday(a, d){
   resumeToast(plan);
 
   function next(){
-    if (i >= words.length){ resumeClear('wed'); return finishScreen(d, right, words.length); }
+    if (i >= words.length){ resumeClear('wed'); if (right === words.length) award('fixer'); return finishScreen(d, right, words.length); }
     const w = words[i];
     host.innerHTML = '';
     const c = el('<div class="card center hexy">'+
@@ -6465,8 +6604,7 @@ function actWednesday(a, d){
 /* the audience jumps up and cheers (29 Sep 2026: "the crowd goes wild" used to be a quiet drum) */
 function crowdGoesWild(card){
   sfx('crowd');
-  const row = card.querySelector('.crowd-row');
-  if (row){ row.classList.remove('wild'); void row.offsetWidth; row.classList.add('wild'); setTimeout(() => row.classList.remove('wild'), 1600); }
+  card.querySelectorAll('.crowd-col').forEach(row => { row.classList.remove('wild'); void row.offsetWidth; row.classList.add('wild'); setTimeout(() => row.classList.remove('wild'), 1600); });
   const host = card.querySelector('.host');
   if (host) host.src = SCOUT_IMG('cheering');
 }
@@ -6501,7 +6639,7 @@ function actThursday(a, d){
   }
 
   function next(){
-    if (i >= words.length){ resumeClear('thu'); return finishScreen(d, right, words.length); }
+    if (i >= words.length){ resumeClear('thu'); if (right === words.length) award('spotlight'); return finishScreen(d, right, words.length); }
     const w = words[i];
     host.innerHTML = '';
     const c = el('<div class="card center hexy spotlight stage-card">'+
@@ -6523,9 +6661,13 @@ function actThursday(a, d){
       onDone: ok => { if (ok){ right++; crowdGoesWild(c); jar.add(c.querySelector('.boxes')); } setDot(dd, i, ok); i++;
         resumeSave('thu', words.map(x => x.word), i, {right}); setTimeout(next, ok ? 500 : 0); }
     });
-    // the audience, and the helpers underneath
-    c.appendChild(el('<div class="crowd-row" aria-hidden="true">'+
-      Array.from({ length: 7 }, (_, k) => '<img src="'+SCOUT_IMG(k % 2 ? 'cheering' : 'waving')+'" alt="" style="animation-delay:-'+(k * .3)+'s">').join('')+'</div>'));
+    // the audience sits either side of the letters, where you can see them cheer
+    const bees = n => Array.from({ length: n }, (_, k) => '<img src="'+SCOUT_IMG(k % 2 ? 'cheering' : 'waving')+'" alt="" style="animation-delay:-'+(k * .37)+'s">').join('');
+    const mid = el('<div class="stage-mid"><div class="crowd-col l" aria-hidden="true">'+bees(3)+'</div><div class="stage-center"></div>'+
+      '<div class="crowd-col r" aria-hidden="true">'+bees(3)+'</div></div>');
+    const bx = c.querySelector('.boxes'), tr = c.querySelector('.stage-tiles');
+    bx.before(mid);
+    mid.querySelector('.stage-center').append(bx, tr);
     const helpers = el('<div class="row helpers" style="justify-content:center;margin:8px 0 0">'+
       '<button class="btn grey" id="sl">🐢 Slower</button><button class="btn grey" id="tip">💡 Rule</button></div>');
     c.appendChild(helpers);
@@ -6580,6 +6722,8 @@ function actFriday(a, d){
      work is done. It should read as a win, not as a clock cut short. */
   function record(id, score, early){
     p.games[id] = Math.max(p.games[id]||0, score); save();
+    if (id === 'cat' && score >= 60) award('catcher');
+    if (id === 'scr' && score >= 15 * Math.min(8, WEEK.allWords.length)) award('wrangler');
     celebrate(early ? 'big' : 'small'); sfx('win');
     const pp = popup('<div class="em">'+(early ? '\ud83c\udfc1' : '\ud83c\udf89')+'</div>'+
       '<h2>Score: '+score+'</h2>'+
@@ -6742,6 +6886,21 @@ function actFriday(a, d){
         f.addEventListener('animationend', () => f.remove());
         sky.appendChild(f);
       };
+      /* typing works too (29 Sep 2026): the right letter catches the nearest
+         falling one, or counts on its own if none is falling yet */
+      claimKeys(ch => {
+        if (done) return;
+        if (ch === w[pos]){
+          const f = [...sky.querySelectorAll('.fall:not(.caught)')].filter(x => x.textContent === ch)
+            .sort((x, y) => y.getBoundingClientRect().top - x.getBoundingClientRect().top)[0];
+          if (f) f.click();
+          else { const g = el('<button class="fall">'+esc(ch)+'</button>'); g.style.left = '45%'; g.style.animationDuration = '6s'; sky.appendChild(g);
+                 g.onclick = null; pos++; sfx('pop'); g.classList.add('caught'); setTimeout(() => g.remove(), 250); drawGot();
+                 if (pos >= w.length){ done = true; clearInterval(tm); score += 10; if (misses < 3) wordStat(w).r++; save();
+                   sfx('great'); sayWord(w); scoutPop('cheering', cheer(), 1800); i++; setTimeout(step, 1600); } }
+        } else { misses++; sfx('tap'); wiggle(got);
+          if (misses === 3){ wordStat(w).x++; noteMiss(w); save(); scoutPop('thinking', 'Listen again, which letter comes next?', 2600); } }
+      }, () => {});
       const tm = setInterval(spawn, hard ? 750 : 1000);
       spawn();
     }
@@ -7112,7 +7271,7 @@ function actSaturday(a, d){
   }
 
   function win(){
-    sfx('win'); award('boss');
+    sfx('win'); award('boss'); if (hearts === 3) award('untouch');
     // clear the tricky flags for the words that were actually beaten — only those
     const p = prog();
     pile.forEach(w => { if (beatenWords.has(w.word) && p.stats[w.word]) p.stats[w.word].x = 0; });
@@ -7221,6 +7380,7 @@ function actSunday(a, d){
     host.innerHTML = '';
     const perfect = right === words.length;
     if (perfect) award('perfect');
+    if (best >= 5) award('onfire');
     const c = el('<div class="card center certificate">'+
       '<img src="../img/ui/icon-trophy.webp" alt="" width="84" height="84" style="width:84px;height:84px">'+
       '<div class="eyebrow-ink">Champion Certificate</div>'+
