@@ -931,6 +931,8 @@ body[data-view=day] .dots{ margin:0 0 8px; }
 .ppu-scout{ justify-content:center; margin:6px 0 4px; text-align:left; }
 .ppu-scout img{ width:64px!important; animation:scoutBob 2.6s ease-in-out infinite; }
 .ppu-scout .bubble{ font-size:17px; line-height:23px; }
+.ppu-scout{ align-items:center; gap:10px; }
+.ppu-again{ min-height:46px; font-size:16px; padding:10px 16px; }
 
 .shields img.hit{ animation:shieldHit .45s ease; }
 .shields img.lost{ animation:shieldLost .6s ease; }
@@ -949,7 +951,9 @@ body[data-view=day] .gamebadge .hivebuild i{ width:17px; height:19px; }
 /* the jar or hive, big, at the bottom of the game card (29 Sep 2026) */
 .gamebadge.gamedock{ display:flex; flex-direction:row; align-items:center; justify-content:center; gap:14px; max-width:none; margin:14px -6px 0;
   padding-top:12px; border-top:2px dashed #eee6ff; }
-.gamebadge.gamedock .gb-label{ color:var(--ink); font-size:17px; line-height:22px; max-width:120px; text-align:left; }
+.gamebadge.gamedock .gb-label{ color:var(--ink); font-size:17px; line-height:21px; max-width:104px; text-align:center; }
+.gamebadge .gb-top{ display:block; font-size:22px; line-height:26px; margin-bottom:2px; }
+.gamebadge.gamedock{ gap:10px!important; }
 .gamebadge.gamedock .jar{ width:72px; height:84px; }
 .gamebadge.gamedock .jar{ background:#f3eefe; border:4px solid #ffc93c; border-radius:18px 18px 24px 24px; }
 .gamebadge.gamedock .jar-lid{ height:15px; border-radius:8px; }
@@ -1068,6 +1072,48 @@ body.walking .wrap{ z-index:auto; }
 .kc-other{ margin-top:10px; font-size:14px; } .kc-other summary{ cursor:pointer; color:#6d28d9; font-weight:800; }
 #sqWalk .kc-os-h{ font-size:15px; } #sqWalk .kc-steps li{ font-size:14px; line-height:20px; padding:5px 0; }
 #sqWalk{ max-height:calc(100vh - 24px); overflow:auto; }
+.kc-preview{ display:flex; gap:12px; align-items:center; margin:4px 0 6px; }
+.kc-preview p{ margin:0!important; }
+.kc-app{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:4px; background:linear-gradient(160deg,#3b2a8a,#221252);
+  border-radius:16px; padding:8px 8px 6px; }
+.kc-app img{ width:56px; height:56px; border-radius:13px; box-shadow:0 4px 10px rgba(0,0,0,.35); }
+.kc-app span{ color:#fff; font:700 11px/13px -apple-system, system-ui, sans-serif; white-space:nowrap; }
+/* the Spelling Bee's home */
+.bee-hub .bh-count{ font-size:24px; line-height:30px; margin:4px 0 10px; }
+.bee-hub .bh-count b{ color:#b45309; font-size:34px; }
+.bee-bighive{ gap:4px 5px!important; }
+.bee-bighive .hex{ width:34px!important; height:39px!important; cursor:pointer; }
+.bee-stage .judge{ font-size:20px; }
+/* the hive shows on any screen, not only the sprints (the bee's stage too) */
+body .gamebadge.gamedock .hivebuild i{ width:27px; height:31px; background:#ece6fb; }
+body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
+/* a shorter stage: the round banner in one line, the three questions in one row */
+.bee-play .stage{ padding:10px 12px 10px; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+.bee-play .stage .micon{ font-size:34px; line-height:40px; height:40px; }
+.bee-play .stage .micon img.ic{ width:38px; height:38px; }
+.bee-play .stage .rivals{ font-size:14px; line-height:18px; margin:0; }
+.bee-play .stage .crowd{ margin:0; font-size:16px; }
+.bee-stage .askbacks{ flex-wrap:nowrap; gap:6px; }
+.bee-stage .askbacks button{ padding:9px 8px; font-size:14px; line-height:18px; flex:1 1 0; }
+.bee-stage .askbacks button img.ic{ width:18px; height:18px; }
+/* "What shall we practice?" */
+.mode-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:4px 0 8px; }
+@media (max-width:360px){ .mode-grid{ grid-template-columns:1fr; } }
+.mode-card{ position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; border:0; cursor:pointer;
+  background:#fff; color:var(--ink); border-radius:22px; padding:16px 10px 14px; box-shadow:0 6px 0 rgba(0,0,0,.18); font-family:inherit; }
+.mode-card:active{ transform:translateY(3px); box-shadow:0 3px 0 rgba(0,0,0,.18); }
+.mode-card.mc-week{ border-top:6px solid #3ba9ff; }
+.mode-card.mc-bee{ border-top:6px solid var(--gold); background:linear-gradient(180deg,#fffdf3,#fff); }
+.mc-ic{ width:74px; height:84px; clip-path:var(--hexclip); display:grid; place-items:center; background:linear-gradient(160deg,#e9e2ff,#d6c9fb); }
+.mc-bee .mc-ic{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
+.mc-ic img{ width:52px; height:52px; object-fit:contain; }
+.mode-card b{ font:900 18px/22px var(--font-head); margin-top:4px; }
+.mode-card small{ font-size:13.5px; line-height:18px; color:var(--ink-soft); font-weight:700; }
+.mc-hive{ display:flex; flex-wrap:wrap; justify-content:center; gap:2px; margin:6px 0 2px; max-width:150px; }
+.mc-hive i{ width:15px; height:17px; clip-path:var(--hexclip); background:#e6e0f7; display:block; }
+.mc-hive i.on{ background:linear-gradient(160deg,#7cc4ff,#3ba9ff); }
+.mc-hive i.on.gold{ background:linear-gradient(160deg,#ffe08a,#ffb31a); }
+.mc-go{ margin-top:6px; font:900 14px/18px var(--font-head); color:#6d28d9; }
 /* the small install bar on the child's home screen */
 .installbar{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); border-radius:16px; margin:0 0 12px; color:#fff; }
 .installbar summary{ color:#fff!important; list-style:none; display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; font-weight:800; font-size:15px; }
@@ -1912,7 +1958,7 @@ const STORE_KEY = 'spellingQuest.v1';
    month while the app shipped repeatedly, so the 9 September audit had to hash
    the served file instead of trusting it. A stale stamp is worse than none:
    it answers "which build am I on?" confidently and wrongly. */
-const BUILD = '2026-09-11';
+const BUILD = '2026-09-29';
 
 const DAYS = [
   { key:'mon', n:'Monday',    t:'Meet the Words',  em:'👂', cls:'d1', sub:'Hear them aloud and learn the pattern' },
@@ -2598,6 +2644,9 @@ function buildCurrentWeek(){
   try{
     const texts = WEEK.allWords.map(w => w.word);
     WEEK.sections.forEach(sec => { if (sec.tip) texts.push(speakable(sec.tip.title + '. ' + sec.tip.rule + ' ' + sec.tip.trick)); });
+    // the Tile Monster warnings, so Scout can shout them the moment he appears
+    texts.push('Look out, it\'s the Tile Monster! He wants to smash our hive!', 'Look out, it\'s the Tile Monster again! Here he comes!',
+               'Oh no, the Tile Monster is back! Hold on!', 'Look out! The Tile Monster wants our letters!');
     setTimeout(() => scoutWarm(texts), 1500);
     // then the slow words, and the sound-it-out and piece sounds (29 Sep 2026)
     setTimeout(() => {
@@ -3057,6 +3106,9 @@ function setVoiceSex(sex){
 
 function speakable(html){
   return String(html)
+    /* a letter on its own in bold is a letter name: "Short <b>a</b>" said as
+       "Short A", not "short uh" (29 Sep 2026: it came out as "night key") */
+    .replace(/(^|[^A-Za-z])<b>([a-z])<\/b>(?![A-Za-z])/g, (m, pre, ch) => pre + ch.toUpperCase())
     .replace(/<[^>]+>/g, '')
     .replace(/\s*→\s*/g, ' becomes ')
     .replace(/\s*\+\s*/g, ' plus ')
@@ -4324,6 +4376,7 @@ const WALKME = [
   { t:'Scout\'s Backpack', view:'home', target:'#tb-badge', d:'Badges they earn hide in here as gold surprises they get to open.' },
   { t:'The Grown-up Zone', view:'home', target:'#gu', d:'Everything for you sits behind your grown-up code. Let\'s look inside.' },
   { t:'This week\'s words', view:'parent:words', grown:true, target:'#wk-words', d:'Paste the words straight from the teacher\'s list, any layout. Tap Save & start the week, and Scout builds the whole week from them.' },
+  { t:'Spelling bee coming up?', view:'parent:words', grown:true, target:'#wk-bee', d:'Paste the whole bee list and the date. Scout splits it into small weekly sections, keeps bringing back the words they miss, and practices them on a stage with judges. Once it\'s set, your child picks "Spelling Bee" or "This Week\'s Words" when they start.' },
   { t:'Test day and nights', view:'parent:kids', grown:true, target:'.kidcard', d:'Pick the grade, the test day, and how many nights they have to practice. The week rearranges itself around it.' },
   { t:'Add a child', view:'parent:kids', grown:true, target:'#addkid', d:'One purchase covers the whole family. Each child gets their own words, stars and test day.' },
   { t:'See how they\'re doing', view:'parent:prog', grown:true, target:'.kidprog', open:true, d:'Tap a child to open their week: sprints done, words to revisit, words they\'ve got, and their Paper Power-Up.' },
@@ -4379,9 +4432,7 @@ function walkStep(i, tries){
   if (tgt){ try{ tgt.scrollIntoView({ block:'center' }); }catch(e){} tgt.classList.add('walk-hi'); WALK_PREV = { el:tgt }; }
   // the install step shows the steps in the popover when the card isn't there (a computer)
   const d = typeof w.d === 'function' ? w.d() : w.d;
-  const body = w.install ? (tgt ? '<p>Put Spelling Quest on your Home Screen so it opens like an app, one tap away. The steps are right here, for iPhone and Android.</p>'
-                                : installStepsHtml(true, true))
-                         : '<p>'+esc(d)+'</p>';
+  const body = w.install ? installStepsHtml(true, true) : '<p>'+esc(d)+'</p>';
   const last = i === steps.length - 1;
   const ov = el('<div id="sqWalk" role="dialog" aria-label="'+esc(w.t)+'">'+
     '<div class="wk-n">'+(i+1)+' OF '+steps.length+'</div>'+
@@ -4439,8 +4490,11 @@ function installStepsHtml(short, both){
       step(2, 'Tap <b>Install app</b> or <b>Add to Home screen</b>.')+
       step(3, 'Tap <b>Install</b> to finish.')+'</ol>'+
       '<button class="btn yellow sqInstallBtn" style="display:'+(INSTALL_EVT ? 'inline-flex' : 'none')+'">📲 Add to Home Screen</button></div>';
-  const intro = '<p>'+(short ? 'Put Spelling Quest on your Home Screen so it opens like an app, one tap away.'
-                             : 'So Spelling Quest opens like an app, one tap away, and your child can find Scout on their own.')+'</p>';
+  /* what they'll see on their Home Screen once it's added (Kathryn, 29 Sep 2026) */
+  const preview = '<div class="kc-preview"><div class="kc-app"><img src="../apple-touch-icon.png" alt="" width="60" height="60"><span>Spelling Quest</span></div>'+
+    '<p>'+(short ? 'Put Spelling Quest on your Home Screen so it opens like an app, one tap away.'
+                 : 'So Spelling Quest opens like an app, one tap away, and your child can find Scout on their own.')+'</p></div>';
+  const intro = preview;
   if (both || (!isIOS() && !isAndroid())) return intro + ios + android;
   return intro + (isAndroid()
     ? android + '<details class="kc-other"><summary>On an iPhone or iPad instead?</summary>'+ios+'</details>'
@@ -4458,9 +4512,9 @@ function installBar(){
   return b;
 }
 function installCard(){
-  if (!installNeeded()) return null;
+  if (isInstalled()) return null;
   const c = el('<div class="card keepclose"><div class="kc-head"><div><h3>Keep Scout close ✨</h3>'+
-    '<div class="muted">One quick step</div></div><img src="../img/sq-icon.webp" alt="" width="56" height="56"></div>'+
+    '<div class="muted">One quick step</div></div></div>'+
     installStepsHtml(false)+'</div>');
   c.querySelectorAll('.sqInstallBtn').forEach(b => b.onclick = installNow);
   return c;
@@ -4701,7 +4755,14 @@ function renderPick(a){
       '<p class="muted">It\'s me, Scout! Tap your name and let\'s go.</p>'+
     '</div>'));
   // a different hello every day, said out loud (a browser may keep quiet until the first tap)
-  setTimeout(() => { if (VIEW === 'pick') scoutSpeak(pickHello(DB.kids.length > 1), 6000); }, 400);
+  setTimeout(() => { if (VIEW === 'pick') greetOnce('pick', () => scoutSpeak(pickHello(DB.kids.length > 1), 6000)); }, 400);
+  /* get each child's map greeting ready now, so Scout says hello the moment
+     they tap their name instead of a second or two later */
+  setTimeout(() => DB.kids.forEach(k => {
+    const prev = DB.active;
+    try{ DB.active = k.id; scoutPrefetch(speakableText(homeGreeting().hi)); }catch(e){}
+    DB.active = prev;
+  }), 1200);
   const grid = el('<div class="who-grid"></div>');
   DB.kids.forEach(k => {
     const c = el(
@@ -4811,13 +4872,34 @@ function placeHomeScout(grid){
     scoutFlyTo(img, () => { img.classList.add('landed'); });
   });
   window.addEventListener('resize', put);
-  setTimeout(() => scoutSpeak(hs.line, 8000), 250);
+  const gk = 'home:' + (kid() ? kid().id : '');
+  if (hs.party) GREETED[gk] = 0;          // a finished week always gets its cheer
+  setTimeout(() => greetOnce(gk, () => scoutSpeak(hs.line, 8000)), 250);
   if (hs.party){
     // the whole week is done: a proper party, the first time they see it
     setTimeout(() => { celebrate('big'); sfx('win'); }, 700);
     setTimeout(() => celebrate('big'), 2600);
   }
 }
+/* what Scout says on the map for the child who is active now */
+function homeGreeting(){
+  const k = kid(), pp = prog(), tk0 = todayKey();
+  const td = DAYS[DAY_INDEX[tk0]];
+  const doneToday = !!(pp.days[tk0] && pp.days[tk0].done);
+  const quiet = scoutMood() === 'quiet';
+  const line = doneToday
+    ? (quiet ? 'Today\'s sprint is done. Nice work.' : 'We did today\'s sprint! Want to play a game while we\'re here?')
+    : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Today we\'re doing ' + td.t + ' together. Ready?');
+  const allDone = DAYS.every(d => pp.days[d.key] && pp.days[d.key].done);
+  const hi = allDone
+    ? (quiet ? 'Every sprint is done. You\'re ready for the test.' : 'We did it! Every single sprint is done. You\'re ready for test day, ' + esc(k.name) + '! Let\'s go look in our backpack.')
+    : line;
+  return { hi, allDone, doneToday };
+}
+/* hellos already said this visit (29 Sep 2026: Scout greeted twice on the
+   picker, and again every time a child came back to the map) */
+const GREETED = {};
+function greetOnce(key, fn){ if (GREETED[key]) return; GREETED[key] = 1; fn(); }
 function renderHome(a){
   AFTER_MAP = [];
   buildCurrentWeek();
@@ -4827,20 +4909,12 @@ function renderHome(a){
   const ib = installBar();
   if (ib) a.appendChild(ib);
   {
-    const k = kid(), pp = prog(), tk0 = todayKey();
-    const td = DAYS[DAY_INDEX[tk0]];
-    const doneToday = pp.days[tk0] && pp.days[tk0].done;
-    const quiet = scoutMood() === 'quiet';
-    const line = doneToday
-      ? (quiet ? 'Today\'s sprint is done. Nice work.' : 'We did today\'s sprint! Want to play a game while we\'re here?')
-      : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Today we\'re doing ' + td.t + ' together. Ready?');
+    const k = kid(), pp = prog();
     /* Scout's greeting sits right above the map, and Scout herself flies in and
-       lands beside today's sprint, pointing at it (29 Sep 2026). Every visit,
-       so switching to a brother and back gets a hello too. */
-    const allDone = DAYS.every(d => pp.days[d.key] && pp.days[d.key].done);
-    const hi = allDone
-      ? (quiet ? 'Every sprint is done. You\'re ready for the test.' : 'We did it! Every single sprint is done. You\'re ready for test day, ' + esc(k.name) + '! Let\'s go look in our backpack.')
-      : line;
+       lands beside today's sprint, pointing at it (29 Sep 2026). She says it
+       out loud once per visit for each child (Kathryn: not every time they
+       come back to the map). */
+    const { hi, allDone, doneToday } = homeGreeting();
     const hb = el('<div class="home-bubble'+(allDone ? ' champ' : '')+'">'+
       (allDone ? '<img src="../img/ui/icon-trophy.webp" alt="" class="hb-trophy">' : '')+hi+
       (allDone ? '<div class="hb-bp">Go look in Scout\'s Backpack. Something new is waiting!</div><button class="btn yellow" id="hbbp" style="margin-top:8px">🎒 Open the backpack</button>' : '')+'</div>');
@@ -5360,7 +5434,7 @@ function parentWords(a){
 
   // ---- spelling bee list ----
   const anyBee = DB.kids.some(k => (DB.beeByKid[k.id]||'').trim());
-  const beeCard = el('<div class="card"><details'+(anyBee?' open':'')+'>'+
+  const beeCard = el('<div class="card" id="wk-bee"><details'+(anyBee?' open':'')+'>'+
     '<summary>🐝 Spelling Bee list</summary>'+
     '<p class="muted" style="margin-top:10px">A long list with a date. The app splits it into weekly sections, '+
     'carries forward anything they miss, and in the last two weeks brings back the words they\'ve already nailed '+
@@ -5749,11 +5823,9 @@ function parentMore(a){
   a.appendChild(tr);
 
   a.appendChild(el('<div class="card"><h3>ℹ️ About</h3>'+
-    '<p class="muted">Spelling Quest works offline once it\'s loaded. On an iPad: Safari → Share → '+
-    '<b>Add to Home Screen</b> for a full-screen app icon.</p>'+
+    '<p class="muted">Spelling Quest works offline once it\'s loaded. To put it on your Home Screen, see <b>Keep Scout close</b> at the top of this page.</p>'+
     '<p class="muted">All seven sprints are always open, so they can jump ahead or catch up whenever they like.</p>'+
-    '<p class="muted">Version <b>'+BUILD+'</b> — if you\'ve just uploaded a new version but still see an old one, '+
-    'swipe the app closed in the iPad app switcher and open it again.</p></div>'));
+    '<p class="muted">Version <b>'+BUILD+'</b>. If something looks out of date, close the app fully and open it again.</p></div>'));
 }
 
 /* ---------------- boot ---------------- */
@@ -6082,7 +6154,11 @@ function paperPowerUp(host, items, store, onSave, onFinish){
         '</div>'+
         '<h2 style="font-size:22px;line-height:28px;margin:2px 0 2px">'+st.em+' '+st.t+'</h2>'+
         '<div class="bigword" style="margin:10px 0 6px">'+shown+'</div>'+
-        '<div class="scout-card ppu-scout"><img src="'+SCOUT_IMG(st.k === 'check' ? 'magnifying' : st.k === 'write' ? 'pencil' : 'pointing')+'" alt="Scout" width="64" height="64"><div class="bubble" id="ppuline"></div></div>'+
+        /* Scout's words are heard, not shown (29 Sep 2026: the bubble said "Now
+           write snap on your paper" right under "no peeking"). A button plays
+           her last instruction again. */
+        '<div class="scout-card ppu-scout"><img src="'+SCOUT_IMG(st.k === 'check' ? 'magnifying' : st.k === 'write' ? 'pencil' : 'pointing')+'" alt="Scout" width="64" height="64">'+
+          '<button class="btn grey ppu-again" id="ppuline">🔁 What did Scout say?</button></div>'+
 
         (st.k !== 'write'
           ? '<div class="row" style="justify-content:center;margin-top:8px"><button class="btn grey" id="phear">🔊 Hear it</button></div>'
@@ -6098,11 +6174,13 @@ function paperPowerUp(host, items, store, onSave, onFinish){
          step comes up, a short reminder after that, one voice at a time. */
       const pt = it.patternId && PATTERN_BY_ID[it.patternId];
       const lineEl = c.querySelector('#ppuline');
-      const tell = t => { lineEl.textContent = t; say(t); };
+      let said = [];
+      const tell = t => { said = [t]; say(t); };
+      lineEl.onclick = () => { stopAudio(); said.forEach((t, n) => n ? say(t) : sayNow(t)); };
       if (st.k === 'look'){
         if (!told.look) tell('Look at this word: ' + word + '. Say it out loud with me: ' + word + '. When you\'ve got it, tap Hide it.');
         else tell(pickFresh(['Next word: ', 'Here\'s our next one: ', 'Look: '], 'ppuL') + word + '.');
-        if (pt && pt.id !== lastPattern && scoutMood() !== 'quiet'){ const r = 'Remember: ' + speakable(pt.title) + '.'; lineEl.textContent += ' ' + r; say(r); }
+        if (pt && pt.id !== lastPattern && scoutMood() !== 'quiet'){ const r = 'Remember: ' + speakable(pt.title) + '.'; said.push(r); say(r); }
         lastPattern = pt && pt.id; told.look = true;
       } else if (st.k === 'write'){
         tell(fixing ? 'One more go! Write it again from memory.'
@@ -6563,7 +6641,9 @@ function gameBar(host, label, total, kind){
   /* a small vertical badge in the header, next to the sprint's name, instead
      of a row of its own (29 Sep 2026: moves every game up the screen) */
   const top = host.querySelector('.topbar');
-  const bar = el('<div class="gamebadge"><div class="gb-label">'+label+'</div></div>');
+  // the icon sits on top and the name underneath, so it stacks neatly beside the jar or hive
+  const lab = String(label).replace(/^(<img[^>]*>|\S+)\s+/, '<span class="gb-top">$1</span>');
+  const bar = el('<div class="gamebadge"><div class="gb-label">'+lab+'</div></div>');
   if (top) top.appendChild(bar); else host.appendChild(bar);
   const game = kind === 'hive' ? hiveBuilder(bar, total) : honeyJar(bar, total);
   /* 29 Sep 2026 (Kathryn: "it's still tiny, can we add it on the card?"): the
@@ -7121,9 +7201,20 @@ function hiveSmash(card, first, done){
                      : pickOne(['Look out, it\'s the Tile Monster again! Here he comes!', 'Oh no, the Tile Monster is back! Hold on!',
                                 'Look out! The Tile Monster wants our letters!']);
   scoutPop('thinking', line, 2600, { silent:true });
-  say(line);
+  /* she says it right now (nothing queued ahead of her), and the monster only
+     sets off once her voice has actually started (29 Sep 2026: the warning
+     came after he'd gone, while the clip was still loading) */
+  stopSpeech(); sayNow(line);
   mon.style.opacity = '0';
-  setTimeout(() => { mon.style.opacity = ''; sfx('growl'); flyIn(); }, 1100);
+  const t0 = Date.now();
+  const go = () => { mon.style.opacity = ''; sfx('growl'); flyIn(); };
+  const wait = () => {
+    if (!card.isConnected) return;
+    if (scoutSpeaking() || ('speechSynthesis' in window && speechSynthesis.speaking)) return setTimeout(go, 900);
+    if (Date.now() - t0 > 3500) return go();
+    setTimeout(wait, 100);
+  };
+  setTimeout(wait, 100);
   const flyIn = () => { const fly = mon.animate([
     { transform:'translate('+(cr.width + 30)+'px,'+(ty - 70)+'px) rotate(25deg) scale(.7)' },
     { transform:'translate('+(tx + 40)+'px,'+(ty - 50)+'px) rotate(-10deg) scale(1)', offset:.7 },
@@ -7773,7 +7864,13 @@ function actSaturday(a, d){
     function gotRight(it){
       pos++; sfx('pop'); drawGot(); it.el.classList.add('grab');
       // a breather to find the next letter before the next wave arrives
-      if (pos < word.length){ retarget(); spawnIn = Math.max(spawnIn, ease < 1 ? 1400 : 700); return; }
+      /* the letters already coming stay what they were, so nothing changes under
+         a child's eyes (29 Sep 2026: an F in the next row turned into an R).
+         They fade away instead, and a new row brings the next letter. */
+      if (pos < word.length){
+        items.forEach(o => { if (!o.done && o !== it){ o.done = true; o.el.classList.add('fade'); setTimeout(() => o.el.remove(), 450); } });
+        spawnIn = ease < 1 ? 1100 : 750; return;
+      }
       over = true;
       if (bumps === 0){ beaten++; beatenWords.add(word); wordStat(word).r++; save(); }
       sayWord(word);
@@ -8131,18 +8228,25 @@ function renderBeeHome(a){
   const pct = Math.round(100 * mastered / Math.max(1, plan.words.length));
   const doneToday = p.days[today()];
 
-  a.appendChild(el('<div class="card center">'+
-    '<div style="font-size:14px;line-height:20px;letter-spacing:2px;color:var(--ink-soft);font-weight:800">SPELLING BEE</div>'+
-    '<h2 style="font-size:22px;line-height:28px;margin:2px 0 8px">'+
-      (plan.daysLeft == null ? 'Practice pool'
-        : plan.daysLeft === 0 ? '🐝 The bee is today!'
-        : plan.daysLeft + ' day'+(plan.daysLeft===1?'':'s')+' to go')+'</h2>'+
-    '<div class="hive" id="hive"></div>'+
-    '<div class="fuel-lbl muted">'+mastered+' of '+plan.words.length+' words in the hive</div>'+
+  /* the bee's home (29 Sep 2026 redesign): Scout, the countdown and the whole
+     list as one big honeycomb, then two big game cards, like the sprints */
+  const hello = plan.daysLeft === 0 ? 'The bee is today! Let\'s warm up together.'
+    : doneToday ? 'We practiced today already. Want another turn on stage?'
+    : plan.daysLeft != null ? plan.daysLeft + ' days until the bee. Let\'s fill our hive!' : 'Let\'s practice for the bee!';
+  a.appendChild(el('<div class="scout-card chatty"><img src="'+SCOUT_IMG('cheering')+'" alt="Scout" width="96" height="96">'+
+    '<div class="bubble">'+esc(hello)+'</div></div>'));
+  setTimeout(() => greetOnce('bee:' + kid().id, () => scoutSpeak(hello, 6000)), 300);
+  a.appendChild(el('<div class="card center bee-hub">'+
+    '<div class="eyebrow-ink">Spelling Bee</div>'+
+    '<h2 class="bh-count">'+(plan.daysLeft == null ? 'Practice pool'
+        : plan.daysLeft === 0 ? 'The bee is today!'
+        : '<b>'+plan.daysLeft+'</b> day'+(plan.daysLeft===1?'':'s')+' to go')+'</h2>'+
+    '<div class="hive bee-bighive" id="hive"></div>'+
+    '<div class="fuel-lbl muted">'+mastered+' of '+plan.words.length+' words in the hive · tap a cell to hear it</div>'+
     (plan.finalStretch
-      ? '<p class="muted" style="margin-top:10px">🔥 Final stretch — every word is back in the mix, with extra time on the tricky ones.</p>'
-      : '<p class="muted" style="margin-top:10px">This week\'s section: <b>'+plan.thisWeek.length+' new words</b>'+
-        (plan.shaky.length ? ' plus <b>'+plan.shaky.length+'</b> to revisit' : '')+'</p>')+
+      ? '<p class="muted" style="margin-top:8px">🔥 Final stretch: every word is back in the mix.</p>'
+      : '<p class="muted" style="margin-top:8px">This week: <b>'+plan.thisWeek.length+' new words</b>'+
+        (plan.shaky.length ? ' plus <b>'+plan.shaky.length+'</b> to practice again' : '')+'</p>')+
   '</div>'));
 
   const hive = a.querySelector('#hive');
@@ -8154,18 +8258,21 @@ function renderBeeHome(a){
     hive.appendChild(h);
   });
 
-  const start = el('<button class="btn big '+(doneToday?'grey':'yellow')+'" style="margin-bottom:10px">'+
-    (doneToday ? '🎤 Back on stage?' : '🎤 Take the stage') + '</button>');
+  const grid = el('<div class="mode-grid"></div>');
+  const start = el('<button class="mode-card mc-bee">'+
+    '<div class="mc-ic"><img src="../img/ui/icon-mic.webp" alt=""></div><b>'+(doneToday ? 'Back on stage' : 'Take the stage')+'</b>'+
+    '<small>The judges call your words. A crowd of bees cheers you on.</small><span class="mc-go">Let\'s go →</span></button>');
   start.onclick = () => { unlockAudio(); sfx('tap'); go('beeplay'); };
-  a.appendChild(start);
-
-  const speed = el('<button class="btn big blue" style="margin-bottom:14px">⚡ Speed round — all '+plan.words.length+' words</button>');
+  const speed = el('<button class="mode-card mc-week">'+
+    '<div class="mc-ic"><img src="../img/ui/icon-speed.webp" alt=""></div><b>Speed round</b>'+
+    '<small>All '+plan.words.length+' words. How fast can you fill the hive?</small><span class="mc-go">Ready, set… →</span></button>');
   speed.onclick = () => { unlockAudio(); sfx('tap'); go('beespeed'); };
-  a.appendChild(speed);
+  grid.append(start, speed);
+  a.appendChild(grid);
 
-  // word wall
-  const list = el('<div class="card"><h3 style="font-size:18px">🐝 The whole list</h3>'+
-    '<p class="muted">Green = mastered · red = needs work · grey = not started</p><div id="ww" style="margin-top:8px"></div></div>');
+  // word wall, folded away
+  const list = el('<details class="card"><summary style="font:900 18px/24px var(--font-head)">🐝 The whole list</summary>'+
+    '<p class="muted" style="margin-top:8px">Gold = in the hive · pink = practice again · grey = not started</p><div id="ww" style="margin-top:8px"></div></details>');
   const ww = list.querySelector('#ww');
   plan.words.forEach(w => {
     const cls = beeMastered(w) ? ' done' : beeShaky(w) ? ' bad' : beeSeen(w) ? '' : ' dim';
@@ -8226,9 +8333,11 @@ function actBeePlay(a){
   let words = beeSessionWords();
   if (!words.length){ a.appendChild(el('<div class="card center"><h2>No words are ready here yet. Ask a grown-up to add a spelling-bee list.</h2></div>')); return; }
 
-  const host = el('<div></div>'); a.appendChild(host);
+  // the bee's own hive fills one cell per word spelled right (like Fix the Hive)
+  const jar = gameBar(a, '🐝 Bee Hive', words.length, 'hive');
+  const host = el('<div class="bee-play"></div>'); a.appendChild(host);
   const started = Date.now();
-  let i = 0, right = 0, asked = 0, extended = false;
+  let i = 0, right = 0, asked = 0, extended = false, streak = 0;
   let field = Math.min(12, words.length);        // the other spellers on stage
   let out = 0;                                   // how many turns have been taken
 
@@ -8267,6 +8376,7 @@ function actBeePlay(a){
       '<p class="trick">'+w.tip.trick+'</p></div>'+
       '<div class="row" style="justify-content:center"><button class="btn grey" id="sl">🐢 Slowly</button>'+
       '<button class="btn grey" id="hr">🔊 Hear the rule</button></div>'+
+      '<p class="muted" style="margin-top:10px;font-size:14px;line-height:20px">On stage you can ask the judges to repeat it, say it slowly, or give a hint. In a real bee you are always allowed to ask.</p>'+
       '<button class="btn big yellow" id="ok" style="margin-top:12px">🎤 Ready — call me up!</button></div>');
     host.appendChild(c);
     const sp = c.querySelector('#sp');
@@ -8282,17 +8392,16 @@ function actBeePlay(a){
   function onStage(w, blanks, fresh){
     host.innerHTML = '';
     const c = el('<div>'+ stageHTML('') +
-      '<div class="card" style="margin-top:12px">'+
+      '<div class="card hexy spotlight stage-card bee-stage" style="margin-top:12px">'+
         '<div class="judge">🧑‍⚖️ Your word is… <b id="jw">📣</b></div>'+
         '<div class="askbacks">'+
-          '<button id="ab-rep">🔁 Repeat it, please</button>'+
-          '<button id="ab-slow">🐢 Slowly, please</button>'+
-          '<button id="ab-rule">💡 Any hints?</button>'+
+          '<button id="ab-rep">🔁 Repeat it</button>'+
+          '<button id="ab-slow">🐢 Slowly</button>'+
+          '<button id="ab-rule">💡 A hint?</button>'+
         '</div>'+
         '<p class="muted center" style="margin-top:8px">'+
           (blanks ? 'Some letters are already up on the board.' : 'Spell it for the judges.')+'</p>'+
-        '<p class="muted center" style="margin-top:4px;font-size:14px;line-height:20px">'+
-          'Practice asking for help here. In a real bee you are always allowed to ask.</p>'+
+
         /* This line used to say a grown-up could check which questions the bee allows.
            There is no such control and never has been - no setting, no code, no card asking
            for one. A children's screen promising a feature that is not there is the same
@@ -8327,19 +8436,28 @@ function actBeePlay(a){
     setTimeout(announce, fresh ? 550 : 350);
 
     const card = c.querySelector('.card');
+    /* K–2 build the word from letter tiles, like Sprint 4; 3rd grade and up type it */
+    const useTiles = gradeOf() <= 2;
+    const decoys = shuffle('abcdefghijklmnoprstuwy'.split('').filter(x => w.word.toLowerCase().indexOf(x) < 0)).slice(0, gp().stageDecoys);
     typingRound(card, {
       word:w.word, patternId:w.patternId, blanks: blanks, noStats:true, noSpell:true,
+      tiles: useTiles ? shuffle(w.word.toLowerCase().split('').filter((ch, n) => !blanks || blanks.indexOf(n) >= 0).concat(decoys)) : null,
       onDone: ok => {
         beeMark(w.word, ok);
         if (out < field) out++;
         if (ok){
-          right++;
-          sfx('clap');
-          scoutPop('cheering', cheer() + ' The judges nod you through.', 2400);
+          right++; streak++;
+          sfx('clap'); crowdGoesWild(card);
+          jar.add(card.querySelector('.boxes'));
+          if (streak === 3 || streak === 6 || streak === 10){
+            sfx('combo'); celebrate('small', card.querySelector('.boxes'));
+            scoutPop('cheering', streak + ' in a row! The crowd is going wild!', 2400);
+          } else scoutPop('cheering', cheer() + ' The judges nod you through.', 2400);
         } else {
+          streak = 0;
           noteMiss(w.word);
           sfx('ding');
-          toast('Thank you. That one goes on your practice list — good word to have found.', 2800);
+          toast('Thank you. That one goes on your practice list. Good word to have found.', 2800);
         }
         asked++; i++;
         /* The other spellers miss words too, and get them right the next time.
@@ -8351,10 +8469,16 @@ function actBeePlay(a){
           setTimeout(() => toast(m, 3600), 1000);
           setTimeout(next, 4400);
         } else {
-          setTimeout(next, 900);
+          setTimeout(next, ok ? 1600 : 900);          // time to watch the crowd dance
         }
       }
     });
+    // a crowd of bees either side of the letters, like Sprint 4
+    const bees = n => Array.from({ length: n }, (_, k) => '<img src="'+SCOUT_IMG(k % 2 ? 'cheering' : 'waving')+'" alt="" style="animation-delay:-'+(k * .37)+'s">').join('');
+    const mid = el('<div class="stage-mid"><div class="crowd-col l" aria-hidden="true">'+bees(3)+'</div><div class="stage-center"></div>'+
+      '<div class="crowd-col r" aria-hidden="true">'+bees(3)+'</div></div>');
+    const bx = card.querySelector('.boxes'), tr = card.querySelector('.stage-tiles');
+    if (bx){ bx.before(mid); mid.querySelector('.stage-center').append(bx); if (tr) mid.querySelector('.stage-center').append(tr); }
   }
 
   function maybeStop(){
@@ -8554,24 +8678,39 @@ function renderModes(a){
   if (!hasBee) return renderHome(a);
 
   topbar(a);
-  a.appendChild(el('<div class="card center" style="padding:14px">'+
-    '<h2 style="font-size:22px;margin:2px 0 4px">What shall we practice?</h2></div>'));
+  /* the choice between this week's list and the bee (29 Sep 2026 redesign):
+     Scout asks, and each side is a big card with its own little hive of progress */
+  const q = 'What shall we practice today, ' + k.name + '?';
+  a.appendChild(el('<div class="scout-card chatty"><img src="'+SCOUT_IMG('thinking')+'" alt="Scout" width="96" height="96">'+
+    '<div class="bubble">'+esc(q)+'</div></div>'));
+  setTimeout(() => greetOnce('modes:' + k.id, () => scoutSpeak(q, 6000)), 300);
 
   buildCurrentWeek();
-  const wk = el('<button class="day d2" style="width:100%;min-height:110px;margin-bottom:12px">'+
-    '<div><span class="em">📅</span><b>This Week\'s Words</b>'+
-    '<small>'+esc(WEEK.title)+' · '+WEEK.allWords.length+' words</small></div></button>');
+  const pp = prog();
+  const doneN = DAYS.filter(d => pp.days[d.key] && pp.days[d.key].done).length;
+  const hexes = (n, of, cls) => '<div class="mc-hive">'+Array.from({ length: of }, (_, i) => '<i class="'+(i < n ? 'on '+cls : '')+'"></i>').join('')+'</div>';
+  const grid = el('<div class="mode-grid"></div>');
+  const wk = el('<button class="mode-card mc-week">'+
+    '<div class="mc-ic"><img src="../img/ui/icon-calendar.webp" alt=""></div>'+
+    '<b>This Week\'s Words</b>'+
+    '<small>'+WEEK.allWords.length+' words · test on '+WEEKDAYS[testDayOf(k)]+'</small>'+
+    hexes(doneN, 7, '')+
+    '<span class="mc-go">'+(doneN >= 7 ? 'All sprints done!' : doneN ? doneN + ' of 7 sprints done' : 'Start the week')+' →</span></button>');
   wk.onclick = () => { sfx('tap'); go('home'); };
-  a.appendChild(wk);
+  grid.appendChild(wk);
 
   buildBee();
   const plan = beePlan();
-  const bee = el('<button class="day d4" style="width:100%;min-height:110px">'+
-    '<div><span class="em">🐝</span><b>Spelling Bee</b>'+
-    '<small>'+plan.mastered.length+' of '+plan.words.length+' mastered'+
-    (plan.daysLeft != null ? ' · '+plan.daysLeft+' days to go' : '')+'</small></div></button>');
+  const shown = Math.min(plan.words.length, 10), got = Math.round(shown * plan.mastered.length / Math.max(1, plan.words.length));
+  const bee = el('<button class="mode-card mc-bee">'+
+    '<div class="mc-ic"><img src="'+SCOUT_IMG('cheering')+'" alt=""></div>'+
+    '<b>Spelling Bee</b>'+
+    '<small>'+plan.mastered.length+' of '+plan.words.length+' words mastered'+(plan.daysLeft != null ? ' · '+plan.daysLeft+' days to go' : '')+'</small>'+
+    hexes(got, shown, 'gold')+
+    '<span class="mc-go">Take the stage →</span></button>');
   bee.onclick = () => { sfx('tap'); go('bee'); };
-  a.appendChild(bee);
+  grid.appendChild(bee);
+  a.appendChild(grid);
 
   const foot = el('<div class="center" style="margin-top:16px"><button class="btn ghost">⚙️ Grown-ups</button></div>');
   foot.querySelector('button').onclick = parentGate;
