@@ -1016,6 +1016,8 @@ body[data-view=day] .gamebadge.gamedock .hivebuild i.on{ background:linear-gradi
 .badge.revealed .em{ animation:badgeFlip .7s cubic-bezier(.2,1.3,.5,1); }
 @keyframes badgeFlip{ from{ transform:rotateY(90deg) scale(.6); } to{ transform:rotateY(0) scale(1); } }
 .iconbtn{ position:relative; }
+.topbar .iconbtn{ width:44px; height:50px; flex:0 0 auto; }
+.topbar .iconbtn img.ic{ width:26px; height:26px; }
 .iconbtn .dot{ position:absolute; top:50%; right:0; transform:translateY(-50%); min-width:18px; height:18px; border-radius:9px; background:#ff5fa2; color:#fff;
   font:900 12px/18px var(--font-head); text-align:center; padding:0 4px; }
 .hb-bp{ font-size:16px; margin-top:6px; }
@@ -1082,6 +1084,9 @@ body.walking .wrap{ z-index:auto; }
 .kc-app span{ color:#fff; font:700 11px/13px -apple-system, system-ui, sans-serif; white-space:nowrap; }
 .wed-pic{ font-size:44px; line-height:52px; margin:0 auto 2px; }
 .wed-pic img.ic{ width:52px; height:52px; }
+/* activity screens hold still on phones (29 Sep 2026) */
+body[data-view=day], body[data-view=beeplay], body[data-view=beespeed]{ overscroll-behavior:none; }
+.runway, .sky, .meadow{ touch-action:none; overscroll-behavior:contain; }
 /* jump between This Week's Words and the Spelling Bee */
 .modeswitch{ display:flex; align-items:center; gap:10px; width:100%; margin:0 0 12px; padding:8px 14px; border:1px solid rgba(255,255,255,.3);
   border-radius:999px; background:rgba(255,255,255,.12); color:#fff; font:700 15px/20px var(--font-body, inherit); cursor:pointer; text-align:left; }
@@ -4413,7 +4418,7 @@ const WALKME = [
   { t:'The week at a glance', view:'home', target:'.hmap', d:walkNightsText },
   { t:'The honey pot', view:'home', target:'.honeypot', d:'Every word they win adds a drop of honey. Little wins along the way keep them going.' },
   { t:'Scout\'s Backpack', view:'home', target:'#tb-badge', d:'Badges they earn hide in here as gold surprises they get to open.' },
-  { t:'The Grown-up Zone', view:'home', target:'#gu', d:'Everything for you sits behind your grown-up code. Let\'s look inside.' },
+  { t:'The Grown-up Zone', view:'home', target:'#tb-gu', d:'Everything for you sits behind your grown-up code. Let\'s look inside.' },
   { t:'This week\'s words', view:'parent:words', grown:true, target:'#wk-words', d:'Paste the words straight from the teacher\'s list, any layout. Tap Save & start the week, and Scout builds the whole week from them.' },
   { t:'Spelling bee coming up?', view:'parent:words', grown:true, target:'#wk-bee', d:'Paste the whole bee list and the date. Scout splits it into small weekly sections, keeps bringing back the words they miss, and practices them on a stage with judges. Once it\'s set, your child picks "Spelling Bee" or "This Week\'s Words" when they start.' },
   { t:'Test day and nights', view:'parent:kids', grown:true, target:'.kidcard', d:'Pick the grade, the test day, and how many nights they have to practice. The week rearranges itself around it.' },
@@ -4815,7 +4820,7 @@ function renderPick(a){
     grid.appendChild(c);
   });
   a.appendChild(grid);
-  const b = el('<div class="center" style="margin-top:22px"><button class="btn ghost">⚙️ Grown-ups</button></div>');
+  const b = el('<div class="center" style="margin-top:22px"><button class="btn ghost">🔒 Grown-ups</button></div>');
   b.querySelector('button').onclick = parentGate;
   a.appendChild(b);
   a.appendChild(siteFooter());
@@ -4831,10 +4836,13 @@ function topbar(a, opts){
       '<button class="iconbtn" id="tb-home">🏠</button>'+
       '<button class="iconbtn" id="tb-badge" aria-label="Scout\'s Backpack"><img class="ic" src="../img/ui/icon-backpack.webp" alt=""></button>'+
       '<button class="iconbtn" id="tb-swap">🔄</button>'+
+      /* Grown-ups lives up here now, far right (Kathryn, 29 Sep 2026) */
+      '<button class="iconbtn" id="tb-gu" aria-label="Grown-ups"><img class="ic" src="../img/ui/icon-lock.webp" alt=""></button>'+
     '</div>');
   bar.querySelector('#tb-home').onclick = () => { location.href = './'; };
   bar.querySelector('#tb-swap').onclick = () => go('pick');
   bar.querySelector('#tb-badge').onclick = () => go('badges');
+  bar.querySelector('#tb-gu').onclick = () => parentGate();
   setTimeout(updateBackpackDot, 0);
   a.appendChild(bar);
   const xp = el('<div class="xpbar"><i style="width:'+levelPct(k)+'%"></i></div>');
@@ -4938,6 +4946,22 @@ function homeGreeting(){
 /* hellos already said this visit (29 Sep 2026: Scout greeted twice on the
    picker, and again every time a child came back to the map) */
 const GREETED = {};
+/* Kathryn: the page scrolling mid-game "really threw off my daughter". On the
+   game areas a swipe only ever steers. On the rest of an activity screen the
+   page stays put whenever the whole activity already fits on the screen; on a
+   phone too small for it, it still scrolls so nothing is out of reach. */
+document.addEventListener('touchmove', e => {
+  const v = document.body.dataset.view;
+  if (v !== 'day' && v !== 'beeplay' && v !== 'beespeed') return;
+  const t = e.target;
+  if (t && t.closest){
+    if (t.closest('.runway,.sky,.meadow')){ e.preventDefault(); return; }
+    if (t.closest('.pop,textarea,select,.scrollok')) return;
+  }
+  let top = Infinity, bottom = -Infinity;
+  document.querySelectorAll('#app .card').forEach(c => { const r = c.getBoundingClientRect(); if (r.height){ top = Math.min(top, r.top); bottom = Math.max(bottom, r.bottom); } });
+  if (top >= -4 && bottom <= innerHeight + 4) e.preventDefault();
+}, { passive:false });
 function greetOnce(key, fn){ if (GREETED[key]) return; GREETED[key] = 1; fn(); }
 function renderHome(a){
   AFTER_MAP = [];
@@ -5106,10 +5130,7 @@ function renderHome(a){
     bk.onclick = () => go('modes');
     foot.appendChild(bk);
   }
-  const gu = el('<button class="btn ghost" id="gu">⚙️ Grown-ups</button>');
-  gu.onclick = parentGate;
-  foot.appendChild(gu);
-  a.appendChild(foot);
+  if (foot.children.length) a.appendChild(foot);
   /* One Ayah carries the utility row on its home page and Spelling Quest only
      carried it on the way in — so the six pages were unreachable from the screen
      a family actually sits on. Same component, so the two storage sentences stay
@@ -5867,10 +5888,7 @@ function parentMore(a){
   tr.querySelector('#tourgo').onclick = () => { sfx('tap'); runTour(true); };
   a.appendChild(tr);
 
-  a.appendChild(el('<div class="card"><h3>ℹ️ About</h3>'+
-    '<p class="muted">Spelling Quest works offline once it\'s loaded. To put it on your Home Screen, see <b>Keep Scout close</b> at the top of this page.</p>'+
-    '<p class="muted">All seven sprints are always open, so they can jump ahead or catch up whenever they like.</p>'+
-    '<p class="muted">Version <b>'+BUILD+'</b>. If something looks out of date, close the app fully and open it again.</p></div>'));
+  // (the About card is gone, 29 Sep 2026: Keep Scout close covers installing, and the rest was noise)
 }
 
 /* ---------------- boot ---------------- */
@@ -7868,10 +7886,16 @@ function actSaturday(a, d){
     function spawn(){
       const need = word[pos]; wave++;
       const needLane = Math.floor(Math.random() * 3);
+      /* a full row of three always carries the letter AFTER this one too, so
+         if it's still coming once they've grabbed this one, it isn't a wall
+         with no way through (Kathryn, 29 Sep 2026) */
+      const after = word[pos + 1];
+      const lanes = [0,1,2].filter(l => l !== needLane);
+      const afterLane = after ? lanes[Math.floor(Math.random() * 2)] : -1;
       for (let l = 0; l < 3; l++){
         let ch = null;
         if (l === needLane) ch = need;
-        else if (Math.random() < gp().bossFill) ch = abc.replace(need, '')[Math.floor(Math.random() * 25)];
+        else if (Math.random() < gp().bossFill) ch = l === afterLane && after !== need ? after : abc.replace(need, '').replace(after || '#', '')[Math.floor(Math.random() * 24)];
         if (!ch) continue;
         const e = el('<div class="tok'+(l === needLane && gp().bossGlow && bumps >= gp().bossGlow ? ' need' : '')+'">'+esc(ch)+'</div>');
         rw.appendChild(e);
@@ -7919,6 +7943,16 @@ function actSaturday(a, d){
         items.forEach(o => { if (o.done || o === it) return;
           o.isNeed = o.ch === word[pos];
           o.el.classList.toggle('need', o.isNeed && !!gp().bossGlow && bumps >= gp().bossGlow); });
+        /* a row still coming that fills all three lanes but has none of the new
+           letter would be impossible to get past: one of its letters floats away */
+        const rows = {};
+        items.forEach(o => { if (!o.done && o !== it && o.x > meX() + 20) (rows[o.wave] = rows[o.wave] || []).push(o); });
+        Object.values(rows).forEach(r => {
+          if (r.length >= 3 && !r.some(o => o.ch === word[pos])){
+            const o = r[Math.floor(Math.random() * r.length)];
+            o.done = true; o.el.classList.add('fade'); setTimeout(() => o.el.remove(), 350);
+          }
+        });
         spawnIn = Math.min(spawnIn, ease < 1 ? 1100 : 750); return;
       }
       over = true;
@@ -8769,9 +8803,7 @@ function renderModes(a){
   grid.appendChild(bee);
   a.appendChild(grid);
 
-  const foot = el('<div class="center" style="margin-top:16px"><button class="btn ghost">⚙️ Grown-ups</button></div>');
-  foot.querySelector('button').onclick = parentGate;
-  a.appendChild(foot);
+
 }
 
 </script>
