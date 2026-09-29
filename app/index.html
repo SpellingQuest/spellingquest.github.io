@@ -2669,7 +2669,44 @@ function trickyWords(){
 
 function level(k){ return Math.max(1, Math.floor((k.xp||0)/150) + 1); }
 function levelPct(k){ return Math.round((((k.xp||0)%150)/150)*100); }
-function isHard(){ return (kid().grade || 1) >= 3; }
+function isHard(){ return (kid().grade || 1) >= 3; }      // typing shown first from 3rd grade
+
+/* ---- how each grade plays (29 Sep 2026) ----
+   Kathryn: "I want each grade to be tailored more for them, so I do not want
+   KG to play as 1st grade." Every grade has its own row. The words always come
+   from the teacher's list; what changes is how much help Scout gives, how busy
+   each game is, and how much is asked in one go.
+     mood        how much Scout talks (chatty / normal / quiet)
+     soundOut    Scout sounds out each new word by herself in Sprint 1
+     hintDelay   Sprint 1: the pattern's letters glow after this many ms (0 = only after misses)
+     hintMisses  …or after this many wrong taps
+     findBoard   Find it!: how many words on the board
+     blanks      Sprint 3 (Fix the Hive): extra letters knocked out beyond the pattern
+     stageDecoys Sprint 4: extra letter tiles that aren't in the word
+     ppuWords    Paper Power-Up: how many words to write
+     ppuSpot     Paper Power-Up: the tricky part is shown straight away
+     bossSpeed / bossGap / bossFill / bossGlow   Boss: how fast letters come, how far apart,
+                 how crowded the other lanes are, and after how many bumps the right letter glows (0 = never)
+     catchRight / catchFall / catchEvery   Letter Catcher: how often the next letter falls,
+                 how long a letter takes to fall (s), and ms between letters
+     beeDecoys / beeSpeed / beeGlow        Bee Chase: extra bees, how fast they fly, and when the next bee glows (0 = never)
+     quizBlanks  Spelling bee prep: extra letters hidden on a word they missed */
+const GRADE_PROFILES = {
+  0: { label:'Kindergarten', blurb:'Scout sounds out every new word, the pattern glows almost straight away, and the games are slow and gentle.', mood:'chatty', soundOut:true,  hintDelay:1200, hintMisses:1, findBoard:3, blanks:1, stageDecoys:0, ppuWords:1, ppuSpot:true,
+       bossSpeed:85,  bossGap:2500, bossFill:.25, bossGlow:1, catchRight:.72, catchFall:7.4, catchEvery:1200, beeDecoys:0, beeSpeed:.65, beeGlow:3500, quizBlanks:1 },
+  1: { label:'1st grade', blurb:'Lots of help from Scout, glowing hints after one try, and slower games with the right letter turning up often.',    mood:'chatty', soundOut:false, hintDelay:2000, hintMisses:1, findBoard:3, blanks:1, stageDecoys:1, ppuWords:2, ppuSpot:true,
+       bossSpeed:100, bossGap:2150, bossFill:.4,  bossGlow:2, catchRight:.64, catchFall:6.6, catchEvery:1080, beeDecoys:1, beeSpeed:.8,  beeGlow:5000, quizBlanks:1 },
+  2: { label:'2nd grade', blurb:"Help when it's needed: hints after a short wait, a few more choices, and games at a steady pace.",    mood:'normal', soundOut:false, hintDelay:3000, hintMisses:1, findBoard:4, blanks:1, stageDecoys:2, ppuWords:2, ppuSpot:true,
+       bossSpeed:120, bossGap:1900, bossFill:.55, bossGlow:2, catchRight:.58, catchFall:5.8, catchEvery:980,  beeDecoys:2, beeSpeed:1.0, beeGlow:6500, quizBlanks:1 },
+  3: { label:'3rd grade', blurb:'More on their own: hints only after two tries, more look-alike letters, and typing shown first.',    mood:'normal', soundOut:false, hintDelay:0,    hintMisses:2, findBoard:5, blanks:2, stageDecoys:3, ppuWords:3, ppuSpot:false,
+       bossSpeed:150, bossGap:1550, bossFill:1,   bossGlow:3, catchRight:.5,  catchFall:4.9, catchEvery:850,  beeDecoys:3, beeSpeed:1.35,beeGlow:0,    quizBlanks:2 },
+  4: { label:'4th grade', blurb:'Scout keeps it short, no glowing answers in the games, and more letters to fill in from memory.',    mood:'quiet',  soundOut:false, hintDelay:0,    hintMisses:2, findBoard:6, blanks:3, stageDecoys:4, ppuWords:3, ppuSpot:false,
+       bossSpeed:170, bossGap:1380, bossFill:1,   bossGlow:0, catchRight:.45, catchFall:4.2, catchEvery:760,  beeDecoys:3, beeSpeed:1.6, beeGlow:0,    quizBlanks:2 },
+  5: { label:'5th grade', blurb:'The full challenge: quick games, the most choices, and more of each word filled in from memory.',    mood:'quiet',  soundOut:false, hintDelay:0,    hintMisses:3, findBoard:6, blanks:3, stageDecoys:5, ppuWords:4, ppuSpot:false,
+       bossSpeed:185, bossGap:1250, bossFill:1,   bossGlow:0, catchRight:.4,  catchFall:3.8, catchEvery:700,  beeDecoys:4, beeSpeed:1.8, beeGlow:0,    quizBlanks:3 },
+};
+function gradeOf(k){ k = k || kid(); const g = k && typeof k.grade === 'number' ? k.grade : 1; return GRADE_PROFILES[g] ? g : 1; }
+function gp(){ return GRADE_PROFILES[gradeOf()]; }
 
 /* ---------------- the week, anchored to each child's test day ----------------
    The seven activities are slots, not fixed weekdays. Slot 1 is the day of the
@@ -3881,8 +3918,7 @@ document.addEventListener('click', e => {
   const w = chip.textContent.trim(); if (w){ unlockAudio(); sayWord(w); }
 });
 function scoutMood(){
-  const g = (kid() && kid().grade) || 1;
-  return g <= 1 ? 'chatty' : g <= 3 ? 'normal' : 'quiet';
+  return kid() ? gp().mood : 'normal';
 }
 function pickOne(list){ return list[Math.floor(Math.random()*list.length)]; }
 
@@ -5417,6 +5453,7 @@ function parentKids(a){
       /* K to 5th grade (29 Sep 2026: kindergarten was missing; it plays like 1st grade) */
       '<div class="row" data-f="grade">'+[0,1,2,3,4,5].map(g =>
         '<button class="btn '+(k.grade===g?'':'grey')+'" data-g="'+g+'" style="flex:1;padding:12px 6px">'+(g ? g : 'K')+'</button>').join('')+'</div>'+
+      '<div class="muted" style="margin-top:6px;font-size:14px;line-height:20px"><b>'+GRADE_PROFILES[gradeOf(k)].label+':</b> '+esc(GRADE_PROFILES[gradeOf(k)].blurb)+'</div>'+
       '<label class="fl">Spelling test day</label>'+
       '<div class="row daypick" data-f="testday">'+WEEKDAYS_SHORT.map((n, d) =>
         '<button class="btn '+(testDayOf(k)===d?'':'grey')+'" data-d="'+d+'">'+n+'</button>').join('')+'</div>'+
@@ -5815,57 +5852,74 @@ function resumeId(dayKey){
   const k = kid();
   return ((k && k.id) || '?') + ':' + (k ? weekKeyFor(k) : '?') + ':' + dayKey;
 }
+/* 29 Sep 2026 (Kathryn: "my son closed the app partway through Sprint 1 and
+   it started him at the beginning"). The place in a sprint used to live only
+   in this browser's storage, and on an iPhone Safari and the Home Screen app
+   keep separate storage, so closing one and opening the other started over.
+   It is now also kept with the child's synced progress (as a stamped string,
+   so the newest copy wins), and a spot is restored by WHAT was on screen, not
+   by counting screens, so a small change to the week can't throw it away. */
+function resumeRemote(dayKey){
+  try{ const pp = prog(); const v = pp.rs && pp.rs[dayKey]; return v ? JSON.parse(v) : null; }catch(e){ return null; }
+}
+function resumeStore(dayKey, slot){
+  const all = resumeAll(), id = resumeId(dayKey);
+  all[id] = slot; resumeWrite(all);
+  try{ const pp = prog(); pp.rs = pp.rs || {}; pp.rs[dayKey] = JSON.stringify(slot); save(); }catch(e){}
+}
+/* the newest of this browser's copy and the synced copy; a "cleared" mark wins if it is newer */
+function resumeSlot(dayKey){
+  const a = resumeAll()[resumeId(dayKey)] || null, b = resumeRemote(dayKey);
+  const slot = !a ? b : !b ? a : ((b.at || 0) > (a.at || 0) ? b : a);
+  if (!slot || slot.cleared) return null;
+  if (Date.now() - (slot.at || 0) > RESUME_MAX_AGE_MS) return null;
+  return slot;
+}
 /* i is where to pick up. Nothing is stored at position 0 — there is no such
    thing as resuming an exercise nobody has started. */
 function resumeSave(dayKey, order, i, extra){
-  const all = resumeAll(), id = resumeId(dayKey);
-  if (!i || i <= 0){ delete all[id]; resumeWrite(all); return; }
-  all[id] = { order: order || null, i: i, at: Date.now(), extra: extra || {} };
-  resumeWrite(all);
+  if (!i || i <= 0) return resumeClear(dayKey);
+  resumeStore(dayKey, { order: order || null, i: i, at: Date.now(), extra: extra || {} });
 }
 function resumeClear(dayKey){
-  const all = resumeAll(); delete all[resumeId(dayKey)]; resumeWrite(all);
+  resumeStore(dayKey, { cleared:true, at: Date.now() });
 }
 
 /* Work out what to run and where to start.
 
-   `pool` is the full word list. If a saved slot matches it exactly, the words
-   come back in the order they were in. If the week's words changed underneath
-   us — a grown-up pasted a new list — the slot is thrown away rather than
-   half-honoured, because resuming into a list that no longer exists is worse
-   than starting again. */
+   `pool` is the full word list. The saved order is kept for the words that
+   are still in the week; any new word joins the end, and a word that's gone
+   is skipped. The child picks up after the words they have already done. */
 function resumePlan(dayKey, pool){
-  const slot = resumeAll()[resumeId(dayKey)];
+  const slot = resumeSlot(dayKey);
   const fresh = { words: shuffle(pool), start: 0, extra: {}, resumed: false };
   if (!slot || !slot.order) return fresh;
-  if (Date.now() - (slot.at || 0) > RESUME_MAX_AGE_MS){ resumeClear(dayKey); return fresh; }
   const byWord = {}; pool.forEach(w => byWord[w.word] = w);
-  const order = slot.order.map(x => byWord[x]).filter(Boolean);
-  if (order.length !== slot.order.length || order.length !== pool.length){
-    resumeClear(dayKey); return fresh;
-  }
-  const start = Math.min(slot.i, order.length);
-  if (start <= 0) return fresh;
+  const doneWords = slot.order.slice(0, slot.i).filter(x => byWord[x]);
+  const kept = slot.order.map(x => byWord[x]).filter(Boolean);
+  const added = pool.filter(w => slot.order.indexOf(w.word) < 0);
+  const order = kept.concat(shuffle(added));
+  const start = Math.min(doneWords.length, order.length);
+  if (start <= 0 || start >= order.length) return fresh;
   return { words: order, start: start, extra: slot.extra || {}, resumed: true };
 }
 
 /* Same idea for the two activities that walk a fixed queue rather than a
-   shuffled word list — Monday and Tuesday. There is no order to remember, so
-   only the position is stored. */
-function resumeQueuePlan(dayKey, queueLength){
-  const slot = resumeAll()[resumeId(dayKey)];
+   shuffled word list — Monday and Tuesday. `keys` names each screen in the
+   queue (a tip, a word, a Find it!), so the right screen is found even if the
+   queue itself has shifted. */
+function resumeQueuePlan(dayKey, queueLength, keys){
+  const slot = resumeSlot(dayKey);
   if (!slot || slot.order) return { start: 0, extra: {}, resumed: false };
-  if (Date.now() - (slot.at || 0) > RESUME_MAX_AGE_MS){ resumeClear(dayKey); return { start:0, extra:{}, resumed:false }; }
-  if (slot.len !== queueLength){ resumeClear(dayKey); return { start:0, extra:{}, resumed:false }; }
-  const start = Math.min(slot.i, queueLength);
+  let start = -1;
+  if (keys && slot.key) start = keys.indexOf(slot.key);
+  if (start < 0) start = Math.min(slot.i || 0, queueLength - 1);
   if (start <= 0) return { start: 0, extra: {}, resumed: false };
   return { start: start, extra: slot.extra || {}, resumed: true };
 }
-function resumeQueueSave(dayKey, i, queueLength, extra){
-  const all = resumeAll(), id = resumeId(dayKey);
-  if (!i || i <= 0){ delete all[id]; resumeWrite(all); return; }
-  all[id] = { order: null, len: queueLength, i: i, at: Date.now(), extra: extra || {} };
-  resumeWrite(all);
+function resumeQueueSave(dayKey, i, queueLength, extra, key){
+  if (!i || i <= 0) return resumeClear(dayKey);
+  resumeStore(dayKey, { order: null, len: queueLength, i: i, key: key || null, at: Date.now(), extra: extra || {} });
 }
 /* Said once, gently, so a child is not confused about why she is on word 8. */
 function resumeToast(plan){
@@ -5971,7 +6025,7 @@ const PPU_TOTAL = PPU_STEPS.length;
 /* host: where to draw · items: [{word, patternId}] · store: {counts, ...}
    onSave: called after every step · onFinish: called when every word is done */
 function paperPowerUp(host, items, store, onSave, onFinish){
-  const hard = isHard();
+  // (grade settings come from gp())
   let wi = 0;
 
   function firstUnfinished(){
@@ -5994,7 +6048,7 @@ function paperPowerUp(host, items, store, onSave, onFinish){
     const word = it.word;
     let step = Math.min(store.counts[word] || 0, PPU_TOTAL - 1);
     let fixing = false;      // came back to Write after "Fix it"
-    let spotted = !hard;     // K–2 see the tricky part straight away
+    let spotted = gp().ppuSpot;     // K–2 see the tricky part straight away
 
     function draw(){
       const st = PPU_STEPS[step];
@@ -6083,8 +6137,8 @@ function paperPowerUp(host, items, store, onSave, onFinish){
 
 /* pick the words for tonight's Paper Power-Up out of a pool */
 function ppuItems(pool, missedWords){
-  const hard = isHard();
-  const want = hard ? 3 : 2;
+  // (grade settings come from gp())
+  const want = gp().ppuWords;
   const byWord = {};
   pool.forEach(w => { byWord[w.word] = w; });
   const picked = missedWords.slice(0, want).map(w => byWord[w] || { word:w, patternId:null });
@@ -6549,7 +6603,8 @@ function actMonday(a, d){
   let queue = [];
   WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s}));
     if (s.words.length >= 2) queue.push({find:s}); });
-  const plan = resumeQueuePlan('mon', queue.length);
+  const qkey = q => q.tip ? 'tip:' + q.tip.label : q.find ? 'find:' + q.find.label : 'word:' + q.word.word;
+  const plan = resumeQueuePlan('mon', queue.length, queue.map(qkey));
   let qi = plan.start;
   readCount = plan.extra.readCount || 0;
   for (let i = 0; i < readCount; i++) jar.add();
@@ -6561,7 +6616,7 @@ function actMonday(a, d){
       if (readCount >= words.length) award('reader');
       return finishScreen(d, readCount, words.length);
     }
-    resumeQueueSave('mon', qi, queue.length, {readCount});
+    resumeQueueSave('mon', qi, queue.length, {readCount}, qkey(queue[qi]));
     const item = queue[qi++];
     host.innerHTML = '';
     /* a new screen: drop anything still waiting to be said about the last word
@@ -6583,7 +6638,7 @@ function actMonday(a, d){
     const w = item.word, span = patternSpan(w.word, item.sec.patternId);
     wi++;
     if (!span) return sayWithMe(item);          // a word with no pattern to find: straight to saying it
-    const hard = isHard();
+    // (grade settings come from gp())
     const need = new Set(); for (let i = span.i; i < span.i + span.len; i++) need.add(i);
     let misses = 0;
     const c = el('<div class="card center">'+
@@ -6607,11 +6662,11 @@ function actMonday(a, d){
         }
       } else {
         misses++; wiggle(t); sfx('tap');
-        if (misses === (hard ? 2 : 1)) hint();
+        if (misses === gp().hintMisses) hint();
       }
     }});
     c.querySelector('#tiles').appendChild(row);
-    if (!hard) setTimeout(hint, 2200);
+    if (gp().hintDelay) setTimeout(hint, gp().hintDelay);
     c.querySelector('#hear').onclick = () => sayWord(w.word);
     /* a quick reminder of the pattern every few words, not the whole card again */
     const nth = item.sec.words.indexOf(w), lab = item.sec.label.replace(/ words$/, '');
@@ -6643,7 +6698,12 @@ function actMonday(a, d){
     sp.onclick = play;
     c.querySelector('#sl').onclick = () => saySlow(w.word);
     c.querySelector('#le').onclick = () => sayLetters(w.word);
-    say(scoutMood() === 'quiet' ? w.word : pickFresh(['Say it with me: ' + w.word + '.', 'Your turn with me: ' + w.word + '.',
+    if (gp().soundOut){
+      /* kindergarten: Scout sounds every new word out first, then they say it together */
+      say('Let\'s sound it out.');
+      saySounds(w.word);
+      say(pickFresh(['Now together: ' + w.word + '!', 'Say it with me: ' + w.word + '!'], 'swmK'));
+    } else say(scoutMood() === 'quiet' ? w.word : pickFresh(['Say it with me: ' + w.word + '.', 'Your turn with me: ' + w.word + '.',
       'Ready? Together: ' + w.word + '.', 'Let\'s say it: ' + w.word + '.'], 'swm'));
     let finished = false;
     c.querySelector('#done').onclick = () => {
@@ -6656,7 +6716,7 @@ function actMonday(a, d){
   // after each group: Scout says a word, the child finds it in the honeycomb
   function findIt(sec){
     const all = sec.words.map(x => x.word);
-    const g = (kid() && kid().grade) || 1, size = g <= 1 ? 3 : g === 2 ? 4 : 6;
+    const size = gp().findBoard;
     // always at least one word left over, so the last find is still a choice
     const targets = shuffle(all).slice(0, Math.max(1, Math.min(3, all.length, size - 1)));
     let ti = 0, misses = 0;
@@ -6807,7 +6867,8 @@ function actTuesday(a, d){
   const host = el('<div></div>'); a.appendChild(host);
   let queue = [];
   WEEK.sections.forEach(s => { queue.push({tip:s}); s.words.forEach(w => queue.push({word:w, sec:s})); });
-  const plan = resumeQueuePlan('tue', queue.length);
+  const qkey = q => q.tip ? 'tip:' + q.tip.label : 'word:' + q.word.word;
+  const plan = resumeQueuePlan('tue', queue.length, queue.map(qkey));
   let qi = plan.start, correct = plan.extra.correct || 0,
       total = WEEK.allWords.length, firstTry = plan.extra.firstTry || 0;
   const dd = dots(total, a);
@@ -6822,7 +6883,7 @@ function actTuesday(a, d){
       if (correct === total) award('builder');
       return finishScreen(d, firstTry, total);
     }
-    resumeQueueSave('tue', qi, queue.length, {correct, firstTry, di});
+    resumeQueueSave('tue', qi, queue.length, {correct, firstTry, di}, qkey(queue[qi]));
     const item = queue[qi++];
     host.innerHTML = '';
     if (item.tip){
@@ -7000,7 +7061,7 @@ function actWednesday(a, d){
   const host = el('<div></div>'); a.appendChild(host);
   const plan = resumePlan('wed', WEEK.allWords);
   const words = plan.words;
-  const lvl = isHard() ? 3 : 1;
+  const lvl = gp().blanks;
   let i = plan.start, right = plan.extra.right || 0;
   const dd = dots(words.length, a);
   for (let j = 0; j < i; j++) setDot(dd, j, true);
@@ -7157,7 +7218,7 @@ function actThursday(a, d){
     sp.onclick = play;
     setTimeout(play, 350);
 
-    const decoys = shuffle('abcdefghijklmnoprstuwy'.split('').filter(x => w.word.toLowerCase().indexOf(x) < 0)).slice(0, isHard() ? 4 : 2);
+    const decoys = shuffle('abcdefghijklmnoprstuwy'.split('').filter(x => w.word.toLowerCase().indexOf(x) < 0)).slice(0, gp().stageDecoys);
     typingRound(c, {
       word: w.word, patternId: w.patternId, blanks: null,
       tiles: shuffle(w.word.toLowerCase().split('').concat(decoys)),
@@ -7340,7 +7401,7 @@ function actFriday(a, d){
      K–2: slower letters and the right one more often. No timer. */
   function gameCatch(id){
     const words = shuffle(WEEK.allWords).slice(0, Math.min(6, WEEK.allWords.length));
-    const hard = isHard();
+    // (grade settings come from gp())
     let i = 0, score = 0;
     step();
     function step(){
@@ -7365,11 +7426,11 @@ function actFriday(a, d){
       const spawn = () => {
         if (done || !document.body.contains(sky)) { clearInterval(tm); return; }
         const need = w[pos];
-        const ch = Math.random() < (hard ? .45 : .6) ? need
+        const ch = Math.random() < gp().catchRight ? need
           : abc.replace(need, '')[Math.floor(Math.random()*25)];
         const f = el('<button class="fall">'+esc(ch)+'</button>');
         f.style.left = (6 + Math.random()*78) + '%';
-        f.style.animationDuration = (hard ? 4.2 : 6.2) + 's';
+        f.style.animationDuration = gp().catchFall + 's';
         f.onclick = () => {
           if (done) return;
           if (ch === w[pos]){
@@ -7404,7 +7465,7 @@ function actFriday(a, d){
         } else { misses++; sfx('tap'); wiggle(got);
           if (misses === 3){ wordStat(w).x++; noteMiss(w); save(); scoutPop('thinking', 'Listen again, which letter comes next?', 2600); } }
       }, () => {});
-      const tm = setInterval(spawn, hard ? 750 : 1000);
+      const tm = setInterval(spawn, gp().catchEvery);
       spawn();
     }
   }
@@ -7417,7 +7478,7 @@ function actFriday(a, d){
      bee you need glows after two wrong tries. Typing works too. */
   function gameScramble(id){
     const words = shuffle(WEEK.allWords).slice(0, Math.min(8, WEEK.allWords.length));
-    const hard = isHard();
+    // (grade settings come from gp())
     let i = 0, score = 0;
     step();
     function step(){
@@ -7441,8 +7502,8 @@ function actFriday(a, d){
       drawGot();
       // a couple of extra "decoy" bees on longer lists keep it lively
       const decoys = 'aeiourstlnmdcbp'.split('').filter(x => w.indexOf(x) < 0);
-      const letters = w.split('').concat(shuffle(decoys).slice(0, hard ? 3 : 1));
-      const W = md.clientWidth || 320, H = md.clientHeight || 260, sp = hard ? 1.6 : 0.9;
+      const letters = w.split('').concat(shuffle(decoys).slice(0, gp().beeDecoys));
+      const W = md.clientWidth || 320, H = md.clientHeight || 260, sp = gp().beeSpeed;
       const bees = letters.map(ch => {
         const b = el('<button class="bug"><span class="wing l"></span><span class="wing r"></span><span class="body">'+esc(ch)+'</span></button>');
         const bee = { ch, el:b, x: Math.random() * (W - 56), y: Math.random() * (H - 56), vx:(Math.random()-.5) * 2 * sp, vy:(Math.random()-.5) * 2 * sp, boost:0, gone:false };
@@ -7487,7 +7548,7 @@ function actFriday(a, d){
         requestAnimationFrame(tick);
       };
       tick();
-      if (!hard) setTimeout(() => { if (!done && pos === 0) bees.forEach(o => o.el.classList.toggle('hint', !o.gone && o.ch === w[pos])); }, 6000);
+      if (gp().beeGlow) setTimeout(() => { if (!done && pos === 0) bees.forEach(o => o.el.classList.toggle('hint', !o.gone && o.ch === w[pos])); }, gp().beeGlow);
     }
   }
 
@@ -7622,7 +7683,7 @@ function actSaturday(a, d){
     if (hearts <= 0) return lose();
     if (i >= pile.length) return win();
     const w = pile[i], word = w.word.toLowerCase();
-    const hard = isHard();
+    // (grade settings come from gp())
     let pos = 0, lane = 1, bumps = 0, over = false;
     host.innerHTML = '';
     const hp = Math.round(100 * (pile.length - i) / pile.length);
@@ -7662,7 +7723,7 @@ function actSaturday(a, d){
        each next letter): letters move slower and come further apart, a little
        more for every letter past four */
     const ease = word.length <= 4 ? 1 : Math.max(.55, 1 - (word.length - 4) * .08);
-    const speed = (hard ? 175 : 115) * ease;
+    const speed = gp().bossSpeed * ease;
     let spawnIn = 500, last = performance.now(), wave = 0;
     const abc = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -7672,9 +7733,9 @@ function actSaturday(a, d){
       for (let l = 0; l < 3; l++){
         let ch = null;
         if (l === needLane) ch = need;
-        else if (hard || Math.random() < .5) ch = abc.replace(need, '')[Math.floor(Math.random() * 25)];
+        else if (Math.random() < gp().bossFill) ch = abc.replace(need, '')[Math.floor(Math.random() * 25)];
         if (!ch) continue;
-        const e = el('<div class="tok'+(l === needLane && !hard && bumps >= 2 ? ' need' : '')+'">'+esc(ch)+'</div>');
+        const e = el('<div class="tok'+(l === needLane && gp().bossGlow && bumps >= gp().bossGlow ? ' need' : '')+'">'+esc(ch)+'</div>');
         rw.appendChild(e);
         items.push({ ch, lane:l, x: W() + 30, el:e, done:false, wave, isNeed: l === needLane });
       }
@@ -7687,7 +7748,7 @@ function actSaturday(a, d){
         if (o.isNeed) ch = need;
         else if (ch === need) ch = abc.replace(need, '')[Math.floor(Math.random() * 25)];
         if (ch !== o.ch){ o.ch = ch; o.el.textContent = ch; }
-        o.el.classList.toggle('need', o.isNeed && !hard && bumps >= 2);
+        o.el.classList.toggle('need', o.isNeed && !!gp().bossGlow && bumps >= gp().bossGlow);
       });
     }
     function steer(dl){ if (over) return; lane = Math.max(0, Math.min(2, lane + dl)); sfx('key'); }
@@ -7735,7 +7796,7 @@ function actSaturday(a, d){
       const dt = Math.min(50, now - last) / 1000; last = now;
       if (!over){
         spawnIn -= dt * 1000;
-        if (spawnIn <= 0){ spawn(); spawnIn = ((hard ? 1350 : 1900) + Math.random() * 300) / ease; }
+        if (spawnIn <= 0){ spawn(); spawnIn = (gp().bossGap + Math.random() * 300) / ease; }
       }
       const target = laneY(lane);
       meY += (target - meY) * Math.min(1, dt * 14);
@@ -8193,7 +8254,7 @@ function actBeePlay(a){
     const st = beeStat(w.word);
     host.innerHTML = '';
     if (!st.seen) return study(w);
-    return onStage(w, (st.x > 0 && st.run === 0) ? makeBlanks(w.word, w.patternId, isHard()?2:1) : null);
+    return onStage(w, (st.x > 0 && st.run === 0) ? makeBlanks(w.word, w.patternId, gp().quizBlanks) : null);
   }
 
   /* a brand-new word gets a study card first — backstage, before the round */
