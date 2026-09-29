@@ -1041,6 +1041,15 @@ details.psec > summary{ font:900 16px/1.3 var(--font-head); color:var(--ink); pa
 .row.daypick{ flex-wrap:nowrap; gap:4px; }
 .row.daypick .btn{ flex:1 1 0; min-width:0; padding:11px 0; font-size:14px; min-height:46px; border-radius:12px; }
 /* review nights: looks like something you can change (29 Sep 2026) */
+.pushgrp{ display:flex; gap:10px; align-items:flex-start; margin:8px 0; cursor:pointer; font-size:15px; line-height:21px; }
+.pushgrp input{ width:22px; height:22px; margin-top:1px; accent-color:var(--brand, #7c3aed); flex:none; }
+.pushgrp .muted{ display:block; font-size:14px; line-height:20px; }
+.gu-note{ display:flex; gap:12px; align-items:center; text-align:left; background:rgba(255,255,255,.96); color:var(--ink);
+  border-radius:18px; padding:12px 14px; margin:8px auto 0; max-width:520px; box-shadow:0 4px 0 rgba(0,0,0,.12); }
+.gu-note b{ display:block; font-size:15px; line-height:20px; }
+.gu-note span{ font-size:14px; line-height:20px; color:var(--ink-soft); }
+.gu-note .gu-x{ margin-left:auto; flex:none; background:none; border:0; font-size:22px; line-height:1; color:var(--ink-soft); cursor:pointer; padding:6px; }
+.gu-note .btn{ flex:none; padding:10px 14px; font-size:15px; min-height:0; }
 select.ti[data-f="nights"], select.ti#pushtime{ display:block; width:100%; font:800 17px/22px var(--font-head, inherit); color:var(--ink);
   padding:13px 48px 13px 16px; border:2px solid #d9cdfb; border-radius:14px; cursor:pointer;
   background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%237c3aed'/%3E%3Cpath d='M7 10l5 5 5-5' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
@@ -2039,10 +2048,10 @@ const BADGES = [
   { id:'streak14', em:'☄️', n:'Two-Week Streak',d:'Practice 14 days in a row', art:'streak-14' },
   { id:'weeks2',   em:'🗓️', n:'Two Great Weeks',d:'Finish 2 weeks', art:'two-weeks' },
   // 29 Sep 2026: Spelling Bee badges
-  { id:'beestage', em:'🎙️', n:'On Stage',       d:'Finish a Spelling Bee practice' },
-  { id:'beestreak',em:'🐝', n:'Bee Streak',     d:'5 bee words in a row on stage' },
-  { id:'beespeed', em:'⚡', n:'Speed Speller',  d:'Finish a Spelling Bee speed round' },
-  { id:'beehive',  em:'👑', n:'Full Hive',      d:'Every word on the bee list in the hive' },
+  { id:'beestage', em:'🎙️', n:'On Stage',       d:'Finish a Spelling Bee practice', art:'on-stage' },
+  { id:'beestreak',em:'🐝', n:'Bee Streak',     d:'5 bee words in a row on stage', art:'bee-streak' },
+  { id:'beespeed', em:'⚡', n:'Speed Speller',  d:'Finish a Spelling Bee speed round', art:'speed-speller' },
+  { id:'beehive',  em:'👑', n:'Full Hive',      d:'Every word on the bee list in the hive', art:'full-hive' },
   { id:'level15',  em:'💎', n:'Level 15',       d:'Reach level 15', art:'level-15' },
 ];
 
@@ -2740,6 +2749,16 @@ function wordStat(w){
   const p = prog();
   if (!p.stats[w]) p.stats[w] = { r:0, x:0 };
   return p.stats[w];
+}
+/* "That one was tricky and we got it!" — a word missed earlier this week,
+   right first time now. Once per word per visit, so it stays special. */
+const TRICKY_WON = {};
+function trickyWinLine(w){
+  const st = prog().stats[w];
+  if (!st || !(st.x > 0) || TRICKY_WON[w]) return null;
+  TRICKY_WON[w] = 1;
+  const mood = scoutMood();
+  return mood === 'quiet' ? 'That tricky one? Got it.' : mood === 'chatty' ? 'That one was tricky and we got it! Woo-hoo!' : 'That one was tricky and we got it!';
 }
 function trickyWords(){
   const p = prog();
@@ -4573,7 +4592,7 @@ function installCard(){
    happens in the scout-push edge function; this device only keeps its own
    subscription and the time. */
 const PUSH_FN = 'https://nkkckcnclqwpvvwujedg.supabase.co/functions/v1/scout-push';
-const PUSH_TIMES = ['15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00'];
+const PUSH_TIMES = ['15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];   // quiet hours start at 8 pm
 function pushSupported(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
 function pushState(){ try { return JSON.parse(localStorage.getItem('sq_push') || '{}') || {}; } catch(e){ return {}; } }
 function pushSave(st){ try { localStorage.setItem('sq_push', JSON.stringify(st)); } catch(e){} }
@@ -4582,6 +4601,82 @@ function pushCall(body){
     .then(r => r.json()).catch(() => null);
 }
 function localDate(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function pushGroups(){ const g = pushState().groups || {}; return { week: g.week !== false, account: g.account !== false }; }
+
+/* The next nine days of possible reminders, worked out here because only the
+   app knows each child's route (SQ-Recommended-Notifications.pdf, 29 Sep 2026).
+   The server sends at most one a day: the highest priority whose "nd" dates had
+   no finished sprint on any of the family's devices. Texts name a sprint at
+   most, never a child or a word: they pass through Apple's and Google's servers
+   and show on a lock screen. */
+function pushPlan(){
+  const out = [], now = new Date(), t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayAt = i => new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + i);
+  const add = (d, k, t, b, p, g, nd, u) => out.push({ d, k, t, b, p, g: g || 'week', nd: nd || [], u: u || '/app/' });
+  const many = (DB.kids || []).length > 1;
+  (DB.kids || []).forEach(k => {
+    const td = testDayOf(k), start = startDayOf(k), n = reviewNightsOf(k), r = routeFor(k);
+    const pw = (k.prog && k.prog[weekKeyFor(k)]) || {};
+    const days = pw.days || {}, write = pw.write || {};
+    const wwAt = (k.prog && k.prog[WW_AT_KEY]) || 0;
+    const sinceStart = (t0.getDay() - start + 7) % 7;             // nights since this window began
+    for (let i = 0; i < 9; i++){
+      const dt = dayAt(i), d = ymd(dt), dow = dt.getDay(), prev = ymd(dayAt(i - 1));
+      const off = (dow - start + 7) % 7;
+      const thisWindow = i + sinceStart < 7;                        // still the words they have now
+      const undone = keys => keys.filter(x => !(thisWindow && days[x] && days[x].done));
+      // 4. the night before the test
+      if ((dow + 1) % 7 === td) add(d, 'eve', 'Test tomorrow 🐝', 'Open Grown-ups to see the words worth a look together.', 90, 'week', [], '/app/#open=prog');
+      // 1. the night the words come home, until this week's list is in
+      if (dow === start && wwAt < dt.getTime()) add(d, 'words', 'New words tonight?', 'Add this week\'s list and Scout will get it ready.', 85);
+      // 5. evening of test day (when the new list doesn't arrive the same day)
+      if (dow === td && start !== td) add(d, 'test', 'How did the test go?', 'Next list goes in when the words come home.', 50);
+      // 7. the week's recap, the day after the test
+      if (dow === (td + 1) % 7) add(d, 'recap', 'This week with Scout', 'See what they\'ve got and what\'s worth one more look.', 40, 'week', [], '/app/#open=prog');
+      if (n > 7){
+        if (dow !== td) add(d, 'nightly', 'Spelling Quest', 'Scout\'s ready for tonight\'s sprint. About 10 minutes.', 70, 'week', [d]);
+        continue;
+      }
+      // 2. each review night
+      const keys = (off < r.length && r[off]) || [];
+      const left = undone(keys);
+      if (left.length){
+        const body = many ? 'Tonight\'s sprints are ready. About 10 minutes each.'
+          : left.length > 1 ? 'Two short sprints tonight. One now is plenty.'
+          : 'Tonight: ' + DAYS[DAY_INDEX[left[0]]].t + '. About 10 minutes.';
+        add(d, 'nightly', 'Spelling Quest', body, 70, 'week', [d]);
+      }
+      // 6. a missed night, caught up without guilt (the server keeps it to once a week)
+      const poff = (off + 6) % 7, pkeys = (off > 0 && poff < r.length && r[poff]) || [];
+      if (keys.length && pkeys.length && dow !== td && undone(pkeys).length && (i > 0 || thisWindow))
+        add(d, 'missed', 'Spelling Quest', WEEKDAYS[(dow + 6) % 7] + '\'s sprint is still open. It can share a night with tonight\'s.', 80, 'week', [prev, d]);
+    }
+    // 3. the day after a Paper Power-Up that wasn't finished
+    Object.keys(write).forEach(key => {
+      const w = write[key];
+      if (!w || w.done || !w.when) return;
+      const [y, m, dd] = String(w.when).split('-').map(Number);
+      const next = ymd(new Date(y, m - 1, dd + 1));
+      if (next >= ymd(t0)) add(next, 'ppu', 'Paper Power-Up is waiting', 'Grab a pencil when it suits.', 60);
+    });
+  });
+  // 8. the free week: day 5 and day 7
+  const unlocked = !!(DB.accessCode || (DB.licence && DB.licence.key));
+  if (!unlocked && DB.trialStart){
+    const s0 = new Date(DB.trialStart), sd = new Date(s0.getFullYear(), s0.getMonth(), s0.getDate());
+    const on = n => ymd(new Date(sd.getFullYear(), sd.getMonth(), sd.getDate() + n - 1));
+    add(on(5), 'trial', 'Spelling Quest', 'Two days left in your free week.', 55, 'account');
+    add(on(7), 'trial', 'Spelling Quest', 'Last day of your free week. Add your key in Grown-ups whenever you\'re ready.', 75, 'account');
+  }
+  // 9. a key that has stopped verifying: 14 and 3 days before the grace runs out
+  if (DB.licence && DB.licence.key && DB.licence.failingSince){
+    const end = DB.licence.failingSince + GRACE_DAYS * 86400000;
+    [[14, 55], [3, 75]].forEach(([n, pr]) => add(ymd(new Date(end - n * 86400000)), 'key', 'Spelling Quest', 'Your license key needs a look. Progress is safe.', pr, 'account'));
+  }
+  const today = ymd(t0);
+  return out.filter(e => e.d >= today).slice(0, 80);
+}
 function pushTestDays(){ return (DB && DB.kids || []).map(testDayOf).filter((d, i, a) => a.indexOf(d) === i); }
 function pushTz(){ try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){ return ''; } }
 function timeLabel(t){ const [h, m] = t.split(':').map(Number); return ((h+11)%12+1)+':'+String(m).padStart(2,'0')+(h < 12 ? ' am' : ' pm'); }
@@ -4597,16 +4692,17 @@ async function pushOn(time){
   let sub = await reg.pushManager.getSubscription();
   if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64uBytes(k.publicKey) });
   const j = sub.toJSON();
-  const r = await pushCall({ action:'subscribe', sub:j, tz:pushTz(), remind_at:time, test_days:pushTestDays(), fam:familyFingerprint() });
+  const r = await pushCall({ action:'subscribe', sub:j, tz:pushTz(), remind_at:time, test_days:pushTestDays(),
+    fam:familyFingerprint(), plan:pushPlan(), groups:pushGroups() });
   if (!r || !r.ok) return { ok:false, why:'offline' };
-  pushSave({ on:true, time, endpoint:j.endpoint });
+  pushSave({ on:true, time, endpoint:j.endpoint, groups:pushGroups() });
   return { ok:true };
 }
 async function pushOff(){
   const st = pushState();
   try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch(e){}
   if (st.endpoint) pushCall({ action:'unsubscribe', endpoint:st.endpoint });
-  pushSave({ on:false, time:st.time });
+  pushSave({ on:false, time:st.time, groups:st.groups });
 }
 /* keeps the server's copy current: time zone after travel, a changed test day,
    the family code once it's entered */
@@ -4614,15 +4710,53 @@ function pushRefresh(extra){
   const st = pushState();
   if (!st.on || !st.endpoint) return;
   pushCall(Object.assign({ action:'update', endpoint:st.endpoint, tz:pushTz(), test_days:pushTestDays(),
-    fam:familyFingerprint() || undefined }, extra || {})).then(r => {
-    if (r && r.ok && !r.on) pushSave({ on:false, time:st.time });   // the server dropped it (expired)
+    fam:familyFingerprint() || undefined, plan:pushPlan(), groups:pushGroups() }, extra || {})).then(r => {
+    if (r && r.ok && !r.on) pushSave({ on:false, time:st.time, groups:st.groups });   // the server dropped it (expired)
   });
 }
 /* a finished sprint quiets today's reminder on every device of this family */
+function localDoneDates(){ try { return JSON.parse(localStorage.getItem('sq_done_dates') || '[]'); } catch(e){ return []; } }
 function pushDone(){
+  try { const dd = localDoneDates(); if (dd.indexOf(localDate()) < 0){ dd.push(localDate()); localStorage.setItem('sq_done_dates', JSON.stringify(dd.slice(-21))); } } catch(e){}
   const st = pushState(), fam = familyFingerprint();
   if (!fam && !(st.on && st.endpoint)) return;
   pushCall({ action:'done', date:localDate(), fam: fam || undefined, endpoint: st.on ? st.endpoint : undefined });
+  setTimeout(pushRefresh, 1500);
+}
+
+/* One line for the grown-ups on the choose-a-name screen (Phase A of the
+   notifications plan): the reminders offer once a sprint has been finished (never
+   on first launch), otherwise today's most useful reminder, shown in the app. */
+function noteKey(){ return 'sq_note_' + localDate(); }
+function guNote(){
+  const dismissed = k => { try { return (localStorage.getItem(noteKey()) || '').split(',').indexOf(k) >= 0; } catch(e){ return false; } };
+  const dismiss = k => { try { const v = localStorage.getItem(noteKey()); localStorage.setItem(noteKey(), (v ? v + ',' : '') + k); } catch(e){} };
+  const anyDone = (DB.kids || []).some(k => Object.keys(k.prog || {}).some(id => isWeekKey(id) && k.prog[id] && k.prog[id].days &&
+    Object.values(k.prog[id].days).some(x => x && x.done)));
+  let offerOff = false; try { offerOff = localStorage.getItem('sq_push_offer') === 'no'; } catch(e){}
+  let n = null;
+  if (anyDone && !offerOff && pushSupported() && !pushState().on && Notification.permission === 'default' && !(isIOS() && !isInstalled())){
+    n = el('<div class="gu-note" id="gu-offer"><img src="'+SCOUT_IMG('waving')+'" alt="" width="44" height="44">'+
+      '<div><b>Grown-ups: a nudge at sprint time?</b><span>Scout can send you one reminder a day. Never to your child.</span></div>'+
+      '<button class="btn" id="gu-yes">Set up</button><button class="gu-x" aria-label="No thanks">×</button></div>');
+    n.querySelector('#gu-yes').onclick = () => { sfx('tap'); window.__toPush = 1; parentGate('more'); };
+    n.querySelector('.gu-x').onclick = () => { try { localStorage.setItem('sq_push_offer', 'no'); } catch(e){} n.remove(); };
+    return n;
+  }
+  const done = localDoneDates(), today = localDate();
+  const due = pushPlan().filter(e => e.d === today && !e.nd.some(d => done.indexOf(d) >= 0) && !dismissed(e.k))
+    .sort((a, b) => b.p - a.p);
+  const e = due[0];
+  if (!e) return null;
+  const go2 = { eve:'prog', recap:'prog', words:'words', trial:'more', key:'more' }[e.k];
+  n = el('<div class="gu-note"><img src="'+SCOUT_IMG(e.k === 'eve' || e.k === 'recap' ? 'cheering' : 'pointing')+'" alt="" width="44" height="44">'+
+    '<div><b>'+esc(e.k === 'nightly' || e.k === 'missed' ? e.b : e.t)+'</b>'+
+    (e.k === 'nightly' || e.k === 'missed' ? '' : '<span>'+esc(e.b)+'</span>')+'</div>'+
+    (go2 ? '<button class="btn" id="gu-go">Open</button>' : '')+
+    '<button class="gu-x" aria-label="Hide for today">×</button></div>');
+  if (go2) n.querySelector('#gu-go').onclick = () => { sfx('tap'); parentGate(go2); };
+  n.querySelector('.gu-x').onclick = () => { dismiss(e.k); n.remove(); };
+  return n;
 }
 
 function remindersCard(){
@@ -4632,7 +4766,8 @@ function remindersCard(){
   const blocked = pushSupported() && Notification.permission === 'denied';
   const c = el('<div class="card" id="wk-push"><h3>🔔 Reminders from Scout</h3>'+
     '<p class="muted" style="font-size:14px;line-height:20px;margin-top:4px">One friendly nudge a day on this device '+
-    'when it\'s time for the sprint. Scout stays quiet on test day, and once today\'s sprint is done on any of your devices.</p>'+
+    'when it\'s time for the sprint, never after 8 pm, and never once tonight\'s sprint is done on any of your devices. '+
+    'Nothing is ever sent to your child. If three in a row go unopened, Scout goes quiet until you next open the app.</p>'+
     (iosNeedsInstall
       ? '<p class="muted" style="font-size:14px;line-height:20px;margin-top:10px"><b>On iPhone and iPad:</b> put Scout on your '+
         'Home Screen first (the steps are above), then open Scout from there to turn reminders on.</p>'
@@ -4642,6 +4777,11 @@ function remindersCard(){
       : '<label class="fl">Remind me at</label>'+
         '<select class="ti" id="pushtime">'+PUSH_TIMES.map(t =>
           '<option value="'+t+'"'+(t===time?' selected':'')+'>'+timeLabel(t)+'</option>').join('')+'</select>'+
+        '<label class="fl">What Scout reminds you about</label>'+
+        '<label class="pushgrp"><input type="checkbox" id="pg-week"'+(pushGroups().week?' checked':'')+'> <span><b>The weekly rhythm</b>'+
+          '<span class="muted">Tonight\'s sprint, new words, test day, a missed night, the week\'s recap.</span></span></label>'+
+        '<label class="pushgrp"><input type="checkbox" id="pg-acc"'+(pushGroups().account?' checked':'')+'> <span><b>Your account</b>'+
+          '<span class="muted">The end of your free week, or a key that needs a look.</span></span></label>'+
         '<div class="row" style="margin-top:12px">'+
         (st.on
           ? '<button class="btn grey" id="pushtest" style="flex:1">Send a test</button>'+
@@ -4677,6 +4817,13 @@ function remindersCard(){
       say('That one didn\'t go through. Try turning reminders off and on again.');
     });
   };
+  c.querySelectorAll('#pg-week,#pg-acc').forEach(cb => cb.onchange = () => {
+    const s2 = pushState();
+    s2.groups = { week: c.querySelector('#pg-week').checked, account: c.querySelector('#pg-acc').checked };
+    pushSave(s2); sfx('tap');
+    if (s2.on) pushRefresh();
+  });
+  if (window.__toPush){ window.__toPush = 0; setTimeout(() => c.scrollIntoView({ block:'center', behavior:'smooth' }), 350); }
   if (sel) sel.onchange = () => {
     const s2 = pushState(); s2.time = sel.value; pushSave(s2);
     if (s2.on){ pushRefresh({ remind_at: sel.value }); say('✅ On. Scout will nudge you around '+timeLabel(sel.value)+'.'); }
@@ -4940,6 +5087,7 @@ function renderPick(a){
     grid.appendChild(c);
   });
   a.appendChild(grid);
+  try { const gn = guNote(); if (gn) a.appendChild(gn); } catch(e){}
   const b = el('<div class="center" style="margin-top:22px"><button class="btn ghost">🔒 Grown-ups</button></div>');
   b.querySelector('button').onclick = parentGate;
   a.appendChild(b);
@@ -5058,9 +5206,21 @@ function homeGreeting(){
     ? (quiet ? 'Today\'s sprint is done. Nice work.' : 'We did today\'s sprint! Want to play a game while we\'re here?')
     : (quiet ? 'Up next: ' + td.t + '.' : 'Hi ' + esc(k.name) + '! Today we\'re doing ' + td.t + ' together. Ready?');
   const allDone = DAYS.every(d => pp.days[d.key] && pp.days[d.key].done);
+  /* in-app moments from the notifications plan (29 Sep 2026), in Scout's
+     age-aware voice: chatty K-1, shorter 2-3, brief 4-5 */
+  const mood = scoutMood();
+  const eve = (new Date().getDay() + 1) % 7 === testDayOf(k) && !doneToday;
+  const gapDays = k.lastDay ? Math.round((Date.parse(new Date().toISOString().slice(0,10)) - Date.parse(k.lastDay)) / 86400000) : 0;
+  const special = eve
+    ? (mood === 'chatty' ? 'Big day tomorrow, ' + esc(k.name) + '! Want one more run of the tricky ones?'
+      : mood === 'quiet' ? 'Test tomorrow. One more run of the tricky ones?' : 'Big day tomorrow! Want one more run of the tricky ones?')
+    : (gapDays >= 3 && !doneToday)
+    ? (mood === 'chatty' ? 'You\'re back! I missed you, ' + esc(k.name) + '. I saved our spot. Today it\'s ' + td.t + '!'
+      : mood === 'quiet' ? 'Welcome back. Up next: ' + td.t + '.' : 'You\'re back! I saved our spot.')
+    : null;
   const hi = allDone
     ? (quiet ? 'Every sprint is done. You\'re ready for the test.' : 'We did it! Every single sprint is done. You\'re ready for test day, ' + esc(k.name) + '! Let\'s go look in our backpack.')
-    : line;
+    : (special || line);
   return { hi, allDone, doneToday };
 }
 /* hellos already said this visit (29 Sep 2026: Scout greeted twice on the
@@ -5613,6 +5773,7 @@ function parentWords(a){
     } });
     if (!any){ toast('Add some words first!'); return; }
     if (card.querySelector('#fw').checked) newWeekId(); else logWeek();
+    pushRefresh();
     save(); buildCurrentWeek(); sfx('good');
     toast('✅ New week saved!');
     setTimeout(()=>go('parent','words'), 600);
@@ -6049,7 +6210,9 @@ function boot(){
     Object.keys(SCOUT_INTROS).forEach(k => { lines.push(SCOUT_INTROS[k][1], SCOUT_INTROS[k][2]); });
     CHEERS.concat(CHEERS_QUIET, ENCOURAGE, ENCOURAGE_QUIET,
       PICK_HELLOS.map(h => h[0]), PICK_HELLOS.map(h => h[1]),
-      ['We did it! Sprint complete!','Sprint complete. Great teamwork!','Halfway there!','Half a jar of honey!','We\'re halfway, keep going!',
+      ['We did it! Sprint complete!','Sprint complete. Great teamwork!','Honey jar\'s full! That\'s a whole sprint.',
+       'That one was tricky and we got it!','That one was tricky and we got it! Woo-hoo!','That tricky one? Got it.',
+       'You\'re back! I saved our spot.','Big day tomorrow! Want one more run of the tricky ones?','Test tomorrow. One more run of the tricky ones?','Halfway there!','Half a jar of honey!','We\'re halfway, keep going!',
        'Write it from memory. No peeking!','Eyes on your paper. No peeking!','Pencil power! Write it from memory.','I\'m covering my eyes too. Write it!',
        'One more go! No peeking!','You\'ve got this. Write it again!',
        'Let\'s check! Does yours match mine?','Moment of truth! Let\'s peek.','Detective time! Check every letter.','Ooh, let\'s see! Letter by letter.',
@@ -6065,8 +6228,43 @@ function boot(){
   if (toPick && /[#&](key|start)=/.test(location.hash)) history.replaceState(null,'',location.pathname);
   go(toPick ? 'pick' : 'gate');
   try{ startSync(); }catch(e){}
-  setTimeout(() => { try{ pushRefresh(); }catch(e){} }, 3000);
+  setTimeout(() => { try{ pushRefresh({ seen:true }); }catch(e){} }, 3000);
+  /* a tapped reminder can ask for a page: "#open=prog" is the grown-ups' Progress */
+  if (/[#&]open=prog/.test(location.hash)){
+    history.replaceState(null, '', location.pathname);
+    if (toPick) setTimeout(() => openFromReminder('prog'), 700);
+  }
 }
+/* 10. A new version is ready: the page is network-first, so a family who keeps
+   the app open for days is the only one running old code. Look again when the
+   app comes back to the front (at most every 30 minutes), never mid-activity. */
+let APP_SIG = null, APP_CHECKED = 0;
+function pageSig(t){ let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) >>> 0; return t.length + ':' + h; }
+function checkForUpdate(){
+  if (Date.now() - APP_CHECKED < 30 * 60000 && APP_SIG) return;
+  APP_CHECKED = Date.now();
+  fetch(location.pathname, { cache:'no-store' }).then(r => r.ok ? r.text() : null).then(t => {
+    if (!t) return;
+    const sig = pageSig(t);
+    if (!APP_SIG){ APP_SIG = sig; return; }
+    if (sig !== APP_SIG && !document.querySelector('#sqNew')){
+      const bar = el('<div class="gu-note" id="sqNew" style="position:fixed;left:16px;right:16px;bottom:16px;z-index:60">'+
+        '<div><b>A new version of Spelling Quest is ready.</b><span>Reload to get it. Nothing is lost.</span></div>'+
+        '<button class="btn" id="sqReload">Reload</button></div>');
+      bar.querySelector('#sqReload').onclick = () => location.reload();
+      const show = () => { if (['day','beeplay','beespeed'].indexOf(document.body.dataset.view) < 0) document.body.appendChild(bar); else setTimeout(show, 20000); };
+      show();
+    }
+  }).catch(() => {});
+}
+setTimeout(checkForUpdate, 8000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkForUpdate(); });
+function openFromReminder(where){
+  if (where === 'prog' && hasAccess()) parentGate('prog');
+}
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => {
+  if (e.data && e.data.sqOpen) openFromReminder(e.data.sqOpen);
+});
 document.addEventListener('DOMContentLoaded', boot);
 
 </script>
@@ -6488,7 +6686,7 @@ function rewardScreen(d, correct, total, s, xp, extra){
     (unseenBadges() ? '<button class="btn big yellow" id="bp" style="margin-top:14px">🎒 A new badge! Open the backpack</button>' : '')+
     '<button class="btn big green" style="margin-top:'+(unseenBadges() ? 8 : 14)+'px" data-close>Back to the map</button>');
   const bp = p.querySelector('#bp'); if (bp) bp.onclick = () => { p.remove(); go('badges'); };
-  try{ if (typeof scoutSpeak === 'function') scoutSpeak(s===3 ? 'We did it! Sprint complete!' : 'Sprint complete. Great teamwork!'); }catch(e){}
+  try{ if (typeof scoutSpeak === 'function') scoutSpeak(s===3 ? pickFresh(['We did it! Sprint complete!', 'Honey jar\'s full! That\'s a whole sprint.'], 'fin3') : 'Sprint complete. Great teamwork!'); }catch(e){}
   p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('home'); });
 }
 
@@ -6618,10 +6816,12 @@ function typingRound(host, opts){
     tries++;
     if (ok){
       locked = true; draw('good');
+      const won = tries === 1 && !opts.noStats ? trickyWinLine(word) : null;
       if (!opts.noStats){ wordStat(word).r++; save(); }
       sfx(tries === 1 ? 'great' : 'good');
       sayWord(word);                               // the word first, then Scout's cheer
-      scoutPop('cheering', cheer(), 2200);
+      if (won){ scoutPop('cheering', won, 2600); try{ sayQueued(won); }catch(e){} }
+      else scoutPop('cheering', cheer(), 2200);
       setTimeout(()=>opts.onDone(tries === 1, tries), 1500);
     } else {
       draw('bad');
@@ -7275,6 +7475,8 @@ function actTuesday(a, d){
       const made = placed.map(p=>p.txt).join('');
       tries++;
       if (made === w.word.toLowerCase()){
+        const won = tries === 1 ? trickyWinLine(w.word) : null;
+        if (won) setTimeout(() => { scoutPop('cheering', won, 2600); try{ sayQueued(won); }catch(e){} }, 700);
         wordStat(w.word).r++; save();
         slots.querySelectorAll('.slot').forEach(s => s.classList.add('lit'));
         jar.add(slots); if (Math.random() < .5) scoutFly({ pose:'cheering' });

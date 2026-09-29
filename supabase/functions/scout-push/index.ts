@@ -6,14 +6,24 @@
 //
 // POST { action, ... } from the app:
 //   key                          -> { publicKey }
-//   subscribe  { sub, tz, remind_at, test_days, fam? }   (fam: the family's scrambled sync code, when there is one)
+//   subscribe  { sub, tz, remind_at, test_days, fam?, plan?, groups? }   (fam: the family's scrambled sync code, when there is one)
 //   done       { date, fam?, endpoint? }  a sprint was finished today on some device of this family
-//   update     { endpoint, tz?, remind_at?, test_days?, done?, fam? }   (done: 'YYYY-MM-DD', a sprint finished today)
+//   update     { endpoint, tz?, remind_at?, test_days?, done?, fam?, plan?, groups?, seen? }
+//              (done: 'YYYY-MM-DD', a sprint finished today; seen: the app was opened, so un-pause)
 //   unsubscribe { endpoint }
 //   test       { endpoint }      -> sends one right now
 // POST { action:'tick' } with header x-cron-key, every 15 minutes from pg_cron:
-//   sends today's reminder to each device whose reminder time has come, unless a
-//   sprint was already finished today, it's test day, or one was sent today.
+//   sends each device its one message for today, in the 90 minutes after its
+//   reminder time, never in quiet hours (8 pm to 7:30 am), and not at all after
+//   three unopened reminders in a row, until the app is next opened.
+//
+// The plan (29 Sep 2026, SQ-Recommended-Notifications.pdf): the app works out
+// the next nine days of possible reminders itself, since it knows each child's
+// route, test day and review nights, and sends them here each time it opens.
+// Each entry is { d:date, k:kind, t:title, b:body, p:priority, g:'week'|'account',
+// nd:[dates], u:url }. On the day, the highest-priority entry whose group is on
+// and none of whose nd dates had a finished sprint is sent. The texts never carry
+// a child's name or words (the app builds them from sprint names only).
 //
 // No secrets to add: the VAPID signing key is made on first use and kept in
 // public.sq_push_keys (row-level security on, no policies, so only this
@@ -100,6 +110,46 @@ const LINES = [
   "Five minutes with Scout today? Let's go!",
 ];
 
+const KINDS = ["words", "nightly", "ppu", "eve", "test", "missed", "recap", "trial", "key"];
+const isDate = (d: any) => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ""));
+const cleanStr = (t: any, n: number) => String(t || "").replace(/[\u0000-\u001f<>]/g, "").slice(0, n);
+const cleanPlan = (pl: any) => {
+  if (!Array.isArray(pl)) return null;
+  return pl.slice(0, 80).filter((e: any) => e && isDate(e.d) && KINDS.includes(e.k) && e.t && e.b).map((e: any) => ({
+    d: e.d, k: e.k, t: cleanStr(e.t, 80), b: cleanStr(e.b, 160),
+    p: Math.max(0, Math.min(100, Number(e.p) || 0)), g: e.g === "account" ? "account" : "week",
+    nd: Array.isArray(e.nd) ? e.nd.filter(isDate).slice(0, 3) : [],
+    u: e.u === "/app/#open=prog" ? e.u : "/app/",
+  }));
+};
+const cleanGroups = (g: any) => g && typeof g === "object" ? { week: g.week !== false, account: g.account !== false } : null;
+const QUIET_FROM = 20 * 60;          // quiet hours 8 pm to 7:30 am
+const QUIET_TO = 7 * 60 + 30;
+const PAUSE_AFTER = 3;               // three ignored reminders in a row pause them until the app is opened
+const daysBetween = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+
+/* today's one message for this device, or null */
+function pick(r: any, now: { date: string; dow: number }) {
+  const groups = r.groups || { week: true, account: true };
+  const done: string[] = r.done_dates || [];
+  if (Array.isArray(r.plan)) {
+    const due = r.plan.filter((e: any) => e.d === now.date && groups[e.g] !== false &&
+      !(e.nd || []).some((d: string) => done.includes(d)) &&
+      !(e.k === "missed" && r.last_missed && daysBetween(r.last_missed, now.date) < 7));    // missed night: once a week at most
+    due.sort((a: any, b: any) => b.p - a.p);
+    const e = due[0];
+    return e ? { title: e.t, body: e.b, url: e.u, tag: "sq-daily", kind: e.k } : null;
+  }
+  // no plan yet (an older copy of the app): the simple nightly nudge
+  if (groups.week === false || r.last_done === now.date) return null;
+  const days: number[] = r.test_days || [];
+  if (days.includes(now.dow)) return null;
+  const eve = days.includes((now.dow + 1) % 7);
+  return { title: eve ? "Test tomorrow! 🐝" : "Spelling Quest",
+    body: eve ? "One last practice with Scout tonight?" : LINES[Math.floor(Math.random() * LINES.length)],
+    url: "/app/", tag: "sq-daily", kind: eve ? "eve" : "nightly" };
+}
+
 const okSub = (s: any) => s && /^https:\/\//.test(String(s.endpoint || "")) && s.keys && s.keys.p256dh && s.keys.auth;
 const cleanTime = (t: any) => /^([01]\d|2[0-3]):[0-5]\d$/.test(String(t)) ? String(t) : null;
 const cleanDays = (d: any) => Array.isArray(d) ? [...new Set(d.map(Number).filter((n) => n >= 0 && n <= 6))] : null;
@@ -132,16 +182,19 @@ Deno.serve(async (req) => {
       const [h, m] = String(r.remind_at).split(":").map(Number);
       const due = h * 60 + m;
       if (now.mins < due || now.mins > due + 90) continue;                       // only in the 90 minutes after their time
-      if (r.last_sent === now.date || r.last_done === now.date) continue;        // one a day, and never after a finished sprint
-      const days: number[] = r.test_days || [];
-      if (days.includes(now.dow)) continue;                                      // test day: no nagging
-      const eve = days.includes((now.dow + 1) % 7);
-      const msg = { title: eve ? "Test tomorrow! 🐝" : "Spelling Quest",
-        body: eve ? "One last practice with Scout tonight?" : LINES[Math.floor(Math.random() * LINES.length)],
-        url: "/app/", tag: "sq-daily" };
-      const code = await sendOne(keys, r.sub, msg).catch(() => 0);
+      if (now.mins >= QUIET_FROM || now.mins < QUIET_TO) continue;               // quiet hours
+      if (r.last_sent === now.date) continue;                                    // one a day, at most
+      if ((r.ignored || 0) >= PAUSE_AFTER) continue;                             // paused until the app is next opened
+      const msg = pick(r, now);
+      if (!msg) continue;
+      const code = await sendOne(keys, r.sub, { title: msg.title, body: msg.body, url: msg.url, tag: msg.tag }).catch(() => 0);
       if (code === 404 || code === 410) { await db.from("sq_push").delete().eq("endpoint", r.endpoint); continue; }
-      if (code >= 200 && code < 300){ sent++; await db.from("sq_push").update({ last_sent: now.date }).eq("endpoint", r.endpoint); }
+      if (code >= 200 && code < 300){
+        sent++;
+        const patch: any = { last_sent: now.date, ignored: (r.ignored || 0) + 1 };
+        if (msg.kind === "missed") patch.last_missed = now.date;
+        await db.from("sq_push").update(patch).eq("endpoint", r.endpoint);
+      }
     }
     return json({ ok: true, sent });
   }
@@ -155,7 +208,8 @@ Deno.serve(async (req) => {
     if (!okSub(s)) return json({ error: "bad subscription" }, 400);
     const row = { endpoint: String(s.endpoint).slice(0, 1000), sub: { endpoint: s.endpoint, keys: { p256dh: s.keys.p256dh, auth: s.keys.auth } },
       tz: cleanTz(body.tz) || "America/Chicago", remind_at: cleanTime(body.remind_at) || "18:30",
-      test_days: cleanDays(body.test_days) || [], fam: cleanFam(body.fam), updated_at: new Date().toISOString() };
+      test_days: cleanDays(body.test_days) || [], fam: cleanFam(body.fam), plan: cleanPlan(body.plan),
+      groups: cleanGroups(body.groups) || { week: true, account: true }, ignored: 0, updated_at: new Date().toISOString() };
     const { error } = await db.from("sq_push").upsert(row, { onConflict: "endpoint" });
     return error ? json({ error: "store" }, 500) : json({ ok: true, on: true });
   }
@@ -166,8 +220,14 @@ Deno.serve(async (req) => {
     const date = String(body.date || "");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "date" }, 400);
     const fam = cleanFam(body.fam), ep = /^https:\/\//.test(String(body.endpoint || "")) ? String(body.endpoint) : null;
-    if (fam) await db.from("sq_push").update({ last_done: date }).eq("fam", fam);
-    if (ep) await db.from("sq_push").update({ last_done: date }).eq("endpoint", ep);
+    const rows: any[] = [];
+    if (fam) rows.push(...((await db.from("sq_push").select("endpoint, done_dates").eq("fam", fam)).data || []));
+    if (ep && !rows.some((r) => r.endpoint === ep)) rows.push(...((await db.from("sq_push").select("endpoint, done_dates").eq("endpoint", ep)).data || []));
+    for (const r of rows) {
+      const dd = [...new Set([...(r.done_dates || []), date])].sort().slice(-21);   // three weeks is plenty
+      // a finished sprint means the reminders are doing their job: never paused for "silence"
+      await db.from("sq_push").update({ last_done: date, done_dates: dd, ignored: 0 }).eq("endpoint", r.endpoint);
+    }
     return json({ ok: true });
   }
 
@@ -185,6 +245,9 @@ Deno.serve(async (req) => {
     if (cleanDays(body.test_days)) patch.test_days = cleanDays(body.test_days);
     if (/^\d{4}-\d{2}-\d{2}$/.test(String(body.done || ""))) patch.last_done = body.done;
     if (cleanFam(body.fam)) patch.fam = cleanFam(body.fam);
+    if (cleanPlan(body.plan)) patch.plan = cleanPlan(body.plan);
+    if (cleanGroups(body.groups)) patch.groups = cleanGroups(body.groups);
+    if (body.seen === true) patch.ignored = 0;
     const { data, error } = await db.from("sq_push").update(patch).eq("endpoint", endpoint).select("endpoint");
     if (error) return json({ error: "store" }, 500);
     return json({ ok: true, on: !!(data && data.length) });
