@@ -1041,11 +1041,11 @@ details.psec > summary{ font:900 16px/1.3 var(--font-head); color:var(--ink); pa
 .row.daypick{ flex-wrap:nowrap; gap:4px; }
 .row.daypick .btn{ flex:1 1 0; min-width:0; padding:11px 0; font-size:14px; min-height:46px; border-radius:12px; }
 /* review nights: looks like something you can change (29 Sep 2026) */
-select.ti[data-f="nights"]{ display:block; width:100%; font:800 17px/22px var(--font-head, inherit); color:var(--ink);
+select.ti[data-f="nights"], select.ti#pushtime{ display:block; width:100%; font:800 17px/22px var(--font-head, inherit); color:var(--ink);
   padding:13px 48px 13px 16px; border:2px solid #d9cdfb; border-radius:14px; cursor:pointer;
   background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%237c3aed'/%3E%3Cpath d='M7 10l5 5 5-5' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
   box-shadow:0 3px 0 #e6ddff; }
-select.ti[data-f="nights"]:hover, select.ti[data-f="nights"]:focus{ border-color:var(--brand, #7c3aed); outline:none; }
+select.ti[data-f="nights"]:hover, select.ti[data-f="nights"]:focus, select.ti#pushtime:focus{ border-color:var(--brand, #7c3aed); outline:none; }
 
 /* walk-me (after RBTL) */
 body.walking .wrap{ z-index:auto; }
@@ -2950,6 +2950,7 @@ function completeDay(key, stars, xp){
   p.days[key] = { done:true, stars:Math.max(stars||0, prev.stars||0), when:new Date().toISOString().slice(0,10) };
   const k = kid();
   k.xp = (k.xp||0) + (xp||0);
+  pushDone();
   // streak
   const today = new Date().toISOString().slice(0,10);
   if (k.lastDay !== today){
@@ -4426,6 +4427,7 @@ const WALKME = [
   { t:'See how they\'re doing', view:'parent:prog', grown:true, target:'.kidprog', open:true, d:'Tap a child to open their week: sprints done, words to revisit, words they\'ve got, and their Paper Power-Up.' },
   { t:'Your access key', view:'parent:more', grown:true, target:'#wk-access', d:'Your free week starts straight away, no key needed. When you buy, your key goes here, and you can add it any time. Nothing is lost.' },
   { t:'Keep Scout close', view:'parent:more', grown:true, target:'.keepclose', install:true, d:'' },
+  { t:'Reminders from Scout', view:'parent:more', grown:true, target:'#wk-push', d:'Turn on one friendly nudge a day at the time that suits your family. Scout stays quiet on test day and once the sprint is done.' },
   { t:'Any time you need it', view:'parent:more', grown:true, target:'#wk-tour', d:'This tour lives here. Run it again whenever someone new is setting things up.' },
 ];
 function tourSeen(){ try { return localStorage.getItem('sq_tour_v1') === '1'; } catch(e){ return true; } }
@@ -4561,6 +4563,124 @@ function installCard(){
     '<div class="muted">One quick step</div></div></div>'+
     installStepsHtml(false)+'</div>');
   c.querySelectorAll('.sqInstallBtn').forEach(b => b.onclick = installNow);
+  return c;
+}
+
+/* ---------------- Reminders from Scout (web push), 29 Sep 2026 ----------------
+   Book Bestie's notification section, for Spelling Quest: off until a grown-up
+   turns it on, one gentle nudge a day at the time they pick, never on test day,
+   and never once a sprint is done (on any of the family's devices). The sending
+   happens in the scout-push edge function; this device only keeps its own
+   subscription and the time. */
+const PUSH_FN = 'https://nkkckcnclqwpvvwujedg.supabase.co/functions/v1/scout-push';
+const PUSH_TIMES = ['15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00'];
+function pushSupported(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+function pushState(){ try { return JSON.parse(localStorage.getItem('sq_push') || '{}') || {}; } catch(e){ return {}; } }
+function pushSave(st){ try { localStorage.setItem('sq_push', JSON.stringify(st)); } catch(e){} }
+function pushCall(body){
+  return fetch(PUSH_FN, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) })
+    .then(r => r.json()).catch(() => null);
+}
+function localDate(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function pushTestDays(){ return (DB && DB.kids || []).map(testDayOf).filter((d, i, a) => a.indexOf(d) === i); }
+function pushTz(){ try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){ return ''; } }
+function timeLabel(t){ const [h, m] = t.split(':').map(Number); return ((h+11)%12+1)+':'+String(m).padStart(2,'0')+(h < 12 ? ' am' : ' pm'); }
+function b64uBytes(s){ const b = atob(s.replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((s.length+3)%4)); return Uint8Array.from(b, c => c.charCodeAt(0)); }
+
+async function pushOn(time){
+  if (!pushSupported()) return { ok:false, why:'unsupported' };
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') return { ok:false, why: perm === 'denied' ? 'denied' : 'dismissed' };
+  const k = await pushCall({ action:'key' });
+  if (!k || !k.publicKey) return { ok:false, why:'offline' };
+  const reg = await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64uBytes(k.publicKey) });
+  const j = sub.toJSON();
+  const r = await pushCall({ action:'subscribe', sub:j, tz:pushTz(), remind_at:time, test_days:pushTestDays(), fam:familyFingerprint() });
+  if (!r || !r.ok) return { ok:false, why:'offline' };
+  pushSave({ on:true, time, endpoint:j.endpoint });
+  return { ok:true };
+}
+async function pushOff(){
+  const st = pushState();
+  try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch(e){}
+  if (st.endpoint) pushCall({ action:'unsubscribe', endpoint:st.endpoint });
+  pushSave({ on:false, time:st.time });
+}
+/* keeps the server's copy current: time zone after travel, a changed test day,
+   the family code once it's entered */
+function pushRefresh(extra){
+  const st = pushState();
+  if (!st.on || !st.endpoint) return;
+  pushCall(Object.assign({ action:'update', endpoint:st.endpoint, tz:pushTz(), test_days:pushTestDays(),
+    fam:familyFingerprint() || undefined }, extra || {})).then(r => {
+    if (r && r.ok && !r.on) pushSave({ on:false, time:st.time });   // the server dropped it (expired)
+  });
+}
+/* a finished sprint quiets today's reminder on every device of this family */
+function pushDone(){
+  const st = pushState(), fam = familyFingerprint();
+  if (!fam && !(st.on && st.endpoint)) return;
+  pushCall({ action:'done', date:localDate(), fam: fam || undefined, endpoint: st.on ? st.endpoint : undefined });
+}
+
+function remindersCard(){
+  const st = pushState();
+  const time = st.time || '18:30';
+  const iosNeedsInstall = isIOS() && !isInstalled();
+  const blocked = pushSupported() && Notification.permission === 'denied';
+  const c = el('<div class="card" id="wk-push"><h3>🔔 Reminders from Scout</h3>'+
+    '<p class="muted" style="font-size:14px;line-height:20px;margin-top:4px">One friendly nudge a day on this device '+
+    'when it\'s time for the sprint. Scout stays quiet on test day, and once today\'s sprint is done on any of your devices.</p>'+
+    (iosNeedsInstall
+      ? '<p class="muted" style="font-size:14px;line-height:20px;margin-top:10px"><b>On iPhone and iPad:</b> put Scout on your '+
+        'Home Screen first (the steps are above), then open Scout from there to turn reminders on.</p>'
+      : !pushSupported()
+      ? '<p class="muted" style="font-size:14px;line-height:20px;margin-top:10px">This browser can\'t show reminders. '+
+        'Try Scout in Chrome or Safari, or from your Home Screen.</p>'
+      : '<label class="fl">Remind me at</label>'+
+        '<select class="ti" id="pushtime">'+PUSH_TIMES.map(t =>
+          '<option value="'+t+'"'+(t===time?' selected':'')+'>'+timeLabel(t)+'</option>').join('')+'</select>'+
+        '<div class="row" style="margin-top:12px">'+
+        (st.on
+          ? '<button class="btn grey" id="pushtest" style="flex:1">Send a test</button>'+
+            '<button class="btn grey" id="pushoff" style="flex:1">Turn off</button>'
+          : '<button class="btn" id="pushon" style="flex:1">Turn on reminders</button>')+
+        '</div>'+
+        '<p class="muted" id="pushline" style="margin-top:10px;font-size:14px;line-height:20px">'+
+        (blocked ? 'Notifications are blocked for Scout. Allow them in your browser or phone settings, then come back.'
+          : st.on ? '✅ On. Scout will nudge you around '+timeLabel(time)+'.' : '')+'</p>')+
+    '</div>');
+  const line = c.querySelector('#pushline');
+  const say = t => { if (line) line.textContent = t; };
+  const on = c.querySelector('#pushon'), off = c.querySelector('#pushoff'), test = c.querySelector('#pushtest');
+  const sel = c.querySelector('#pushtime');
+  const redraw = () => { const n = remindersCard(); c.replaceWith(n); };
+  if (on) on.onclick = () => {
+    sfx('tap'); on.disabled = true; say('Asking your device…');
+    pushOn(sel.value).then(r => {
+      if (r.ok){ sfx('good'); toast('🔔 Reminders on'); return redraw(); }
+      on.disabled = false;
+      say(r.why === 'denied' ? 'Notifications are blocked for Scout. Allow them in your browser or phone settings, then try again.'
+        : r.why === 'dismissed' ? 'No problem. Tap again whenever you\'re ready.'
+        : r.why === 'unsupported' ? 'This browser can\'t show reminders.'
+        : 'Couldn\'t reach Scout just now. Check your connection and try again.');
+    }).catch(() => { on.disabled = false; say('Couldn\'t turn them on just now. Try again in a moment.'); });
+  };
+  if (off) off.onclick = () => { sfx('tap'); pushOff().then(() => { toast('Reminders off'); redraw(); }); };
+  if (test) test.onclick = () => {
+    sfx('tap'); say('Sending…');
+    pushCall({ action:'test', endpoint:st.endpoint }).then(r => {
+      if (r && r.ok) return say('Sent! It should pop up in a moment.');
+      if (r && r.on === false){ pushSave({ on:false, time }); return redraw(); }
+      say('That one didn\'t go through. Try turning reminders off and on again.');
+    });
+  };
+  if (sel) sel.onchange = () => {
+    const s2 = pushState(); s2.time = sel.value; pushSave(s2);
+    if (s2.on){ pushRefresh({ remind_at: sel.value }); say('✅ On. Scout will nudge you around '+timeLabel(sel.value)+'.'); }
+  };
   return c;
 }
 
@@ -5622,7 +5742,7 @@ function parentKids(a){
     });
     c.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
       k.testDay = +b.dataset.d; k.prog = k.prog || {}; k.prog[TD_AT_KEY] = Date.now();
-      save(); sfx('tap');
+      save(); sfx('tap'); pushRefresh();
       toast('Plans changed. Here\'s the best route from today to quiz day.', 3200);
       stayOn('kids');
     });
@@ -5791,6 +5911,7 @@ function beeLogHtml(k){
 
 function parentMore(a){
   const ic = installCard(); if (ic) a.appendChild(ic);
+  a.appendChild(remindersCard());
   /* The Voice card is gone (29 Sep 2026, Kathryn): Scout speaks in her own
      recorded voice, and the device voice is only a quiet fallback now. */
 
@@ -5944,6 +6065,7 @@ function boot(){
   if (toPick && /[#&](key|start)=/.test(location.hash)) history.replaceState(null,'',location.pathname);
   go(toPick ? 'pick' : 'gate');
   try{ startSync(); }catch(e){}
+  setTimeout(() => { try{ pushRefresh(); }catch(e){} }, 3000);
 }
 document.addEventListener('DOMContentLoaded', boot);
 
@@ -8619,6 +8741,7 @@ function beeFinishScreen(correct, total){
   const xp = correct*10 + (st===3?30:st===2?15:5);
   const k = kid();
   k.xp = (k.xp||0) + xp;
+  pushDone();
   const tdy = new Date().toISOString().slice(0,10);
   if (k.lastDay !== tdy){
     const y = new Date(Date.now()-86400000).toISOString().slice(0,10);

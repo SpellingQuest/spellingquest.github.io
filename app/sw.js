@@ -95,3 +95,22 @@ self.addEventListener('fetch', e => {
 
   // Anything else goes straight to the network.
 });
+
+/* Scout's reminders (29 Sep 2026, after Read Between The Lines). The server
+   (supabase/functions/scout-push) sends at most one a day, and only when a
+   grown-up has turned them on in Grown-ups → More. */
+self.addEventListener('push', e => {
+  let m = {};
+  try { m = e.data ? e.data.json() : {}; } catch (err) { m = { body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(m.title || 'Spelling Quest', {
+    body: m.body || '', tag: m.tag || 'sq', icon: '../icon-192.png', badge: '../icon-192.png', data: { url: m.url || '/app/' }
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || '/app/', self.location.origin).href;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) { if ('focus' in c) return c.focus(); }
+    return self.clients.openWindow(url);
+  }));
+});
