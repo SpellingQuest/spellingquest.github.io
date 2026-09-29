@@ -721,6 +721,8 @@ h1,h2,h3,.gb-label,.topbar .who b,.pop h2{ font-family:var(--font-head); font-we
 .badge > div{ color:#5a4e84 !important; opacity:1 !important; }
 .avem{ display:inline-block; line-height:1; }
 .avem.up{ transform:scale(1.3); }
+.avem.art img{ width:1.35em; height:1.35em; display:block; object-fit:contain; }
+.av .avem.art img{ width:40px; height:40px; }
 /* round patches (batch 4): the patch is the badge, no honeycomb behind it */
 .badge .em img.patch{ width:80px; height:80px; display:block; }
 .badge.art .em, .badge.locked .em{ background:none!important; clip-path:none; width:84px; height:84px; }
@@ -1078,6 +1080,15 @@ body.walking .wrap{ z-index:auto; }
   border-radius:16px; padding:8px 8px 6px; }
 .kc-app img{ width:56px; height:56px; border-radius:13px; box-shadow:0 4px 10px rgba(0,0,0,.35); }
 .kc-app span{ color:#fff; font:700 11px/13px -apple-system, system-ui, sans-serif; white-space:nowrap; }
+.wed-pic{ font-size:44px; line-height:52px; margin:0 auto 2px; }
+.wed-pic img.ic{ width:52px; height:52px; }
+/* jump between This Week's Words and the Spelling Bee */
+.modeswitch{ display:flex; align-items:center; gap:10px; width:100%; margin:0 0 12px; padding:8px 14px; border:1px solid rgba(255,255,255,.3);
+  border-radius:999px; background:rgba(255,255,255,.12); color:#fff; font:700 15px/20px var(--font-body, inherit); cursor:pointer; text-align:left; }
+.modeswitch img{ width:30px; height:30px; object-fit:contain; }
+.modeswitch span{ flex:1; }
+.modeswitch b{ color:var(--gold-soft, #ffe39a); }
+.modeswitch i{ font-style:normal; font-weight:900; }
 /* the Spelling Bee's home */
 .bee-hub .bh-count{ font-size:24px; line-height:30px; margin:4px 0 10px; }
 .bee-hub .bh-count b{ color:#b45309; font-size:34px; }
@@ -1978,11 +1989,20 @@ function sprintIco(d, px){
          'style="width:'+px+'px;height:'+px+'px;vertical-align:middle">';
 }
 
-const AVATARS = ['🦊','🐼','🐸','🦄','🐙','🦁','🐨','🐬','🦖','🐝','🦉','🐳','🐯','🦋','🐢','🚀','⭐','🤖'];   // 29 Sep 2026: 🌈 → 🤖 (Kathryn: more for the boys)
+const AVATARS = ['🦊','🐼','🐸','🦄','🐙','🦁','🐨','🐬','🦖','🐝','🦉','🦈','🐯','🦋','🐢','🚀','⚽','🤖'];   // 29 Sep 2026: 🌈 → 🤖, 🐳 → 🦈, ⭐ → ⚽ (Kathryn: more for the boys)
+/* Kathryn's avatar pictures (batch 9, 29 Sep 2026). A child's avatar is still
+   stored (and synced) as its emoji, so older choices keep working; each one is
+   shown as its picture. The whale and star became a shark and a soccer ball. */
+const AV_ART = { '🦊':'fox','🐼':'panda','🐸':'frog','🦄':'unicorn','🐙':'octopus','🦁':'lion','🐨':'koala','🐬':'dolphin',
+  '🦖':'t-rex','🐝':'bee','🦉':'owl','🦈':'shark','🐳':'shark','🐯':'tiger','🦋':'butterfly','🐢':'turtle','🚀':'astronaut',
+  '⚽':'soccer-ball','⭐':'soccer-ball','🤖':'robot','🌈':'robot' };
 /* Emoji aren't drawn the same size: the frog is a face that fills the square,
    the dinosaur is a whole little animal. These are nudged up so they match. */
 const SMALL_AVATARS = '🦖🐢🦋🐙🐬🐳🦉🐝🚀🦄🤖';
-function avEm(a){ return '<span class="avem'+(a && SMALL_AVATARS.indexOf(a) >= 0 ? ' up' : '')+'">'+(a || '')+'</span>'; }
+function avEm(a){
+  if (a && AV_ART[a]) return '<span class="avem art no-ic"><img src="../img/av/av-'+AV_ART[a]+'.webp" alt="" draggable="false"></span>';
+  return '<span class="avem'+(a && SMALL_AVATARS.indexOf(a) >= 0 ? ' up' : '')+'">'+(a || '')+'</span>';
+}
 
 const BADGES = [
   { id:'first',    em:'🌟', n:'First Star',     d:'Finish your first day', art:'first-star' },
@@ -1999,21 +2019,26 @@ const BADGES = [
   { id:'writer',   em:'✍️', n:'Pencil Power',   d:'Finish a Paper Power-Up', art:'pencil-power' },
   { id:'weeks4',   em:'📚', n:'Month of Words', d:'Finish 4 weeks', art:'month' },
   // 29 Sep 2026: more to collect
-  { id:'stars3',   em:'🌟', n:'Triple Star',    d:'Get 3 stars on a sprint' },
-  { id:'detective',em:'🔎', n:'Word Detective', d:'Finish Meet the Words' },
-  { id:'fixer',    em:'🛠️', n:'Hive Fixer',     d:'Fix the Hive with every word right' },
-  { id:'spotlight',em:'🎤', n:'Spotlight Star', d:'Spell every word right in the Spelling Bee' },
-  { id:'untouch',  em:'🛡️', n:'Untouchable',    d:'Beat the Tile Monster without losing a shield' },
-  { id:'onfire',   em:'🔥', n:'On Fire',        d:'5 words in a row in the Champion Quiz' },
-  { id:'catcher',  em:'🧺', n:'Super Catcher',  d:'A perfect game of Letter Catcher' },
-  { id:'wrangler', em:'🐝', n:'Bee Wrangler',   d:'A perfect game of Bee Chase' },
-  { id:'honey50',  em:'🍯', n:'Honey Collector',d:'50 drops of honey in one week' },
-  { id:'honey100', em:'🐻', n:'Honey Hoarder',  d:'100 drops of honey in one week' },
-  { id:'early',    em:'🌅', n:'Early Bird',     d:'Finish a sprint before 8 in the morning' },
-  { id:'owl',      em:'🦉', n:'Night Owl',      d:'Finish a sprint after 7 at night' },
-  { id:'streak14', em:'☄️', n:'Two-Week Streak',d:'Practice 14 days in a row' },
-  { id:'weeks2',   em:'🗓️', n:'Two Great Weeks',d:'Finish 2 weeks' },
-  { id:'level15',  em:'💎', n:'Level 15',       d:'Reach level 15' },
+  { id:'stars3',   em:'🌟', n:'Triple Star',    d:'Get 3 stars on a sprint', art:'triple-star' },
+  { id:'detective',em:'🔎', n:'Word Detective', d:'Finish Meet the Words', art:'detective' },
+  { id:'fixer',    em:'🛠️', n:'Hive Fixer',     d:'Fix the Hive with every word right', art:'hive-fixer' },
+  { id:'spotlight',em:'🎤', n:'Spotlight Star', d:'Spell every word right in the Spelling Bee', art:'spotlight' },
+  { id:'untouch',  em:'🛡️', n:'Untouchable',    d:'Beat the Tile Monster without losing a shield', art:'untouchable' },
+  { id:'onfire',   em:'🔥', n:'On Fire',        d:'5 words in a row in the Champion Quiz', art:'on-fire' },
+  { id:'catcher',  em:'🧺', n:'Super Catcher',  d:'A perfect game of Letter Catcher', art:'super-catcher' },
+  { id:'wrangler', em:'🐝', n:'Bee Wrangler',   d:'A perfect game of Bee Chase', art:'bee-wrangler' },
+  { id:'honey50',  em:'🍯', n:'Honey Collector',d:'50 drops of honey in one week', art:'honey-collector' },
+  { id:'honey100', em:'🐻', n:'Honey Hoarder',  d:'100 drops of honey in one week', art:'honey-hoarder' },
+  { id:'early',    em:'🌅', n:'Early Bird',     d:'Finish a sprint before 8 in the morning', art:'early-bird' },
+  { id:'owl',      em:'🦉', n:'Night Owl',      d:'Finish a sprint after 7 at night', art:'night-owl' },
+  { id:'streak14', em:'☄️', n:'Two-Week Streak',d:'Practice 14 days in a row', art:'streak-14' },
+  { id:'weeks2',   em:'🗓️', n:'Two Great Weeks',d:'Finish 2 weeks', art:'two-weeks' },
+  // 29 Sep 2026: Spelling Bee badges
+  { id:'beestage', em:'🎙️', n:'On Stage',       d:'Finish a Spelling Bee practice' },
+  { id:'beestreak',em:'🐝', n:'Bee Streak',     d:'5 bee words in a row on stage' },
+  { id:'beespeed', em:'⚡', n:'Speed Speller',  d:'Finish a Spelling Bee speed round' },
+  { id:'beehive',  em:'👑', n:'Full Hive',      d:'Every word on the bee list in the hive' },
+  { id:'level15',  em:'💎', n:'Level 15',       d:'Reach level 15', art:'level-15' },
 ];
 
 /* a badge's picture: Kathryn's round patch when there is one (batch 4, 29 Sep
@@ -3373,9 +3398,17 @@ function sayQueued(text, opts, maxWait){
   SPEAK_Q.push({ text, opts: opts || {}, gen: SPEAK_GEN, at: Date.now(), maxWait: maxWait || 0 });
   pumpSpeech();
 }
+/* A tap cuts in with its first line; any more lines from the same tap wait
+   their turn (29 Sep 2026: "Next word: snip." then "Remember: short I" in one
+   tap cut the word off after its "s"). */
+let TAP_EV = null;
 function say(text, opts){
   opts = opts || {};
-  if (opts.now || inUserTap()) return sayNow(text, opts);
+  if (opts.now) return sayNow(text, opts);
+  if (inUserTap()){
+    if (TAP_EV !== window.event){ TAP_EV = window.event; return sayNow(text, opts); }
+    return sayQueued(text, opts);
+  }
   return sayQueued(text, opts);
 }
 /* Scout's own chatter (cheers, intros): always waits its turn, never cuts in */
@@ -3399,17 +3432,17 @@ function stopAudio(){
   try{ speechSynthesis.cancel(); }catch(e){}
 }
 function stopSpeech(){ SPEAK_Q = []; SPEAK_GEN++; stopAudio(); }
-function sayWord(w, opts){ if (inUserTap()) stopAudio(); return say(w, opts); }
+function sayWord(w, opts){ if (inUserTap() && TAP_EV !== window.event) stopAudio(); return say(w, opts); }
 /* sentences sound robotic when they're dragged out — read prose at normal speed */
 function sayRule(html, opts){
-  if (inUserTap()) stopAudio();
+  if (inUserTap() && TAP_EV !== window.event) stopAudio();
   return say(speakable(html), Object.assign({ rate:1.02, pitch:1.0 }, opts || {}));
 }
 
 /* iOS quietly ignores small rate changes, so "slowly" also breaks the word into
    its chunks with real pauses — which is more useful anyway. */
 function saySlow(word){
-  if (inUserTap()) stopAudio();
+  if (inUserTap() && TAP_EV !== window.event) stopAudio();
   const parts = speechSyllables(word);          // real syllables, never letters
   if (SCOUT_OK !== false){
     /* 29 Sep 2026 (Kathryn: "vowels not so much, iii for snip"): a one-beat
@@ -3832,7 +3865,7 @@ function playSlices(got, spans, withWord){
 /* one piece's sound (Honeycomb Builder): the slice of the word that piece is */
 function sayChunk(chunk, word){
   const c = String(chunk).toLowerCase(), w = String(word || chunk).toLowerCase();
-  if (inUserTap()) stopAudio();
+  if (inUserTap() && TAP_EV !== window.event) stopAudio();
   const custom = async () => {
     const got = word && await wordAlign(w);
     if (!got) return 0;
@@ -3845,7 +3878,7 @@ function sayChunk(chunk, word){
   say(c, { rate:.8, custom });
 }
 function saySounds(w){
-  if (inUserTap()) stopAudio();
+  if (inUserTap() && TAP_EV !== window.event) stopAudio();
   const word = String(w).toLowerCase();
   const custom = async () => {
     const got = await wordAlign(word);
@@ -3925,6 +3958,12 @@ const UI_ICONS = {
   '🔑':'key|key', '⚙':'settings|settings', '📋':'list|word list', '⚠':'warning|heads up', '🔒':'lock|locked',
   '📅':'calendar|calendar', '🗓':'calendar|calendar', '✉':'envelope|email', '💳':'card|payment',
   '🎒':'backpack|backpack', '👧':'child|child',
+  // batch 7 (29 Sep 2026)
+  '🧑‍⚖️':'judge|judge', '💾':'save-start|save', '🧹':'start-over|start over', '🧭':'walk-me|walk me through it', 'ℹ':'about|about',
+  '📝':'words-tab|words', '📊':'progress|progress', '➕':'add-child|add', '🗑':'remove|remove', '📲':'install|install',
+  '⏳':'hourglass|waiting', '🔎':'magnifier|find', '🛠':'hammer|fix', '🔡':'sound-it-out|sound it out', '🏁':'flag|finish',
+  '⚔':'lets-go|let\'s go', '🎯':'target|target', '💯':'perfect|perfect', '📭':'empty|empty', '🎬':'intermission|intermission',
+  '📣':'megaphone|megaphone', '👋':'wave|hello', '📚':'books|books',
 };
 const UI_ICON_RE = new RegExp('(' + Object.keys(UI_ICONS).join('|') + ')️?', 'g');
 function uiIcon(ch){
@@ -4908,6 +4947,12 @@ function renderHome(a){
   if (ts) a.appendChild(ts);
   const ib = installBar();
   if (ib) a.appendChild(ib);
+  /* straight across to the bee, without going back to the name picker (29 Sep 2026) */
+  if (beeHasList(kid())){
+    const sw = el('<button class="modeswitch"><img src="'+SCOUT_IMG('cheering')+'" alt=""><span>Switch to the <b>Spelling Bee</b></span><i>→</i></button>');
+    sw.onclick = () => { sfx('tap'); go('bee'); };
+    a.appendChild(sw);
+  }
   {
     const k = kid(), pp = prog();
     /* Scout's greeting sits right above the map, and Scout herself flies in and
@@ -5389,7 +5434,7 @@ function parentWords(a){
 
   DB.kids.forEach(k => {
     const w = el('<div style="margin-top:14px">'+
-      '<label class="fl">'+k.avatar+' '+esc(k.name)+' · '+(k.grade === 0 ? 'kindergarten' : 'grade '+(k.grade||1))+'</label>'+
+      '<label class="fl">'+esc(k.name)+' · '+(k.grade === 0 ? 'kindergarten' : 'grade '+(k.grade||1))+'</label>'+
       '<textarea class="ta" style="min-height:120px" spellcheck="false" placeholder="Paste '+esc(k.name)+'\'s words…"></textarea>'+
       '<details style="margin-top:6px"><summary>See the patterns they\'ll learn</summary><div class="pvbox"></div></details>'+
       '</div>');
@@ -5448,7 +5493,7 @@ function parentWords(a){
   const bkids = beeCard.querySelector('#bkids');
   DB.kids.forEach(k => {
     const w = el('<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">'+
-      '<label class="fl">'+k.avatar+' '+esc(k.name)+' — bee date</label>'+
+      '<label class="fl">'+esc(k.name)+' — bee date</label>'+
       '<input class="ti bdate" type="date" value="'+esc((DB.beeTargetByKid&&DB.beeTargetByKid[k.id])||DB.beeTarget||'')+'">'+
       '<label class="fl">'+esc(k.name)+'\'s bee words</label>'+
       '<textarea class="ta" style="min-height:110px" spellcheck="false" '+
@@ -5521,7 +5566,7 @@ function logWeek(){
 function parentKids(a){
   DB.kids.forEach((k, i) => {
     const c = el('<div class="card kidcard">'+
-      '<h3>'+k.avatar+' Child '+(i+1)+'</h3>'+
+      '<h3 style="display:flex;align-items:center;gap:8px">'+avEm(k.avatar)+' Child '+(i+1)+'</h3>'+
       '<label class="fl">Name</label><input class="ti" data-f="name" value="'+esc(k.name)+'">'+
       '<label class="fl">Grade (sets the difficulty)</label>'+
       /* K to 5th grade (29 Sep 2026: kindergarten was missing; it plays like 1st grade) */
@@ -7152,8 +7197,10 @@ function actWednesday(a, d){
     if (i >= words.length){ resumeClear('wed'); if (right === words.length) award('fixer'); return finishScreen(d, right, words.length); }
     const w = words[i];
     host.innerHTML = '';
+    /* by Sprint 3 they work on their own (Kathryn, 29 Sep 2026): the pattern's
+       picture stays as a clue, the rule's words don't */
     const c = el('<div class="card center hexy">'+
-      '<div class="remind big">'+w.emoji+' '+w.tip.title+'</div>'+
+      '<div class="wed-pic" aria-hidden="true">'+w.emoji+'</div>'+
       '<div class="muted" style="margin-top:4px">Word '+(i+1)+' of '+words.length+' · Some letters fell out of the hive! Fill the holes.</div>'+
       '</div>');
     host.appendChild(c);
@@ -7171,7 +7218,7 @@ function actWednesday(a, d){
     const helpers = el('<div class="row helpers" style="justify-content:center;margin:10px 0 0">'+
         '<button class="btn blue" id="hear">🔊 Hear it</button>'+
         '<button class="btn grey" id="slow">🐢 Slowly</button>'+
-        '<button class="btn grey" id="tip">💡 Pattern</button></div>');
+        '<button class="btn grey" id="tip">💡 Hint</button></div>');
     c.appendChild(helpers);
     c.querySelector('#hear').onclick = () => sayWord(w.word);
     c.querySelector('#slow').onclick = () => saySlow(w.word);
@@ -7864,12 +7911,15 @@ function actSaturday(a, d){
     function gotRight(it){
       pos++; sfx('pop'); drawGot(); it.el.classList.add('grab');
       // a breather to find the next letter before the next wave arrives
-      /* the letters already coming stay what they were, so nothing changes under
-         a child's eyes (29 Sep 2026: an F in the next row turned into an R).
-         They fade away instead, and a new row brings the next letter. */
+      /* the letters already coming stay exactly as they are (Kathryn, 29 Sep
+         2026: nothing changes under a child's eyes, and nothing vanishes either).
+         They are now just letters to dodge, unless one happens to be the next
+         letter, which they can grab. A new row soon brings the next letter too. */
       if (pos < word.length){
-        items.forEach(o => { if (!o.done && o !== it){ o.done = true; o.el.classList.add('fade'); setTimeout(() => o.el.remove(), 450); } });
-        spawnIn = ease < 1 ? 1100 : 750; return;
+        items.forEach(o => { if (o.done || o === it) return;
+          o.isNeed = o.ch === word[pos];
+          o.el.classList.toggle('need', o.isNeed && !!gp().bossGlow && bumps >= gp().bossGlow); });
+        spawnIn = Math.min(spawnIn, ease < 1 ? 1100 : 750); return;
       }
       over = true;
       if (bumps === 0){ beaten++; beatenWords.add(word); wordStat(word).r++; save(); }
@@ -7908,7 +7958,7 @@ function actSaturday(a, d){
           it.done = true;
           if (it.ch === word[pos]) gotRight(it); else { it.el.classList.add('bad'); bump(it); }
           setTimeout(() => it.el.remove(), 250);
-          items.forEach(o => { if (!o.done && o.wave === it.wave){ o.done = true; o.el.classList.add('fade'); setTimeout(() => o.el.remove(), 300); } });
+          // the rest of that row keeps coming: letters to dodge, not to vanish (Kathryn, 29 Sep 2026)
         } else if (it.x < -40){ it.done = true; it.el.remove(); }
       });
       requestAnimationFrame(loop);
@@ -8144,6 +8194,7 @@ function beeMark(word, ok){
   if (ok){ s.r++; s.run++; }
   else { s.x++; s.run = 0; }
   save();
+  try{ const pl = beePlan(); if (pl.words.length && pl.mastered.length >= pl.words.length) award('beehive'); }catch(e){}
 }
 
 /* ---------------- the schedule ---------------- */
@@ -8228,6 +8279,11 @@ function renderBeeHome(a){
   const pct = Math.round(100 * mastered / Math.max(1, plan.words.length));
   const doneToday = p.days[today()];
 
+  if (String(rawForKid(kid()) || '').trim()){
+    const sw = el('<button class="modeswitch"><img src="../img/ui/icon-calendar.webp" alt=""><span>Switch to <b>This Week\'s Words</b></span><i>→</i></button>');
+    sw.onclick = () => { sfx('tap'); go('home'); };
+    a.appendChild(sw);
+  }
   /* the bee's home (29 Sep 2026 redesign): Scout, the countdown and the whole
      list as one big honeycomb, then two big game cards, like the sprints */
   const hello = plan.daysLeft === 0 ? 'The bee is today! Let\'s warm up together.'
@@ -8449,6 +8505,7 @@ function actBeePlay(a){
           right++; streak++;
           sfx('clap'); crowdGoesWild(card);
           jar.add(card.querySelector('.boxes'));
+          if (streak === 5) award('beestreak');
           if (streak === 3 || streak === 6 || streak === 10){
             sfx('combo'); celebrate('small', card.querySelector('.boxes'));
             scoutPop('cheering', streak + ' in a row! The crowd is going wild!', 2400);
@@ -8502,7 +8559,7 @@ function actBeePlay(a){
   function finish(){
     const p = beeProg();
     p.days[today()] = { asked, right, when: today(), done:true };
-    save();
+    save(); award('beestage');
     host.innerHTML = '';
     const full = asked >= words.length;
     if (full) celebrate('big');
@@ -8658,7 +8715,7 @@ function actBeeSpeed(a){
 
   function done(){
     const secs = Math.round((Date.now()-t0)/1000);
-    celebrate('big'); sfx('win');
+    celebrate('big'); sfx('win'); award('beespeed');
     const p = popup('<div class="em">⚡</div><h2>Speed round done!</h2>'+
       '<p style="font-size:18px;line-height:22px;font-weight:800">'+hits+' / '+queue.length+' right</p>'+
       '<p class="muted">in '+Math.floor(secs/60)+'m '+(secs%60)+'s</p>'+
