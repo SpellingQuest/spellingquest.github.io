@@ -6088,8 +6088,7 @@ function beeLogHtml(k){
   let words = [];
   try{ const wk = buildWeek(raw, {}); wk.sections.forEach(s2 => s2.words.forEach(w => words.push(w.word))); }
   catch(e){ return ''; }
-  const bkey = (DB.beeId||'bee1') + ':' + (((DB.beeTargetByKid&&DB.beeTargetByKid[k.id])||DB.beeTarget||'') || 'open');
-  const bp = (k.bee && (k.bee[bkey] || k.bee[DB.beeId])) || { stats:{} };
+  const bp = beeProgFor(k);
   const st = w => bp.stats[w] || {r:0,x:0,run:0,seen:0};
   const mastered = words.filter(w => st(w).run >= 3);
   const shaky = words.filter(w => st(w).x > 0 && st(w).run < 3);
@@ -8567,11 +8566,33 @@ function buildBee(){
 }
 
 /* ---------------- per-child bee progress ---------------- */
-function beeProg(){
-  const k = kid();
+function beeProg(){ return beeProgFor(kid()); }
+/* 1 Oct 2026 (Kathryn: "keep progress in spelling bee"). Progress used to be
+   filed under the bee date, so moving the date in the Grown-up Zone quietly
+   started the child from zero. It now lives under the child alone, and any
+   records filed under an older date are folded in the first time it is read:
+   per word, whichever record has seen the word more wins; days, games and
+   paper practice are combined; the earliest start is kept. */
+function beeProgFor(k){
   k.bee = k.bee || {};
-  const id = (DB.beeId || 'bee1') + ':' + (beeTargetFor(k) || 'open');
-  if (!k.bee[id]) k.bee[id] = { stats:{}, days:{}, started:new Date().toISOString().slice(0,10) };
+  const id = DB.beeId || 'bee1';
+  const old = Object.keys(k.bee).filter(key => key.indexOf(id + ':') === 0);
+  if (!k.bee[id] || old.length){
+    const p = k.bee[id] || { stats:{}, days:{}, started:today() };
+    old.forEach(key => {
+      const o = k.bee[key] || {};
+      Object.keys(o.stats || {}).forEach(w => {
+        const a = p.stats[w], b = o.stats[w];
+        if (!a || (b.seen || 0) > (a.seen || 0)) p.stats[w] = b;
+      });
+      ['days', 'games', 'write'].forEach(f => { if (o[f]) p[f] = Object.assign({}, o[f], p[f] || {}); });
+      if (o.games && p.games) Object.keys(o.games).forEach(g => p.games[g] = Math.max(p.games[g] || 0, o.games[g] || 0));
+      if (o.started && (!p.started || o.started < p.started)) p.started = o.started;
+      delete k.bee[key];
+    });
+    k.bee[id] = p;
+    if (old.length) save();
+  }
   return k.bee[id];
 }
 function beeStat(w){
