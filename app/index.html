@@ -2442,6 +2442,13 @@ function load(){
   DB.beeByKid = DB.beeByKid || {};
   DB.beeTargetByKid = DB.beeTargetByKid || {};
   DB.beeId = DB.beeId || 'bee1';
+  /* bee lists saved before they synced (1 Oct 2026) travel as version 1, so a
+     list edited on any device after this beats them */
+  DB.kids.forEach(k => {
+    const w = String(DB.beeByKid[k.id] || '');
+    if (w.trim() && !k.prog[BEE_LIST_KEY])
+      k.prog[BEE_LIST_KEY] = { 1: { w, d: DB.beeTargetByKid[k.id] || DB.beeTarget || '' } };
+  });
   // Older saves kept ONE shared word list. Give every child their own copy so the
   // two of them can never silently end up locked to the same words.
   DB.kids.forEach(k => {
@@ -2597,6 +2604,15 @@ function absorb(rows){
     const prog = forwardMerge(k.prog || {}, r.progress || {});
     if (JSON.stringify(prog) !== JSON.stringify(k.prog || {})) changed = true;
     k.prog = prog;
+
+    /* the bee list and date: the newest edit from any device wins */
+    const bl = beeListLatest(k.prog);
+    if (bl){
+      DB.beeByKid = DB.beeByKid || {}; DB.beeTargetByKid = DB.beeTargetByKid || {};
+      if ((DB.beeByKid[k.id] || '') !== (bl.w || '') || (DB.beeTargetByKid[k.id] || '') !== (bl.d || '')){
+        DB.beeByKid[k.id] = bl.w || ''; DB.beeTargetByKid[k.id] = bl.d || ''; changed = true;
+      }
+    }
 
     /* The review window travels inside progress — see stampReviewNights(). The
        merge above has already picked the newer stamp, so all that is left is to
@@ -2920,6 +2936,31 @@ const WW_AT_KEY = '__wwAt';
 const G_AT_KEY  = '__gAt';
 const TD_AT_KEY = '__tdAt';
 const AV_AT_KEY = '__avAt';   // when the character was last picked (29 Sep 2026)
+/* The spelling bee (1 Oct 2026, Kathryn: "I want it to sync properly"). Its
+   progress and its list used to live on one device only. Both now ride in
+   `progress` like the stamps above, so no schema or RPC change:
+   - BEE_KEY holds the bee progress (per-word stats, days, games), which the
+     forward merge handles as it does a week's.
+   - BEE_LIST_KEY holds the list and the bee date, one entry per edit, keyed
+     by the time of the edit: { <ms>: { w:words, d:date } }. The newest key
+     wins. Each edit gets its own key rather than overwriting one string,
+     because a forward merge has no safe rule for two different strings. */
+const BEE_KEY = '__bee';
+const BEE_LIST_KEY = '__beeList';
+function beeListLatest(prog){
+  const e = prog && prog[BEE_LIST_KEY];
+  if (!e || typeof e !== 'object') return null;
+  const at = Object.keys(e).map(Number).filter(isFinite).sort((a, b) => b - a)[0];
+  return at ? Object.assign({ at }, e[at]) : null;
+}
+/* a grown-up saved or removed a bee list: record it as the newest version */
+function beeListStamp(k){
+  k.prog = k.prog || {};
+  const e = (k.prog[BEE_LIST_KEY] && typeof k.prog[BEE_LIST_KEY] === 'object') ? k.prog[BEE_LIST_KEY] : {};
+  const now = Math.max(Date.now(), ((beeListLatest(k.prog) || {}).at || 0) + 1);
+  e[now] = { w: String(DB.beeByKid[k.id] || ''), d: DB.beeTargetByKid[k.id] || '' };
+  k.prog[BEE_LIST_KEY] = e;
+}
 function readStampedNights(k){
   const v = k && k.prog && k.prog[RN_KEY];
   if (typeof v !== 'number' || !isFinite(v)) return null;
@@ -5854,8 +5895,10 @@ function parentWords(a){
     let any = false;
     DB.kids.forEach(k => {
       const v = bboxes[k.id].value.trim();
-      DB.beeByKid[k.id] = v;
-      DB.beeTargetByKid[k.id] = (bdates[k.id] && bdates[k.id].value) || '';
+      const d = (bdates[k.id] && bdates[k.id].value) || '';
+      if (v !== (DB.beeByKid[k.id] || '') || d !== (DB.beeTargetByKid[k.id] || '')){
+        DB.beeByKid[k.id] = v; DB.beeTargetByKid[k.id] = d; beeListStamp(k);
+      }
       if (v) any = true;
     });
     if (!any){ toast('Add some words first!'); return; }
@@ -5863,7 +5906,7 @@ function parentWords(a){
     save(); sfx('good'); toast('\ud83d\udC1d Bee list saved!');
   };
   beeCard.querySelector('#bclear').onclick = () => {
-    DB.kids.forEach(k => { DB.beeByKid[k.id] = ''; DB.beeTargetByKid[k.id] = ''; });
+    DB.kids.forEach(k => { if (DB.beeByKid[k.id] || DB.beeTargetByKid[k.id]){ DB.beeByKid[k.id] = ''; DB.beeTargetByKid[k.id] = ''; beeListStamp(k); } });
     DB.beeTarget = ''; save(); toast('Bee list removed');
     setTimeout(()=>go('parent','words'), 500);
   };
@@ -6857,7 +6900,10 @@ function typingRound(host, opts){
       if (!opts.noStats){ wordStat(word).r++; save(); }
       sfx(tries === 1 ? 'great' : 'good');
       sayWord(word);                               // the word first, then Scout's cheer
-      if (won){ scoutPop('cheering', won, 2600); try{ sayQueued(won); }catch(e){} }
+      /* quietWin: the caller gives the one cheer itself (the bee stage, 1 Oct
+         2026: Scout was cheering twice for every word, sometimes the same line) */
+      if (opts.quietWin){}
+      else if (won){ scoutPop('cheering', won, 2600); try{ sayQueued(won); }catch(e){} }
       else scoutPop('cheering', cheer(), 2200);
       setTimeout(()=>opts.onDone(tries === 1, tries), 1500);
     } else {
@@ -6888,8 +6934,9 @@ function typingRound(host, opts){
           // quiz was saying the old word over the new one)
           whenQuiet(() => opts.onDone(false, tries), 2600, 11000);
         } else {
+          /* no second "try again" here: Scout already said one on the miss above
+             (1 Oct 2026, it was two in a row, sometimes the same line) */
           blanks.forEach(i => { if (filled[i] !== word[i]){ delete filled[i]; freeTile(i); } });
-          scoutPop('thinking', encourage(), 3200);
           draw();
         }
       }, 700);
@@ -8567,19 +8614,20 @@ function buildBee(){
 
 /* ---------------- per-child bee progress ---------------- */
 function beeProg(){ return beeProgFor(kid()); }
-/* 1 Oct 2026 (Kathryn: "keep progress in spelling bee"). Progress used to be
-   filed under the bee date, so moving the date in the Grown-up Zone quietly
-   started the child from zero. It now lives under the child alone, and any
-   records filed under an older date are folded in the first time it is read:
-   per word, whichever record has seen the word more wins; days, games and
-   paper practice are combined; the earliest start is kept. */
+/* Bee progress lives under the child alone (1 Oct 2026, Kathryn: "keep
+   progress in spelling bee"), inside `progress` so it syncs (see BEE_KEY).
+   It used to be filed per bee date in k.bee, on this device only, so moving
+   the date quietly started the child from zero. Anything still in k.bee is
+   folded in the first time it is read: per word, whichever record has seen
+   the word more wins; days, games and paper practice are combined; the
+   earliest start is kept. */
 function beeProgFor(k){
-  k.bee = k.bee || {};
-  const id = DB.beeId || 'bee1';
-  const old = Object.keys(k.bee).filter(key => key.indexOf(id + ':') === 0);
-  if (!k.bee[id] || old.length){
-    const p = k.bee[id] || { stats:{}, days:{}, started:today() };
-    old.forEach(key => {
+  k.prog = k.prog || {};
+  const legacy = k.bee ? Object.keys(k.bee) : [];
+  if (!k.prog[BEE_KEY] || legacy.length){
+    const p = k.prog[BEE_KEY] || { stats:{}, days:{}, started:today() };
+    p.stats = p.stats || {}; p.days = p.days || {};
+    legacy.forEach(key => {
       const o = k.bee[key] || {};
       Object.keys(o.stats || {}).forEach(w => {
         const a = p.stats[w], b = o.stats[w];
@@ -8588,12 +8636,12 @@ function beeProgFor(k){
       ['days', 'games', 'write'].forEach(f => { if (o[f]) p[f] = Object.assign({}, o[f], p[f] || {}); });
       if (o.games && p.games) Object.keys(o.games).forEach(g => p.games[g] = Math.max(p.games[g] || 0, o.games[g] || 0));
       if (o.started && (!p.started || o.started < p.started)) p.started = o.started;
-      delete k.bee[key];
     });
-    k.bee[id] = p;
-    if (old.length) save();
+    delete k.bee;
+    k.prog[BEE_KEY] = p;
+    if (legacy.length) save();
   }
-  return k.bee[id];
+  return k.prog[BEE_KEY];
 }
 function beeStat(w){
   const p = beeProg();
@@ -8949,7 +8997,7 @@ function actBeePlay(a){
     const useTiles = gradeOf() <= 2;
     const decoys = shuffle('abcdefghijklmnoprstuwy'.split('').filter(x => w.word.toLowerCase().indexOf(x) < 0)).slice(0, gp().stageDecoys);
     typingRound(card, {
-      word:w.word, patternId:w.patternId, blanks: blanks, noStats:true, noSpell:true,
+      word:w.word, patternId:w.patternId, blanks: blanks, noStats:true, noSpell:true, quietWin:true,
       tiles: useTiles ? shuffle(w.word.toLowerCase().split('').filter((ch, n) => !blanks || blanks.indexOf(n) >= 0).concat(decoys)) : null,
       onDone: ok => {
         beeMark(w.word, ok);
@@ -8959,7 +9007,10 @@ function actBeePlay(a){
           sfx('clap'); crowdGoesWild(card);
           jar.add(card.querySelector('.boxes'));
           if (streak === 5) award('beestreak');
-          if (streak === 3 || streak === 6 || streak === 10){
+          // the hive says "halfway there" on its own; one cheer per word
+          const halfway = words.length >= 4 && right === Math.ceil(words.length / 2);
+          if (halfway){}
+          else if (streak === 3 || streak === 6 || streak === 10){
             sfx('combo'); celebrate('small', card.querySelector('.boxes'));
             scoutPop('cheering', streak + ' in a row! The crowd is going wild!', 2400);
           } else scoutPop('cheering', cheer() + ' The judges nod you through.', 2400);
@@ -9211,7 +9262,7 @@ function renderBeeGames(a){
   BACK_TO = 'bee';
   dayHeader(a, { key:'beegames', n:'Bee Games', t:'Play with your bee words', em:'🎮', sub:'Pick a game' });
   const host = el('<div class="bee-games"></div>'); a.appendChild(host);
-  const p = beeProg(); p.games = p.games || {};
+  const games = () => { const p = beeProg(); p.games = p.games || {}; return p.games; };
   MISSED = [];
 
   function menu(){
@@ -9221,7 +9272,7 @@ function renderBeeGames(a){
       '<div class="bubble">Three games, made just for the bee. Which one first?</div></div>'));
     const g = el('<div class="bg-list"></div>');
     BEE_GAMES.forEach(gm => {
-      const best = p.games[gm.id];
+      const best = games()[gm.id];
       const b = el('<button class="bg-card"><span class="bg-em">'+gm.em+'</span><span class="bg-tx"><b>'+gm.n+'</b>'+
         '<small>'+(best ? '⭐ Best '+best : gm.s)+'</small></span><i>→</i></button>');
       b.onclick = () => { unlockAudio(); sfx('tap'); GAMES[gm.fn](); };
@@ -9231,7 +9282,7 @@ function renderBeeGames(a){
   }
 
   function record(id, score, line){
-    p.games[id] = Math.max(p.games[id] || 0, score);
+    games()[id] = Math.max(games()[id] || 0, score);
     const k = kid(); k.xp = (k.xp || 0) + Math.round(score / 5);
     save();
     celebrate('small'); sfx('win');
