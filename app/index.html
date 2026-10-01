@@ -1126,39 +1126,53 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .mode-card.mc-week{ border-top:6px solid #3ba9ff; }
 .mode-card.mc-bee{ border-top:6px solid var(--gold); background:linear-gradient(180deg,#fffdf3,#fff); }
 .mode-card.mc-wide{ grid-column:1 / -1; }
-/* the bee's own games (2 Oct 2026) */
+/* the bee's own games (2 Oct 2026, third go) */
 .mode-card.mc-game{ border-top:6px solid #ff9ec7; }
-.mode-card .mc-em{ font-size:40px; line-height:52px; }
-.wheel-wrap{ position:relative; width:230px; height:230px; margin:6px auto 4px; }
-.wheel{ width:230px; height:230px; border-radius:50%; position:relative; border:6px solid #fff; box-shadow:0 6px 0 rgba(0,0,0,.15);
-  background:conic-gradient(#ffe08a 0 45deg,#ff9ec7 45deg 90deg,#9ad4ff 90deg 135deg,#b6f0c2 135deg 180deg,#ffe08a 180deg 225deg,#ff9ec7 225deg 270deg,#9ad4ff 270deg 315deg,#b6f0c2 315deg 360deg);
+.mode-card .mc-em{ font-size:40px; line-height:56px; min-height:56px; }
+.mode-card .mc-em img{ width:56px; height:56px; display:block; }
+.wheel-wrap{ position:relative; width:240px; height:240px; margin:8px auto 4px; }
+.wheel{ width:240px; height:240px; display:block; border-radius:50%; box-shadow:0 0 0 6px #fff, 0 8px 0 4px rgba(0,0,0,.15);
   transition:transform 2.2s cubic-bezier(.15,.8,.25,1); }
-.wheel span{ position:absolute; left:50%; top:50%; width:40px; height:40px; margin:-20px 0 0 -20px; font-size:30px; line-height:40px; text-align:center; }
-.wheel-pin{ position:absolute; top:-14px; left:50%; transform:translateX(-50%); z-index:2; font-size:28px; color:#b45309; text-shadow:0 2px 0 #fff; }
-.prize-shelf{ display:flex; justify-content:center; gap:4px; min-height:40px; font-size:28px; line-height:36px; margin:6px 0; flex-wrap:wrap; }
-.prize-shelf .muted{ font-size:14px; }
+.wheel-pin{ position:absolute; top:-16px; left:50%; transform:translateX(-50%); z-index:2; font-size:30px; color:#2b2350; text-shadow:0 2px 0 #fff; }
 .wheel-ask{ display:flex; align-items:center; justify-content:center; gap:10px; }
-.wheel-prize{ font-size:44px; }
-.petals{ display:flex; justify-content:center; align-items:center; gap:2px; font-size:24px; margin:8px 0; flex-wrap:wrap; }
-.petals .fl-head{ font-size:44px; margin-right:6px; }
-.petal{ transition:transform .5s, opacity .5s; }
-.petal.gone{ opacity:.15; transform:translateY(14px) rotate(60deg); }
-.flower-word{ display:flex; justify-content:center; gap:5px; flex-wrap:wrap; margin:10px 0 4px; }
-.fl-l{ width:36px; height:46px; border-bottom:4px solid var(--ink-soft); font:900 30px/46px var(--font-head); color:var(--ink); }
+.flower-stage{ position:relative; display:flex; align-items:flex-end; justify-content:center; gap:4px; }
+.flower-svg{ width:190px; height:186px; }
+.can{ display:flex; flex-direction:column-reverse; align-items:center; font-size:15px; line-height:17px; padding-bottom:8px; }
+.can .can-ic{ font-size:30px; line-height:34px; }
+.can .drop{ transition:opacity .4s, transform .4s; }
+.can .drop.gone{ opacity:.12; transform:translateY(8px); }
+.pour{ position:absolute; top:0; left:50%; transform:translateX(-50%); font-size:24px; letter-spacing:6px; animation:pourDown .9s ease-in forwards; pointer-events:none; }
+@keyframes pourDown{ from{ transform:translate(-50%,-10px); opacity:1; } to{ transform:translate(-50%,90px); opacity:0; } }
+.flower-word{ display:flex; justify-content:center; gap:5px; flex-wrap:wrap; margin:6px 0 2px; }
+.fl-l{ width:34px; height:44px; border-bottom:4px solid var(--ink-soft); font:900 30px/44px var(--font-head); color:var(--ink); }
 .fl-l.on{ border-color:#22a35a; }
-.abc{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:8px; }
-.abc button{ border:0; border-radius:10px; background:#fff4d6; box-shadow:0 3px 0 rgba(0,0,0,.15); font:900 20px/40px var(--font-head); color:var(--ink); cursor:pointer; }
-.abc button.yes{ background:#c8f5d2; }
-.abc button.no{ background:#eee; opacity:.45; }
+.keyboard .key.yes{ background:#c8f5d2!important; }
+.keyboard .key.no{ opacity:.35; }
 .memory{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px; }
-.mcard{ position:relative; height:82px; border:0; border-radius:16px; cursor:pointer; background:linear-gradient(160deg,#ffe08a,#ffc93c); box-shadow:0 5px 0 rgba(0,0,0,.15);
-  font:900 22px/1.1 var(--font-head); color:var(--ink); padding:6px; }
+.mcard{ position:relative; height:76px; border:0; border-radius:16px; cursor:pointer; background:linear-gradient(160deg,#ffe08a,#ffc93c); box-shadow:0 5px 0 rgba(0,0,0,.15);
+  font:900 22px/1.1 var(--font-head); color:var(--ink); padding:6px; transition:background .2s; }
 .mcard .face{ display:none; word-break:break-word; }
 .mcard .back{ font-size:34px; }
 .mcard.up{ background:#fff; box-shadow:0 0 0 3px #ffd23f inset, 0 5px 0 rgba(0,0,0,.12); }
 .mcard.up .face{ display:block; }
 .mcard.up .back{ display:none; }
 .mcard.done{ background:#e6f9ec; box-shadow:0 0 0 3px #22a35a inset; }
+.bop-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px; }
+.hole{ position:relative; height:96px; overflow:hidden; border-radius:18px; background:radial-gradient(ellipse at 50% 92%, #6b4a1f 0 30%, #f6d58a 31% 100%); }
+.hole .bug{ position:absolute; left:0; width:100%; bottom:-100px; height:92px; border:0; background:none; cursor:pointer; padding:0;
+  display:flex; flex-direction:column; align-items:center; transition:bottom .18s ease-out; }
+.hole.up .bug{ bottom:4px; }
+.hole .b-em{ font-size:30px; line-height:34px; }
+.hole .sign{ background:#fff; border:2px solid #2b2350; border-radius:8px; padding:3px 5px; font:900 16px/20px var(--font-head); color:var(--ink); white-space:nowrap; }
+.hole .sign.long{ font-size:13px; padding:3px 3px; }
+.hole .sign.xlong{ font-size:11px; letter-spacing:-.2px; padding:3px 2px; }
+.hole.bonk .bug{ animation:bonk .5s ease-out; }
+.hole.bonk .sign{ background:#c8f5d2; border-color:#22a35a; }
+.hole.giggle .bug{ animation:giggle .4s; }
+.hole.giggle .sign{ background:#ffe8ef; }
+.hole.show .sign{ background:#fff4d6; border-color:#f5b400; }
+@keyframes bonk{ 0%{ transform:scaleY(1); } 30%{ transform:scaleY(.6); } 100%{ transform:scaleY(1); } }
+@keyframes giggle{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-10deg); } 75%{ transform:rotate(10deg); } }
 .mc-ic{ width:74px; height:84px; clip-path:var(--hexclip); display:grid; place-items:center; background:linear-gradient(160deg,#e9e2ff,#d6c9fb); }
 .mc-bee .mc-ic{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
 .mc-ic img{ width:52px; height:52px; object-fit:contain; }
@@ -4702,8 +4716,7 @@ function pushPlan(){
       if ((dow + 1) % 7 === td) add(d, 'eve', 'Test tomorrow 🐝', 'Open Grown-ups to see the words worth a look together.', 90, 'week', [], '/app/#open=prog');
       // 1. the night the words come home, until this week's list is in
       if (dow === start && wwAt < dt.getTime()) add(d, 'words', 'New words tonight?', 'Add this week\'s list and Scout will get it ready.', 85);
-      // 5. evening of test day (when the new list doesn't arrive the same day)
-      if (dow === td && start !== td) add(d, 'test', 'How did the test go?', 'Next list goes in when the words come home.', 50);
+      // 5. (evening of test day) removed 2 Oct 2026, Kathryn
       // 7. the week's recap, the day after the test
       if (dow === (td + 1) % 7) add(d, 'recap', 'This week with Scout', 'See what they\'ve got and what\'s worth one more look.', 40, 'week', [], '/app/#open=prog');
       if (n > 7){
@@ -4724,14 +4737,7 @@ function pushPlan(){
       if (keys.length && pkeys.length && dow !== td && undone(pkeys).length && (i > 0 || thisWindow))
         add(d, 'missed', 'Spelling Quest', WEEKDAYS[(dow + 6) % 7] + '\'s sprint is still open. It can share a night with tonight\'s.', 80, 'week', [prev, d]);
     }
-    // 3. the day after a Paper Power-Up that wasn't finished
-    Object.keys(write).forEach(key => {
-      const w = write[key];
-      if (!w || w.done || !w.when) return;
-      const [y, m, dd] = String(w.when).split('-').map(Number);
-      const next = ymd(new Date(y, m - 1, dd + 1));
-      if (next >= ymd(t0)) add(next, 'ppu', 'Paper Power-Up is waiting', 'Grab a pencil when it suits.', 60);
-    });
+    // 3. (the day after an unfinished Paper Power-Up) removed 2 Oct 2026, Kathryn
   });
   // 8. the free week: day 5 and day 7
   const unlocked = !!(DB.accessCode || (DB.licence && DB.licence.key));
@@ -4747,7 +4753,49 @@ function pushPlan(){
     [[14, 55], [3, 75]].forEach(([n, pr]) => add(ymd(new Date(end - n * 86400000)), 'key', 'Spelling Quest', 'Your license key needs a look. Progress is safe.', pr, 'account'));
   }
   const today = ymd(t0);
-  return out.filter(e => e.d >= today).slice(0, 80);
+  return pushBundle(out.filter(e => e.d >= today)).slice(0, 80);
+}
+
+/* Two messages on one day go out together as one (2 Oct 2026, Kathryn: "look
+   at how RBTL is set up for multiple notifications at once"). RBTL holds news
+   that lands close together and sends it as one push: "2 updates: A · B".
+   Before this, only the higher priority message went and the other was lost
+   (the free week's last day under "New words tonight?").
+
+   The server still sends one message a day, the highest priority whose "nd"
+   dates had no finished sprint. So the bundling happens here, with no server
+   change: for each day, every combination of two or more of that day's
+   messages is added as one more entry, ranked above the singles and larger
+   combinations above smaller ones. A combination carries every "nd" date of
+   its parts, so a finished sprint quiets the combination and the server falls
+   back to the biggest one that is still true, the same as RBTL's queue.
+   Messages from a group the grown-up turned off are left out first, so a
+   bundle never carries one in. */
+function pushBundle(list){
+  // one of each message per day (two children make two copies of the same nudge)
+  const seen = {}, singles = [], on = pushGroups();
+  list.forEach(e => { if (on[e.g] === false) return; const id = e.d + '|' + e.k + '|' + e.b; if (seen[id]) return; seen[id] = 1; singles.push(e); });
+  const byDay = {};
+  singles.forEach(e => (byDay[e.d] = byDay[e.d] || []).push(e));
+  const out = [];
+  Object.keys(byDay).sort().forEach(d => {
+    const day = byDay[d].sort((a, b) => b.p - a.p).slice(0, 4);    // at most 4 a day: 11 bundles
+    day.forEach(e => out.push(Object.assign({}, e, { p: Math.round(e.p / 2) })));   // singles rank 0-50
+    for (let mask = 1; mask < (1 << day.length); mask++){
+      const parts = day.filter((_, i) => mask & (1 << i));
+      if (parts.length < 2) continue;
+      const top = parts[0];
+      // each part by its headline: its own title, or the first sentence of its text
+      const one = parts.map(x => (x.t !== 'Spelling Quest' ? x.t : x.b.split(/[.!?]\s/)[0]).replace(/[.!]$/, '')).join(' · ');
+      const body = (parts.length + ' things today: ' + one).slice(0, 158);
+      out.push({ d, k: parts.some(x => x.k === 'missed') ? 'missed' : top.k,
+        t: 'Spelling Quest 🐝', b: body.length === 158 ? body.replace(/\s+\S*$/, '') + '…' : body,
+        p: 50 + parts.length * 10, g: parts.every(x => x.g === 'account') ? 'account' : top.g,
+        nd: parts.reduce((a, x) => a.concat(x.nd || []), []).filter((x, i, a) => a.indexOf(x) === i).slice(0, 3),
+        u: top.u });
+    }
+  });
+  return out;
 }
 function pushTestDays(){ return (DB && DB.kids || []).map(testDayOf).filter((d, i, a) => a.indexOf(d) === i); }
 function pushTz(){ try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch(e){ return ''; } }
@@ -8710,17 +8758,19 @@ function beePlan(){
   };
 }
 
-/* Build today's turn on stage: a short, fixed-size list. Today's new words,
-   then a few misses, then words they have met before on a daily rotation so
-   the whole list stays warm without ever being handed over in one go. */
-function beeSessionWords(){
+/* Today's list: a short, fixed-size list, worked out once a day and kept, so
+   the stage, the games and "Today's list" on the bee screen all show the same
+   words (2 Oct 2026). Today's new words, then a few misses, then words they
+   have met before on a daily rotation, so the whole list stays warm without
+   ever being handed over in one go. */
+function beeTodayWords(){
+  const p = beeProg();
+  if (p.today && p.today.d === today() && Array.isArray(p.today.w) && p.today.w.every(w => BEE.byWord[w])) return p.today.w.slice();
   const plan = beePlan();
   const size = beeSessionSize();
   const out = [];
   const push = (arr, n) => { for (const w of arr){ if (n != null && n <= 0) break; if (out.indexOf(w) < 0){ out.push(w); if (n != null) n--; } } };
-
-  // changes once a day; a second turn the same day gets different review words
-  const rot = Math.floor(Date.now() / 86400000) + (beeProg().days[today()] ? Math.floor(Math.random() * 97) : 0);
+  const rot = Math.floor(Date.now() / 86400000);   // changes once a day
   const slice = (arr, n) => {
     if (arr.length <= n) return arr.slice();
     const start = (rot * n) % arr.length;
@@ -8728,23 +8778,28 @@ function beeSessionWords(){
     for (let i = 0; i < n; i++) r.push(arr[(start + i) % arr.length]);
     return r;
   };
-
   push(plan.newToday);
+  push(plan.metToday);
   push(shuffle(plan.shaky), plan.finalStretch ? 5 : 3);
-  const known = plan.seen.filter(w => out.indexOf(w) < 0 && !beeShaky(w));
-  push(slice(known, Math.max(0, size - out.length)));
-  if (out.length < size) push(plan.metToday);
+  push(slice(plan.seen.filter(w => out.indexOf(w) < 0 && !beeShaky(w)), Math.max(0, size - out.length)));
   if (out.length < size) push(shuffle(plan.seen), size - out.length);
   // a brand-new list on day one is only today's few new words, and that is fine
-  return shuffle(out.slice(0, Math.max(size, plan.newToday.length))).map(w => BEE.byWord[w]).filter(Boolean);
+  p.today = { d: today(), w: out.slice(0, Math.max(size, plan.newToday.length + plan.metToday.length)) };
+  save();
+  return p.today.w.slice();
+}
+/* a turn on stage: today's list; a second turn the same day shuffles it */
+function beeSessionWords(){
+  return shuffle(beeTodayWords()).map(w => BEE.byWord[w]).filter(Boolean);
 }
 
 /* a short round for the games and the speed round: words already met, the
    shaky ones first, never the whole list */
 function beeRoundWords(n){
-  const plan = beePlan();
-  let pool = plan.seen.length ? plan.seen : plan.newToday.length ? plan.newToday : plan.words;
-  const lead = shuffle(plan.shaky).slice(0, Math.ceil(n / 2));
+  const todays = beeTodayWords();
+  const pool = todays.filter(beeSeen).length ? todays.filter(beeSeen) : todays;
+  // the shaky ones on today's list lead
+  const lead = shuffle(pool.filter(beeShaky)).slice(0, Math.ceil(n / 2));
   const rest = shuffle(pool.filter(w => lead.indexOf(w) < 0));
   return shuffle(lead.concat(rest).slice(0, n)).map(w => BEE.byWord[w]).filter(Boolean);
 }
@@ -8787,26 +8842,30 @@ function renderBeeHome(a){
   grid.appendChild(start);
   const best = (p.games || {});
   BEE_GAMES.forEach(gm => {
-    const b = el('<button class="mode-card mc-game"><div class="mc-em">'+gm.em+'</div><b>'+esc(gm.n)+'</b>'+
+    const b = el('<button class="mode-card mc-game"><b>'+esc(gm.n)+'</b>'+
       '<small>'+esc(gm.s)+'</small><span class="mc-go">'+(best[gm.id] ? '⭐ Best '+best[gm.id] : 'Play →')+'</span></button>');
+    b.prepend(beeGameIcon(gm.art, gm.em, 56));
     b.onclick = () => { unlockAudio(); sfx('tap'); go('beegame', gm.id); };
     grid.appendChild(b);
   });
   const speed = el('<button class="mode-card mc-game">'+
-    '<div class="mc-em">⚡</div><b>Speed round</b>'+
-    '<small>Which word did you hear? '+Math.min(BEE_SPEED_N, Math.max(1, plan.seen.length || plan.words.length))+' quick ones.</small><span class="mc-go">Ready, set… →</span></button>');
+    '<b>Bug Bop</b>'+
+    '<small>Bop the bug with the right spelling</small><span class="mc-go">'+(best.bop ? '⭐ Best '+best.bop : 'Play →')+'</span></button>');
+  speed.prepend(beeGameIcon('icon-bug-bop', '🔨', 56));
   speed.onclick = () => { unlockAudio(); sfx('tap'); go('beespeed'); };
   grid.appendChild(speed);
   a.appendChild(grid);
 
-  /* every word on the list, all of it readable (2 Oct 2026: the words not
-     started yet were drawn at half strength, so it looked like only today's) */
-  const list = el('<details class="card"><summary style="font:900 18px/24px var(--font-head)">🐝 The whole list · '+plan.words.length+' words</summary>'+
-    '<p class="muted" style="margin-top:8px">Tap a word to hear it. ⭐ = you know it · 🔁 = practice again</p><div id="ww" style="margin-top:8px"></div></details>');
+  /* Today's list (2 Oct 2026, Kathryn: call it "Today's list"): the same
+     words the stage and the games use today */
+  const todays = beeTodayWords();
+  const list = el('<details class="card"><summary style="font:900 18px/24px var(--font-head)">🐝 Today\'s list · '+todays.length+' words</summary>'+
+    '<p class="muted" style="margin-top:8px">Tap a word to hear it. ✨ = new today · ⭐ = you know it · 🔁 = practice again</p><div id="ww" style="margin-top:8px"></div></details>');
   const ww = list.querySelector('#ww');
-  plan.words.forEach(w => {
+  const fresh = beePlan().newToday.concat(beePlan().metToday);
+  todays.forEach(w => {
     const cls = beeMastered(w) ? ' done' : beeShaky(w) ? ' bad' : '';
-    const mark = beeMastered(w) ? '⭐ ' : beeShaky(w) ? '🔁 ' : '';
+    const mark = beeMastered(w) ? '⭐ ' : beeShaky(w) ? '🔁 ' : fresh.indexOf(w) >= 0 ? '✨ ' : '';
     const chip = el('<span class="wordchip'+cls+'">'+mark+esc(w)+'<span class="sp">🔊</span></span>');
     chip.onclick = () => { unlockAudio(); sayWord(w); };
     ww.appendChild(chip);
@@ -9148,84 +9207,79 @@ function writeItScreenBee(d, done){
   };
 }
 
-/* ---------------- kid: speed round ---------------- */
-const BEE_SPEED_N = 12;
-function actBeeSpeed(a){
-  buildBee();
-  const d = { key:'speed', n:'Speed Round', t:'Quick words', em:'⚡', sub:'How fast can you go?' };
-  BACK_TO = 'bee';
-  dayHeader(a, d);
-  const host = el('<div></div>'); a.appendChild(host);
-  const all = BEE.allWords.slice();
-  if (!all.length) return;
+/* ---------------- kid: the bee's own games ----------------
+   Third go, 2 Oct 2026 (Kathryn, after her kids played them):
+   - Prize Wheel: the prize pictures read as the word ("it stopped on bag but
+     has a picture of a flower"). Now the slices are just colours and patterns,
+     one slice per word on today's list, and a slice is greyed out once that
+     word is done today, so the wheel never lands on it twice (until every
+     slice is done and they choose to go round again).
+   - Save the Flower: a wilted flower that gets water every time a word is
+     spelled, so it perks up and blooms over the game. The same keyboard as
+     every other game.
+   - Memory Match: all the cards are shown first, then turned over, so it is
+     memory and not guessing. Pairs are the same word; Scout says each card.
+   - The speed round is Bug Bop, new to the app (below).
+   Each game opens with one sentence on how to play that Scout reads, Scout
+   says every word, and a miss goes on today's practice list without
+   touching mastery, which only the stage awards. */
+const BEE_GAMES = [
+  { id:'wheel', em:'🎡', art:'icon-spin-spell', n:'Spin & Spell', s:'Spin the wheel, hear a word, spell it',
+    how:'Spin the wheel. I\'ll say the word it lands on, and you spell it! Words you\'ve done turn grey.' },
+  { id:'flower', em:'🥀', art:'icon-thirsty-flower', n:'Save the Flower', s:'Spell words to water the flower',
+    how:'This flower is thirsty! I\'ll say a word. Tap the letters that are in it. Finish the word and the flower gets a drink. Wrong letters spill some water.' },
+  { id:'match', em:'🃏', art:'icon-memory-match', n:'Memory Match', s:'Remember where the words are',
+    how:'Look at all the cards and remember where the words are. Then they flip over. Find the pairs!' },
+];
 
-  /* a short round, not the whole list (1 Oct 2026); the wrong answers still
-     come from the whole list */
-  let queue = beeRoundWords(BEE_SPEED_N), i = 0, score = 0, hits = 0;
-  const t0 = Date.now();
-
-  function step(){
-    if (i >= queue.length) return done();
-    const w = queue[i];
-    const others = shuffle(all.filter(x => x.word !== w.word)).slice(0,3).map(x => x.word);
-    let opts = shuffle([w.word].concat(others));
-    if (opts.length < 2) opts = [w.word].concat(misspell(w.word, w.patternId).slice(0,2));
-    host.innerHTML = '';
-    const c = el('<div class="card center">'+
-      '<div class="muted">⚡ '+(i+1)+' of '+queue.length+' · '+hits+' right</div>'+
-      '<div class="fuel" style="margin-top:8px"><i style="width:'+Math.round(100*i/queue.length)+'%"></i></div>'+
-      '<div class="speaker" id="sp" style="margin-top:12px">🔊</div>'+
-      '<p style="font-weight:800;margin-top:12px">Which word did you hear?</p><div id="ops"></div></div>');
-    host.appendChild(c);
-    c.querySelector('#sp').onclick = () => sayWord(w.word);
-    sayWord(w.word);
-    const ops = c.querySelector('#ops');
-    opts.forEach(o => {
-      const b = el('<button class="btn big blue" style="margin-bottom:8px">'+esc(o)+'</button>');
-      b.onclick = () => {
-        const ok = o === w.word;
-        if (ok){ hits++; score += 10; sfx('good'); b.className='btn big green'; }
-        else { sfx('wrong'); b.className='btn big revisit'; noteMiss(w.word); scoutPop('thinking', encourage(), 3000);
-               Array.from(ops.children).forEach(x=>{ if(x.textContent===w.word) x.className='btn big green'; }); }
-        beeMark(w.word, ok);
-        ops.querySelectorAll('button').forEach(x=>x.disabled=true);
-        i++; setTimeout(step, ok ? 420 : 1200);
-      };
-      ops.appendChild(b);
-    });
-  }
-
-  function done(){
-    const secs = Math.round((Date.now()-t0)/1000);
-    celebrate('big'); sfx('win'); award('beespeed');
-    const p = popup('<div class="em">⚡</div><h2>Speed round done!</h2>'+
-      '<p style="font-size:18px;line-height:22px;font-weight:800">'+hits+' / '+queue.length+' right</p>'+
-      '<p class="muted">in '+Math.floor(secs/60)+'m '+(secs%60)+'s</p>'+
-      '<button class="btn big green" style="margin-top:12px" data-close>Back to the bee</button>');
-    const k = kid(); k.xp = (k.xp||0) + hits*3; save();
-    p.addEventListener('click', e => { if (e.target.dataset.close !== undefined) go('bee'); });
-  }
-  step();
+/* a game's picture: its art in img/ui when it's there, its emoji until then
+   (the art list for ChatGPT names each file) */
+function beeGameIcon(art, em, size){
+  const box = el('<div class="mc-em"></div>');
+  const img = el('<img src="../img/ui/'+art+'.webp" alt="" width="'+size+'" height="'+size+'" draggable="false">');
+  img.onerror = () => { box.textContent = em; };
+  box.appendChild(img);
+  return box;
 }
 
-/* ---------------- kid: the bee's own games ----------------
-   2 Oct 2026, second go (Kathryn: the first three games were a little
-   confusing, Scout didn't read all the words, and the kids have had word
-   scrambles before and wanted something new). So: games kids already know
-   how to play, nothing that hands them a pile of letters to sort, Scout
-   says every word out loud, and each game opens with one sentence on how to
-   play that Scout reads too. They sit right on the bee screen, no menu.
-   A miss goes on today's practice list but never touches mastery, which
-   only the stage awards. */
-const BEE_GAMES = [
-  { id:'wheel', em:'🎡', n:'Prize Wheel',    s:'Spin, listen, spell it, win the prize',
-    how:'Spin the wheel to pick a prize. I\'ll say a word. Spell it right and the prize is yours!' },
-  { id:'flower', em:'🌻', n:'Save the Flower', s:'Guess the letters before the petals fall',
-    how:'I\'ll say a word. Tap the letters you think are in it. Each wrong letter drops a petal. Fill the word before they\'re gone!' },
-  { id:'match', em:'🃏', n:'Memory Match',   s:'Match the sound to the spelling',
-    how:'Flip two cards. A speaker card says a word out loud. Find the card with that word spelled on it!' },
-];
-const BEE_PRIZES = ['🍯','🌻','🍩','🎈','⭐','🍓','🦋','🎁'];
+/* one or two believable wrong spellings for a word */
+function beeWrongs(w, n){
+  const s = w.word.toLowerCase(), out = misspell(w.word, w.patternId).filter(x => x !== s);
+  let guard = 0;
+  while (out.length < n && guard++ < 30){
+    const i = Math.floor(Math.random() * s.length);
+    if (!/[a-z]/.test(s[i])) continue;
+    const pool = (isVowel(s[i]) ? 'aeiou' : 'bcdfgklmnprstvz').split('').filter(c => c !== s[i]);
+    const x = s.slice(0, i) + pickOne(pool) + s.slice(i + 1);
+    if (x !== s && out.indexOf(x) < 0) out.push(x);
+  }
+  return shuffle(out).slice(0, n);
+}
+
+/* the flower in Save the Flower: t runs from 0 (wilted) to 1 (in full bloom) */
+function flowerSVG(t){
+  const mix = (a, b) => { const h = x => [1,3,5].map(i => parseInt(x.slice(i, i + 2), 16));
+    const A = h(a), B = h(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; };
+  const droop = (1 - t) * 70 * Math.PI / 180, L = 96;
+  const bx = 110, by = 176, hx = bx + L * Math.sin(droop), hy = by - L * Math.cos(droop);
+  const petal = mix('#a89070', '#ffc93c'), petal2 = mix('#8c7656', '#ff9ec7'), leaf = mix('#8f8a55', '#3fbf5f'), stem = mix('#857f4a', '#2f9e4f');
+  const sc = .7 + .45 * t, rot = droop * 180 / Math.PI;
+  const petals = Array.from({ length:10 }, (_, i) =>
+    '<ellipse cx="0" cy="'+(-20 * sc)+'" rx="'+(9 * sc)+'" ry="'+(17 * sc)+'" fill="'+(i % 2 ? petal2 : petal)+'" transform="rotate('+(i * 36)+')"/>').join('');
+  const lx = bx + (hx - bx) * .45, ly = by + (hy - by) * .45;
+  return '<svg viewBox="0 0 240 236" class="flower-svg" aria-hidden="true">'+
+    (t >= 1 ? '<g class="fl-spark"><text x="34" y="52" font-size="22">✨</text><text x="186" y="40" font-size="20">✨</text><text x="196" y="110" font-size="26">🐝</text></g>' : '')+
+    '<path d="M'+bx+' '+by+' Q'+bx+' '+(by - L * .55)+' '+hx.toFixed(1)+' '+hy.toFixed(1)+'" stroke="'+stem+'" stroke-width="7" fill="none" stroke-linecap="round"/>'+
+    '<ellipse cx="'+(lx - 16)+'" cy="'+(ly + 4)+'" rx="18" ry="7" fill="'+leaf+'" transform="rotate('+(-25 + (1 - t) * 40)+' '+(lx - 16)+' '+(ly + 4)+')"/>'+
+    '<ellipse cx="'+(lx + 16)+'" cy="'+(ly + 10)+'" rx="18" ry="7" fill="'+leaf+'" transform="rotate('+(25 + (1 - t) * 40)+' '+(lx + 16)+' '+(ly + 10)+')"/>'+
+    '<g transform="translate('+hx.toFixed(1)+' '+hy.toFixed(1)+') rotate('+rot.toFixed(1)+')">'+petals+
+      '<circle r="'+(12 * sc)+'" fill="'+mix('#6b5236', '#8a4b14')+'"/>'+
+      (t >= .5 ? '<circle cx="-4" cy="-2" r="1.8" fill="#2d1b0e"/><circle cx="4" cy="-2" r="1.8" fill="#2d1b0e"/><path d="M-4 4 Q0 '+(5 + 4 * t)+' 4 4" stroke="#2d1b0e" stroke-width="1.6" fill="none"/>'
+               : '<path d="M-5 -1 L-2 -1 M2 -1 L5 -1 M-4 6 Q0 3 4 6" stroke="#2d1b0e" stroke-width="1.6" fill="none"/>')+
+    '</g>'+
+    '<path d="M70 176 H150 L142 230 H78 Z" fill="#e07a4f"/><rect x="64" y="170" width="92" height="14" rx="5" fill="#c9653d"/>'+
+  '</svg>';
+}
 
 function renderBeeGame(a, id){
   buildBee();
@@ -9233,7 +9287,6 @@ function renderBeeGame(a, id){
   BACK_TO = 'bee';
   dayHeader(a, { key:'beegame', n:gm.n, t:gm.n, em:gm.em, sub:'Spelling Bee game' });
   const host = el('<div class="bee-game"></div>'); a.appendChild(host);
-  const prog = () => { const p = beeProg(); p.games = p.games || {}; return p; };
   MISSED = [];
   const alive = () => host.isConnected;
   const hear = w => { unlockAudio(); sayWord(w); };
@@ -9252,82 +9305,99 @@ function renderBeeGame(a, id){
     setTimeout(() => { if (alive()) scoutSpeak(gm.how, 9000); }, 300);
     c.querySelector('#go').onclick = () => { unlockAudio(); stopSpeech(); sfx('tap'); GAMES[gm.id](); };
   }
-
-  function record(score, line){
-    if (!alive()) return;
-    releaseKeys();
-    const p = prog(); p.games[gm.id] = Math.max(p.games[gm.id] || 0, score);
-    const k = kid(); k.xp = (k.xp || 0) + Math.round(score / 5);
-    save();
-    celebrate('small'); sfx('win');
-    const pp = popup('<div class="em">🏆</div><h2>'+esc(line)+'</h2>'+
-      '<p class="muted">Score: '+score+(p.games[gm.id] === score ? ' · your best!' : ' · best '+p.games[gm.id])+'</p>'+
-      '<button class="btn big green" data-again>Play again</button>'+
-      '<button class="btn big grey" style="margin-top:8px" data-close>Back to the bee</button>');
-    pp.addEventListener('click', e => {
-      if (e.target.dataset.again !== undefined){ pp.remove(); if (alive()) GAMES[gm.id](); }
-      else if (e.target.dataset.close !== undefined && alive()) go('bee');
-    });
-  }
+  const record = (score, line, again) => beeGameRecord(gm.id, score, line, () => { if (alive()) (again || GAMES[gm.id])(); }, alive);
 
   const GAMES = {
-    /* --- Prize Wheel ---
-       Spin, the wheel lands on a prize, Scout says the word, spell it on the
-       keyboard (K–2 fill in the missing letters). Right: the prize goes on
-       your shelf. Five spins. */
+    /* --- Spin & Spell --- */
     wheel(){
       releaseKeys();
-      const words = beeRoundWords(5);
-      let i = 0, score = 0, turn = 0;
-      const won = [];
+      const p = beeProg();
+      const words = beeTodayWords().map(w => BEE.byWord[w]).filter(Boolean);
+      if (!p.wheel || p.wheel.d !== today()) p.wheel = { d: today(), done: [] };
+      const isDone = w => p.wheel.done.indexOf(w.word) >= 0;
+      const n = words.length;
+      let score = 0, turn = 0, spun = 0;
+      const COLS = ['#ffc93c','#ff9ec7','#7cc8ff','#8fe3a3','#c9a7ff','#ffab6b'];
+      const PATS = ['stripe','dots','zig','check','solid','wave'];
+      const R = 100, slice = 360 / n;
+      const pt = (deg, r) => { const a2 = (deg - 90) * Math.PI / 180; return (r * Math.cos(a2)).toFixed(2) + ' ' + (r * Math.sin(a2)).toFixed(2); };
+      const defs = COLS.map((c, i) => {
+        const id = 'wp' + i, pat = PATS[i];
+        const body = pat === 'stripe' ? '<rect width="12" height="12" fill="'+c+'"/><path d="M0 12 L12 0" stroke="#fff" stroke-width="3" opacity=".55"/>'
+          : pat === 'dots'  ? '<rect width="12" height="12" fill="'+c+'"/><circle cx="6" cy="6" r="2.4" fill="#fff" opacity=".6"/>'
+          : pat === 'zig'   ? '<rect width="12" height="12" fill="'+c+'"/><path d="M0 8 L3 4 L6 8 L9 4 L12 8" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/>'
+          : pat === 'check' ? '<rect width="12" height="12" fill="'+c+'"/><rect width="6" height="6" fill="#fff" opacity=".35"/><rect x="6" y="6" width="6" height="6" fill="#fff" opacity=".35"/>'
+          : pat === 'wave'  ? '<rect width="12" height="12" fill="'+c+'"/><path d="M0 6 Q3 2 6 6 T12 6" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/>'
+          : '<rect width="12" height="12" fill="'+c+'"/>';
+        return '<pattern id="'+id+'" width="12" height="12" patternUnits="userSpaceOnUse">'+body+'</pattern>';
+      }).join('') + '<pattern id="wpg" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#d6d3de"/><path d="M0 10 L10 0" stroke="#c4c0cf" stroke-width="2"/></pattern>';
+      const slices = words.map((w, i) => n === 1
+        ? '<circle r="'+R+'" class="wsl" data-i="0"/>'
+        : '<path class="wsl" data-i="'+i+'" d="M0 0 L'+pt(i * slice, R)+' A'+R+' '+R+' 0 '+(slice > 180 ? 1 : 0)+' 1 '+pt((i + 1) * slice, R)+' Z"/>').join('');
       host.innerHTML = '';
       const c = el('<div class="card center game-card">'+
-        '<div class="game-top"><span class="muted">🎡 Spin <b id="n">1</b> of '+words.length+'</span>'+
+        '<div class="game-top"><span class="muted">🎡 <b id="dn">0</b> of '+n+' words done</span>'+
           '<span class="score-pill"><b id="sc">0</b> pts</span></div>'+
-        '<div class="prize-shelf" id="shelf"><span class="muted">Your prizes will go here</span></div>'+
-        '<div class="wheel-wrap"><div class="wheel-pin">▼</div><div class="wheel" id="wheel">'+
-          BEE_PRIZES.map((p, k) => '<span style="transform:rotate('+(k * 45 + 22.5)+'deg) translateY(-92px) rotate(-'+(k * 45 + 22.5)+'deg)">'+p+'</span>').join('')+
-        '</div></div>'+
+        '<div class="wheel-wrap"><div class="wheel-pin">▼</div>'+
+          '<svg class="wheel" id="wheel" viewBox="-104 -104 208 208"><defs>'+defs+'</defs>'+slices+
+          '<circle r="16" fill="#fff" stroke="#2b2350" stroke-width="3"/><text y="7" text-anchor="middle" font-size="18">🐝</text></svg></div>'+
         '<div id="play"></div></div>');
       host.appendChild(c);
-      const wheel = c.querySelector('#wheel'), play = c.querySelector('#play'), shelf = c.querySelector('#shelf');
+      const wheel = c.querySelector('#wheel'), play = c.querySelector('#play');
+      function paint(hot){
+        c.querySelectorAll('.wsl').forEach(el2 => {
+          const i = +el2.dataset.i;
+          el2.setAttribute('fill', isDone(words[i]) ? 'url(#wpg)' : 'url(#wp' + (i % COLS.length) + ')');
+          el2.setAttribute('stroke', i === hot ? '#2b2350' : '#fff');
+          el2.setAttribute('stroke-width', i === hot ? '5' : '2');
+        });
+        c.querySelector('#dn').textContent = words.filter(isDone).length;
+      }
       function ready(){
         if (!alive()) return;
-        if (i >= words.length) return record(score, won.length ? 'You won '+won.length+' prize'+(won.length===1?'':'s')+'!' : 'Nice spinning!');
-        c.querySelector('#n').textContent = i + 1;
+        paint(-1);
         play.innerHTML = '';
+        const left = words.filter(w => !isDone(w));
+        if (!left.length){
+          const msg = el('<div><p class="game-say">🎉 You spun every word on today\'s list!</p></div>');
+          if (spun){ setTimeout(() => record(score, 'Every word on today\'s list!', again), 900); }
+          const b = el('<button class="btn big yellow">🔁 Spin them all again</button>');
+          b.onclick = again;
+          msg.appendChild(b); play.appendChild(msg);
+          return;
+        }
         const b = el('<button class="btn big yellow" style="margin-top:6px">🎡 Spin!</button>');
         b.onclick = spin;
         play.appendChild(b);
       }
+      function again(){ p.wheel = { d: today(), done: [] }; save(); if (alive()) GAMES.wheel(); }
       function spin(){
         sfx('tap'); unlockAudio();
         play.innerHTML = '<p class="game-say">Spinning…</p>';
-        const k = Math.floor(Math.random() * BEE_PRIZES.length);
-        turn += 4 * 360 + (360 - ((turn % 360) + k * 45 + 22.5) % 360);
+        const open = words.map((w, i) => i).filter(i => !isDone(words[i]));
+        const k = pickOne(open);
+        const centre = k * slice + slice / 2;
+        turn += 4 * 360 + (360 - ((turn % 360) + centre) % 360);
         wheel.style.transform = 'rotate(' + turn + 'deg)';
-        setTimeout(() => { if (alive()) spell(BEE_PRIZES[k]); }, 2300);
+        setTimeout(() => { if (alive()) spell(k); }, 2300);
       }
-      function spell(prize){
-        const w = words[i];
-        sfx('ding');
+      function spell(k){
+        const w = words[k];
+        sfx('ding'); paint(k);
         play.innerHTML = '';
-        const head = el('<div class="wheel-ask"><span class="wheel-prize">'+prize+'</span><span class="game-say">Spell the word to win it!</span></div>');
+        const head = el('<div class="wheel-ask"><span class="game-say">Listen, then spell it!</span></div>');
         head.appendChild(speaker(w.word));
         play.appendChild(head);
         const box = el('<div></div>'); play.appendChild(box);
-        const little = gradeOf() <= 2;
         typingRound(box, {
           word:w.word, patternId:w.patternId, noStats:true, noSpell:true,
-          blanks: little ? makeBlanks(w.word, w.patternId, 3) : null,
+          blanks: gradeOf() <= 2 ? makeBlanks(w.word, w.patternId, 3) : null,
           onDone: ok => {
-            if (ok){
-              score += 20; won.push(prize);
-              shelf.innerHTML = won.map(p => '<span>'+p+'</span>').join('');
-              celebrate('small', shelf);
-            } else noteMiss(w.word);
+            if (ok) score += 20; else noteMiss(w.word);
+            spun++;
+            p.wheel.done.push(w.word); save();     // greyed out for the rest of today
             c.querySelector('#sc').textContent = score;
-            i++; setTimeout(ready, 600);
+            setTimeout(ready, 500);
           }
         });
         setTimeout(() => hear(w.word), 250);
@@ -9335,129 +9405,119 @@ function renderBeeGame(a, id){
       ready();
     },
 
-    /* --- Save the Flower ---
-       The letter-guessing game every child knows. Scout says the word; tap
-       letters; right ones drop into place, wrong ones knock off a petal.
-       Little ones get more petals. A flower that runs out of petals is never
-       a loss screen: Scout shows the word, says it, and it goes on the
-       practice list. */
+    /* --- Save the Flower --- */
     flower(){
       releaseKeys();
-      const words = beeRoundWords(4);
-      const PETALS = gradeOf() <= 2 ? 8 : 6;
-      let i = 0, score = 0, saved = 0;
+      const words = beeRoundWords(5);
+      const DROPS = gradeOf() <= 2 ? 8 : 6;
+      let i = 0, score = 0, drinks = 0;
+      const total = words.length;
+      host.innerHTML = '';
+      const c = el('<div class="card center game-card">'+
+        '<div class="game-top"><span class="muted">🌱 Word <b id="n">1</b> of '+total+'</span>'+
+          '<span id="spk"></span><span class="score-pill"><b id="sc">0</b> pts</span></div>'+
+        '<div class="flower-stage"><div id="fl">'+flowerSVG(0)+'</div><div class="can" id="can"></div></div>'+
+        '<div class="flower-word" id="fw"></div>'+
+        '<p class="muted" id="msg" style="min-height:22px;margin:4px 0">Which letters are in the word?</p>'+
+        '<div id="kb"></div></div>');
+      host.appendChild(c);
+      const fl = c.querySelector('#fl'), fw = c.querySelector('#fw'), msg = c.querySelector('#msg'), can = c.querySelector('#can');
+      let word = '', got = null, tried = null, left = 0, over = true, cur = null;
+      const kb = buildKeyboard(k => guess(k));
+      c.querySelector('#kb').appendChild(kb);
+      const keyEl = ch => [...kb.querySelectorAll('.key')].find(x => x.textContent === ch);
+      function drawWord(){
+        fw.innerHTML = word.split('').map(ch => '<span class="fl-l'+(got.has(ch) ? ' on' : '')+'">'+(got.has(ch) ? esc(ch) : '')+'</span>').join('');
+        can.innerHTML = '<span class="can-ic">🪣</span>' + Array.from({ length:DROPS }, (_, k) => '<span class="drop'+(k < left ? '' : ' gone')+'">💧</span>').join('');
+      }
       function step(){
         if (!alive()) return;
-        if (i >= words.length) return record(score, saved ? 'You saved '+saved+' flower'+(saved===1?'':'s')+'!' : 'Good guessing!');
-        const w = words[i], word = w.word.toLowerCase();
-        const got = new Set(word.split('').filter(ch => !/[a-z]/.test(ch)));   // spaces, hyphens, apostrophes show from the start
-        const tried = new Set();
-        let left = PETALS, over = false;
-        host.innerHTML = '';
-        const c = el('<div class="card center game-card">'+
-          '<div class="game-top"><span class="muted">🌻 '+(i+1)+' of '+words.length+'</span>'+
-            '<span class="score-pill"><b>'+score+'</b> pts</span></div>'+
-          '<div class="petals" id="pet"></div>'+
-          '<div class="flower-word" id="fw"></div>'+
-          '<p class="muted" id="msg" style="min-height:22px;margin:4px 0">Which letters are in the word?</p>'+
-          '<div class="abc" id="abc"></div></div>');
-        host.appendChild(c);
-        c.querySelector('.game-top').insertBefore(speaker(w.word), c.querySelector('.score-pill'));
-        const pet = c.querySelector('#pet'), fw = c.querySelector('#fw'), abc = c.querySelector('#abc'), msg = c.querySelector('#msg');
-        function draw(){
-          pet.innerHTML = '<span class="fl-head">'+(left > 0 ? '🌻' : '🥀')+'</span>'+
-            Array.from({ length:PETALS }, (_, k) => '<span class="petal'+(k < left ? '' : ' gone')+'">🌸</span>').join('');
-          fw.innerHTML = word.split('').map(ch => '<span class="fl-l'+(got.has(ch) ? ' on' : '')+'">'+(got.has(ch) ? esc(ch) : '')+'</span>').join('');
-        }
-        'abcdefghijklmnopqrstuvwxyz'.split('').forEach(ch => {
-          const b = el('<button>'+ch+'</button>');
-          b.onclick = () => guess(ch);
-          abc.appendChild(b);
-        });
-        function guess(ch){
-          if (over || tried.has(ch)) return;
-          tried.add(ch);
-          const b = [...abc.children].find(x => x.textContent === ch);
-          if (word.indexOf(ch) >= 0){
-            got.add(ch); sfx('pop'); if (b) b.classList.add('yes');
-            msg.textContent = 'Yes! ' + ch.toUpperCase() + ' is in it.';
-          } else {
-            left--; sfx('wrong'); if (b) b.classList.add('no');
-            msg.textContent = 'No ' + ch.toUpperCase() + '. A petal fell off!';
-          }
-          if (b) b.disabled = true;
-          draw();
-          if (word.split('').every(x => got.has(x))){
-            over = true; saved++; score += 10 + left * 5;
-            msg.textContent = 'You saved the flower!';
-            sfx('great'); celebrate('small', fw);
-            setTimeout(() => hear(w.word), 300);
-            scoutPop('cheering', cheer(), 1800, { silent:true });
-            i++; setTimeout(step, 2400);
-          } else if (left <= 0){
-            over = true; noteMiss(w.word);
-            word.split('').forEach(x => got.add(x)); draw();
-            msg.textContent = 'Here\'s how it\'s spelled. It goes on your practice list.';
-            sfx('ding'); setTimeout(() => hear(w.word), 300);
-            i++; setTimeout(step, 3200);
-          }
-        }
-        claimKeys(ch => { if (/^[a-z]$/.test(ch)) guess(ch); }, () => {});
-        draw();
-        setTimeout(() => hear(w.word), 300);
+        if (i >= total) return record(score, drinks >= total ? 'Your flower is in full bloom!' : 'You gave the flower '+drinks+' drink'+(drinks===1?'':'s')+'!');
+        cur = words[i]; word = cur.word.toLowerCase();
+        got = new Set(word.split('').filter(ch => !/[a-z]/.test(ch)));    // spaces, hyphens, apostrophes show from the start
+        tried = new Set(); left = DROPS; over = false;
+        c.querySelector('#n').textContent = i + 1;
+        const spk = c.querySelector('#spk'); spk.innerHTML = ''; spk.appendChild(speaker(cur.word));
+        kb.querySelectorAll('.key').forEach(k => { k.classList.remove('yes', 'no'); k.disabled = false; });
+        msg.textContent = 'Which letters are in the word?';
+        drawWord();
+        setTimeout(() => hear(cur.word), 300);
       }
+      function guess(ch){
+        if (over || ch === 'del' || !/^[a-z]$/.test(ch) || tried.has(ch)) return;
+        tried.add(ch);
+        const b = keyEl(ch);
+        if (word.indexOf(ch) >= 0){ got.add(ch); sfx('pop'); if (b) b.classList.add('yes'); msg.textContent = 'Yes! ' + ch.toUpperCase() + ' is in it.'; }
+        else { left--; sfx('wrong'); if (b) b.classList.add('no'); msg.textContent = 'No ' + ch.toUpperCase() + '. A little water spilled.'; }
+        if (b) b.disabled = true;
+        drawWord();
+        if (word.split('').every(x => got.has(x))){
+          over = true; drinks++; score += 10 + left * 5;
+          msg.textContent = 'You spelled it! The flower gets a drink.';
+          sfx('great'); setTimeout(() => hear(cur.word), 200);
+          // water pours, then the flower perks up a step
+          const pour = el('<div class="pour" aria-hidden="true">💧💧💧</div>'); fl.parentNode.appendChild(pour);
+          setTimeout(() => { pour.remove(); fl.innerHTML = flowerSVG(Math.min(1, drinks / total)); celebrate('small', fl); }, 900);
+          c.querySelector('#sc').textContent = score;
+          i++; setTimeout(step, 2800);
+        } else if (left <= 0){
+          over = true; noteMiss(cur.word);
+          word.split('').forEach(x => got.add(x)); drawWord();
+          msg.textContent = 'Out of water! Here\'s how it\'s spelled. It goes on your practice list.';
+          sfx('ding'); setTimeout(() => hear(cur.word), 300);
+          i++; setTimeout(step, 3400);
+        }
+      }
+      claimKeys(ch => guess(ch), () => {});
       step();
     },
 
-    /* --- Memory Match ---
-       Cards face down. Half are speaker cards (flip one and Scout says its
-       word), half show a word spelled out. Find the pairs. Scout says the word
-       again when a pair is found, so every word is heard at least twice. */
+    /* --- Memory Match --- */
     match(){
       releaseKeys();
       const words = beeRoundWords(gradeOf() <= 2 ? 3 : 4);
-      const cards = shuffle([].concat(
-        words.map((w, k) => ({ k, kind:'say', word:w.word })),
-        words.map((w, k) => ({ k, kind:'see', word:w.word }))));
-      let open = [], found = 0, tries = 0, lock = false;
+      const cards = shuffle([].concat(words.map((w, k) => ({ k, word:w.word })), words.map((w, k) => ({ k, word:w.word }))));
+      let open = [], found = 0, tries = 0, lock = true;
       host.innerHTML = '';
       const c = el('<div class="card center game-card">'+
         '<div class="game-top"><span class="muted">🃏 Pairs <b id="f">0</b> of '+words.length+'</span>'+
           '<span class="score-pill">Tries <b id="t">0</b></span></div>'+
-        '<p class="game-say">Find the sound that matches the word!</p>'+
+        '<p class="game-say" id="say">Remember where the words are!</p>'+
         '<div class="memory" id="mem"></div></div>');
       host.appendChild(c);
-      const mem = c.querySelector('#mem');
+      const mem = c.querySelector('#mem'), say = c.querySelector('#say');
       cards.forEach(cd => {
-        const b = el('<button class="mcard"><span class="back">🐝</span><span class="face">'+
-          (cd.kind === 'say' ? '🔊' : esc(cd.word))+'</span></button>');
-        cd.el = b;
-        b.onclick = () => flip(cd);
+        const b = el('<button class="mcard up"><span class="back">🐝</span><span class="face">'+esc(cd.word)+'</span></button>');
+        cd.el = b; b.onclick = () => flip(cd);
         mem.appendChild(b);
       });
+      // look first: a few seconds with every card face up, counted down
+      let secs = (gradeOf() <= 2 ? 4 : 3) + words.length;
+      const tick = () => {
+        if (!alive()) return;
+        if (secs > 0){ say.textContent = 'Remember where the words are! ' + secs; secs--; setTimeout(tick, 1000); return; }
+        cards.forEach(cd => cd.el.classList.remove('up'));
+        sfx('tap'); say.textContent = 'Now find the pairs!';
+        lock = false;
+      };
+      tick();
       function flip(cd){
         if (lock || cd.done || open.indexOf(cd) >= 0) return;
-        unlockAudio();
-        cd.el.classList.add('up');
-        if (cd.kind === 'say') hear(cd.word); else sfx('tap');
+        cd.el.classList.add('up'); hear(cd.word);
         open.push(cd);
         if (open.length < 2) return;
         tries++; c.querySelector('#t').textContent = tries;
         const [x, y] = open;
-        if (x.k === y.k && x.kind !== y.kind){
+        if (x.k === y.k){
           x.done = y.done = true; open = []; found++;
           c.querySelector('#f').textContent = found;
-          setTimeout(() => {
-            [x, y].forEach(o => { o.el.classList.add('done'); o.el.querySelector('.face').textContent = (o.kind === 'say' ? '🔊 ' : '') + o.word; });
-            sfx('great'); hear(x.word);
-          }, 500);
+          setTimeout(() => { x.el.classList.add('done'); y.el.classList.add('done'); sfx('great'); }, 400);
           if (found === words.length){
             const score = Math.max(10, words.length * 20 - Math.max(0, tries - words.length) * 5);
-            setTimeout(() => record(score, 'All pairs in '+tries+' tries!'), 2000);
+            setTimeout(() => record(score, 'All pairs in '+tries+' tries!'), 1800);
           }
         } else {
           lock = true;
-          if (x.k !== y.k && x.kind !== y.kind) noteMiss(x.word);
           setTimeout(() => { x.el.classList.remove('up'); y.el.classList.remove('up'); open = []; lock = false; }, 1300);
         }
       }
@@ -9465,6 +9525,124 @@ function renderBeeGame(a, id){
   };
 
   intro();
+}
+
+/* the end of any bee game: best score, stars, play again or back to the bee */
+function beeGameRecord(id, score, line, again, alive){
+  if (!alive()) return;
+  releaseKeys();
+  const p = beeProg(); p.games = p.games || {};
+  p.games[id] = Math.max(p.games[id] || 0, score);
+  const k = kid(); k.xp = (k.xp || 0) + Math.round(score / 5);
+  save();
+  celebrate('small'); sfx('win');
+  const pp = popup('<div class="em">🏆</div><h2>'+esc(line)+'</h2>'+
+    '<p class="muted">Score: '+score+(p.games[id] === score ? ' · your best!' : ' · best '+p.games[id])+'</p>'+
+    '<button class="btn big green" data-again>Play again</button>'+
+    '<button class="btn big grey" style="margin-top:8px" data-close>Back to the bee</button>');
+  pp.addEventListener('click', e => {
+    if (e.target.dataset.again !== undefined){ pp.remove(); again(); }
+    else if (e.target.dataset.close !== undefined && alive()) go('bee');
+  });
+}
+
+/* ---------------- kid: Bug Bop (the speed round) ----------------
+   2 Oct 2026 (Kathryn: "anything else fun we can do for speed round… not an
+   exercise that we have elsewhere"). Whack-a-mole: Scout says a word, bugs pop
+   up out of the honeycomb holding signs, and you bop the one holding the right
+   spelling before they duck back down. They pop up again somewhere else if you
+   miss them. Quick bops score more. A wrong bop just makes the bug giggle. */
+const BEE_BOP_N = 8;
+function actBeeSpeed(a){
+  buildBee();
+  const d = { key:'speed', n:'Bug Bop', t:'Bug Bop', em:'🔨', sub:'Bop the bug with the right spelling' };
+  BACK_TO = 'bee';
+  dayHeader(a, d);
+  MISSED = [];
+  const host = el('<div></div>'); a.appendChild(host);
+  const alive = () => host.isConnected;
+  const how = 'I\'ll say a word. Bugs pop up holding signs. Bop the bug with the right spelling before it hides!';
+  const c0 = el('<div class="card center"><div style="font-size:64px;line-height:72px">🔨</div>'+
+    '<h2 style="font-size:24px;line-height:30px">Bug Bop</h2>'+
+    '<div class="scout-card chatty" style="margin:10px 0"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="72" height="72">'+
+      '<div class="bubble" style="text-align:left">'+esc(how)+'</div></div>'+
+    '<button class="btn big green" id="go">▶️ Play!</button></div>');
+  host.appendChild(c0);
+  setTimeout(() => { if (alive()) scoutSpeak(how, 9000); }, 300);
+  c0.querySelector('#go').onclick = () => { unlockAudio(); stopSpeech(); sfx('tap'); play(); };
+
+  function play(){
+    const words = beeRoundWords(BEE_BOP_N);
+    const UP = gradeOf() <= 2 ? 2600 : 1900, BUGS = ['🐞','🐛','🦗','🐜','🪲','🐌'];
+    let i = 0, score = 0, hits = 0, timers = [];
+    host.innerHTML = '';
+    const c = el('<div class="card center game-card">'+
+      '<div class="game-top"><span class="muted">🔨 <b id="n">1</b> of '+words.length+'</span>'+
+        '<span id="spk"></span><span class="score-pill"><b id="sc">0</b> pts</span></div>'+
+      '<p class="game-say" id="say">Listen…</p>'+
+      '<div class="bop-grid" id="grid">'+Array.from({ length:9 }, (_, k) => '<div class="hole" data-k="'+k+'"><button class="bug" tabindex="-1"></button></div>').join('')+'</div></div>');
+    host.appendChild(c);
+    const holes = [...c.querySelectorAll('.hole')], say = c.querySelector('#say');
+    const clear = () => { timers.forEach(clearTimeout); timers = []; holes.forEach(h => { h.classList.remove('up', 'bonk', 'giggle', 'show'); }); };
+    function round(){
+      if (!alive()) return;
+      clear();
+      if (i >= words.length) return finish();
+      const w = words[i], right = w.word.toLowerCase();
+      const signs = shuffle([right].concat(beeWrongs(w, 2)));
+      let pops = 0, done = false, t0 = 0;
+      c.querySelector('#n').textContent = i + 1;
+      const spk = c.querySelector('#spk'); spk.innerHTML = ''; const sb = el('<button class="speaker mini" aria-label="Hear the word again">🔊</button>'); sb.onclick = () => sayWord(w.word); spk.appendChild(sb);
+      say.textContent = 'Bop the right spelling!';
+      sayWord(w.word);
+      function pop(){
+        if (!alive() || done) return;
+        holes.forEach(h => h.classList.remove('up', 'giggle'));
+        if (pops >= 4){                          // they've had four looks: show it and move on
+          done = true; noteMiss(w.word);
+          const h = holes[4]; const bug = h.querySelector('.bug');
+          bug.innerHTML = '<span class="b-em">🐝</span><span class="sign'+(right.length > 11 ? ' xlong' : right.length > 8 ? ' long' : '')+'">'+esc(right)+'</span>'; h.classList.add('up', 'show');
+          say.textContent = 'That\'s the one! It goes on your practice list.'; sayWord(w.word);
+          timers.push(setTimeout(() => { i++; round(); }, 2600));
+          return;
+        }
+        pops++;
+        const spots = shuffle(holes.map((_, k) => k)).slice(0, signs.length);
+        signs.forEach((sg, n) => {
+          const h = holes[spots[n]], bug = h.querySelector('.bug');
+          bug.innerHTML = '<span class="b-em">'+pickOne(BUGS)+'</span><span class="sign'+(sg.length > 11 ? ' xlong' : sg.length > 8 ? ' long' : '')+'">'+esc(sg)+'</span>';
+          bug.onclick = () => bop(h, sg);
+          timers.push(setTimeout(() => h.classList.add('up'), n * 180));
+        });
+        t0 = Date.now();
+        timers.push(setTimeout(pop, UP + 700));
+      }
+      function bop(h, sg){
+        if (done || !h.classList.contains('up')) return;
+        if (sg === right){
+          done = true; clear();
+          h.classList.add('up', 'bonk');
+          const quick = Math.max(0, Math.round((UP - (Date.now() - t0)) / 200));
+          score += 10 + quick; hits++;
+          c.querySelector('#sc').textContent = score;
+          sfx('great'); sayWord(w.word);
+          say.textContent = 'Bop! ' + right;
+          celebrate('small', h);
+          timers.push(setTimeout(() => { i++; round(); }, 1500));
+        } else {
+          h.classList.add('giggle'); sfx('wrong'); noteMiss(w.word);
+          say.textContent = 'Hee hee, not me! Listen again…';
+          timers.push(setTimeout(() => h.classList.remove('up', 'giggle'), 500));
+        }
+      }
+      timers.push(setTimeout(pop, 900));
+    }
+    function finish(){
+      award('beespeed');
+      beeGameRecord('bop', score, hits === words.length ? 'You bopped every word!' : 'You bopped '+hits+' of '+words.length+'!', () => { if (alive()) play(); }, alive);
+    }
+    round();
+  }
 }
 
 /* ---------------- kid: which mode? ---------------- */
