@@ -1175,15 +1175,17 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .bop-tools .btn{ flex:1 1 0; margin:0; padding:8px 6px; font-size:14px; line-height:18px; }
 .bop-cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:6px; }
 .bop-cards.n3 .bop-card:last-child{ grid-column:1 / -1; }
-.bop-card{ position:relative; height:132px; overflow:hidden; border-radius:18px;
+.bop-card{ position:relative; height:230px; overflow:hidden; border-radius:18px;
   background:radial-gradient(circle at 20% 30%, #b6f0c2 0 8%, transparent 9%), radial-gradient(circle at 80% 75%, #b6f0c2 0 7%, transparent 8%), #e3f7d5;
   box-shadow:inset 0 0 0 3px #bfe6a9; }
 .crawler{ position:absolute; left:0; top:0; border:0; background:none; padding:0; cursor:pointer; display:flex; flex-direction:column; align-items:center; will-change:transform; }
-.crawler .b-ic{ width:46px; height:46px; display:grid; place-items:center; font-size:34px; line-height:46px; transition:transform .1s linear; }
-.crawler .b-ic img{ width:46px; height:46px; display:block; }
-.crawler .sign{ background:#fff; border:2px solid #2b2350; border-radius:8px; padding:2px 6px; font:900 16px/20px var(--font-head); color:var(--ink); white-space:nowrap; margin-top:-4px; }
-.crawler .sign.long{ font-size:13px; }
-.crawler .sign.xlong{ font-size:11px; padding:2px 3px; }
+.crawler .b-ic{ width:128px; height:128px; display:grid; place-items:center; font-size:96px; line-height:128px; transition:transform .1s linear; }
+.crawler .b-ic img{ width:128px; height:128px; display:block; }
+/* 3 Oct 2026 (Kathryn): bugs about three times bigger; the sign sits on top of
+   the bug's back so the pair still fits two cards across a phone */
+.crawler .sign{ position:relative; z-index:1; background:#fff; border:2px solid #2b2350; border-radius:8px; padding:3px 7px; font:900 18px/22px var(--font-head); color:var(--ink); white-space:nowrap; margin-top:-36px; }
+.crawler .sign.long{ font-size:15px; }
+.crawler .sign.xlong{ font-size:12px; padding:3px 4px; }
 .crawler.glow .sign{ box-shadow:0 0 0 4px #ffd23f, 0 0 16px 6px #ffd23f; }
 .crawler.bonked .sign{ background:#c8f5d2; border-color:#22a35a; }
 .mc-ic{ width:74px; height:84px; clip-path:var(--hexclip); display:grid; place-items:center; background:linear-gradient(160deg,#e9e2ff,#d6c9fb); }
@@ -9335,7 +9337,7 @@ const BEE_GAMES = [
   { id:'flower', em:'🥀', art:'icon-thirsty-flower', n:'Save the Flower', s:'Spell words to water the flower',
     how:'This flower is thirsty! I\'ll say a word. Spell it to give the flower a drink. A wrong try spills a little water, but I\'ll help you.' },
   { id:'match', em:'🃏', art:'icon-memory-match', n:'Memory Match',   s:'Match the sound to the word',
-    how:'Tap a horn to hear a word. Then flip the cards to find that word. Cards that don\'t match flip back, so remember where they are!' },
+    how:'First, look at the words and remember where they are. Then they turn over. Tap a horn to hear a word, and flip the card where that word is hiding!' },
 ];
 
 /* a game's picture: its art in img/ui when it's there, its emoji until then
@@ -9564,13 +9566,13 @@ function renderBeeGame(a, id){
       const horns = words.map((w, k) => ({ k, w }));
       const cards = shuffle(words.map((w, k) => ({ k, w })));
       const COLS = ['#ffc93c','#ff9ec7','#7cc8ff','#8fe3a3','#c9a7ff'];
-      let sel = null, found = 0, tries = 0, lock = false;
+      let sel = null, found = 0, tries = 0, lock = true, looking = true;   // locked while they look
       host.innerHTML = '';
       const c = el('<div class="card center game-card">'+
         '<div class="game-top"><span class="muted">🃏 Pairs <b id="f">0</b> of '+n+'</span>'+
           '<button class="btn yellow mini-rule" id="rule">💡 Rule</button>'+
           '<span class="score-pill">Tries <b id="t">0</b></span></div>'+
-        '<p class="game-say" id="say">Tap a horn to hear a word.</p>'+
+        '<p class="game-say" id="say">Look at the words and remember where they are!</p>'+
         '<div class="horns" id="horns" style="grid-template-columns:repeat('+n+',1fr)"></div>'+
         '<div class="memory" id="mem"></div></div>');
       host.appendChild(c);
@@ -9581,16 +9583,29 @@ function renderBeeGame(a, id){
         hornRow.appendChild(b);
       });
       cards.forEach(cd => {
-        const b = el('<button class="mcard"><span class="back">🐝</span><span class="face">'+esc(cd.w.word)+'</span></button>');
+        const b = el('<button class="mcard up"><span class="back">🐝</span><span class="face">'+esc(cd.w.word)+'</span></button>');
         cd.el = b; b.onclick = () => flip(cd);
         mem.appendChild(b);
       });
+      /* look first (3 Oct 2026, Kathryn: "it doesn't let you look at the written
+         words first"): the word cards start face up with a countdown, read
+         aloud as a list, then turn over. The horns never turn over. */
+      let secs = (gradeOf() <= 2 ? 5 : 3) + n;
+      const look = () => {
+        if (!alive()) return;
+        if (secs > 0){ say.textContent = 'Look at the words and remember where they are! ' + secs; secs--; setTimeout(look, 1000); return; }
+        cards.forEach(cd => cd.el.classList.remove('up'));
+        sfx('tap'); lock = false; looking = false;
+        say.textContent = 'Tap a horn to hear a word.';
+      };
+      look();
       c.querySelector('#rule').onclick = () => {
         sfx('tap');
         if (!sel){ say.textContent = 'Tap a horn first, then I can show its rule.'; wiggle(hornRow); return; }
         rulePopup(beeSafeTip(sel.w.tip, sel.w.word), true);
       };
       function pickHorn(h){
+        if (looking) return;
         unlockAudio(); hear(h.w.word);
         if (h.done) return;
         sel = h; h.misses = h.misses || 0;
