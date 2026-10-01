@@ -1094,7 +1094,7 @@ body.walking .wrap{ z-index:auto; }
 .wed-pic{ font-size:44px; line-height:52px; margin:0 auto 2px; }
 .wed-pic img.ic{ width:52px; height:52px; }
 /* activity screens hold still on phones (29 Sep 2026) */
-body[data-view=day], body[data-view=beeplay], body[data-view=beespeed], body[data-view=beegames]{ overscroll-behavior:none; }
+body[data-view=day], body[data-view=beeplay], body[data-view=beespeed], body[data-view=beegame]{ overscroll-behavior:none; }
 .runway, .sky, .meadow{ touch-action:none; overscroll-behavior:contain; }
 /* jump between This Week's Words and the Spelling Bee */
 .modeswitch{ display:flex; align-items:center; gap:10px; width:100%; margin:0 0 12px; padding:8px 14px; border:1px solid rgba(255,255,255,.3);
@@ -1104,10 +1104,6 @@ body[data-view=day], body[data-view=beeplay], body[data-view=beespeed], body[dat
 .modeswitch b{ color:var(--gold-soft, #ffe39a); }
 .modeswitch i{ font-style:normal; font-weight:900; }
 /* the Spelling Bee's home */
-.bee-hub .bh-count{ font-size:24px; line-height:30px; margin:4px 0 10px; }
-.bee-hub .bh-count b{ color:#b45309; font-size:34px; }
-.bee-bighive{ gap:4px 5px!important; }
-.bee-bighive .hex{ width:34px!important; height:39px!important; cursor:pointer; }
 .bee-stage .judge{ font-size:20px; }
 /* the hive shows on any screen, not only the sprints (the bee's stage too) */
 body .gamebadge.gamedock .hivebuild i{ width:27px; height:31px; background:#ece6fb; }
@@ -1130,42 +1126,39 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .mode-card.mc-week{ border-top:6px solid #3ba9ff; }
 .mode-card.mc-bee{ border-top:6px solid var(--gold); background:linear-gradient(180deg,#fffdf3,#fff); }
 .mode-card.mc-wide{ grid-column:1 / -1; }
-/* the bee's own games (1 Oct 2026) */
-.bg-list{ display:flex; flex-direction:column; gap:10px; margin:6px 0 10px; }
-.bg-card{ display:flex; align-items:center; gap:12px; border:0; border-radius:20px; padding:12px 16px; background:#fff; text-align:left; cursor:pointer;
-  box-shadow:0 5px 0 rgba(0,0,0,.14); border-left:6px solid var(--gold); font:inherit; color:var(--ink); }
-.bg-card:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.14); }
-.bg-em{ font-size:40px; line-height:44px; }
-.bg-tx{ flex:1; display:flex; flex-direction:column; }
-.bg-tx b{ font:900 19px/24px var(--font-head); }
-.bg-tx small{ font-size:14px; line-height:18px; color:var(--ink-soft); font-weight:700; }
-.bg-card i{ font-style:normal; font-weight:900; font-size:22px; color:#b45309; }
-.hop-path{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-end; gap:6px; margin:14px 0 6px; min-height:58px; }
-.hop-spot{ width:34px; height:34px; border-radius:50%; background:#e9f7e4; border:3px dashed #9ad48a; display:flex; align-items:center; justify-content:center;
-  font:900 20px/1 var(--font-head); color:var(--ink); }
-.hop-spot.on{ background:#ffe08a; border:3px solid #f5b400; }
-.hop-scout{ width:46px; height:46px; }
-.hop-scout.hop{ animation:hopUp .4s ease-out; }
-@keyframes hopUp{ 0%{ transform:translateY(0); } 45%{ transform:translateY(-22px) rotate(-8deg); } 100%{ transform:translateY(0); } }
-.hop-pick{ display:flex; justify-content:center; gap:14px; margin:14px 0 4px; flex-wrap:wrap; }
-.hop-flower{ width:78px; height:78px; border:0; border-radius:50%; cursor:pointer; font:900 32px/1 var(--font-head); color:var(--ink);
-  background:radial-gradient(circle,#ffe08a 0 38%,#ff9ec7 40% 100%); box-shadow:0 5px 0 rgba(0,0,0,.15); transition:transform .2s, opacity .2s; }
-.hop-flower:active{ transform:scale(.93); }
-.hop-flower.droop{ transform:rotate(25deg) translateY(10px); opacity:.35; }
-.hop-flower.glow{ box-shadow:0 0 0 5px #fff, 0 0 18px 8px #ffd23f; }
-.bell-letters{ display:flex; justify-content:center; flex-wrap:wrap; gap:5px; min-height:52px; margin:14px 0; }
-.bell-l{ width:38px; height:46px; border-radius:10px; background:#fff4d6; border:2px solid #f5b400; display:flex; align-items:center; justify-content:center;
-  font:900 26px/1 var(--font-head); color:var(--ink); animation:popIn .25s ease-out; }
-.bell-l.fix{ background:#c8f5d2; border-color:#22a35a; }
-@keyframes popIn{ from{ transform:scale(.4); opacity:0; } to{ transform:scale(1); opacity:1; } }
-.bell-row{ display:flex; gap:10px; }
-.bell-row .btn{ flex:1 1 0; margin:0; font-size:17px; padding-left:8px; padding-right:8px; }
-.buzz-card{ margin:16px auto; padding:22px 12px; border-radius:20px; background:#fff; box-shadow:0 0 0 3px #ffd23f inset;
-  font:900 34px/40px var(--font-head); color:var(--ink); word-break:break-word; }
-.buzz-card.in{ animation:popIn .25s ease-out; }
-.buzz-card.good{ background:#e6f9ec; }
-.buzz-card.bad{ background:#ffe8ef; }
-.buzz-card s{ opacity:.5; }
+/* the bee's own games (2 Oct 2026) */
+.mode-card.mc-game{ border-top:6px solid #ff9ec7; }
+.mode-card .mc-em{ font-size:40px; line-height:52px; }
+.wheel-wrap{ position:relative; width:230px; height:230px; margin:6px auto 4px; }
+.wheel{ width:230px; height:230px; border-radius:50%; position:relative; border:6px solid #fff; box-shadow:0 6px 0 rgba(0,0,0,.15);
+  background:conic-gradient(#ffe08a 0 45deg,#ff9ec7 45deg 90deg,#9ad4ff 90deg 135deg,#b6f0c2 135deg 180deg,#ffe08a 180deg 225deg,#ff9ec7 225deg 270deg,#9ad4ff 270deg 315deg,#b6f0c2 315deg 360deg);
+  transition:transform 2.2s cubic-bezier(.15,.8,.25,1); }
+.wheel span{ position:absolute; left:50%; top:50%; width:40px; height:40px; margin:-20px 0 0 -20px; font-size:30px; line-height:40px; text-align:center; }
+.wheel-pin{ position:absolute; top:-14px; left:50%; transform:translateX(-50%); z-index:2; font-size:28px; color:#b45309; text-shadow:0 2px 0 #fff; }
+.prize-shelf{ display:flex; justify-content:center; gap:4px; min-height:40px; font-size:28px; line-height:36px; margin:6px 0; flex-wrap:wrap; }
+.prize-shelf .muted{ font-size:14px; }
+.wheel-ask{ display:flex; align-items:center; justify-content:center; gap:10px; }
+.wheel-prize{ font-size:44px; }
+.petals{ display:flex; justify-content:center; align-items:center; gap:2px; font-size:24px; margin:8px 0; flex-wrap:wrap; }
+.petals .fl-head{ font-size:44px; margin-right:6px; }
+.petal{ transition:transform .5s, opacity .5s; }
+.petal.gone{ opacity:.15; transform:translateY(14px) rotate(60deg); }
+.flower-word{ display:flex; justify-content:center; gap:5px; flex-wrap:wrap; margin:10px 0 4px; }
+.fl-l{ width:36px; height:46px; border-bottom:4px solid var(--ink-soft); font:900 30px/46px var(--font-head); color:var(--ink); }
+.fl-l.on{ border-color:#22a35a; }
+.abc{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:8px; }
+.abc button{ border:0; border-radius:10px; background:#fff4d6; box-shadow:0 3px 0 rgba(0,0,0,.15); font:900 20px/40px var(--font-head); color:var(--ink); cursor:pointer; }
+.abc button.yes{ background:#c8f5d2; }
+.abc button.no{ background:#eee; opacity:.45; }
+.memory{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px; }
+.mcard{ position:relative; height:82px; border:0; border-radius:16px; cursor:pointer; background:linear-gradient(160deg,#ffe08a,#ffc93c); box-shadow:0 5px 0 rgba(0,0,0,.15);
+  font:900 22px/1.1 var(--font-head); color:var(--ink); padding:6px; }
+.mcard .face{ display:none; word-break:break-word; }
+.mcard .back{ font-size:34px; }
+.mcard.up{ background:#fff; box-shadow:0 0 0 3px #ffd23f inset, 0 5px 0 rgba(0,0,0,.12); }
+.mcard.up .face{ display:block; }
+.mcard.up .back{ display:none; }
+.mcard.done{ background:#e6f9ec; box-shadow:0 0 0 3px #22a35a inset; }
 .mc-ic{ width:74px; height:84px; clip-path:var(--hexclip); display:grid; place-items:center; background:linear-gradient(160deg,#e9e2ff,#d6c9fb); }
 .mc-bee .mc-ic{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
 .mc-ic img{ width:52px; height:52px; object-fit:contain; }
@@ -4342,7 +4335,7 @@ function render(arg){
   if (VIEW === 'bee')      return renderBeeHome(a);
   if (VIEW === 'beeplay')  return actBeePlay(a);
   if (VIEW === 'beespeed') return actBeeSpeed(a);
-  if (VIEW === 'beegames') return renderBeeGames(a);
+  if (VIEW === 'beegame')  return renderBeeGame(a, arg);
   if (VIEW === 'home')     return renderHome(a);
   if (VIEW === 'parent') return renderParent(a, arg);
   if (VIEW === 'day')    return renderDay(a, arg);
@@ -5311,7 +5304,7 @@ const GREETED = {};
    phone too small for it, it still scrolls so nothing is out of reach. */
 document.addEventListener('touchmove', e => {
   const v = document.body.dataset.view;
-  if (v !== 'day' && v !== 'beeplay' && v !== 'beespeed' && v !== 'beegames') return;
+  if (v !== 'day' && v !== 'beeplay' && v !== 'beespeed' && v !== 'beegame') return;
   const t = e.target;
   if (t && t.closest){
     if (t.closest('.runway,.sky,.meadow')){ e.preventDefault(); return; }
@@ -8768,8 +8761,6 @@ function renderBeeHome(a){
   }
   const plan = beePlan();
   const p = beeProg();
-  const mastered = plan.mastered.length;
-  const pct = Math.round(100 * mastered / Math.max(1, plan.words.length));
   const doneToday = p.days[today()];
 
   if (String(rawForKid(kid()) || '').trim()){
@@ -8785,55 +8776,38 @@ function renderBeeHome(a){
   a.appendChild(el('<div class="scout-card chatty"><img src="'+SCOUT_IMG('cheering')+'" alt="Scout" width="96" height="96">'+
     '<div class="bubble">'+esc(hello)+'</div></div>'));
   setTimeout(() => greetOnce('bee:' + kid().id, () => scoutSpeak(hello, 6000)), 300);
-  a.appendChild(el('<div class="card center bee-hub">'+
-    '<div class="eyebrow-ink">Spelling Bee</div>'+
-    '<h2 class="bh-count">'+(plan.daysLeft == null ? 'Practice pool'
-        : plan.daysLeft === 0 ? 'The bee is today!'
-        : '<b>'+plan.daysLeft+'</b> day'+(plan.daysLeft===1?'':'s')+' to go')+'</h2>'+
-    '<div class="hive bee-bighive" id="hive"></div>'+
-    '<div class="fuel-lbl muted">'+mastered+' of '+plan.words.length+' words in the hive · tap a cell to hear it</div>'+
-    /* only ever today's small job, never the size of the whole list (1 Oct 2026) */
-    '<p class="muted" style="margin-top:8px">'+
-      (plan.newLeft
-        ? 'Today: <b>'+plan.newLeft+' new word'+(plan.newLeft===1?'':'s')+'</b> to meet'+(plan.seen.length ? ', plus a few old friends.' : '.')
-        : plan.finalStretch ? '🔥 Final stretch: a few words at a time from the whole hive.'
-        : plan.metToday.length ? '✅ Today\'s new words are met! Play a game to keep them buzzing.'
-        : 'No new words today — just a quick warm-up with words you know.')+'</p>'+
-  '</div>'));
-
-  const hive = a.querySelector('#hive');
-  plan.words.forEach(w => {
-    const cls = beeMastered(w) ? 'gold' : beeShaky(w) ? 'red' : beeSeen(w) ? 'warm' : '';
-    const h = el('<i class="hex '+cls+'"></i>');
-    h.title = w;
-    h.onclick = () => { unlockAudio(); sayWord(w); };
-    hive.appendChild(h);
-  });
+  /* 2 Oct 2026 (Kathryn): the countdown card under Scout said the same thing
+     she does, so it's gone; and every game sits right here, no extra menu. */
 
   const grid = el('<div class="mode-grid"></div>');
   const start = el('<button class="mode-card mc-bee mc-wide">'+
     '<div class="mc-ic"><img src="../img/ui/icon-mic.webp" alt=""></div><b>'+(doneToday ? 'Back on stage' : 'Take the stage')+'</b>'+
     '<small>The judges call your words. A crowd of bees cheers you on.</small><span class="mc-go">Let\'s go →</span></button>');
   start.onclick = () => { unlockAudio(); sfx('tap'); go('beeplay'); };
-  /* 1 Oct 2026 (Kathryn: the kids are bored with the bee): games of its own */
-  const games = el('<button class="mode-card mc-week">'+
-    '<div class="mc-ic"><img src="'+SCOUT_IMG('cheering')+'" alt=""></div><b>Bee games</b>'+
-    '<small>Flower Hop, Judge\'s Bell and Buzz or Bust.</small><span class="mc-go">Play →</span></button>');
-  games.onclick = () => { unlockAudio(); sfx('tap'); go('beegames'); };
-  const speed = el('<button class="mode-card mc-bee">'+
-    '<div class="mc-ic"><img src="../img/ui/icon-speed.webp" alt=""></div><b>Speed round</b>'+
-    '<small>'+Math.min(BEE_SPEED_N, Math.max(1, plan.seen.length || plan.words.length))+' quick words. How fast can you go?</small><span class="mc-go">Ready, set… →</span></button>');
+  grid.appendChild(start);
+  const best = (p.games || {});
+  BEE_GAMES.forEach(gm => {
+    const b = el('<button class="mode-card mc-game"><div class="mc-em">'+gm.em+'</div><b>'+esc(gm.n)+'</b>'+
+      '<small>'+esc(gm.s)+'</small><span class="mc-go">'+(best[gm.id] ? '⭐ Best '+best[gm.id] : 'Play →')+'</span></button>');
+    b.onclick = () => { unlockAudio(); sfx('tap'); go('beegame', gm.id); };
+    grid.appendChild(b);
+  });
+  const speed = el('<button class="mode-card mc-game">'+
+    '<div class="mc-em">⚡</div><b>Speed round</b>'+
+    '<small>Which word did you hear? '+Math.min(BEE_SPEED_N, Math.max(1, plan.seen.length || plan.words.length))+' quick ones.</small><span class="mc-go">Ready, set… →</span></button>');
   speed.onclick = () => { unlockAudio(); sfx('tap'); go('beespeed'); };
-  grid.append(start, games, speed);
+  grid.appendChild(speed);
   a.appendChild(grid);
 
-  // word wall, folded away
-  const list = el('<details class="card"><summary style="font:900 18px/24px var(--font-head)">🐝 The whole list</summary>'+
-    '<p class="muted" style="margin-top:8px">Gold = in the hive · pink = practice again · grey = not started</p><div id="ww" style="margin-top:8px"></div></details>');
+  /* every word on the list, all of it readable (2 Oct 2026: the words not
+     started yet were drawn at half strength, so it looked like only today's) */
+  const list = el('<details class="card"><summary style="font:900 18px/24px var(--font-head)">🐝 The whole list · '+plan.words.length+' words</summary>'+
+    '<p class="muted" style="margin-top:8px">Tap a word to hear it. ⭐ = you know it · 🔁 = practice again</p><div id="ww" style="margin-top:8px"></div></details>');
   const ww = list.querySelector('#ww');
   plan.words.forEach(w => {
-    const cls = beeMastered(w) ? ' done' : beeShaky(w) ? ' bad' : beeSeen(w) ? '' : ' dim';
-    const chip = el('<span class="wordchip'+cls+'">'+esc(w)+'<span class="sp">🔊</span></span>');
+    const cls = beeMastered(w) ? ' done' : beeShaky(w) ? ' bad' : '';
+    const mark = beeMastered(w) ? '⭐ ' : beeShaky(w) ? '🔁 ' : '';
+    const chip = el('<span class="wordchip'+cls+'">'+mark+esc(w)+'<span class="sp">🔊</span></span>');
     chip.onclick = () => { unlockAudio(); sayWord(w); };
     ww.appendChild(chip);
   });
@@ -9235,270 +9209,262 @@ function actBeeSpeed(a){
 }
 
 /* ---------------- kid: the bee's own games ----------------
-   1 Oct 2026 (Kathryn: the kids are bored with the bee, and it needs
-   completely different games, not the weekly arcade again). Three games
-   built around what a bee actually asks of a speller: holding a word in
-   your head one letter at a time, catching a slip as it happens, and
-   knowing a right spelling on sight. Every round is short and uses words
-   the child has already met. A miss here goes on today's practice list but
-   never touches mastery, which only the stage awards. */
+   2 Oct 2026, second go (Kathryn: the first three games were a little
+   confusing, Scout didn't read all the words, and the kids have had word
+   scrambles before and wanted something new). So: games kids already know
+   how to play, nothing that hands them a pile of letters to sort, Scout
+   says every word out loud, and each game opens with one sentence on how to
+   play that Scout reads too. They sit right on the bee screen, no menu.
+   A miss goes on today's practice list but never touches mastery, which
+   only the stage awards. */
 const BEE_GAMES = [
-  { id:'hop',  em:'🌼', n:'Flower Hop',   s:'Hop to the next letter',       fn:'beeHop'  },
-  { id:'bell', em:'🔔', n:'Judge\'s Bell', s:'Ring it when a speller slips', fn:'beeBell' },
-  { id:'buzz', em:'⚡', n:'Buzz or Bust', s:'Right or wrong? Quick!',       fn:'beeBuzz' },
+  { id:'wheel', em:'🎡', n:'Prize Wheel',    s:'Spin, listen, spell it, win the prize',
+    how:'Spin the wheel to pick a prize. I\'ll say a word. Spell it right and the prize is yours!' },
+  { id:'flower', em:'🌻', n:'Save the Flower', s:'Guess the letters before the petals fall',
+    how:'I\'ll say a word. Tap the letters you think are in it. Each wrong letter drops a petal. Fill the word before they\'re gone!' },
+  { id:'match', em:'🃏', n:'Memory Match',   s:'Match the sound to the spelling',
+    how:'Flip two cards. A speaker card says a word out loud. Find the card with that word spelled on it!' },
 ];
+const BEE_PRIZES = ['🍯','🌻','🍩','🎈','⭐','🍓','🦋','🎁'];
 
-/* a believable slip: one of the usual misspellings, or one letter swapped */
-function beeSlip(w){
-  const opts = misspell(w.word, w.patternId);
-  if (opts.length) return pickOne(opts);
-  const s = w.word.toLowerCase(), i = Math.floor(Math.random() * s.length);
-  const pool = (isVowel(s[i]) ? 'aeiou' : 'bcdfgklmnprstvz').split('').filter(c => c !== s[i]);
-  return s.slice(0, i) + pickOne(pool) + s.slice(i + 1);
-}
-
-function renderBeeGames(a){
+function renderBeeGame(a, id){
   buildBee();
+  const gm = BEE_GAMES.find(x => x.id === id) || BEE_GAMES[0];
   BACK_TO = 'bee';
-  dayHeader(a, { key:'beegames', n:'Bee Games', t:'Play with your bee words', em:'🎮', sub:'Pick a game' });
-  const host = el('<div class="bee-games"></div>'); a.appendChild(host);
-  const games = () => { const p = beeProg(); p.games = p.games || {}; return p.games; };
+  dayHeader(a, { key:'beegame', n:gm.n, t:gm.n, em:gm.em, sub:'Spelling Bee game' });
+  const host = el('<div class="bee-game"></div>'); a.appendChild(host);
+  const prog = () => { const p = beeProg(); p.games = p.games || {}; return p; };
   MISSED = [];
+  const alive = () => host.isConnected;
+  const hear = w => { unlockAudio(); sayWord(w); };
+  const speaker = w => { const b = el('<button class="speaker mini" aria-label="Hear the word again">🔊</button>'); b.onclick = () => hear(w); return b; };
 
-  function menu(){
+  /* the one-sentence how-to, read aloud, then Play */
+  function intro(){
     releaseKeys();
     host.innerHTML = '';
-    host.appendChild(el('<div class="scout-card chatty"><img src="'+SCOUT_IMG('waving')+'" alt="Scout" width="80" height="80">'+
-      '<div class="bubble">Three games, made just for the bee. Which one first?</div></div>'));
-    const g = el('<div class="bg-list"></div>');
-    BEE_GAMES.forEach(gm => {
-      const best = games()[gm.id];
-      const b = el('<button class="bg-card"><span class="bg-em">'+gm.em+'</span><span class="bg-tx"><b>'+gm.n+'</b>'+
-        '<small>'+(best ? '⭐ Best '+best : gm.s)+'</small></span><i>→</i></button>');
-      b.onclick = () => { unlockAudio(); sfx('tap'); GAMES[gm.fn](); };
-      g.appendChild(b);
-    });
-    host.appendChild(g);
+    const c = el('<div class="card center"><div style="font-size:64px;line-height:72px">'+gm.em+'</div>'+
+      '<h2 style="font-size:24px;line-height:30px">'+esc(gm.n)+'</h2>'+
+      '<div class="scout-card chatty" style="margin:10px 0"><img src="'+SCOUT_IMG('pointing')+'" alt="Scout" width="72" height="72">'+
+        '<div class="bubble" style="text-align:left">'+esc(gm.how)+'</div></div>'+
+      '<button class="btn big green" id="go">▶️ Play!</button></div>');
+    host.appendChild(c);
+    setTimeout(() => { if (alive()) scoutSpeak(gm.how, 9000); }, 300);
+    c.querySelector('#go').onclick = () => { unlockAudio(); stopSpeech(); sfx('tap'); GAMES[gm.id](); };
   }
 
-  function record(id, score, line){
-    games()[id] = Math.max(games()[id] || 0, score);
+  function record(score, line){
+    if (!alive()) return;
+    releaseKeys();
+    const p = prog(); p.games[gm.id] = Math.max(p.games[gm.id] || 0, score);
     const k = kid(); k.xp = (k.xp || 0) + Math.round(score / 5);
     save();
     celebrate('small'); sfx('win');
-    const pp = popup('<div class="em">🏆</div><h2>Score: '+score+'</h2>'+
-      '<p class="muted">'+line+'</p>'+
+    const pp = popup('<div class="em">🏆</div><h2>'+esc(line)+'</h2>'+
+      '<p class="muted">Score: '+score+(p.games[gm.id] === score ? ' · your best!' : ' · best '+p.games[gm.id])+'</p>'+
       '<button class="btn big green" data-again>Play again</button>'+
-      '<button class="btn big grey" style="margin-top:8px" data-close>More games</button>');
+      '<button class="btn big grey" style="margin-top:8px" data-close>Back to the bee</button>');
     pp.addEventListener('click', e => {
-      if (!host.isConnected){ pp.remove(); return; }
-      if (e.target.dataset.again !== undefined){ pp.remove(); GAMES[BEE_GAMES.find(x => x.id === id).fn](); }
-      else if (e.target.dataset.close !== undefined) menu();
+      if (e.target.dataset.again !== undefined){ pp.remove(); if (alive()) GAMES[gm.id](); }
+      else if (e.target.dataset.close !== undefined && alive()) go('bee');
     });
   }
 
   const GAMES = {
-    /* --- Flower Hop ---
-       Scout says the word, then hops along a path of flowers, one per letter.
-       At each step a few flowers bloom with letters on them; tap the next
-       letter of the word and Scout hops on. A wrong flower droops; after two
-       droops the right one glows. Holding the word in your head one letter
-       at a time is exactly what spelling it out loud on stage needs. */
-    beeHop(){
+    /* --- Prize Wheel ---
+       Spin, the wheel lands on a prize, Scout says the word, spell it on the
+       keyboard (K–2 fill in the missing letters). Right: the prize goes on
+       your shelf. Five spins. */
+    wheel(){
       releaseKeys();
-      const words = beeRoundWords(6);
-      let i = 0, score = 0;
-      function step(){
-        if (!host.isConnected) return;
-        if (i >= words.length) return record('hop', score, 'You hopped through '+words.length+' words!');
-        const w = words[i], word = w.word.toLowerCase();
-        let pos = 0, misses = 0;
-        host.innerHTML = '';
-        const c = el('<div class="card center game-card">'+
-          '<div class="game-top"><span class="muted">🌼 '+(i+1)+' of '+words.length+'</span>'+
-            '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
-            '<span class="score-pill">'+score+' pts</span></div>'+
-          '<p class="game-say">Hop to the next letter!</p>'+
-          '<div class="hop-path" id="path"></div>'+
-          '<div class="hop-pick" id="pick"></div></div>');
-        host.appendChild(c);
-        c.querySelector('#sp').onclick = () => sayWord(w.word);
-        sayWord(w.word);
-        const path = c.querySelector('#path'), pick = c.querySelector('#pick');
-        word.split('').forEach(() => path.appendChild(el('<span class="hop-spot"></span>')));
-        const scout = el('<img class="hop-scout" src="'+SCOUT_IMG('waving')+'" alt="">');
-        path.prepend(scout);
-
-        function choices(){
-          pick.innerHTML = '';
-          if (pos >= word.length) return;
-          const want = word[pos];
-          const n = gradeOf() <= 1 ? 2 : 3;
-          const like = (isVowel(want) ? 'aeiou' : 'bcdfghklmnprstwy').split('').filter(x => x !== want);
-          const opts = shuffle([want].concat(shuffle(like).slice(0, n - 1)));
-          opts.forEach(ch => {
-            const f = el('<button class="hop-flower"><span>'+esc(ch)+'</span></button>');
-            f.onclick = () => tap(ch, f);
-            pick.appendChild(f);
-          });
-        }
-        function tap(ch, f){
-          if (pos >= word.length) return;
-          if (ch === word[pos]){
-            sfx('pop');
-            if (!misses) score += 5;
-            const spot = path.querySelectorAll('.hop-spot')[pos];
-            spot.textContent = word[pos]; spot.classList.add('on');
-            spot.after(scout);
-            scout.classList.remove('hop'); void scout.offsetWidth; scout.classList.add('hop');
-            pos++; misses = 0;
-            if (pos >= word.length){
-              pick.innerHTML = '';
-              score += 10;
-              setTimeout(() => { sfx('great'); sayWord(w.word); scoutPop('cheering', cheer(), 1600); celebrate('small', path); }, 300);
-              i++; setTimeout(step, 1900);
-            } else choices();
-            c.querySelector('.score-pill').textContent = score + ' pts';
-          } else {
-            misses++; sfx('wrong'); f.classList.add('droop'); f.disabled = true;
-            if (misses === 1) noteMiss(w.word);
-            if (misses >= 2) pick.querySelectorAll('.hop-flower').forEach(x => { if (x.textContent === word[pos]) x.classList.add('glow'); });
-          }
-        }
-        claimKeys(ch => { const f = [...pick.querySelectorAll('.hop-flower:not([disabled])')].find(x => x.textContent === ch); if (f) tap(ch, f); else sfx('wrong'); }, () => {});
-        choices();
-      }
-      step();
-    },
-
-    /* --- Judge's Bell ---
-       The child is the judge. Scout says the word, then a speller at the
-       microphone spells it one letter at a time. Sometimes they slip. Ring
-       the bell on the wrong letter, or press "Spelled right!" when they
-       finish clean. Catching a slip in someone else's spelling is how you
-       start catching it in your own. The speller always gets a kind word. */
-    beeBell(){
-      releaseKeys();
-      const words = beeRoundWords(8);
-      let i = 0, score = 0;
-      function step(){
-        if (!host.isConnected) return;
-        if (i >= words.length) return record('bell', score, 'What a sharp-eared judge!');
-        const w = words[i], right = w.word.toLowerCase();
-        const slip = Math.random() < .6;
-        const shown = slip ? beeSlip(w) : right;
-        // where the spelling first goes wrong (or the end, if it is just shorter)
-        let bad = -1;
-        if (slip){ bad = 0; while (bad < shown.length && shown[bad] === right[bad]) bad++; }
-        const speller = pickOne(RIVALS.filter(r => r !== '🐝'));
-        let pos = 0, over = false, timer = null, started = false;
-        host.innerHTML = '';
-        const c = el('<div class="card center game-card">'+
-          '<div class="game-top"><span class="muted">🔔 '+(i+1)+' of '+words.length+'</span>'+
-            '<button class="speaker mini" id="sp" aria-label="Hear the word">🔊</button>'+
-            '<span class="score-pill">'+score+' pts</span></div>'+
-          '<p class="game-say"><span style="font-size:30px">'+speller+'</span> is spelling your word…</p>'+
-          '<div class="bell-letters" id="ls"></div>'+
-          '<div class="bell-row"><button class="btn big yellow" id="ring">🔔 Ding! A slip!</button>'+
-          '<button class="btn big green" id="ok" disabled>✅ Spelled right!</button></div>'+
-          '<p class="muted" id="msg" style="min-height:22px;margin-top:8px"></p></div>');
-        host.appendChild(c);
-        const ls = c.querySelector('#ls'), msg = c.querySelector('#msg');
-        c.querySelector('#sp').onclick = () => sayWord(w.word);
-        const speed = gradeOf() <= 2 ? 1300 : 950;
-
-        function addLetter(){
-          if (over || !host.isConnected) return;
-          if (pos >= shown.length){ c.querySelector('#ok').disabled = false; msg.textContent = 'All done. Was that right?'; return; }
-          ls.appendChild(el('<span class="bell-l">'+esc(shown[pos])+'</span>'));
-          sfx('tap'); pos++;
-          timer = setTimeout(addLetter, speed);
-        }
-        function end(ok, text){
-          over = true; clearTimeout(timer);
-          c.querySelectorAll('.bell-row button').forEach(b => b.disabled = true);
-          if (ok){ score += 10; sfx('great'); scoutPop('cheering', cheer(), 1600); }
-          else { sfx('ding'); noteMiss(w.word); }
-          msg.innerHTML = text;
-          // always finish on the right spelling
-          ls.innerHTML = right.split('').map((ch, k) => '<span class="bell-l '+(slip && k === bad ? 'fix' : '')+'">'+esc(ch)+'</span>').join('');
-          c.querySelector('.score-pill').textContent = score + ' pts';
-          i++; setTimeout(step, ok ? 2200 : 3200);
-        }
-        c.querySelector('#ring').onclick = () => {
-          if (over) return;
-          if (!slip){ return end(false, 'That one was spelled right all along! Here it is.'); }
-          if (pos - 1 >= bad || (bad >= shown.length && pos >= shown.length)) return end(true, 'Ding! Good catch. Here is how it really goes:');
-          sfx('tap'); wiggle(c.querySelector('#ring'));
-          msg.textContent = 'Not yet, every letter so far is right. Keep listening!';
-        };
-        c.querySelector('#ok').onclick = () => {
-          if (over) return;
-          if (slip) end(false, 'Sneaky! There was a slip. Here is the right way:');
-          else end(true, 'Yes! Spelled right. The judges agree with you.');
-        };
-        const begin = () => { if (started) return; started = true; timer = setTimeout(addLetter, 400); };
-        sayWord(w.word, { onend: begin });
-        setTimeout(begin, 2500);           // in case speech never reports finishing
-      }
-      step();
-    },
-
-    /* --- Buzz or Bust ---
-       45 seconds. A word card drops in, spelled right or with one slip. Buzz
-       if it is right, bust if it is not. Quick, a little silly, and it trains
-       the eye that knows a spelling "looks wrong". Every bust shows the right
-       spelling straight away so the wrong one never gets the last word. */
-    beeBuzz(){
-      releaseKeys();
-      const pool = beeRoundWords(20);
-      let queue = shuffle(pool), qi = 0, score = 0, left = 45, ticker = null, busy = false;
+      const words = beeRoundWords(5);
+      let i = 0, score = 0, turn = 0;
+      const won = [];
       host.innerHTML = '';
       const c = el('<div class="card center game-card">'+
-        '<div class="game-top"><span class="clock-pill">⏱️ <b id="clk">45</b>s</span>'+
+        '<div class="game-top"><span class="muted">🎡 Spin <b id="n">1</b> of '+words.length+'</span>'+
           '<span class="score-pill"><b id="sc">0</b> pts</span></div>'+
-        '<p class="game-say">Right or wrong?</p>'+
-        '<div class="buzz-card" id="card"></div>'+
-        '<div class="bell-row"><button class="btn big green" id="yes">🐝 Buzz! Right</button>'+
-        '<button class="btn big pink" id="no">💥 Bust! Wrong</button></div>'+
-        '<p class="muted" id="msg" style="min-height:22px;margin-top:8px"></p></div>');
+        '<div class="prize-shelf" id="shelf"><span class="muted">Your prizes will go here</span></div>'+
+        '<div class="wheel-wrap"><div class="wheel-pin">▼</div><div class="wheel" id="wheel">'+
+          BEE_PRIZES.map((p, k) => '<span style="transform:rotate('+(k * 45 + 22.5)+'deg) translateY(-92px) rotate(-'+(k * 45 + 22.5)+'deg)">'+p+'</span>').join('')+
+        '</div></div>'+
+        '<div id="play"></div></div>');
       host.appendChild(c);
-      const card = c.querySelector('#card'), msg = c.querySelector('#msg');
-      let cur = null;
-      function next(){
-        if (left <= 0) return;
-        if (qi >= queue.length){ queue = shuffle(pool); qi = 0; }
-        const w = queue[qi++];
-        const fake = Math.random() < .5;
-        cur = { w, shown: fake ? beeSlip(w) : w.word.toLowerCase(), fake };
-        card.textContent = cur.shown;
-        card.className = 'buzz-card in';
-        msg.textContent = '';
-        busy = false;
+      const wheel = c.querySelector('#wheel'), play = c.querySelector('#play'), shelf = c.querySelector('#shelf');
+      function ready(){
+        if (!alive()) return;
+        if (i >= words.length) return record(score, won.length ? 'You won '+won.length+' prize'+(won.length===1?'':'s')+'!' : 'Nice spinning!');
+        c.querySelector('#n').textContent = i + 1;
+        play.innerHTML = '';
+        const b = el('<button class="btn big yellow" style="margin-top:6px">🎡 Spin!</button>');
+        b.onclick = spin;
+        play.appendChild(b);
       }
-      function answer(sayRight){
-        if (busy || left <= 0 || !cur) return;
-        busy = true;
-        const ok = sayRight === !cur.fake;
-        if (ok){ score += 5; sfx('good'); card.classList.add('good'); }
-        else { sfx('wrong'); card.classList.add('bad'); noteMiss(cur.w.word); }
-        if (cur.fake){ card.innerHTML = '<s>'+esc(cur.shown)+'</s> → <b>'+esc(cur.w.word)+'</b>'; }
-        msg.textContent = ok ? (cur.fake ? 'Busted! Good eye.' : 'Buzz! That\'s right.') : (cur.fake ? 'That one had a slip.' : 'That one was right!');
-        c.querySelector('#sc').textContent = score;
-        setTimeout(next, cur.fake || !ok ? 1300 : 600);
+      function spin(){
+        sfx('tap'); unlockAudio();
+        play.innerHTML = '<p class="game-say">Spinning…</p>';
+        const k = Math.floor(Math.random() * BEE_PRIZES.length);
+        turn += 4 * 360 + (360 - ((turn % 360) + k * 45 + 22.5) % 360);
+        wheel.style.transform = 'rotate(' + turn + 'deg)';
+        setTimeout(() => { if (alive()) spell(BEE_PRIZES[k]); }, 2300);
       }
-      c.querySelector('#yes').onclick = () => answer(true);
-      c.querySelector('#no').onclick = () => answer(false);
-      ticker = setInterval(() => {
-        if (!host.isConnected){ clearInterval(ticker); return; }
-        left--; c.querySelector('#clk').textContent = Math.max(0, left);
-        if (left <= 0){ clearInterval(ticker); c.querySelectorAll('.bell-row button').forEach(b => b.disabled = true); record('buzz', score, 'Time! You buzzed through it.'); }
-      }, 1000);
-      next();
+      function spell(prize){
+        const w = words[i];
+        sfx('ding');
+        play.innerHTML = '';
+        const head = el('<div class="wheel-ask"><span class="wheel-prize">'+prize+'</span><span class="game-say">Spell the word to win it!</span></div>');
+        head.appendChild(speaker(w.word));
+        play.appendChild(head);
+        const box = el('<div></div>'); play.appendChild(box);
+        const little = gradeOf() <= 2;
+        typingRound(box, {
+          word:w.word, patternId:w.patternId, noStats:true, noSpell:true,
+          blanks: little ? makeBlanks(w.word, w.patternId, 3) : null,
+          onDone: ok => {
+            if (ok){
+              score += 20; won.push(prize);
+              shelf.innerHTML = won.map(p => '<span>'+p+'</span>').join('');
+              celebrate('small', shelf);
+            } else noteMiss(w.word);
+            c.querySelector('#sc').textContent = score;
+            i++; setTimeout(ready, 600);
+          }
+        });
+        setTimeout(() => hear(w.word), 250);
+      }
+      ready();
+    },
+
+    /* --- Save the Flower ---
+       The letter-guessing game every child knows. Scout says the word; tap
+       letters; right ones drop into place, wrong ones knock off a petal.
+       Little ones get more petals. A flower that runs out of petals is never
+       a loss screen: Scout shows the word, says it, and it goes on the
+       practice list. */
+    flower(){
+      releaseKeys();
+      const words = beeRoundWords(4);
+      const PETALS = gradeOf() <= 2 ? 8 : 6;
+      let i = 0, score = 0, saved = 0;
+      function step(){
+        if (!alive()) return;
+        if (i >= words.length) return record(score, saved ? 'You saved '+saved+' flower'+(saved===1?'':'s')+'!' : 'Good guessing!');
+        const w = words[i], word = w.word.toLowerCase();
+        const got = new Set(word.split('').filter(ch => !/[a-z]/.test(ch)));   // spaces, hyphens, apostrophes show from the start
+        const tried = new Set();
+        let left = PETALS, over = false;
+        host.innerHTML = '';
+        const c = el('<div class="card center game-card">'+
+          '<div class="game-top"><span class="muted">🌻 '+(i+1)+' of '+words.length+'</span>'+
+            '<span class="score-pill"><b>'+score+'</b> pts</span></div>'+
+          '<div class="petals" id="pet"></div>'+
+          '<div class="flower-word" id="fw"></div>'+
+          '<p class="muted" id="msg" style="min-height:22px;margin:4px 0">Which letters are in the word?</p>'+
+          '<div class="abc" id="abc"></div></div>');
+        host.appendChild(c);
+        c.querySelector('.game-top').insertBefore(speaker(w.word), c.querySelector('.score-pill'));
+        const pet = c.querySelector('#pet'), fw = c.querySelector('#fw'), abc = c.querySelector('#abc'), msg = c.querySelector('#msg');
+        function draw(){
+          pet.innerHTML = '<span class="fl-head">'+(left > 0 ? '🌻' : '🥀')+'</span>'+
+            Array.from({ length:PETALS }, (_, k) => '<span class="petal'+(k < left ? '' : ' gone')+'">🌸</span>').join('');
+          fw.innerHTML = word.split('').map(ch => '<span class="fl-l'+(got.has(ch) ? ' on' : '')+'">'+(got.has(ch) ? esc(ch) : '')+'</span>').join('');
+        }
+        'abcdefghijklmnopqrstuvwxyz'.split('').forEach(ch => {
+          const b = el('<button>'+ch+'</button>');
+          b.onclick = () => guess(ch);
+          abc.appendChild(b);
+        });
+        function guess(ch){
+          if (over || tried.has(ch)) return;
+          tried.add(ch);
+          const b = [...abc.children].find(x => x.textContent === ch);
+          if (word.indexOf(ch) >= 0){
+            got.add(ch); sfx('pop'); if (b) b.classList.add('yes');
+            msg.textContent = 'Yes! ' + ch.toUpperCase() + ' is in it.';
+          } else {
+            left--; sfx('wrong'); if (b) b.classList.add('no');
+            msg.textContent = 'No ' + ch.toUpperCase() + '. A petal fell off!';
+          }
+          if (b) b.disabled = true;
+          draw();
+          if (word.split('').every(x => got.has(x))){
+            over = true; saved++; score += 10 + left * 5;
+            msg.textContent = 'You saved the flower!';
+            sfx('great'); celebrate('small', fw);
+            setTimeout(() => hear(w.word), 300);
+            scoutPop('cheering', cheer(), 1800, { silent:true });
+            i++; setTimeout(step, 2400);
+          } else if (left <= 0){
+            over = true; noteMiss(w.word);
+            word.split('').forEach(x => got.add(x)); draw();
+            msg.textContent = 'Here\'s how it\'s spelled. It goes on your practice list.';
+            sfx('ding'); setTimeout(() => hear(w.word), 300);
+            i++; setTimeout(step, 3200);
+          }
+        }
+        claimKeys(ch => { if (/^[a-z]$/.test(ch)) guess(ch); }, () => {});
+        draw();
+        setTimeout(() => hear(w.word), 300);
+      }
+      step();
+    },
+
+    /* --- Memory Match ---
+       Cards face down. Half are speaker cards (flip one and Scout says its
+       word), half show a word spelled out. Find the pairs. Scout says the word
+       again when a pair is found, so every word is heard at least twice. */
+    match(){
+      releaseKeys();
+      const words = beeRoundWords(gradeOf() <= 2 ? 3 : 4);
+      const cards = shuffle([].concat(
+        words.map((w, k) => ({ k, kind:'say', word:w.word })),
+        words.map((w, k) => ({ k, kind:'see', word:w.word }))));
+      let open = [], found = 0, tries = 0, lock = false;
+      host.innerHTML = '';
+      const c = el('<div class="card center game-card">'+
+        '<div class="game-top"><span class="muted">🃏 Pairs <b id="f">0</b> of '+words.length+'</span>'+
+          '<span class="score-pill">Tries <b id="t">0</b></span></div>'+
+        '<p class="game-say">Find the sound that matches the word!</p>'+
+        '<div class="memory" id="mem"></div></div>');
+      host.appendChild(c);
+      const mem = c.querySelector('#mem');
+      cards.forEach(cd => {
+        const b = el('<button class="mcard"><span class="back">🐝</span><span class="face">'+
+          (cd.kind === 'say' ? '🔊' : esc(cd.word))+'</span></button>');
+        cd.el = b;
+        b.onclick = () => flip(cd);
+        mem.appendChild(b);
+      });
+      function flip(cd){
+        if (lock || cd.done || open.indexOf(cd) >= 0) return;
+        unlockAudio();
+        cd.el.classList.add('up');
+        if (cd.kind === 'say') hear(cd.word); else sfx('tap');
+        open.push(cd);
+        if (open.length < 2) return;
+        tries++; c.querySelector('#t').textContent = tries;
+        const [x, y] = open;
+        if (x.k === y.k && x.kind !== y.kind){
+          x.done = y.done = true; open = []; found++;
+          c.querySelector('#f').textContent = found;
+          setTimeout(() => {
+            [x, y].forEach(o => { o.el.classList.add('done'); o.el.querySelector('.face').textContent = (o.kind === 'say' ? '🔊 ' : '') + o.word; });
+            sfx('great'); hear(x.word);
+          }, 500);
+          if (found === words.length){
+            const score = Math.max(10, words.length * 20 - Math.max(0, tries - words.length) * 5);
+            setTimeout(() => record(score, 'All pairs in '+tries+' tries!'), 2000);
+          }
+        } else {
+          lock = true;
+          if (x.k !== y.k && x.kind !== y.kind) noteMiss(x.word);
+          setTimeout(() => { x.el.classList.remove('up'); y.el.classList.remove('up'); open = []; lock = false; }, 1300);
+        }
+      }
     },
   };
 
-  menu();
+  intro();
 }
 
 /* ---------------- kid: which mode? ---------------- */
