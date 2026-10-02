@@ -1200,6 +1200,8 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .mc-hive i.on{ background:linear-gradient(160deg,#7cc4ff,#3ba9ff); }
 .mc-hive i.on.gold{ background:linear-gradient(160deg,#ffe08a,#ffb31a); }
 .mc-go{ margin-top:6px; font:900 14px/18px var(--font-head); color:#6d28d9; }
+/* the play button reads as a button: a touch bigger than other inline icons (2 Oct 2026) */
+img.ic[src$="icon-play.webp"]{ width:1.45em!important; height:1.45em!important; vertical-align:-.38em; margin-right:.15em; }
 /* the small install bar on the child's home screen */
 .installbar{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); border-radius:16px; margin:0 0 12px; color:#fff; }
 .installbar summary{ color:#fff!important; list-style:none; display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; font-weight:800; font-size:15px; }
@@ -4096,6 +4098,8 @@ const UI_ICONS = {
   '⏳':'hourglass|waiting', '🔎':'magnifier|find', '🛠':'hammer|fix', '🔡':'sound-it-out|sound it out', '🏁':'flag|finish',
   '⚔':'lets-go|let\'s go', '🎯':'target|target', '💯':'perfect|perfect', '📭':'empty|empty', '🎬':'intermission|intermission',
   '📣':'megaphone|megaphone', '👋':'wave|hello', '📚':'books|books',
+  // the play button (2 Oct 2026, Kathryn: "an on-brand play button everywhere")
+  '▶':'play|play',
 };
 const UI_ICON_RE = new RegExp('(' + Object.keys(UI_ICONS).join('|') + ')️?', 'g');
 function uiIcon(ch){
@@ -8859,20 +8863,20 @@ function renderBeeHome(a){
   const grid = el('<div class="mode-grid"></div>');
   const start = el('<button class="mode-card mc-bee mc-wide">'+
     '<div class="mc-ic"><img src="../img/ui/icon-mic.webp" alt=""></div><b>'+(doneToday ? 'Back on stage' : 'Take the stage')+'</b>'+
-    '<small>The judges call your words. A crowd of bees cheers you on.</small><span class="mc-go">Let\'s go →</span></button>');
+    '<small>The judges call your words. A crowd of bees cheers you on.</small><span class="mc-go">▶️ Let\'s go</span></button>');
   start.onclick = () => { unlockAudio(); sfx('tap'); go('beeplay'); };
   grid.appendChild(start);
   const best = (p.games || {});
   BEE_GAMES.forEach(gm => {
     const b = el('<button class="mode-card mc-game"><b>'+esc(gm.n)+'</b>'+
-      '<small>'+esc(gm.s)+'</small><span class="mc-go">'+(best[gm.id] ? '⭐ Best '+best[gm.id] : 'Play →')+'</span></button>');
+      '<small>'+esc(gm.s)+'</small><span class="mc-go">'+(best[gm.id] ? '⭐ Best '+best[gm.id] : '▶️ Play')+'</span></button>');
     b.prepend(beeGameIcon(gm.art, gm.em, 56));
     b.onclick = () => { unlockAudio(); sfx('tap'); go('beegame', gm.id); };
     grid.appendChild(b);
   });
   const speed = el('<button class="mode-card mc-game">'+
     '<b>Bug Bop</b>'+
-    '<small>Bop the bug with the right spelling</small><span class="mc-go">'+(best.bop ? '⭐ Best '+best.bop : 'Play →')+'</span></button>');
+    '<small>Bop the bug with the right spelling</small><span class="mc-go">'+(best.bop ? '⭐ Best '+best.bop : '▶️ Play')+'</span></button>');
   speed.prepend(beeGameIcon('icon-bug-bop', '🔨', 56));
   speed.onclick = () => { unlockAudio(); sfx('tap'); go('beespeed'); };
   grid.appendChild(speed);
@@ -8900,17 +8904,30 @@ function renderBeeHome(a){
 }
 
 /* A bee hint may point at the rule, but it must never hand over the word —
-   no printing it, no spelling it out, in text or in speech. */
+   no printing it, no spelling it out, in text or in speech.
+   2 Oct 2026 (Kathryn: "Short a, like in •••… sounded like she was reading
+   Chinese after"). It used to blank the word with dots, which Scout then read
+   aloud, and on a word that is the rule's own example (cat, for short a) the
+   card was mostly dots. It also matched inside other words. Now the parts that
+   would give the word away are left out instead: "like in cat" phrases go,
+   then any sentence still holding the word; the rule itself always stays. */
 function beeSafeTip(tip, word){
-  const w = String(word).toLowerCase();
+  const w = String(word).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const hit = new RegExp('\\b' + w + '\\b', 'i');
   const clean = s => {
-    let out = speakableText(s);
-    out = out.replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi'), '\u2022\u2022\u2022');
-    // kill letter-by-letter giveaways: "s, a, i, d" / "s-a-i-d" / "w a s"
-    out = out.replace(/\b[a-z](?:\s*[,\-]\s*[a-z]\b){2,}/gi, '\u2022\u2022\u2022');
+    let out = speakableText(s).replace(/\s+/g, ' ').trim();
+    // "like in cat", "like cat", "as in the cat" and the comma before it
+    out = out.replace(new RegExp(',?\\s*\\b(?:like|as)\\s+(?:in\\s+)?(?:the\\s+|a\\s+)?' + w + '\\b', 'gi'), '');
+    // any sentence that still says the word goes
+    if (hit.test(out)) out = (out.match(/[^.!?]+[.!?]*/g) || []).filter(x => !hit.test(x)).join(' ').trim();
+    // letter-by-letter giveaways: "s, a, i, d" / "s-a-i-d"
+    out = out.replace(/\b[a-z](?:\s*[,\-]\s*[a-z]\b){2,}/gi, '').replace(/\s+([,.!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
     return out;
   };
-  return { title: clean(tip.title), rule: clean(tip.rule), trick: clean(tip.trick) };
+  const title = clean(tip.title) || 'Listen for the pattern';
+  const rule = clean(tip.rule) || 'Listen carefully to each sound, then spell it one letter at a time.';
+  const trick = clean(tip.trick) || 'Say it slowly, one sound at a time, and spell what you hear.';
+  return { title, rule, trick };
 }
 function speakableText(h){ return String(h).replace(/<[^>]+>/g,''); }
 
