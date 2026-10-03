@@ -1167,6 +1167,10 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .horn.on{ box-shadow:0 0 0 4px #2b2350, 0 4px 0 rgba(0,0,0,.15); transform:translateY(-2px); }
 .horn.done{ background:#e6f9ec; box-shadow:0 0 0 3px #22a35a inset; }
 .horn .h-w{ word-break:break-word; }
+.vd-list{ display:grid; gap:8px; }
+.vd-row{ display:flex; gap:10px; align-items:flex-start; }
+.vd-row > span{ font-size:20px; line-height:24px; }
+.vd-row .muted{ font-size:14px; line-height:19px; overflow-wrap:anywhere; }
 .mini-rule{ margin:0!important; padding:6px 10px!important; font-size:14px!important; line-height:18px!important; width:auto!important; }
 .mcard .back{ font-size:34px; }
 .mcard.up{ background:#fff; box-shadow:0 0 0 3px #ffd23f inset, 0 5px 0 rgba(0,0,0,.12); }
@@ -3350,6 +3354,10 @@ async function scoutKey(text, speed){
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 let SCOUT_SRC = null;       // Scout's clip when it is playing through Web Audio (the backup route)
+/* what happened on this device this visit, for the voice check in Grown-ups
+   (3 Oct 2026: the laptop on Chrome played the old voice and we couldn't see why) */
+const SCOUT_STATS = { scout:0, device:0, why:'' };
+function scoutWhy(t){ SCOUT_STATS.why = t; }
 function scoutSpeaking(){ return !!(SCOUT_SRC || (SCOUT_EL && !SCOUT_EL.paused && !SCOUT_EL.ended)); }
 
 /* Scout's clips are downloaded whole and kept on the device (29 Sep 2026).
@@ -3365,8 +3373,8 @@ async function scoutClip(url){
   let res = null, store = null;
   try{ if ('caches' in window){ store = await caches.open(SCOUT_CACHE); res = await store.match(url); } }catch(e){}
   if (!res){
-    try{ res = await fetch(url, { mode:'cors' }); }catch(e){ return null; }
-    if (!res || !res.ok) return null;
+    try{ res = await fetch(url, { mode:'cors' }); }catch(e){ scoutWhy('Downloading a recording was blocked (' + ((e && e.message) || e) + ')'); return null; }
+    if (!res || !res.ok){ if (res && res.status !== 400 && res.status !== 404) scoutWhy('Downloading a recording failed (' + res.status + ')'); return null; }
     try{ if (store) await store.put(url, res.clone()); }catch(e){}
   }
   try{
@@ -3393,7 +3401,7 @@ function scoutPlayUrl(url, token, onend){
     if (!SCOUT_EL || token !== SCOUT_TOKEN) return resolve(token !== SCOUT_TOKEN);
     let settled = false;
     const done = ok => { if (!settled){ settled = true; clearTimeout(tm); resolve(ok); } };
-    const tm = setTimeout(() => done(false), 6000);
+    const tm = setTimeout(() => { scoutWhy('A recording took too long to start'); done(false); }, 6000);
     SCOUT_EL.onerror = () => done(false);
     SCOUT_EL.onplaying = () => done(true);
     SCOUT_EL.onended = () => { if (token === SCOUT_TOKEN && onend) onend(); };
@@ -3411,7 +3419,10 @@ function scoutPlayUrl(url, token, onend){
        already switched on, and only falls back if that is refused too. */
     if (pr && pr.catch) pr.catch(err => {
       if (settled) return;
+      // a clip that isn't there (not recorded yet) is not a refusal: just say no
+      if (!err || err.name !== 'NotAllowedError') return done(false);
       clearTimeout(tm);
+      scoutWhy('The browser would not start the recording (' + err.name + ')');
       scoutPlayWA(url, token, onend).then(ok => { if (!settled){ settled = true; resolve(ok); } });
     });
   });
@@ -3447,11 +3458,11 @@ async function scoutRecord(text, speed){
   try{
     const r = await fetch(SCOUT_FN, { method:'POST', headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({ text, speed }), signal: ctl ? ctl.signal : undefined });
-    if (r.status === 503){ SCOUT_OK = false; return null; }     // no ElevenLabs key yet
-    if (!r.ok) return null;
+    if (r.status === 503){ SCOUT_OK = false; scoutWhy('Scout\'s voice server is not set up (503)'); return null; }     // no ElevenLabs key yet
+    if (!r.ok){ scoutWhy('Scout\'s voice server said ' + r.status); return null; }
     SCOUT_OK = true;
     return (await r.json()).url || null;
-  }catch(e){ return null; }
+  }catch(e){ scoutWhy('Reaching Scout\'s voice server was blocked (' + ((e && e.message) || e) + ')'); return null; }
   finally{ if (tm) clearTimeout(tm); }
 }
 async function scoutPlay(text, opts){
@@ -3464,7 +3475,13 @@ async function scoutPlay(text, opts){
   if (token !== SCOUT_TOKEN) return true;
   let clip = await scoutClip(url);
   if (token !== SCOUT_TOKEN) return true;
+  SCOUT_RATE = speed === 'slow' ? .85 : 1;
   if (!clip){
+    /* the download may have been blocked rather than missing (an ad or privacy
+       blocker can stop fetch() but let the audio player through), so try the
+       stored recording straight from the server before recording a new one */
+    if (await scoutPlayUrl(url, token, opts && opts.onend)){ SCOUT_OK = true; SCOUT_STATS.scout++; return true; }
+    if (token !== SCOUT_TOKEN) return true;
     const made = await scoutRecord(text, speed);
     if (token !== SCOUT_TOKEN) return true;
     if (!made) return false;
@@ -3472,7 +3489,7 @@ async function scoutPlay(text, opts){
     if (token !== SCOUT_TOKEN) return true;
   }
   SCOUT_RATE = speed === 'slow' ? .85 : 1;          // the recording is already slow; stretching it further blurs the vowels
-  if (await scoutPlayUrl(clip, token, opts && opts.onend)){ SCOUT_OK = true; return true; }
+  if (await scoutPlayUrl(clip, token, opts && opts.onend)){ SCOUT_OK = true; SCOUT_STATS.scout++; return true; }
   return token !== SCOUT_TOKEN;
 }
 /* Record the week's words, rules and tricks ahead of time, a couple at a time,
@@ -3493,6 +3510,7 @@ function scoutWarm(texts, speed){
 
 function deviceSay(text, opts){
   opts = opts || {};
+  if (String(text).trim()) SCOUT_STATS.device++;
   text = String(text).replace(/<phoneme[^>]*>([^<]*)<\/phoneme>/g, '$1').replace(/<[^>]+>/g, ' ');
   if (!('speechSynthesis' in window)) { if (opts.onend) opts.onend(); return; }
   try{ speechSynthesis.cancel(); }catch(e){}
@@ -5839,6 +5857,54 @@ function renderParent(a, tab){
    every new family on day one, with a Play button either side of it. */
 const VOICE_TEST = 'The light in the night is bright. Can you hear me clearly?';
 
+function voiceCheckCard2(){
+  const c = el('<div class="card" id="wk-voicecheck"><h3>🔊 Scout\'s voice</h3>'+
+    '<p class="muted">Hearing a robot voice instead of Scout on this device? This checks each step and says which one is stuck.</p>'+
+    '<button class="btn blue big" id="vdgo" style="margin-top:8px">▶️ Check Scout\'s voice</button>'+
+    '<div id="vdout" style="margin-top:10px"></div></div>');
+  const out = c.querySelector('#vdout');
+  c.querySelector('#vdgo').onclick = async () => {
+    unlockAudio(); stopSpeech();
+    const rows = [];
+    const show = () => { out.innerHTML = '<div class="vd-list">' + rows.map(r => '<div class="vd-row"><span>'+(r.ok === null ? '⏳' : r.ok ? '✅' : '❌')+'</span><div><b>'+esc(r.t)+'</b>'+(r.d ? '<div class="muted">'+esc(r.d)+'</div>' : '')+'</div></div>').join('') + '</div>'; };
+    const step = async (t, fn) => { const r = { t, ok:null, d:'' }; rows.push(r); show();
+      try{ const v = await fn(); r.ok = v.ok; r.d = v.d || ''; }catch(e){ r.ok = false; r.d = String((e && e.message) || e); } show(); return r.ok; };
+    const ua = navigator.userAgent, brow = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : /Firefox\//.test(ua) ? 'Firefox' : 'this browser';
+    const os = /Mac OS X/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : /CrOS/.test(ua) ? 'Chromebook' : /iPhone|iPad/.test(ua) ? 'iPhone/iPad' : /Android/.test(ua) ? 'Android' : '';
+    const line = 'Spelling bee time!';
+    let url = '';
+    await step('Internet connection', async () => ({ ok: navigator.onLine !== false, d: navigator.onLine === false ? 'This device says it is offline.' : '' }));
+    await step('Scout\'s voice server', async () => {
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 12000);
+      try{ const r = await fetch(SCOUT_FN, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ text: line, speed:'normal' }), signal: ctl.signal });
+        if (!r.ok) return { ok:false, d:'The server answered ' + r.status + '.' };
+        url = (await r.json()).url || ''; return { ok: !!url };
+      }catch(e){ return { ok:false, d:'Could not reach it. Something on this device or network is blocking nkkckcnclqwpvvwujedg.supabase.co (often an ad or privacy blocker in the browser).' }; }
+      finally{ clearTimeout(tm); }
+    });
+    if (!url) url = await scoutUrlFor(line, 'normal');
+    let clip = null;
+    await step('Downloading a recording', async () => {
+      try{ const r = await fetch(url, { mode:'cors', cache:'no-store' }); if (!r.ok) return { ok:false, d:'The server answered ' + r.status + '.' };
+        const b = await r.blob(); clip = URL.createObjectURL(b); return { ok: b.size > 0, d: b.size ? '' : 'It arrived empty.' };
+      }catch(e){ return { ok:false, d:'Blocked: ' + ((e && e.message) || e) + '. An ad or privacy blocker is the usual cause.' }; }
+    });
+    await step('Playing it out loud', async () => {
+      const au = new Audio(); au.src = clip || url;
+      try{ await au.play(); await new Promise(r => setTimeout(r, 1800)); au.pause(); return { ok:true, d:'You should have just heard Scout say "' + line + '"' }; }
+      catch(e){ return { ok:false, d:'The browser refused: ' + ((e && e.name) || e) + '.' }; }
+    });
+    rows.push({ t:'This visit so far', ok: SCOUT_STATS.device === 0 || SCOUT_STATS.scout > 0,
+      d: SCOUT_STATS.scout + ' line' + (SCOUT_STATS.scout === 1 ? '' : 's') + ' in Scout\'s voice, ' + SCOUT_STATS.device + ' in the device voice' +
+         (SCOUT_STATS.why ? '. Last reason: ' + SCOUT_STATS.why : '') });
+    rows.push({ t: brow + (os ? ' on ' + os : ''), ok:true, d:'' });
+    show();
+    const bad = rows.find(r => r.ok === false);
+    out.appendChild(el('<p style="margin-top:8px;font-weight:800">' + (bad ? 'Stuck at: ' + esc(bad.t) + '. Send Claude a screenshot of this card.' : 'Everything worked. Scout should sound right on this device now.') + '</p>'));
+  };
+  return c;
+}
+
 function voiceCheckCard(){
   const c = el('<div class="card" style="border:3px solid var(--brand)">'+
     '<h3>🔊 Check the voice — worth 60 seconds</h3>'+
@@ -6270,7 +6336,10 @@ function parentMore(a){
   const ic = installCard(); if (ic) a.appendChild(ic);
   a.appendChild(remindersCard());
   /* The Voice card is gone (29 Sep 2026, Kathryn): Scout speaks in her own
-     recorded voice, and the device voice is only a quiet fallback now. */
+     recorded voice, and the device voice is only a quiet fallback now.
+     A voice check came back (3 Oct 2026) for when that fallback shows up on
+     one device and not another: it says which step fails, in plain words. */
+  a.appendChild(voiceCheckCard2());
 
   // ---------- access ----------
   const left = trialLeft();
