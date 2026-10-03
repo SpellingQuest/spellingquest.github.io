@@ -3349,7 +3349,8 @@ async function scoutKey(text, speed){
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(SCOUT_VOICE_VERSION+'|'+speed+'|'+text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-function scoutSpeaking(){ return !!(SCOUT_EL && !SCOUT_EL.paused && !SCOUT_EL.ended); }
+let SCOUT_SRC = null;       // Scout's clip when it is playing through Web Audio (the backup route)
+function scoutSpeaking(){ return !!(SCOUT_SRC || (SCOUT_EL && !SCOUT_EL.paused && !SCOUT_EL.ended)); }
 
 /* Scout's clips are downloaded whole and kept on the device (29 Sep 2026).
    Playing the storage URL straight from an <audio> element made iPhones and
@@ -3402,8 +3403,43 @@ function scoutPlayUrl(url, token, onend){
     try{ SCOUT_EL.preservesPitch = true; SCOUT_EL.webkitPreservesPitch = true;
          SCOUT_EL.defaultPlaybackRate = SCOUT_RATE; SCOUT_EL.playbackRate = SCOUT_RATE; }catch(e){}
     const pr = SCOUT_EL.play();
-    if (pr && pr.catch) pr.catch(() => done(false));
+    /* 3 Oct 2026 (Kathryn: "Scout's voice is broken… my laptop has the really
+       old voice"). A browser that won't let this page start audio by itself
+       (Safari is the strict one) refuses play() for every line Scout says
+       outside a tap, and each refusal used to drop to the device voice. Now a
+       refusal plays the same clip through Web Audio, which the first tap has
+       already switched on, and only falls back if that is refused too. */
+    if (pr && pr.catch) pr.catch(err => {
+      if (settled) return;
+      clearTimeout(tm);
+      scoutPlayWA(url, token, onend).then(ok => { if (!settled){ settled = true; resolve(ok); } });
+    });
   });
+}
+const SCOUT_BUFS = {};       // url -> decoded clip, for the backup route
+async function scoutPlayWA(url, token, onend){
+  try{
+    const ctx = actx();
+    if (!ctx) return false;
+    if (ctx.state !== 'running'){ try{ await ctx.resume(); }catch(e){} }
+    if (ctx.state !== 'running') return false;
+    let buf = SCOUT_BUFS[url];
+    if (!buf){
+      const data = await (await fetch(url)).arrayBuffer();
+      buf = await new Promise((ok, no) => { const r = ctx.decodeAudioData(data, ok, no); if (r && r.then) r.then(ok, no); });
+      SCOUT_BUFS[url] = buf;
+    }
+    if (token !== SCOUT_TOKEN) return true;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    if (SCOUT_RATE !== 1) src.playbackRate.value = SCOUT_RATE;
+    src.connect(ctx.destination);
+    if (SCOUT_SRC){ try{ SCOUT_SRC.stop(); }catch(e){} }
+    SCOUT_SRC = src;
+    src.onended = () => { if (SCOUT_SRC === src) SCOUT_SRC = null; if (token === SCOUT_TOKEN && onend) onend(); };
+    src.start();
+    return true;
+  }catch(e){ return false; }
 }
 async function scoutRecord(text, speed){
   const ctl = ('AbortController' in window) ? new AbortController() : null;
@@ -3563,6 +3599,7 @@ function stopAudio(){
   SCOUT_TOKEN++;
   if (SPEAK_CUR) SPEAK_CUR.done = true;
   try{ if (SCOUT_EL){ SCOUT_EL.pause(); } }catch(e){}
+  try{ if (SCOUT_SRC){ const s0 = SCOUT_SRC; SCOUT_SRC = null; s0.onended = null; s0.stop(); } }catch(e){}
   try{ speechSynthesis.cancel(); }catch(e){}
 }
 function stopSpeech(){ SPEAK_Q = []; SPEAK_GEN++; stopAudio(); }
@@ -5639,10 +5676,22 @@ function unlockAudio(){
     const u = new SpeechSynthesisUtterance(' ');
     u.volume = 0; speechSynthesis.speak(u);
   }catch(e){}
-  // iPad/iPhone only let audio play later if it was started inside a tap once
-  try{ if (SCOUT_EL){ SCOUT_EL.muted = true; const pr = SCOUT_EL.play(); const back = () => { SCOUT_EL.pause(); SCOUT_EL.muted = false; };
-       if (pr && pr.then) pr.then(back, back); else back(); } }catch(e){}
+  /* iPad/iPhone/Safari only let audio play later if it was started inside a tap
+     once. It has to have something to play: an empty player refuses straight
+     away and stays locked (3 Oct 2026: the reason the laptop fell back to the
+     old voice). A tenth of a second of silence does it. */
+  try{ if (SCOUT_EL){
+    if (!SCOUT_EL.src) SCOUT_EL.src = SILENT_WAV;
+    SCOUT_EL.muted = true; const pr = SCOUT_EL.play(); const back = () => { SCOUT_EL.pause(); SCOUT_EL.muted = false; };
+    if (pr && pr.then) pr.then(back, back); else back(); } }catch(e){}
 }
+const SILENT_WAV = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+/* the first tap or key press anywhere switches sound on, whatever was tapped;
+   and every tap wakes Web Audio again if the browser put it to sleep */
+['pointerdown','touchend','keydown'].forEach(ev => document.addEventListener(ev, () => {
+  unlockAudio();
+  if (AC && AC.state === 'suspended'){ try{ AC.resume(); }catch(e){} }
+}, { capture:true, passive:true }));
 
 /* ---------------- parent ---------------- */
 /* Before this there was no way back in from a forgotten grown-up code except
