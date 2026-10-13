@@ -2476,6 +2476,7 @@ function load(){
   DB.weekRawByKid = DB.weekRawByKid || {};
   DB.beeByKid = DB.beeByKid || {};
   DB.beeTargetByKid = DB.beeTargetByKid || {};
+  DB.beePaceByKid = DB.beePaceByKid || {};      // new bee words a day a grown-up chose (0 = automatic)
   DB.beeId = DB.beeId || 'bee1';
   /* bee lists saved before they synced (1 Oct 2026) travel as version 1, so a
      list edited on any device after this beats them */
@@ -2636,7 +2637,9 @@ function absorb(rows){
     if (badges.length !== (k.badges || []).length) changed = true;
     k.badges = badges;
 
+    const beeHere = k.prog && k.prog[BEE_KEY], beeThere = r.progress && r.progress[BEE_KEY];
     const prog = forwardMerge(k.prog || {}, r.progress || {});
+    if (beeHere && beeThere && prog[BEE_KEY]) beeMergeFix(prog[BEE_KEY], beeHere, beeThere);
     if (JSON.stringify(prog) !== JSON.stringify(k.prog || {})) changed = true;
     k.prog = prog;
 
@@ -2647,6 +2650,8 @@ function absorb(rows){
       if ((DB.beeByKid[k.id] || '') !== (bl.w || '') || (DB.beeTargetByKid[k.id] || '') !== (bl.d || '')){
         DB.beeByKid[k.id] = bl.w || ''; DB.beeTargetByKid[k.id] = bl.d || ''; changed = true;
       }
+      DB.beePaceByKid = DB.beePaceByKid || {};
+      if ((DB.beePaceByKid[k.id] || 0) !== (bl.p || 0)){ DB.beePaceByKid[k.id] = bl.p || 0; changed = true; }
     }
 
     /* The review window travels inside progress — see stampReviewNights(). The
@@ -2982,6 +2987,28 @@ const AV_AT_KEY = '__avAt';   // when the character was last picked (29 Sep 2026
      because a forward merge has no safe rule for two different strings. */
 const BEE_KEY = '__bee';
 const BEE_LIST_KEY = '__beeList';
+/* The forward merge keeps the bigger number, but for text it lets the other
+   device's copy win, which for the bee meant a stale server copy overwrote
+   newer ones on this device: today's list stuck on the day it was last synced
+   (13 Oct 2026). For the bee's own text: the newer day wins, the earlier
+   "first met" and "started" dates win, and a day's spun words are combined. */
+function beeMergeFix(out, a, b){
+  const later = (x, y) => (x && y) ? ((x.d || '') >= (y.d || '') ? x : y) : (x || y);
+  const early = (x, y) => (x && y) ? (x < y ? x : y) : (x || y);
+  if (a.today || b.today) out.today = later(a.today, b.today);
+  if (a.started || b.started) out.started = early(a.started, b.started);
+  if (a.wheel || b.wheel){
+    const w = later(a.wheel, b.wheel);
+    const same = a.wheel && b.wheel && a.wheel.d === b.wheel.d;
+    out.wheel = same ? { d: w.d, done: Array.from(new Set([].concat(a.wheel.done || [], b.wheel.done || []))) } : w;
+  }
+  const sa = a.stats || {}, sb = b.stats || {};
+  Object.keys(out.stats || {}).forEach(word => {
+    const f = early(sa[word] && sa[word].first, sb[word] && sb[word].first);
+    if (f) out.stats[word].first = f;
+  });
+  return out;
+}
 function beeListLatest(prog){
   const e = prog && prog[BEE_LIST_KEY];
   if (!e || typeof e !== 'object') return null;
@@ -2993,7 +3020,7 @@ function beeListStamp(k){
   k.prog = k.prog || {};
   const e = (k.prog[BEE_LIST_KEY] && typeof k.prog[BEE_LIST_KEY] === 'object') ? k.prog[BEE_LIST_KEY] : {};
   const now = Math.max(Date.now(), ((beeListLatest(k.prog) || {}).at || 0) + 1);
-  e[now] = { w: String(DB.beeByKid[k.id] || ''), d: DB.beeTargetByKid[k.id] || '' };
+  e[now] = { w: String(DB.beeByKid[k.id] || ''), d: DB.beeTargetByKid[k.id] || '', p: (DB.beePaceByKid && DB.beePaceByKid[k.id]) || 0 };
   k.prog[BEE_LIST_KEY] = e;
 }
 function readStampedNights(k){
@@ -6318,19 +6345,53 @@ function beeLogHtml(k){
   const mastered = words.filter(w => st(w).run >= 3);
   const shaky = words.filter(w => st(w).x > 0 && st(w).run < 3);
   const untouched = words.filter(w => !st(w).seen);
+  const practising = words.length - mastered.length - untouched.length;
   const tgt = (DB.beeTargetByKid && DB.beeTargetByKid[k.id]) || DB.beeTarget || '';
-  const days = tgt
-    ? Math.max(0, Math.round((new Date(tgt) - new Date(new Date().toISOString().slice(0,10)))/86400000))
-    : null;
+  const now = today();
+  const days = tgt ? Math.max(0, daysBetween(now, tgt)) : null;
+  /* when they last practised and how often (13 Oct 2026: two weeks of nothing
+     being recorded went unnoticed because the report never said) */
+  const dayKeys = Object.keys(bp.days || {}).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+  const last = dayKeys[dayKeys.length - 1] || '';
+  const week = dayKeys.filter(d => daysBetween(d, now) < 7).length;
+  const lastTxt = !last ? 'not yet' : last === now ? 'today' : daysBetween(last, now) === 1 ? 'yesterday'
+    : new Date(last + 'T12:00').toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+  // the pace: can the words not met yet all be met before the bee?
+  let pace = '';
+  if (days != null && untouched.length){
+    const cap = beeNewCap(k), auto = gradeOf(k) <= 2 ? 4 : 6, chosen = (DB.beePaceByKid && DB.beePaceByKid[k.id]) || 0;
+    const reach = cap * Math.max(1, days);
+    const catchUp = Math.min(15, Math.ceil(untouched.length / Math.max(1, days - 2)));     // leaves a couple of days to review
+    if (untouched.length > reach)
+      pace = '<p class="muted" style="margin-top:6px"><b style="color:var(--red)">Behind:</b> at '+cap+' new words a day, about '+
+        (untouched.length - reach)+' won\'t be met before the bee.</p>'+
+        (catchUp > cap ? '<button class="btn yellow bee-pace" data-k="'+esc(k.id)+'" data-n="'+catchUp+'" style="margin-top:4px">Catch up: '+catchUp+' new words a day</button>' : '');
+    else
+      pace = '<p class="muted" style="margin-top:6px">On pace: about '+Math.min(cap, Math.ceil(untouched.length / Math.max(1, days)))+' new words a day meets the rest by the bee.</p>';
+    if (chosen) pace += '<p class="muted" style="font-size:14px">Catch-up pace on: '+chosen+' new words a day. '+
+      '<button class="btn link bee-pace" data-k="'+esc(k.id)+'" data-n="0" style="display:inline;padding:0">Back to '+auto+' a day</button></p>';
+  }
   return '<h3 style="margin-top:16px;font-size:17px">🐝 Spelling Bee</h3>'+
     '<div class="muted" style="margin-bottom:6px">'+
       (days != null ? days+' day'+(days===1?'':'s')+' to go · ' : '')+
       mastered.length+' of '+words.length+' mastered</div>'+
     '<div class="bar" style="margin-bottom:8px"><i style="width:'+
       Math.round(100*mastered.length/Math.max(1,words.length))+'%"></i></div>'+
+    '<p class="muted"><b>Last practised:</b> '+lastTxt+' · '+week+' of the last 7 days</p>'+
+    '<p class="muted">'+mastered.length+' mastered · '+practising+' practising · '+untouched.length+' not started</p>'+
     (shaky.length ? '<p class="muted"><b style="color:var(--red)">Words to revisit:</b> '+shaky.map(esc).join(', ')+'</p>' : '')+
-    (untouched.length ? '<p class="muted"><b>Not started yet:</b> '+untouched.length+' word'+(untouched.length===1?'':'s')+'</p>' : '');
+    pace;
 }
+/* the catch-up button in the report (any report screen) */
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.bee-pace'); if (!b) return;
+  const k = (DB.kids || []).find(x => x.id === b.dataset.k); if (!k) return;
+  DB.beePaceByKid = DB.beePaceByKid || {};
+  DB.beePaceByKid[k.id] = +b.dataset.n || 0;
+  beeListStamp(k); save(); sfx('good');
+  toast(+b.dataset.n ? '🐝 Catch-up on: ' + b.dataset.n + ' new words a day for ' + k.name : '🐝 Back to the usual pace for ' + k.name);
+  try{ render(PTAB); }catch(err){ go('parent', 'prog'); }
+});
 
 function parentMore(a){
   const ic = installCard(); if (ic) a.appendChild(ic);
@@ -8843,12 +8904,33 @@ function beeMark(word, ok){
   s.seen++;
   if (ok){ s.r++; s.run++; }
   else { s.x++; s.run = 0; }
+  beeLogDay(ok);
   save();
   try{ const pl = beePlan(); if (pl.words.length && pl.mastered.length >= pl.words.length) award('beehive'); }catch(e){}
 }
 /* remember the day a word was first met, so today's new-word count holds still
    while the child works through it */
 function beeFirstSeen(s){ if (!s.seen && !s.first) s.first = today(); }
+/* 13 Oct 2026 (Kathryn: "Amira has 91 words not started… 0 words mastered…
+   and I have them do spelling bee daily"). The bee games recorded nothing: only
+   the stage counted, so a child who practised through the games every day
+   stayed at zero. Now every game counts. A game where the whole word is typed
+   (Spin & Spell, Save the Flower) counts exactly like the stage, through
+   beeMark. A game that only recognises the word (Memory Match, Bug Bop) marks
+   it as met but leaves mastery to spelling it. Every word practised, anywhere
+   in the bee, adds to the day's log, so the report knows the child was here. */
+function beeMet(word){
+  const s = beeStat(word);
+  if (!s.seen){ beeFirstSeen(s); s.seen = 1; }
+  beeLogDay(false, true);
+  save();
+}
+function beeLogDay(ok, recog){
+  const p = beeProg(), d = p.days[today()] = p.days[today()] || { when: today() };
+  if (recog){ d.seen = (d.seen || 0) + 1; return; }
+  d.words = (d.words || 0) + 1;
+  if (ok) d.firstTry = (d.firstTry || 0) + 1;
+}
 
 /* ---------------- the schedule ----------------
    1 Oct 2026 (Kathryn: 25 days to go and the bee told him to go over 50 words
@@ -8862,7 +8944,9 @@ function beeFirstSeen(s){ if (!s.seen && !s.first) s.first = today(); }
    and the child only ever sees today's few. Misses keep coming back, and the
    words they already know rotate through a few at a time. */
 const BEE_REVIEW_DAYS = 4;                  // the last few days are all review
-function beeNewCap(){ return gradeOf() <= 2 ? 4 : 6; }     // most new words in a day
+/* most new words in a day: 4 for K-2, 6 after, unless a grown-up chose a catch-up
+   pace in the report (13 Oct 2026) */
+function beeNewCap(k){ k = k || kid(); const p = DB.beePaceByKid && DB.beePaceByKid[k.id]; return p > 0 ? p : (gradeOf(k) <= 2 ? 4 : 6); }
 function beeSessionSize(){ return gradeOf() <= 2 ? 8 : 10; } // words per turn on stage
 
 function daysBetween(a, b){ return Math.round((new Date(b) - new Date(a)) / 86400000); }
@@ -9233,7 +9317,7 @@ function actBeePlay(a){
 
   function maybeStop(){
     const p = beeProg();
-    p.days[today()] = { asked, right, when: today() };
+    p.days[today()] = Object.assign(p.days[today()] || {}, { asked, right, when: today() });
     save();
     if (i >= words.length) return finish();
     host.innerHTML = '';
@@ -9251,7 +9335,7 @@ function actBeePlay(a){
 
   function finish(){
     const p = beeProg();
-    p.days[today()] = { asked, right, when: today(), done:true };
+    p.days[today()] = Object.assign(p.days[today()] || {}, { asked, right, when: today(), done:true });
     save(); award('beestage');
     host.innerHTML = '';
     const full = asked >= words.length;
@@ -9640,6 +9724,7 @@ function renderBeeGame(a, id){
         const box = el('<div></div>'); play.appendChild(box);
         beeSpell(box, w, {
           onDone: ok => {
+            beeMark(w.word, ok);                      // counts like the stage (13 Oct 2026)
             if (ok){ score += 20; scoutPop('cheering', cheer(), 1800); } else score += 5;
             spun++;
             p.wheel.done.push(w.word); save();     // greyed out for the rest of today
@@ -9682,6 +9767,7 @@ function renderBeeGame(a, id){
         beeSpell(sp, w, {
           onMiss: tries => drawCan(Math.max(0, PER - tries)),       // a wrong try spills a drop
           onDone: (first, tries) => {
+            beeMark(w.word, first);                   // counts like the stage (13 Oct 2026)
             const left = Math.max(1, PER - tries);
             water += left; score += left * 10;
             c.querySelector('#sc').textContent = score;
@@ -9763,6 +9849,7 @@ function renderBeeGame(a, id){
         if (cd.k === sel.k){
           const h = sel; sel = null;
           cd.done = h.done = true; found++;
+          beeMet(h.w.word);                           // met, not mastered (13 Oct 2026)
           c.querySelector('#f').textContent = found;
           h.el.classList.remove('on'); h.el.classList.add('done'); h.el.querySelector('.h-w').textContent = h.w.word;
           setTimeout(() => { cd.el.classList.add('done'); sfx('great'); hear(h.w.word); }, 250);
@@ -9910,6 +9997,7 @@ function actBeeSpeed(a){
         if (done || b.gone) return;
         if (b.sg === right){
           done = true; b.gone = true;
+          beeMet(w.word);                             // met, not mastered (13 Oct 2026)
           score += wrong ? 5 : 10; hits += wrong ? 0 : 1;
           c.querySelector('#sc').textContent = score;
           sfx('great'); sayWord(w.word);
