@@ -9024,11 +9024,13 @@ function beeSessionWords(){
 /* a short round for the games and the speed round: words already met, the
    shaky ones first, never the whole list */
 function beeRoundWords(n){
+  /* the whole of today's list, the ones to practise again first (17 Oct 2026,
+     Kathryn: each game had one or two words). It used to keep to the words
+     already met, so after the first game or two only those were left. Since
+     every game now counts and helps with a new word, that rule only shrank them. */
   const todays = beeTodayWords();
-  const pool = todays.filter(beeSeen).length ? todays.filter(beeSeen) : todays;
-  // the shaky ones on today's list lead
-  const lead = shuffle(pool.filter(beeShaky)).slice(0, Math.ceil(n / 2));
-  const rest = shuffle(pool.filter(w => lead.indexOf(w) < 0));
+  const lead = shuffle(todays.filter(beeShaky)).slice(0, Math.ceil(n / 2));
+  const rest = shuffle(todays.filter(w => lead.indexOf(w) < 0));
   return shuffle(lead.concat(rest).slice(0, n)).map(w => BEE.byWord[w]).filter(Boolean);
 }
 
