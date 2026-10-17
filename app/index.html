@@ -1157,6 +1157,11 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .keyboard .key.yes{ background:#c8f5d2!important; }
 .keyboard .key.no{ opacity:.35; }
 .memory{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px; }
+.round-pill{ background:var(--gold-soft, #fff4d6); border-radius:999px; padding:6px 10px; font:900 14px/1 var(--font-head); color:var(--ink); white-space:nowrap; }
+.game-top .score-pill{ white-space:nowrap; min-width:0; }
+.round-hive{ display:flex; justify-content:center; gap:3px; margin:8px 0 2px; flex-wrap:wrap; }
+.round-hive i{ width:16px; height:18px; clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); background:#ece6fb; transition:background .3s; }
+.round-hive i.on{ background:linear-gradient(160deg,#ffe08a,#ffc93c 55%,#ffb31a); }
 .memory.many{ grid-template-columns:repeat(3,1fr); gap:7px; }
 .memory.many .mcard{ height:62px; font-size:15px; padding:4px; }
 .memory.many .mcard .back{ font-size:26px; }
@@ -9565,7 +9570,7 @@ const BEE_GAMES = [
   { id:'flower', em:'🥀', art:'icon-thirsty-flower', n:'Save the Flower', s:'Spell words to water the flower',
     how:'This flower is thirsty! I\'ll say a word. Spell it to give the flower a drink. A wrong try spills a little water, but I\'ll help you.' },
   { id:'match', em:'🃏', art:'icon-memory-match', n:'Memory Match',   s:'Match the sound to the word',
-    how:'First, look at the words and remember where they are. Then they turn over. Tap a horn to hear a word, and flip the card where that word is hiding!' },
+    how:'First, look at the words and remember where they are. Then they turn over. Tap a horn to hear a word, and flip the card where that word is hiding! With lots of words, we play in rounds.' },
 ];
 
 /* a game's picture: its art in img/ui when it's there, its emoji until then
@@ -9791,50 +9796,67 @@ function renderBeeGame(a, id){
        to find it. A card that isn't it flips back; remembering where the words
        were is the memory part. */
     match(){
+      /* in rounds (17 Oct 2026, Kathryn): every word on today's list, about five
+         pairs a round (four for K-2), each round opening with its words face up
+         and a countdown, then turning over. One score and one count of tries. */
       releaseKeys();
-      const words = beeRoundWords();
-      const n = words.length;
-      const horns = words.map((w, k) => ({ k, w }));
-      const cards = shuffle(words.map((w, k) => ({ k, w })));
+      const all = beeRoundWords();
+      const size = gradeOf() <= 2 ? 4 : 5;
+      const R = Math.max(1, Math.ceil(all.length / size)), per = Math.ceil(all.length / R);
+      const rounds = Array.from({ length:R }, (_, r) => all.slice(r * per, (r + 1) * per)).filter(x => x.length);
       const COLS = ['#ffc93c','#ff9ec7','#7cc8ff','#8fe3a3','#c9a7ff'];
-      let sel = null, found = 0, tries = 0, lock = true, looking = true;   // locked while they look
+      const NUM = ['One','Two','Three','Four','Five','Six'];
+      let tries = 0, foundAll = 0;
+      const total = all.length;
       host.innerHTML = '';
       const c = el('<div class="card center game-card">'+
-        '<div class="game-top"><span class="muted">🃏 Pairs <b id="f">0</b> of '+n+'</span>'+
+        '<div class="game-top"><span class="round-pill" id="rp"></span>'+
           '<button class="btn yellow mini-rule" id="rule">💡 Rule</button>'+
           '<span class="score-pill">Tries <b id="t">0</b></span></div>'+
-        '<p class="game-say" id="say">Look at the words and remember where they are!</p>'+
-        '<div class="horns" id="horns" style="grid-template-columns:repeat('+Math.min(n, 5)+',1fr)"></div>'+
-        '<div class="memory'+(n > 6 ? ' many' : '')+'" id="mem"></div></div>');
+        '<div class="round-hive" id="hive">'+all.map(() => '<i></i>').join('')+'</div>'+
+        '<p class="game-say" id="say"></p>'+
+        '<div class="horns" id="horns"></div>'+
+        '<div class="memory" id="mem"></div></div>');
       host.appendChild(c);
       const say = c.querySelector('#say'), hornRow = c.querySelector('#horns'), mem = c.querySelector('#mem');
-      horns.forEach(h => {
-        const b = el('<button class="horn" style="--hc:'+COLS[h.k % COLS.length]+'"><span class="h-ic">🔊</span><span class="h-w"></span></button>');
-        h.el = b; b.onclick = () => pickHorn(h);
-        hornRow.appendChild(b);
-      });
-      cards.forEach(cd => {
-        const b = el('<button class="mcard up"><span class="back">🐝</span><span class="face">'+esc(cd.w.word)+'</span></button>');
-        cd.el = b; b.onclick = () => flip(cd);
-        mem.appendChild(b);
-      });
-      /* look first (3 Oct 2026, Kathryn: "it doesn't let you look at the written
-         words first"): the word cards start face up with a countdown, read
-         aloud as a list, then turn over. The horns never turn over. */
-      let secs = Math.min(15, (gradeOf() <= 2 ? 5 : 3) + n);
-      const look = () => {
-        if (!alive()) return;
-        if (secs > 0){ say.textContent = 'Look at the words and remember where they are! ' + secs; secs--; setTimeout(look, 1000); return; }
-        cards.forEach(cd => cd.el.classList.remove('up'));
-        sfx('tap'); lock = false; looking = false;
-        say.textContent = 'Tap a horn to hear a word.';
-      };
-      look();
+      let sel = null, lock = true, looking = true, horns = [], cards = [], found = 0, n = 0;
       c.querySelector('#rule').onclick = () => {
         sfx('tap');
         if (!sel){ say.textContent = 'Tap a horn first, then I can show its rule.'; wiggle(hornRow); return; }
         rulePopup(beeSafeTip(sel.w.tip, sel.w.word), true);
       };
+
+      function startRound(r){
+        if (!alive()) return;
+        const words = rounds[r];
+        n = words.length; found = 0; sel = null; lock = true; looking = true;
+        c.querySelector('#rp').innerHTML = '🐝 Round <b>'+(r + 1)+'</b> of '+rounds.length;
+        horns = words.map((w, k) => ({ k, w }));
+        cards = shuffle(words.map((w, k) => ({ k, w })));
+        hornRow.innerHTML = ''; mem.innerHTML = '';
+        hornRow.style.gridTemplateColumns = 'repeat(' + Math.min(n, 5) + ',1fr)';
+        horns.forEach(h => {
+          const b = el('<button class="horn" style="--hc:'+COLS[h.k % COLS.length]+'"><span class="h-ic">🔊</span><span class="h-w"></span></button>');
+          h.el = b; b.onclick = () => pickHorn(h);
+          hornRow.appendChild(b);
+        });
+        cards.forEach(cd => {
+          const b = el('<button class="mcard up"><span class="back">🐝</span><span class="face">'+esc(cd.w.word)+'</span></button>');
+          cd.el = b; b.onclick = () => flip(cd);
+          mem.appendChild(b);
+        });
+        /* look first (3 Oct 2026): this round's words face up with a countdown,
+           then they turn over. The horns never turn over. */
+        let secs = (gradeOf() <= 2 ? 5 : 3) + n;
+        const tick = () => {
+          if (!alive()) return;
+          if (secs > 0){ say.textContent = 'Look at the words and remember where they are! ' + secs; secs--; setTimeout(tick, 1000); return; }
+          cards.forEach(cd => cd.el.classList.remove('up'));
+          sfx('tap'); lock = false; looking = false;
+          say.textContent = 'Tap a horn to hear a word.';
+        };
+        tick();
+      }
       function pickHorn(h){
         if (looking) return;
         unlockAudio(); hear(h.w.word);
@@ -9850,16 +9872,24 @@ function renderBeeGame(a, id){
         tries++; c.querySelector('#t').textContent = tries;
         if (cd.k === sel.k){
           const h = sel; sel = null;
-          cd.done = h.done = true; found++;
+          cd.done = h.done = true; found++; foundAll++;
           beeMet(h.w.word);                           // met, not mastered (13 Oct 2026)
-          c.querySelector('#f').textContent = found;
+          const cell = c.querySelectorAll('#hive i')[foundAll - 1]; if (cell) cell.classList.add('on');
           h.el.classList.remove('on'); h.el.classList.add('done'); h.el.querySelector('.h-w').textContent = h.w.word;
           setTimeout(() => { cd.el.classList.add('done'); sfx('great'); hear(h.w.word); }, 250);
-          say.textContent = found === n ? 'You found them all!' : 'A match! Tap another horn.';
-          if (found === n){
-            if (tries === n) award('memmaster');
-            const score = Math.max(10, n * 20 - Math.max(0, tries - n) * 5);
-            setTimeout(() => record(score, 'All pairs in '+tries+' tries!'), 1800);
+          if (found < n){ say.textContent = 'A match! Tap another horn.'; return; }
+          const r = rounds.findIndex(x => x.indexOf(h.w) >= 0);
+          if (r < rounds.length - 1){
+            // round done: a cheer, then the next round's words face up
+            lock = true; looking = true;
+            say.textContent = 'Round ' + (r + 1) + ' done! Get ready for round ' + (r + 2) + '…';
+            setTimeout(() => { if (!alive()) return; celebrate('small', mem); scoutPop('cheering', 'Round ' + (r + 1) + ' done! Here comes round ' + (r + 2) + '.', 2200); }, 700);
+            setTimeout(() => startRound(r + 1), 3200);
+          } else {
+            say.textContent = 'You found them all!';
+            if (tries === total) award('memmaster');
+            const score = Math.max(10, total * 20 - Math.max(0, tries - total) * 5);
+            setTimeout(() => record(score, 'All ' + total + ' pairs in ' + tries + ' tries!'), 1800);
           }
         } else {
           lock = true;
@@ -9868,6 +9898,15 @@ function renderBeeGame(a, id){
           setTimeout(() => { cd.el.classList.remove('up'); lock = false; }, 1300);
         }
       }
+
+      // how many rounds today, said once up front (Kathryn: "2 rounds to finish all words")
+      lock = true; looking = true;
+      const many = rounds.length > 1;
+      const hello = many ? NUM[rounds.length - 1] + ' rounds today. Let\'s fill the hive!' : 'One round today. Let\'s fill the hive!';
+      c.querySelector('#rp').innerHTML = '🐝 ' + rounds.length + ' round' + (many ? 's' : '');
+      say.innerHTML = '<b>' + esc(hello) + '</b><br><span class="muted">' + total + ' words, about ' + per + ' pairs a round.</span>';
+      scoutSpeak(hello, 5000);
+      setTimeout(() => startRound(0), 3000);
     },
   };
 
