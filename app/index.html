@@ -1157,11 +1157,14 @@ body .gamebadge.gamedock .hivebuild i.on{ background:linear-gradient(160deg,#ffe
 .keyboard .key.yes{ background:#c8f5d2!important; }
 .keyboard .key.no{ opacity:.35; }
 .memory{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px; }
+.memory.many{ grid-template-columns:repeat(3,1fr); gap:7px; }
+.memory.many .mcard{ height:62px; font-size:15px; padding:4px; }
+.memory.many .mcard .back{ font-size:26px; }
 .mcard{ position:relative; height:76px; border:0; border-radius:16px; cursor:pointer; background:linear-gradient(160deg,#ffe08a,#ffc93c); box-shadow:0 5px 0 rgba(0,0,0,.15);
   font:900 22px/1.1 var(--font-head); color:var(--ink); padding:6px; transition:background .2s; }
 .mcard .face{ display:none; word-break:break-word; }
 .horns{ display:grid; gap:8px; margin:6px 0 4px; }
-.horn{ border:0; border-radius:14px; min-height:62px; cursor:pointer; background:var(--hc); box-shadow:0 4px 0 rgba(0,0,0,.15); padding:4px 2px;
+.horn{ border:0; border-radius:14px; min-height:56px; cursor:pointer; background:var(--hc); box-shadow:0 4px 0 rgba(0,0,0,.15); padding:4px 2px;
   display:flex; flex-direction:column; align-items:center; justify-content:center; font:900 14px/16px var(--font-head); color:var(--ink); }
 .horn .h-ic{ font-size:26px; line-height:30px; }
 .horn.on{ box-shadow:0 0 0 4px #2b2350, 0 4px 0 rgba(0,0,0,.15); transform:translateY(-2px); }
@@ -9023,15 +9026,12 @@ function beeSessionWords(){
 
 /* a short round for the games and the speed round: words already met, the
    shaky ones first, never the whole list */
-function beeRoundWords(n){
-  /* the whole of today's list, the ones to practise again first (17 Oct 2026,
-     Kathryn: each game had one or two words). It used to keep to the words
-     already met, so after the first game or two only those were left. Since
-     every game now counts and helps with a new word, that rule only shrank them. */
-  const todays = beeTodayWords();
-  const lead = shuffle(todays.filter(beeShaky)).slice(0, Math.ceil(n / 2));
-  const rest = shuffle(todays.filter(w => lead.indexOf(w) < 0));
-  return shuffle(lead.concat(rest).slice(0, n)).map(w => BEE.byWord[w]).filter(Boolean);
+/* Every activity plays every word on today's list (17 Oct 2026, Kathryn: "the
+   kids pick each day which activity they want to do… today's words are on all
+   the activities"). It used to keep to the words already met, then to a few
+   words per game, so one game never covered the day. */
+function beeRoundWords(){
+  return shuffle(beeTodayWords()).map(w => BEE.byWord[w]).filter(Boolean);
 }
 
 /* ---------------- kid: bee home ---------------- */
@@ -9747,7 +9747,7 @@ function renderBeeGame(a, id){
        so it always gets a drink. The speller's help grows with every miss. */
     flower(){
       releaseKeys();
-      const words = beeRoundWords(5);
+      const words = beeRoundWords();
       const total = words.length, PER = 3, MAX = total * PER;
       let i = 0, score = 0, water = 0;
       host.innerHTML = '';
@@ -9792,7 +9792,7 @@ function renderBeeGame(a, id){
        were is the memory part. */
     match(){
       releaseKeys();
-      const words = beeRoundWords(gradeOf() <= 2 ? 3 : 4);
+      const words = beeRoundWords();
       const n = words.length;
       const horns = words.map((w, k) => ({ k, w }));
       const cards = shuffle(words.map((w, k) => ({ k, w })));
@@ -9804,8 +9804,8 @@ function renderBeeGame(a, id){
           '<button class="btn yellow mini-rule" id="rule">💡 Rule</button>'+
           '<span class="score-pill">Tries <b id="t">0</b></span></div>'+
         '<p class="game-say" id="say">Look at the words and remember where they are!</p>'+
-        '<div class="horns" id="horns" style="grid-template-columns:repeat('+n+',1fr)"></div>'+
-        '<div class="memory" id="mem"></div></div>');
+        '<div class="horns" id="horns" style="grid-template-columns:repeat('+Math.min(n, 5)+',1fr)"></div>'+
+        '<div class="memory'+(n > 6 ? ' many' : '')+'" id="mem"></div></div>');
       host.appendChild(c);
       const say = c.querySelector('#say'), hornRow = c.querySelector('#horns'), mem = c.querySelector('#mem');
       horns.forEach(h => {
@@ -9821,7 +9821,7 @@ function renderBeeGame(a, id){
       /* look first (3 Oct 2026, Kathryn: "it doesn't let you look at the written
          words first"): the word cards start face up with a countdown, read
          aloud as a list, then turn over. The horns never turn over. */
-      let secs = (gradeOf() <= 2 ? 5 : 3) + n;
+      let secs = Math.min(15, (gradeOf() <= 2 ? 5 : 3) + n);
       const look = () => {
         if (!alive()) return;
         if (secs > 0){ say.textContent = 'Look at the words and remember where they are! ' + secs; secs--; setTimeout(look, 1000); return; }
@@ -9909,7 +9909,6 @@ const BUG_ART = ['ladybug','caterpillar','grasshopper','ant','stag-beetle','snai
                  'inchworm','roly-poly','bumblebee','moth','praying-mantis','cicada','jewel-beetle','weevil','water-strider','katydid'];
 const BUG_EMOJI = { ladybug:'🐞', caterpillar:'🐛', grasshopper:'🦗', ant:'🐜', 'stag-beetle':'🪲', snail:'🐌', butterfly:'🦋', cricket:'🦗',
                     inchworm:'🐛', 'jewel-beetle':'🪲', weevil:'🪲', katydid:'🦗', bumblebee:'🐝', moth:'🦋' };
-const BEE_BOP_N = 8;
 function bugFace(name){
   const box = el('<span class="b-ic"></span>');
   const img = el('<img src="../img/ui/bug-'+name+'.webp" alt="" draggable="false">');
@@ -9937,7 +9936,7 @@ function actBeeSpeed(a){
   c0.querySelector('#go').onclick = () => { unlockAudio(); stopSpeech(); sfx('tap'); play(); };
 
   function play(){
-    const words = beeRoundWords(BEE_BOP_N);
+    const words = beeRoundWords();
     const OPTS = gradeOf() <= 2 ? 3 : 4, SPEED = gradeOf() <= 2 ? .35 : .55;
     let i = 0, score = 0, hits = 0, bugs = [], raf = 0, cur = null;
     let deck = shuffle(BUG_ART.slice());
