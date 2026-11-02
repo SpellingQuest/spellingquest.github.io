@@ -3031,6 +3031,21 @@ function beeListStamp(k){
   e[now] = { w: String(DB.beeByKid[k.id] || ''), d: DB.beeTargetByKid[k.id] || '', p: (DB.beePaceByKid && DB.beePaceByKid[k.id]) || 0 };
   k.prog[BEE_LIST_KEY] = e;
 }
+/* "No spelling words this week" (2 Nov 2026): a grown-up can say a child has no
+   weekly list, so a child with a bee list goes straight to the bee instead of
+   being asked to choose. Same idiom as RN_KEY: the newest edit's time with the
+   on/off in the last digit, so forwardMerge's max() lets the newest device win. */
+const NOWK_KEY = '__noWk';
+function stampWeekOff(k, on){
+  k.prog = k.prog || {};
+  k.prog[NOWK_KEY] = Date.now() * 10 + (on ? 1 : 0);
+}
+function weekOff(k){
+  const v = k && k.prog && k.prog[NOWK_KEY];
+  return typeof v === 'number' && isFinite(v) && v % 10 === 1;
+}
+/* does this child have weekly words to practice? */
+function kidHasWeek(k){ return !!k && !weekOff(k) && !!String(rawForKid(k) || '').trim(); }
 function readStampedNights(k){
   const v = k && k.prog && k.prog[RN_KEY];
   if (typeof v !== 'number' || !isFinite(v)) return null;
@@ -4827,6 +4842,11 @@ function pushPlan(){
       const dt = dayAt(i), d = ymd(dt), dow = dt.getDay(), prev = ymd(dayAt(i - 1));
       const off = (dow - start + 7) % 7;
       const thisWindow = i + sinceStart < 7;                        // still the words they have now
+      // no spelling words this week: nothing to nudge about until next week's list comes home
+      if (weekOff(k)){
+        if (!thisWindow && dow === start && wwAt < dt.getTime()) add(d, 'words', 'New words tonight?', 'Add this week\'s list and Scout will get it ready.', 85);
+        continue;
+      }
       const undone = keys => keys.filter(x => !(thisWindow && days[x] && days[x].done));
       // 4. the night before the test
       if ((dow + 1) % 7 === td) add(d, 'eve', 'Test tomorrow 🐝', 'Open Grown-ups to see the words worth a look together.', 90, 'week', [], '/app/#open=prog');
@@ -6018,7 +6038,7 @@ function parentWords(a){
       '<p class="muted" style="color:#5c3d00">Paste each child\'s own list below and tap Save.</p></div>'));
   }
 
-  const boxes = {};
+  const boxes = {}, offs = {};
   const card = el('<div class="card" id="wk-words"><h3>📝 This week\'s words</h3>'+
     '<p class="muted">Paste them straight from the teacher — any layout works. '+
     'The patterns, chunks, and practice path are worked out for you.</p><div id="kb"></div>'+
@@ -6033,11 +6053,25 @@ function parentWords(a){
     const w = el('<div style="margin-top:14px">'+
       '<label class="fl">'+esc(k.name)+' · '+(k.grade === 0 ? 'kindergarten' : 'grade '+(k.grade||1))+'</label>'+
       '<textarea class="ta" style="min-height:120px" spellcheck="false" placeholder="Paste '+esc(k.name)+'\'s words…"></textarea>'+
+      '<label style="display:flex;gap:9px;align-items:center;font-size:15px;margin-top:8px;font-weight:700">'+
+        '<input type="checkbox" class="nowk" style="width:20px;height:20px"> No spelling words this week</label>'+
+      '<p class="muted nowk-note" style="font-size:13.5px;margin-top:2px" hidden></p>'+
       '<details style="margin-top:6px"><summary>See the patterns they\'ll learn</summary><div class="pvbox"></div></details>'+
       '</div>');
     const ta = w.querySelector('textarea');
     ta.value = DB.weekRawByKid[k.id] || '';
     boxes[k.id] = ta;
+    const off = w.querySelector('.nowk'), note = w.querySelector('.nowk-note');
+    const showOff = () => { const on = off.checked; ta.style.opacity = on ? '.45' : ''; note.hidden = !on;
+      note.textContent = beeHasList(k)
+        ? k.name + ' will go straight to the Spelling Bee words. Paste a new list and tap Save to switch weekly words back on.'
+        : 'No weekly words for ' + k.name + '. Add a Spelling Bee list below and they\'ll go straight to it.'; };
+    off.checked = weekOff(k); showOff();
+    offs[k.id] = off;
+    off.onchange = () => {
+      stampWeekOff(k, off.checked); pushRefresh(); save(); showOff(); sfx('tap');
+      toast(off.checked ? '📭 No spelling words this week for ' + k.name : '📝 Weekly words back on for ' + k.name);
+    };
     const box = w.querySelector('.pvbox');
     const preview = () => {
       box.innerHTML = '';
@@ -6061,6 +6095,9 @@ function parentWords(a){
     const fresh = card.querySelector('#fw').checked;
     DB.kids.forEach(k => { const v = boxes[k.id].value.trim(); if (v){
       const same = wordsFingerprint(rawForKid(k)).key === wordsFingerprint(v).key;
+      /* new words typed in mean the week is back on; the same words saved again
+         while the box is ticked leave it off */
+      if (weekOff(k) && (!same || !offs[k.id].checked)) stampWeekOff(k, false);
       DB.weekRawByKid[k.id] = v;
       if (fresh && same){ k.prog = k.prog || {}; k.prog.__wkSalt = (k.prog.__wkSalt || 0) + 1; }
       /* a save here is human intent, so this is where the word-list stamp is set */
@@ -9053,7 +9090,7 @@ function renderBeeHome(a){
   const p = beeProg();
   const doneToday = p.days[today()];
 
-  if (String(rawForKid(kid()) || '').trim()){
+  if (kidHasWeek(kid())){
     const sw = el('<button class="modeswitch"><img src="../img/ui/icon-calendar.webp" alt=""><span>Switch to <b>This Week\'s Words</b></span><i>→</i></button>');
     sw.onclick = () => { sfx('tap'); go('home'); };
     a.appendChild(sw);
@@ -10072,7 +10109,7 @@ function actBeeSpeed(a){
 /* ---------------- kid: which mode? ---------------- */
 function renderModes(a){
   const k = kid();
-  const hasWeek = !!String(rawForKid(k)||'').trim();
+  const hasWeek = kidHasWeek(k);
   const hasBee = beeHasList(k);
   if (hasBee && !hasWeek) return renderBeeHome(a);
   if (!hasBee) return renderHome(a);
