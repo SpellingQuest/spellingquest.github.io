@@ -6121,7 +6121,6 @@ function parentWords(a){
     'so nothing goes stale.</p>'+
     '<div id="bkids"></div>'+
     '<button class="btn green big" id="bsave" style="margin-top:12px">🐝 Save bee list</button>'+
-    '<button class="btn link" id="bclear" style="width:100%;margin-top:4px">Remove the bee list</button>'+
     '</details></div>');
   a.appendChild(beeCard);
   const bboxes = {}, bdates = {};
@@ -6133,9 +6132,22 @@ function parentWords(a){
       '<label class="fl">'+esc(k.name)+'\'s bee words</label>'+
       '<textarea class="ta" style="min-height:110px" spellcheck="false" '+
       'placeholder="Paste the whole bee list — as many words as you like"></textarea>'+
-      '<p class="muted bn"></p></div>');
+      '<p class="muted bn"></p>'+
+      '<button class="btn link bclear" style="width:100%;margin-top:2px">Remove '+esc(k.name)+'\'s bee list</button></div>');
     const ta = w.querySelector('textarea');
     ta.value = DB.beeByKid[k.id] || '';
+    /* remove one child's bee list only (9 Nov 2026): the old button cleared every
+       child's. Two taps, so a stray tap can't wipe a long list. */
+    const clr = w.querySelector('.bclear');
+    if (!(DB.beeByKid[k.id] || '').trim()) clr.style.display = 'none';
+    let armed = false;
+    clr.onclick = () => {
+      if (!armed){ armed = true; clr.textContent = 'Tap again to remove ' + k.name + '\'s bee list';
+        setTimeout(() => { armed = false; clr.textContent = 'Remove ' + k.name + '\'s bee list'; }, 4000); return; }
+      DB.beeByKid[k.id] = ''; DB.beeTargetByKid[k.id] = ''; beeListStamp(k);
+      save(); toast('Bee list removed for ' + k.name);
+      setTimeout(()=>go('parent','words'), 500);
+    };
     bdates[k.id] = w.querySelector('.bdate');
     const n = w.querySelector('.bn');
     const count = () => { const wk = buildWeek(ta.value, {});
@@ -6158,11 +6170,6 @@ function parentWords(a){
     if (!any){ toast('Add some words first!'); return; }
     DB.beeTarget = '';
     save(); sfx('good'); toast('\ud83d\udC1d Bee list saved!');
-  };
-  beeCard.querySelector('#bclear').onclick = () => {
-    DB.kids.forEach(k => { if (DB.beeByKid[k.id] || DB.beeTargetByKid[k.id]){ DB.beeByKid[k.id] = ''; DB.beeTargetByKid[k.id] = ''; beeListStamp(k); } });
-    DB.beeTarget = ''; save(); toast('Bee list removed');
-    setTimeout(()=>go('parent','words'), 500);
   };
 
 }
